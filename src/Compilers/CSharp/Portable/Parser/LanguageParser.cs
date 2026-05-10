@@ -8494,15 +8494,17 @@ done:
         private bool IsPossibleColonEqualsDeclaration()
             => this.IsTrueIdentifier() && this.PeekToken(1).Kind == SyntaxKind.ColonEqualsToken;
 
-        private StatementSyntax ParseColonEqualsDeclarationStatement(SyntaxList<AttributeListSyntax> attributes)
+        // Desugars `x := expr` into a VariableDeclarationSyntax equivalent to `var x = expr`.
+        // The token layout preserves every source character so ToFullString() reproduces the original:
+        //   - Zero-width 'var' identifier (text="") carries the leading trivia of `x`.
+        //   - Name token keeps the original `x` text and trailing trivia.
+        //   - EqualsToken uses ":=" as its text, accounting for both source characters.
+        // Does NOT consume any trailing terminator; callers handle `;` (statement) or
+        // `;`/`,` (for-init) themselves.
+        private VariableDeclarationSyntax ParseColonEqualsVariableDeclaration()
         {
-            // Desugar `x := expr;` into a LocalDeclarationStatementSyntax equivalent to `var x = expr;`.
-            // The token layout preserves every source character so that ToFullString() reproduces the original:
-            //   - Zero-width 'var' identifier (text="") carries the leading trivia of `x`.
-            //   - Name token keeps the original `x` text and trailing trivia.
-            //   - EqualsToken uses ":=" as its text, accounting for both source characters.
-            nameToken := this.EatToken(SyntaxKind.IdentifierToken);
-            colonEqualsToken := this.EatToken(SyntaxKind.ColonEqualsToken);
+            var nameToken = this.EatToken(SyntaxKind.IdentifierToken);
+            var colonEqualsToken = this.EatToken(SyntaxKind.ColonEqualsToken);
 
             // Zero-width 'var': IsVar recognises it via ContextualKind when Width == 0.
             var varToken = SyntaxFactory.Identifier(
@@ -8511,11 +8513,11 @@ done:
                 text: "",
                 valueText: "var",
                 trailing: null);
-            varType := _syntaxFactory.IdentifierName(varToken);
+            var varType = _syntaxFactory.IdentifierName(varToken);
 
-            // Name token without leading trivia (moved to varToken).
-            // Use the explicit text/valueText overload so @-verbatim identifiers
-            // (e.g. @string, @event) retain the correct ValueText for name lookup.
+            // Name without leading trivia (moved onto varToken). Use the explicit
+            // text/valueText overload so @-verbatim identifiers (e.g. @string, @event)
+            // retain the correct ValueText for name lookup.
             var nameWithoutLeading = SyntaxFactory.Identifier(
                 SyntaxKind.IdentifierToken,
                 leading: null,
@@ -8530,10 +8532,9 @@ done:
                 ":=",
                 colonEqualsToken.GetTrailingTrivia());
 
-            initializer := this.ParseVariableInitializer();
-            semicolon := this.EatToken(SyntaxKind.SemicolonToken);
+            var initializer = this.ParseVariableInitializer();
 
-            variables := _pool.AllocateSeparated<VariableDeclaratorSyntax>();
+            var variables = _pool.AllocateSeparated<VariableDeclaratorSyntax>();
             try
             {
                 variables.Add(_syntaxFactory.VariableDeclarator(
@@ -8541,18 +8542,25 @@ done:
                     argumentList: null,
                     _syntaxFactory.EqualsValueClause(equalsToken, initializer)));
 
-                return _syntaxFactory.LocalDeclarationStatement(
-                    attributes,
-                    awaitKeyword: null,
-                    usingKeyword: null,
-                    modifiers: default,
-                    _syntaxFactory.VariableDeclaration(varType, variables.ToList()),
-                    semicolon);
+                return _syntaxFactory.VariableDeclaration(varType, variables.ToList());
             }
             finally
             {
                 _pool.Free(variables);
             }
+        }
+
+        private StatementSyntax ParseColonEqualsDeclarationStatement(SyntaxList<AttributeListSyntax> attributes)
+        {
+            var declaration = ParseColonEqualsVariableDeclaration();
+            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
+            return _syntaxFactory.LocalDeclarationStatement(
+                attributes,
+                awaitKeyword: null,
+                usingKeyword: null,
+                modifiers: default,
+                declaration,
+                semicolon);
         }
 
         private bool IsPossibleUnsafeStatement()
@@ -9690,6 +9698,13 @@ done:
 
             (VariableDeclarationSyntax variableDeclaration, SeparatedSyntaxList<ExpressionSyntax> initializers) eatVariableDeclarationOrInitializers()
             {
+                // `for (i := 0; ...)`: short-circuit before the type-scan so we don't consume
+                // `i` as a type and then bail when `:=` isn't an identifier.
+                if (this.IsPossibleColonEqualsDeclaration())
+                {
+                    return (this.ParseColonEqualsVariableDeclaration(), initializers: default);
+                }
+
                 using var resetPoint = this.GetDisposableResetPoint(resetOnDispose: false);
 
                 // Here can be either a declaration or an expression statement list.  Scan

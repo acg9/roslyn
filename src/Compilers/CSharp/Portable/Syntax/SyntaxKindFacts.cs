@@ -155,8 +155,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static bool IsPunctuation(SyntaxKind kind)
         {
-            return (kind >= SyntaxKind.TildeToken && kind <= SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken) ||
-                   kind == SyntaxKind.ColonEqualsToken;
+            return kind >= SyntaxKind.TildeToken && kind <= SyntaxKind.ColonEqualsToken;
         }
 
         public static bool IsLanguagePunctuation(SyntaxKind kind)

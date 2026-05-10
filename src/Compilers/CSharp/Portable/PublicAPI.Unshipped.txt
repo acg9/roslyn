@@ -1,3 +1,4 @@
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.ColonEqualsToken = 8288 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 [RSEXPERIMENTAL006]Microsoft.CodeAnalysis.CSharp.SyntaxKind.WithElement = 9081 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind
 [RSEXPERIMENTAL006]Microsoft.CodeAnalysis.CSharp.Syntax.WithElementSyntax
 [RSEXPERIMENTAL006]Microsoft.CodeAnalysis.CSharp.Syntax.WithElementSyntax.AddArgumentListArguments(params Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax![]! items) -> Microsoft.CodeAnalysis.CSharp.Syntax.WithElementSyntax!

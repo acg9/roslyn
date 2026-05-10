@@ -6118,5 +6118,24 @@ System.Console.WriteLine(true)";
 
             Assert.True(statement.Errors().Length > 0);
         }
+
+        [Fact]
+        public void ColonEquals_InForInitializer()
+        {
+            var text = "for (i := 0; i < 10; i++) { }";
+            var statement = this.ParseStatement(text);
+
+            Assert.Equal(SyntaxKind.ForStatement, statement.Kind());
+            Assert.Equal(text, statement.ToFullString());
+            Assert.Equal(0, statement.Errors().Length);
+
+            var fs = (ForStatementSyntax)statement;
+            Assert.NotNull(fs.Declaration);
+            Assert.True(fs.Declaration.Type.IsVar);
+            Assert.Equal(1, fs.Declaration.Variables.Count);
+            Assert.Equal("i", fs.Declaration.Variables[0].Identifier.ToString());
+            Assert.NotNull(fs.Declaration.Variables[0].Initializer);
+            Assert.Equal("0", fs.Declaration.Variables[0].Initializer.Value.ToString());
+        }
     }
 }
