@@ -14,7 +14,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         public bool IsNint => IsIdentifierName("nint");
         public bool IsNuint => IsIdentifierName("nuint");
 
-        private bool IsIdentifierName(string id) => this is IdentifierNameSyntax name && name.Identifier.ToString() == id;
+        private bool IsIdentifierName(string id) =>
+            this is IdentifierNameSyntax name &&
+            (name.Identifier.ToString() == id ||
+             // Zero-width synthetic identifier produced by := lowering; recognized by contextual kind.
+             id == "var" && name.Identifier.ContextualKind == SyntaxKind.VarKeyword && name.Identifier.Width == 0);
 
         public bool IsRef => Kind == SyntaxKind.RefType;
     }

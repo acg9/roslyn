@@ -5840,6 +5840,7 @@ Microsoft.CodeAnalysis.CSharp.SyntaxKind.CoalesceExpression
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.CollectionExpression
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.CollectionInitializerExpression
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.ColonColonToken
+Microsoft.CodeAnalysis.CSharp.SyntaxKind.ColonEqualsToken
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.ColonToken
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.CommaToken
 Microsoft.CodeAnalysis.CSharp.SyntaxKind.CompilationUnit

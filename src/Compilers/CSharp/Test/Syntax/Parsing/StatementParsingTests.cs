@@ -6043,5 +6043,80 @@ System.Console.WriteLine(true)";
                 base.VisitToken(token);
             }
         }
+
+        // ── := (walrus / short variable declaration) ──────────────────────────
+
+        [Fact]
+        public void ColonEquals_BasicParse()
+        {
+            var text = "x := 42;";
+            var statement = this.ParseStatement(text);
+
+            Assert.NotNull(statement);
+            Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
+            // Round-trip must reproduce the original source.
+            Assert.Equal(text, statement.ToFullString());
+            Assert.Equal(0, statement.Errors().Length);
+
+            var ds = (LocalDeclarationStatementSyntax)statement;
+            Assert.Equal(0, ds.Modifiers.Count);
+
+            // Type is recognised as var (implicit).
+            Assert.True(ds.Declaration.Type.IsVar);
+
+            // Variable name.
+            Assert.Equal(1, ds.Declaration.Variables.Count);
+            Assert.Equal("x", ds.Declaration.Variables[0].Identifier.ToString());
+
+            // Initializer present.
+            Assert.NotNull(ds.Declaration.Variables[0].Initializer);
+            Assert.Equal("42", ds.Declaration.Variables[0].Initializer.Value.ToString());
+        }
+
+        [Fact]
+        public void ColonEquals_StringInitializer()
+        {
+            var text = "y := \"hello\";";
+            var statement = this.ParseStatement(text);
+
+            Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
+            Assert.Equal(text, statement.ToFullString());
+            Assert.Equal(0, statement.Errors().Length);
+
+            var ds = (LocalDeclarationStatementSyntax)statement;
+            Assert.True(ds.Declaration.Type.IsVar);
+            Assert.Equal("y", ds.Declaration.Variables[0].Identifier.ToString());
+        }
+
+        [Fact]
+        public void ColonEquals_NotLabel()
+        {
+            // Ensure `x :=` is not confused with a labeled statement (`x:`).
+            var text = "x := 1;";
+            var statement = this.ParseStatement(text);
+
+            Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
+            Assert.Equal(0, statement.Errors().Length);
+        }
+
+        [Fact]
+        public void ColonEquals_NotExpression()
+        {
+            // `:=` in expression position should produce parse errors.
+            var text = "var z = (x := 1);";
+            var statement = this.ParseStatement(text);
+
+            Assert.True(statement.Errors().Length > 0);
+        }
+
+        [Fact]
+        public void ColonEquals_ExplicitTypeIsError()
+        {
+            // `int x := 1;` should not parse as a := declaration.
+            var text = "int x := 1;";
+            var statement = this.ParseStatement(text);
+
+            Assert.True(statement.Errors().Length > 0);
+        }
     }
 }

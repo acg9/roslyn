@@ -8452,6 +8452,10 @@ done:
                     return this.ParseUsingStatement(attributes, this.EatContextualToken(SyntaxKind.AwaitKeyword));
                 }
             }
+            else if (this.IsPossibleColonEqualsDeclaration())
+            {
+                return this.ParseColonEqualsDeclarationStatement(attributes);
+            }
             else if (this.IsPossibleLabeledStatement())
             {
                 return this.ParseLabeledStatement(attributes);
@@ -8485,6 +8489,66 @@ done:
         private bool IsPossibleLabeledStatement()
         {
             return this.PeekToken(1).Kind == SyntaxKind.ColonToken && this.IsTrueIdentifier();
+        }
+
+        private bool IsPossibleColonEqualsDeclaration()
+            => this.IsTrueIdentifier() && this.PeekToken(1).Kind == SyntaxKind.ColonEqualsToken;
+
+        private StatementSyntax ParseColonEqualsDeclarationStatement(SyntaxList<AttributeListSyntax> attributes)
+        {
+            // Desugar `x := expr;` into a LocalDeclarationStatementSyntax equivalent to `var x = expr;`.
+            // The token layout preserves every source character so that ToFullString() reproduces the original:
+            //   - Zero-width 'var' identifier (text="") carries the leading trivia of `x`.
+            //   - Name token keeps the original `x` text and trailing trivia.
+            //   - EqualsToken uses ":=" as its text, accounting for both source characters.
+            var nameToken = this.EatToken(SyntaxKind.IdentifierToken);
+            var colonEqualsToken = this.EatToken(SyntaxKind.ColonEqualsToken);
+
+            // Zero-width 'var': IsVar recognises it via ContextualKind when Width == 0.
+            var varToken = SyntaxFactory.Identifier(
+                SyntaxKind.VarKeyword,
+                nameToken.GetLeadingTrivia(),
+                text: "",
+                valueText: "var",
+                trailing: null);
+            var varType = _syntaxFactory.IdentifierName(varToken);
+
+            // Name token without leading trivia (moved to varToken).
+            var nameWithoutLeading = SyntaxFactory.Identifier(
+                leading: null,
+                nameToken.Text,
+                nameToken.GetTrailingTrivia());
+
+            // '=' with text ":=" so both source characters are reproduced by ToFullString().
+            var equalsToken = SyntaxFactory.Token(
+                colonEqualsToken.GetLeadingTrivia(),
+                SyntaxKind.EqualsToken,
+                ":=",
+                colonEqualsToken.GetTrailingTrivia());
+
+            var initializer = this.ParseVariableInitializer();
+            var semicolon = this.EatToken(SyntaxKind.SemicolonToken);
+
+            var variables = _pool.AllocateSeparated<VariableDeclaratorSyntax>();
+            try
+            {
+                variables.Add(_syntaxFactory.VariableDeclarator(
+                    nameWithoutLeading,
+                    argumentList: null,
+                    _syntaxFactory.EqualsValueClause(equalsToken, initializer)));
+
+                return _syntaxFactory.LocalDeclarationStatement(
+                    attributes,
+                    awaitKeyword: null,
+                    usingKeyword: null,
+                    modifiers: default,
+                    _syntaxFactory.VariableDeclaration(varType, variables.ToList()),
+                    semicolon);
+            }
+            finally
+            {
+                _pool.Free(variables);
+            }
         }
 
         private bool IsPossibleUnsafeStatement()

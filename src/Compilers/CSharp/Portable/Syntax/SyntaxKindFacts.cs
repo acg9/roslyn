@@ -155,7 +155,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static bool IsPunctuation(SyntaxKind kind)
         {
-            return kind >= SyntaxKind.TildeToken && kind <= SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
+            return (kind >= SyntaxKind.TildeToken && kind <= SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken) ||
+                   kind == SyntaxKind.ColonEqualsToken;
         }
 
         public static bool IsLanguagePunctuation(SyntaxKind kind)
@@ -196,6 +197,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             yield return SyntaxKind.GreaterThanGreaterThanGreaterThanToken;
             yield return SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken;
+            yield return SyntaxKind.ColonEqualsToken;
         }
 
         public static bool IsPunctuationOrKeyword(SyntaxKind kind)
@@ -1571,6 +1573,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return "%=";
                 case SyntaxKind.QuestionQuestionEqualsToken:
                     return "??=";
+                case SyntaxKind.ColonEqualsToken:
+                    return ":=";
                 case SyntaxKind.DotDotToken:
                     return "..";
 

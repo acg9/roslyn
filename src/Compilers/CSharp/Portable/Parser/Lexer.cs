@@ -487,7 +487,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 case ':':
                     TextWindow.AdvanceChar();
-                    info.Kind = TextWindow.TryAdvance(':') ? SyntaxKind.ColonColonToken : SyntaxKind.ColonToken;
+                    if (TextWindow.TryAdvance(':'))
+                        info.Kind = SyntaxKind.ColonColonToken;
+                    else if (TextWindow.TryAdvance('='))
+                        info.Kind = SyntaxKind.ColonEqualsToken;
+                    else
+                        info.Kind = SyntaxKind.ColonToken;
                     break;
 
                 case ';':

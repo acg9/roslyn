@@ -80,7 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>Represents <c>..</c> token.</summary>
         DotDotToken = 8222,
 
-        // Values ranging from 8193 (TildeToken) to 8287 (GreaterThanGreaterThanGreaterThanEqualsToken) are reserved for punctuation kinds.
+        // Values ranging from 8193 (TildeToken) to 8288 (ColonEqualsToken) are reserved for punctuation kinds.
         // This gap is included within that range. So if you add a value here make sure `SyntaxFacts.GetPunctuationKinds` includes it in the returned enumeration
 
         // additional xml tokens
@@ -101,7 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <summary>Represents <c>?&gt;</c> token.</summary>
         XmlProcessingInstructionEndToken = 8239, // ?>
 
-        // Values ranging from 8193 (TildeToken) to 8287 (GreaterThanGreaterThanGreaterThanEqualsToken) are reserved for punctuation kinds.
+        // Values ranging from 8193 (TildeToken) to 8288 (ColonEqualsToken) are reserved for punctuation kinds.
         // This gap is included within that range. So if you add a value here make sure `SyntaxFacts.GetPunctuationKinds` includes it in the returned enumeration
 
         // compound punctuation
@@ -161,6 +161,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         GreaterThanGreaterThanGreaterThanToken = 8286,
         /// <summary>Represents <c>&gt;&gt;&gt;=</c> token.</summary>
         GreaterThanGreaterThanGreaterThanEqualsToken = 8287,
+        /// <summary>Represents <c>:=</c> token.</summary>
+        ColonEqualsToken = 8288,
 
         // When adding punctuation, the following functions must be adapted:
         // <see cref="SyntaxFacts.IsPunctuation"/>
