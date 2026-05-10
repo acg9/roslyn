@@ -65,7 +65,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (scopeSyntaxOpt == null)
             {
                 StaticConstructor = new SynthesizedStaticConstructor(this);
-                var cacheVariableName = GeneratedNames.MakeCachedFrameInstanceFieldName();
+                cacheVariableName := GeneratedNames.MakeCachedFrameInstanceFieldName();
                 SingletonCache = new SynthesizedLambdaCacheFieldSymbol(this, this, cacheVariableName, topLevelMethod, isReadOnly: true, isStatic: true);
             }
 
@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (_members.IsDefault)
             {
-                var builder = _membersBuilder;
+                builder := _membersBuilder;
                 if ((object)StaticConstructor != null)
                 {
                     builder.Add(StaticConstructor);

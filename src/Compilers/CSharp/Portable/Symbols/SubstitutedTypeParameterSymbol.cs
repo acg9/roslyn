@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override ImmutableArray<TypeWithAnnotations> GetConstraintTypes(ConsList<TypeParameterSymbol> inProgress)
         {
-            var constraintTypes = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            constraintTypes := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             _map.SubstituteConstraintTypesDistinctWithoutModifiers(_underlyingTypeParameter, _underlyingTypeParameter.GetConstraintTypes(inProgress), constraintTypes, null);
 
             TypeWithAnnotations bestObjectConstraint = default;
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else if (!HasNotNullConstraint && !HasValueTypeConstraint && !HasReferenceTypeConstraint)
                 {
-                    var constraintTypes = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                    constraintTypes := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                     _map.SubstituteConstraintTypesDistinctWithoutModifiers(_underlyingTypeParameter, _underlyingTypeParameter.GetConstraintTypes(ConsList<TypeParameterSymbol>.Empty), constraintTypes, null);
                     return IsNotNullableFromConstraintTypes(constraintTypes.ToImmutableAndFree());
                 }

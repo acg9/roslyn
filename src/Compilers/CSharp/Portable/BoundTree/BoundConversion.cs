@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var sourceConversion = ConversionGroupOpt.Conversion.BestUnionConversionAnalysis.SourceConversion;
+                        sourceConversion := ConversionGroupOpt.Conversion.BestUnionConversionAnalysis.SourceConversion;
                         Debug.Assert(sourceConversion.IsIdentity ||
                                         (sourceConversion.IsTupleLiteralConversion &&
                                         Operand is BoundConvertedTupleLiteral));

@@ -195,7 +195,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 ref attributes,
                 moduleBuilder.SynthesizeEmbeddedAttribute());
 
-            var usageInfo = GetAttributeUsageInfo();
+            usageInfo := GetAttributeUsageInfo();
             if (usageInfo != AttributeUsageInfo.Default)
             {
                 AddSynthesizedAttribute(

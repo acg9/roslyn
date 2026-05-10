@@ -115,15 +115,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static TypeSymbol GetCapturedVariableFieldType(SynthesizedContainer frame, Symbol variable)
         {
-            var local = variable as LocalSymbol;
+            local := variable as LocalSymbol;
             if ((object)local != null)
             {
                 // if we're capturing a generic frame pointer, construct it with the new frame's type parameters
-                var lambdaFrame = local.Type.OriginalDefinition as SynthesizedClosureEnvironment;
+                lambdaFrame := local.Type.OriginalDefinition as SynthesizedClosureEnvironment;
                 if ((object)lambdaFrame != null)
                 {
                     // lambdaFrame may have less generic type parameters than frame, so trim them down (the first N will always match)
-                    var typeArguments = frame.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                    typeArguments := frame.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
                     if (typeArguments.Length > lambdaFrame.Arity)
                     {
                         typeArguments = ImmutableArray.Create(typeArguments, 0, lambdaFrame.Arity);

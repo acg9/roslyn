@@ -12,15 +12,15 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public override BoundNode VisitYieldBreakStatement(BoundYieldBreakStatement node)
         {
-            var result = (BoundStatement)base.VisitYieldBreakStatement(node)!;
+            result := (BoundStatement)base.VisitYieldBreakStatement(node)!;
 
             // We also add sequence points for the implicit "yield break" statement at the end of the method body
             // (added by FlowAnalysisPass.AppendImplicitReturn). Implicitly added "yield break" for async method
             // does not need sequence points added here since it would be done later (presumably during Async rewrite),
             // except in runtime async where the method body is emitted directly.
             // This will need additional testing when async iterators are emitted with runtime async. https://github.com/dotnet/roslyn/issues/75960
-            var currentFunction = _factory.CurrentFunction;
-            var isRuntimeAsync = currentFunction is not null && _compilation.IsRuntimeAsyncEnabledIn(currentFunction);
+            currentFunction := _factory.CurrentFunction;
+            isRuntimeAsync := currentFunction is not null && _compilation.IsRuntimeAsyncEnabledIn(currentFunction);
             if (this.Instrument &&
                 (!node.WasCompilerGenerated || (node.Syntax.Kind() == SyntaxKind.Block && (currentFunction?.IsAsync == false || isRuntimeAsync))))
             {
@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitYieldReturnStatement(BoundYieldReturnStatement node)
         {
-            var result = (BoundStatement)base.VisitYieldReturnStatement(node)!;
+            result := (BoundStatement)base.VisitYieldReturnStatement(node)!;
             if (this.Instrument && !node.WasCompilerGenerated)
             {
                 result = Instrumenter.InstrumentYieldReturnStatement(node, result);

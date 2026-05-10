@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var result = FlowAnalysisAnnotations.None;
+                result := FlowAnalysisAnnotations.None;
                 if (ContainingSymbol is SourcePropertyAccessorSymbol propertyAccessor && propertyAccessor.AssociatedSymbol is SourcePropertySymbolBase property)
                 {
                     if (property.HasDisallowNull)
@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override OneOrMany<SyntaxList<AttributeListSyntax>> GetAttributeDeclarations()
         {
             // Bind the attributes on the accessor's attribute syntax list with "param" target specifier.
-            var accessor = (SourceMemberMethodSymbol)this.ContainingSymbol;
+            accessor := (SourceMemberMethodSymbol)this.ContainingSymbol;
             return accessor.GetAttributeDeclarations();
         }
 
@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (ContainingSymbol is SourcePropertyAccessorSymbol { AssociatedSymbol: SourcePropertySymbolBase property })
             {
-                var annotations = FlowAnalysisAnnotations;
+                annotations := FlowAnalysisAnnotations;
                 if ((annotations & FlowAnalysisAnnotations.DisallowNull) != 0)
                 {
                     AddSynthesizedAttribute(ref attributes, SynthesizedAttributeData.Create(property.DisallowNullAttributeIfExists));

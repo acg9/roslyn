@@ -50,12 +50,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             // new int?(123) always has a value:
             if (expr.Kind == BoundKind.ObjectCreationExpression)
             {
-                var creation = (BoundObjectCreationExpression)expr;
+                creation := (BoundObjectCreationExpression)expr;
                 return creation.Constructor.ParameterCount != 0;
             }
             else if (expr.Kind == BoundKind.Conversion)
             {
-                var conversion = (BoundConversion)expr;
+                conversion := (BoundConversion)expr;
                 switch (conversion.ConversionKind)
                 {
                     case ConversionKind.ImplicitNullable:
@@ -96,13 +96,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // "new int?()" never has a value, but "new int?(x)" always does.
             if (expr.Kind == BoundKind.ObjectCreationExpression)
             {
-                var creation = (BoundObjectCreationExpression)expr;
+                creation := (BoundObjectCreationExpression)expr;
                 return creation.Constructor.ParameterCount == 0;
             }
 
             if (expr.Kind == BoundKind.Conversion)
             {
-                var conversion = (BoundConversion)expr;
+                conversion := (BoundConversion)expr;
                 switch (conversion.ConversionKind)
                 {
                     case ConversionKind.NullLiteral:

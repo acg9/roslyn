@@ -82,8 +82,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Debug.Assert(_calculateDelegate is { });
                 Debug.Assert(_expression is { });
 
-                var delegateType = _calculateDelegate(_binder, _expression);
-                var result = Interlocked.CompareExchange(ref _lazyDelegateType, delegateType, Uninitialized);
+                delegateType := _calculateDelegate(_binder, _expression);
+                result := Interlocked.CompareExchange(ref _lazyDelegateType, delegateType, Uninitialized);
 
                 if (_binder.Compilation.TestOnlyCompilationData is InferredDelegateTypeData data &&
                     (object?)result == Uninitialized)
@@ -161,16 +161,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(this.Equals(other, TypeCompareKind.IgnoreDynamicAndTupleNames | TypeCompareKind.IgnoreNullableModifiersForReferenceTypes));
 
-            var thisDelegateType = GetInternalDelegateType();
-            var otherType = (FunctionTypeSymbol)other;
-            var otherDelegateType = otherType.GetInternalDelegateType();
+            thisDelegateType := GetInternalDelegateType();
+            otherType := (FunctionTypeSymbol)other;
+            otherDelegateType := otherType.GetInternalDelegateType();
 
             if (thisDelegateType is null || otherDelegateType is null)
             {
                 return this;
             }
 
-            var mergedDelegateType = (NamedTypeSymbol)thisDelegateType.MergeEquivalentTypes(otherDelegateType, variance);
+            mergedDelegateType := (NamedTypeSymbol)thisDelegateType.MergeEquivalentTypes(otherDelegateType, variance);
             return (object)thisDelegateType == mergedDelegateType ?
                 this :
                 otherType.WithDelegateType(mergedDelegateType);
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override TypeSymbol SetNullabilityForReferenceTypes(Func<TypeWithAnnotations, TypeWithAnnotations> transform)
         {
-            var thisDelegateType = GetInternalDelegateType();
+            thisDelegateType := GetInternalDelegateType();
             if (thisDelegateType is null)
             {
                 return this;
@@ -188,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private FunctionTypeSymbol WithDelegateType(NamedTypeSymbol delegateType)
         {
-            var thisDelegateType = GetInternalDelegateType();
+            thisDelegateType := GetInternalDelegateType();
             return (object?)thisDelegateType == delegateType ?
                 this :
                 new FunctionTypeSymbol(delegateType);
@@ -211,8 +211,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (t2 is FunctionTypeSymbol otherType)
             {
-                var thisDelegateType = GetInternalDelegateType();
-                var otherDelegateType = otherType.GetInternalDelegateType();
+                thisDelegateType := GetInternalDelegateType();
+                otherDelegateType := otherType.GetInternalDelegateType();
 
                 if (thisDelegateType is null || otherDelegateType is null)
                 {

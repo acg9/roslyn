@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(this.IsDefinitionOrDistinct());
 
-            var synthesizedGlobalMethod = AdaptedMethodSymbol.OriginalDefinition as SynthesizedGlobalMethodSymbol;
+            synthesizedGlobalMethod := AdaptedMethodSymbol.OriginalDefinition as SynthesizedGlobalMethodSymbol;
             if ((object)synthesizedGlobalMethod != null)
             {
                 return synthesizedGlobalMethod.ContainingPrivateImplementationDetailsType;
@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
             }
 
-            var moduleBeingBuilt = (PEModuleBuilder)context.Module;
+            moduleBeingBuilt := (PEModuleBuilder)context.Module;
 
             return moduleBeingBuilt.Translate(containingType,
                 syntaxNodeOpt: (CSharpSyntaxNode)context.SyntaxNode,
@@ -316,7 +316,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else if (AdaptedMethodSymbol.IsExtensionBlockMember())
                 {
-                    var containingType = AdaptedMethodSymbol.ContainingType;
+                    containingType := AdaptedMethodSymbol.ContainingType;
                     return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
                 }
 

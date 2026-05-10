@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
                 return true;
             }
 
-            var myKeys = UnderlyingAssemblySymbol.GetInternalsVisibleToPublicKeys(assemblyWantingAccess.Name);
+            myKeys := UnderlyingAssemblySymbol.GetInternalsVisibleToPublicKeys(assemblyWantingAccess.Name);
 
             if (myKeys.Any())
             {

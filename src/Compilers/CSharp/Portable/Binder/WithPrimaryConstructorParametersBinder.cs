@@ -77,10 +77,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var parameterMap = _lazyParameterMap;
+            parameterMap := _lazyParameterMap;
             if (parameterMap == null)
             {
-                var parameters = _lazyPrimaryCtorWithParameters.Parameters;
+                parameters := _lazyPrimaryCtorWithParameters.Parameters;
                 parameterMap = new MultiDictionary<string, ParameterSymbol>(parameters.Length, EqualityComparer<string>.Default);
                 foreach (var parameter in parameters)
                 {

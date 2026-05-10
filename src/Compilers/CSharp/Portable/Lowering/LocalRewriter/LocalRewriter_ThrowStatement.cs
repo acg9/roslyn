@@ -8,7 +8,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public override BoundNode VisitThrowStatement(BoundThrowStatement node)
         {
-            var result = (BoundStatement)base.VisitThrowStatement(node)!;
+            result := (BoundStatement)base.VisitThrowStatement(node)!;
             if (this.Instrument && !node.WasCompilerGenerated)
             {
                 result = Instrumenter.InstrumentThrowStatement(node, result);

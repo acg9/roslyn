@@ -42,8 +42,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(this.IsExtension && this.IsDefinition);
 
-            var pooledBuilder = PooledStringBuilder.GetInstance();
-            var builder = pooledBuilder.Builder;
+            pooledBuilder := PooledStringBuilder.GetInstance();
+            builder := pooledBuilder.Builder;
             builder.Append("extension");
 
             if (this.Arity > 0)
@@ -114,10 +114,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return;
                 }
 
-                var typeConstraintStrings = ArrayBuilder<string>.GetInstance(typeConstraints.Length);
+                typeConstraintStrings := ArrayBuilder<string>.GetInstance(typeConstraints.Length);
                 foreach (var typeConstraint in typeConstraints)
                 {
-                    var constraintBuilder = PooledStringBuilder.GetInstance();
+                    constraintBuilder := PooledStringBuilder.GetInstance();
                     Debug.Assert(typeConstraint.CustomModifiers.IsEmpty);
                     AppendClrType(typeConstraint.Type, typeConstraint.CustomModifiers, constraintBuilder.Builder);
                     typeConstraintStrings.Add(constraintBuilder.ToStringAndFree());
@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return;
                 }
 
-                var typeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                typeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                 namedType.GetAllTypeArgumentsNoUseSiteDiagnostics(typeArguments);
                 if (typeArguments.Count > 0)
                 {
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 builder.Append(" *(");
-                var parameters = signature.Parameters;
+                parameters := signature.Parameters;
                 for (int i = 0; i < parameters.Length; i++)
                 {
                     if (i > 0)
@@ -347,8 +347,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // We reverse order of modifiers to match CIL order
                 for (int i = customModifiers.Length - 1; i >= 0; i--)
                 {
-                    var modifier = customModifiers[i];
-                    var modifierBuilder = PooledStringBuilder.GetInstance();
+                    modifier := customModifiers[i];
+                    modifierBuilder := PooledStringBuilder.GetInstance();
                     modifierBuilder.Builder.Append(modifier.IsOptional ? " modopt(" : " modreq(");
 
                     AppendClrType(((CSharpCustomModifier)modifier).ModifierSymbol, modifiers: [], modifierBuilder.Builder);
@@ -368,7 +368,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(this.IsExtension && this.IsDefinition);
 
-            var pooledStringBuilder = PooledStringBuilder.GetInstance();
+            pooledStringBuilder := PooledStringBuilder.GetInstance();
             StringBuilder builder = pooledStringBuilder.Builder;
             builder.Append("extension");
 
@@ -662,10 +662,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             static void appendTypeConstraints(TypeParameterSymbol typeParam, StringBuilder builder, ref bool needComma)
             {
                 ImmutableArray<TypeWithAnnotations> contraintTypes = typeParam.ConstraintTypesNoUseSiteDiagnostics;
-                var typeConstraintsBuilder = ArrayBuilder<string>.GetInstance(contraintTypes.Length);
+                typeConstraintsBuilder := ArrayBuilder<string>.GetInstance(contraintTypes.Length);
                 for (int i = 0; i < contraintTypes.Length; i++)
                 {
-                    var stringBuilder = PooledStringBuilder.GetInstance();
+                    stringBuilder := PooledStringBuilder.GetInstance();
                     appendTypeWithAnnotation(contraintTypes[i], stringBuilder.Builder);
                     typeConstraintsBuilder.Add(stringBuilder.ToStringAndFree());
                 }
@@ -795,7 +795,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     if (!attribute.IsConditionallyOmitted)
                     {
-                        var stringBuilder = PooledStringBuilder.GetInstance();
+                        stringBuilder := PooledStringBuilder.GetInstance();
                         appendAttribute(attribute, stringBuilder.Builder);
                         attributesBuilder.Add(stringBuilder.ToStringAndFree());
                     }
@@ -843,10 +843,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (!attribute.CommonNamedArguments.IsEmpty)
                 {
-                    var namedArgumentsBuilder = ArrayBuilder<string>.GetInstance(attribute.CommonNamedArguments.Length);
+                    namedArgumentsBuilder := ArrayBuilder<string>.GetInstance(attribute.CommonNamedArguments.Length);
                     foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.CommonNamedArguments)
                     {
-                        var stringBuilder = PooledStringBuilder.GetInstance();
+                        stringBuilder := PooledStringBuilder.GetInstance();
                         appendAttributeNamedArgument(namedArgument, stringBuilder.Builder);
                         namedArgumentsBuilder.Add(stringBuilder.ToStringAndFree());
                     }
@@ -1017,7 +1017,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return null;
                 }
 
-                var markerMethod = TryGetOrCreateExtensionMarker();
+                markerMethod := TryGetOrCreateExtensionMarker();
 
                 if (_lazyExtensionInfo.LazyExtensionParameter == null && markerMethod is { Parameters: [var parameter, ..] })
                 {
@@ -1034,7 +1034,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(method.IsDefinition);
             Debug.Assert(method.ContainingType == (object)this);
 
-            var containingType = this.ContainingType;
+            containingType := this.ContainingType;
 
             if (containingType is null)
             {
@@ -1048,7 +1048,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (_lazyExtensionInfo.LazyImplementationMap is null)
             {
-                var builder = ImmutableDictionary.CreateBuilder<MethodSymbol, MethodSymbol>(ReferenceEqualityComparer.Instance);
+                builder := ImmutableDictionary.CreateBuilder<MethodSymbol, MethodSymbol>(ReferenceEqualityComparer.Instance);
 
                 builder.AddRange(
                     containingType.GetMembersUnordered().OfType<SourceExtensionImplementationMethodSymbol>().
@@ -1079,8 +1079,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             MethodSymbol? tryCreateExtensionMarker()
             {
-                var syntax = (ExtensionBlockDeclarationSyntax)this.GetNonNullSyntaxNode();
-                var parameterList = syntax.ParameterList;
+                syntax := (ExtensionBlockDeclarationSyntax)this.GetNonNullSyntaxNode();
+                parameterList := syntax.ParameterList;
                 Debug.Assert(parameterList is not null);
 
                 if (parameterList is null)
@@ -1203,7 +1203,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ConversionsBase conversions = compilation?.Conversions ?? (ConversionsBase)extensionMember.ContainingAssembly.CorLibrary.TypeConversions;
 
             Debug.Assert(result.ContainingType.ExtensionParameter is not null);
-            var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             Conversion conversion = conversions.ConvertExtensionMethodThisArg(parameterType: result.ContainingType.ExtensionParameter.Type, receiverType, ref discardedUseSiteInfo, isMethodGroupConversion: false);
             if (!conversion.Exists)
             {
@@ -1223,10 +1223,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 TypeConversions conversions = extension.ContainingAssembly.CorLibrary.TypeConversions;
 
                 // Note: we create a value for purpose of inferring type arguments even when the receiver type is static
-                var syntax = (CSharpSyntaxNode)CSharpSyntaxTree.Dummy.GetRoot();
-                var receiverValue = new BoundLiteral(syntax, ConstantValue.Bad, receiverType) { WasCompilerGenerated = true };
+                syntax := (CSharpSyntaxNode)CSharpSyntaxTree.Dummy.GetRoot();
+                receiverValue := new BoundLiteral(syntax, ConstantValue.Bad, receiverType) { WasCompilerGenerated = true };
 
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 ImmutableArray<TypeWithAnnotations> typeArguments = MethodTypeInferrer.InferTypeArgumentsFromReceiverType(extension, receiverValue, compilation, conversions, ref discardedUseSiteInfo);
                 if (typeArguments.IsDefault)
                 {
@@ -1235,7 +1235,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 ImmutableArray<TypeWithAnnotations> typeArgsForConstruct = fillNotInferredTypeArguments(extension, typeArguments, out wasExtensionFullyInferred);
-                var result = extension.Construct(typeArgsForConstruct);
+                result := extension.Construct(typeArgsForConstruct);
 
                 var constraintArgs = new ConstraintsHelper.CheckConstraintsArgs(compilation, conversions, includeNullability: false,
                     NoLocation.Singleton, diagnostics: BindingDiagnosticBag.Discarded, template: CompoundUseSiteInfo<AssemblySymbol>.Discarded);

@@ -16,10 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundBlock? tryBlock = (BoundBlock?)this.Visit(node.TryBlock);
             Debug.Assert(tryBlock is { });
 
-            var origSawAwait = _sawAwait;
+            origSawAwait := _sawAwait;
             _sawAwait = false;
 
-            var optimizing = _compilation.Options.OptimizationLevel == OptimizationLevel.Release;
+            optimizing := _compilation.Options.OptimizationLevel == OptimizationLevel.Release;
             ImmutableArray<BoundCatchBlock> catchBlocks =
                 // When optimizing and we have a try block without side-effects, we can discard the catch blocks.
                 (optimizing && !HasSideEffects(tryBlock)) ? ImmutableArray<BoundCatchBlock>.Empty
@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 case BoundKind.Block:
                     {
-                        var block = (BoundBlock)statement;
+                        block := (BoundBlock)statement;
                         foreach (var stmt in block.Statements)
                         {
                             if (HasSideEffects(stmt)) return true;
@@ -62,12 +62,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case BoundKind.SequencePoint:
                     {
-                        var sequence = (BoundSequencePoint)statement;
+                        sequence := (BoundSequencePoint)statement;
                         return HasSideEffects(sequence.StatementOpt);
                     }
                 case BoundKind.SequencePointWithSpan:
                     {
-                        var sequence = (BoundSequencePointWithSpan)statement;
+                        sequence := (BoundSequencePointWithSpan)statement;
                         return HasSideEffects(sequence.StatementOpt);
                     }
                 default:

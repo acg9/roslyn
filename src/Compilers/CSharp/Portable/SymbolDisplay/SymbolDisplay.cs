@@ -63,11 +63,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             SymbolDisplayFormat format,
             bool minimal)
         {
-            var builder = ArrayBuilder<SymbolDisplayPart>.GetInstance();
+            builder := ArrayBuilder<SymbolDisplayPart>.GetInstance();
 
             PopulateDisplayParts(builder, symbol, semanticModelOpt, positionOpt, format, minimal);
 
-            var result = builder.ToDisplayString();
+            result := builder.ToDisplayString();
             builder.Free();
 
             return result;
@@ -271,7 +271,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Do not leak unspeakable name of a Simple Program entry point through diagnostics,
             // and, for consistency, with other display options.
-            var underlyingMethod = (symbol as Symbols.PublicModel.MethodSymbol)?.UnderlyingMethodSymbol;
+            underlyingMethod := (symbol as Symbols.PublicModel.MethodSymbol)?.UnderlyingMethodSymbol;
             if (underlyingMethod is SynthesizedSimpleProgramEntryPointSymbol)
             {
                 builder.Add(new SymbolDisplayPart(SymbolDisplayPartKind.MethodName, symbol, "<top-level-statements-entry-point>"));
@@ -285,7 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 symbol = projectedMethod.UnderlyingMethod.ISymbol;
             }
 
-            var visitor = SymbolDisplayVisitor.GetInstance(builder, format, semanticModelOpt, positionOpt);
+            visitor := SymbolDisplayVisitor.GetInstance(builder, format, semanticModelOpt, positionOpt);
             symbol.Accept(visitor);
 
             if (symbol is INamedTypeSymbol { IsExtension: true } extension
@@ -313,7 +313,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         public static string? FormatPrimitive(object? obj, bool quoteStrings, bool useHexadecimalNumbers)
         {
-            var options = ObjectDisplayOptions.EscapeNonPrintableCharacters;
+            options := ObjectDisplayOptions.EscapeNonPrintableCharacters;
             if (quoteStrings)
             {
                 options |= ObjectDisplayOptions.UseQuotes;

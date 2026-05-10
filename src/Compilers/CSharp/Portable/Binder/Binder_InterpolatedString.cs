@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var startText = node.StringStartToken.Text;
+            startText := node.StringStartToken.Text;
             if (startText.StartsWith("@$\"") && !Compilation.IsFeatureEnabled(MessageID.IDS_FeatureAltInterpolatedVerbatimStrings))
             {
                 Error(diagnostics,
@@ -37,8 +37,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     new CSharpRequiredLanguageVersion(MessageID.IDS_FeatureAltInterpolatedVerbatimStrings.RequiredVersion()));
             }
 
-            var builder = ArrayBuilder<BoundExpression>.GetInstance();
-            var stringType = GetSpecialType(SpecialType.System_String, diagnostics, node);
+            builder := ArrayBuilder<BoundExpression>.GetInstance();
+            stringType := GetSpecialType(SpecialType.System_String, diagnostics, node);
             ConstantValue? resultConstant = null;
             bool isResultConstant = true;
 
@@ -48,18 +48,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var isNonVerbatimInterpolatedString = node.StringStartToken.Kind() != SyntaxKind.InterpolatedVerbatimStringStartToken;
-                var isRawInterpolatedString = node.StringStartToken.Kind() is SyntaxKind.InterpolatedSingleLineRawStringStartToken or SyntaxKind.InterpolatedMultiLineRawStringStartToken;
-                var newLinesInInterpolationsAllowed = this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNewLinesInInterpolations);
+                isNonVerbatimInterpolatedString := node.StringStartToken.Kind() != SyntaxKind.InterpolatedVerbatimStringStartToken;
+                isRawInterpolatedString := node.StringStartToken.Kind() is SyntaxKind.InterpolatedSingleLineRawStringStartToken or SyntaxKind.InterpolatedMultiLineRawStringStartToken;
+                newLinesInInterpolationsAllowed := this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNewLinesInInterpolations);
 
-                var intType = GetSpecialType(SpecialType.System_Int32, diagnostics, node);
+                intType := GetSpecialType(SpecialType.System_Int32, diagnostics, node);
                 foreach (var content in node.Contents)
                 {
                     switch (content.Kind())
                     {
                         case SyntaxKind.Interpolation:
                             {
-                                var interpolation = (InterpolationSyntax)content;
+                                interpolation := (InterpolationSyntax)content;
 
                                 // If we're prior to C# 11 then we don't allow newlines in the interpolations of
                                 // non-verbatim interpolated strings.  Check for that here and report an error
@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     !interpolation.OpenBraceToken.IsMissing &&
                                     !interpolation.CloseBraceToken.IsMissing)
                                 {
-                                    var text = node.SyntaxTree.GetText();
+                                    text := node.SyntaxTree.GetText();
                                     if (text.Lines.GetLineFromPosition(interpolation.OpenBraceToken.SpanStart).LineNumber !=
                                         text.Lines.GetLineFromPosition(interpolation.CloseBraceToken.SpanStart).LineNumber)
                                     {
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     }
                                 }
 
-                                var value = BindValue(interpolation.Expression, diagnostics, BindValueKind.RValue);
+                                value := BindValue(interpolation.Expression, diagnostics, BindValueKind.RValue);
 
                                 // We need to ensure the argument is not a lambda, method group, etc. It isn't nice to wait until lowering,
                                 // when we perform overload resolution, to report a problem. So we do that check by calling
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 if (interpolation.AlignmentClause != null)
                                 {
                                     alignment = GenerateConversionForAssignment(intType, BindValue(interpolation.AlignmentClause.Value, diagnostics, Binder.BindValueKind.RValue), diagnostics);
-                                    var alignmentConstant = alignment.ConstantValueOpt;
+                                    alignmentConstant := alignment.ConstantValueOpt;
                                     if (alignmentConstant != null && !alignmentConstant.IsBad)
                                     {
                                         const int magnitudeLimit = 32767;
@@ -120,7 +120,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                                 if (interpolation.FormatClause != null)
                                 {
-                                    var text = interpolation.FormatClause.FormatStringToken.ValueText;
+                                    text := interpolation.FormatClause.FormatStringToken.ValueText;
                                     char lastChar;
                                     bool hasErrors = false;
                                     if (text.Length == 0)
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                         case SyntaxKind.InterpolatedStringText:
                             {
-                                var text = ((InterpolatedStringTextSyntax)content).TextToken.ValueText;
+                                text := ((InterpolatedStringTextSyntax)content).TextToken.ValueText;
                                 // Raw string literals have no escapes.  So there is no need to manipulate their value texts.
                                 // We have to unescape normal interpolated strings as the parser stores their text without
                                 // interpreting {{ and }} sequences (as '{' and '}') respectively.  Changing that at the syntax
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     text = unescapeInterpolatedStringLiteral(text);
                                 }
 
-                                var constantValue = ConstantValue.Create(text, SpecialType.System_String);
+                                constantValue := ConstantValue.Create(text, SpecialType.System_String);
                                 builder.Add(new BoundLiteral(content, constantValue, stringType));
                                 if (isResultConstant)
                                 {
@@ -190,11 +190,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static string unescapeInterpolatedStringLiteral(string value)
             {
-                var builder = PooledStringBuilder.GetInstance();
-                var stringBuilder = builder.Builder;
+                builder := PooledStringBuilder.GetInstance();
+                stringBuilder := builder.Builder;
                 for (int i = 0, formatLength = value.Length; i < formatLength; i++)
                 {
-                    var c = value[i];
+                    c := value[i];
                     stringBuilder.Append(c);
                     if (c is '{' or '}' &&
                         i + 1 < formatLength &&
@@ -281,7 +281,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 }
 
-                var interpolatedStringHandlerType = Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler);
+                interpolatedStringHandlerType := Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler);
                 if (interpolatedStringHandlerType is MissingMetadataTypeSymbol)
                 {
                     return false;
@@ -316,7 +316,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ImmutableArray<BoundExpression> BindInterpolatedStringPartsForFactory(BoundUnconvertedInterpolatedString unconvertedInterpolatedString, BindingDiagnosticBag diagnostics, out bool haveErrors)
         {
-            var partsDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: diagnostics.AccumulatesDependencies);
+            partsDiagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: diagnostics.AccumulatesDependencies);
 
             ImmutableArray<BoundExpression> parts = BindInterpolatedStringParts(unconvertedInterpolatedString, partsDiagnostics);
             haveErrors = partsDiagnostics.HasAnyResolvedErrors() ||
@@ -370,14 +370,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<BoundExpression> makeInterpolatedStringFactoryArguments(SyntaxNode syntax, ImmutableArray<BoundExpression> parts, BindingDiagnosticBag diagnostics)
             {
                 int n = parts.Length - 1;
-                var formatString = PooledStringBuilder.GetInstance();
-                var stringBuilder = formatString.Builder;
-                var expressions = ArrayBuilder<BoundExpression>.GetInstance(n + 1);
+                formatString := PooledStringBuilder.GetInstance();
+                stringBuilder := formatString.Builder;
+                expressions := ArrayBuilder<BoundExpression>.GetInstance(n + 1);
                 expressions.Add(null!); // format placeholder
                 int nextFormatPosition = 0;
                 for (int i = 0; i <= n; i++)
                 {
-                    var part = parts[i];
+                    part := parts[i];
                     if (part is BoundStringInsert fillin)
                     {
                         // this is one of the expression holes
@@ -393,7 +393,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             stringBuilder.Append(':').Append(fillin.Format.ConstantValueOpt.StringValue);
                         }
                         stringBuilder.Append('}');
-                        var value = fillin.Value;
+                        value := fillin.Value;
                         if (value.Type?.TypeKind == TypeKind.Dynamic)
                         {
                             // Object type is checked by BindInterpolatedStringParts
@@ -447,7 +447,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var interpolatedStringHandlerType = Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler);
+            interpolatedStringHandlerType := Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler);
             if (interpolatedStringHandlerType.IsErrorType())
             {
                 // Can't ever bind to the handler no matter what, so just let the default handling take care of it. Cases 4 and 5 are covered by this.
@@ -462,7 +462,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var partsArrayBuilder = ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance();
+            partsArrayBuilder := ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance();
 
             if (!binaryOperator.VisitBinaryOperatorInterpolatedString(
                     partsArrayBuilder,
@@ -521,7 +521,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Func<BoundBinaryOperator, BoundExpression, BoundExpression, (ImmutableArray<ImmutableArray<BoundExpression>>, TypeSymbol), BoundExpression> binaryOperatorFactory =
                 createBinaryOperator;
 
-            var rewritten = (BoundBinaryOperator)originalOperator.RewriteInterpolatedStringAddition((appendCalls, @string), interpolationFactory, binaryOperatorFactory);
+            rewritten := (BoundBinaryOperator)originalOperator.RewriteInterpolatedStringAddition((appendCalls, @string), interpolationFactory, binaryOperatorFactory);
 
             return rewritten.Update(BoundBinaryOperator.UncommonData.InterpolatedStringHandlerAddition(data));
 
@@ -607,7 +607,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(binaryOperator.IsUnconvertedInterpolatedStringAddition);
 
-            var partsArrayBuilder = ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance();
+            partsArrayBuilder := ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance();
 
             binaryOperator.VisitBinaryOperatorInterpolatedString(partsArrayBuilder,
                 static (BoundUnconvertedInterpolatedString unconvertedInterpolatedString, ArrayBuilder<ImmutableArray<BoundExpression>> partsArrayBuilder) =>
@@ -625,7 +625,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 additionalConstructorArguments,
                 additionalConstructorRefKinds);
 
-            var result = UpdateBinaryOperatorWithInterpolatedContents(binaryOperator, appendCalls, data, binaryOperator.Syntax, diagnostics);
+            result := UpdateBinaryOperatorWithInterpolatedContents(binaryOperator, appendCalls, data, binaryOperator.Syntax, diagnostics);
             return result;
         }
 
@@ -648,7 +648,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We satisfy the conditions for using an interpolated string builder. Bind all the builder calls unconditionally, so that if
             // there are errors we get better diagnostics than "could not convert to object."
-            var implicitBuilderReceiver = new BoundInterpolatedStringHandlerPlaceholder(syntax, interpolatedStringHandlerType) { WasCompilerGenerated = true };
+            implicitBuilderReceiver := new BoundInterpolatedStringHandlerPlaceholder(syntax, interpolatedStringHandlerType) { WasCompilerGenerated = true };
             var (appendCallsArray, usesBoolReturn, positionInfo, baseStringLength, numFormatHoles) = BindInterpolatedStringAppendCalls(partsArray, implicitBuilderReceiver, diagnostics);
 
             // Prior to C# 10, all types in an interpolated string expression needed to be convertible to `object`. After 10, some types
@@ -679,7 +679,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         if (currentPart is BoundStringInsert insert)
                         {
-                            var value = insert.Value;
+                            value := insert.Value;
                             bool reported = false;
                             if (value.Type is not null)
                             {
@@ -708,28 +708,28 @@ namespace Microsoft.CodeAnalysis.CSharp
                 conversionDiagnostics.Free();
             }
 
-            var intType = GetSpecialType(SpecialType.System_Int32, diagnostics, syntax);
+            intType := GetSpecialType(SpecialType.System_Int32, diagnostics, syntax);
             int constructorArgumentLength = 3 + additionalConstructorArguments.Length;
-            var argumentsBuilder = ArrayBuilder<BoundExpression>.GetInstance(constructorArgumentLength);
+            argumentsBuilder := ArrayBuilder<BoundExpression>.GetInstance(constructorArgumentLength);
 
-            var refKindsBuilder = ArrayBuilder<RefKind>.GetInstance(constructorArgumentLength);
+            refKindsBuilder := ArrayBuilder<RefKind>.GetInstance(constructorArgumentLength);
             refKindsBuilder.Add(RefKind.None);
             refKindsBuilder.Add(RefKind.None);
             refKindsBuilder.AddRange(additionalConstructorRefKinds);
 
             // Add the trailing out validity parameter for the first attempt.Note that we intentionally use `diagnostics` for resolving System.Boolean,
             // because we want to track that we're using the type no matter what.
-            var boolType = GetSpecialType(SpecialType.System_Boolean, diagnostics, syntax);
+            boolType := GetSpecialType(SpecialType.System_Boolean, diagnostics, syntax);
             var trailingConstructorValidityPlaceholder =
                 new BoundInterpolatedStringArgumentPlaceholder(syntax, BoundInterpolatedStringArgumentPlaceholder.TrailingConstructorValidityParameter, boolType)
                 { WasCompilerGenerated = true };
-            var outConstructorAdditionalArguments = additionalConstructorArguments.Add(trailingConstructorValidityPlaceholder);
+            outConstructorAdditionalArguments := additionalConstructorArguments.Add(trailingConstructorValidityPlaceholder);
             refKindsBuilder.Add(RefKind.Out);
             populateArguments(syntax, outConstructorAdditionalArguments, baseStringLength, numFormatHoles, intType, argumentsBuilder);
 
             BoundExpression constructorCall;
-            var outConstructorDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: diagnostics.AccumulatesDependencies);
-            var outConstructorCall = MakeConstructorInvocation(interpolatedStringHandlerType, argumentsBuilder, refKindsBuilder, syntax, outConstructorDiagnostics);
+            outConstructorDiagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: diagnostics.AccumulatesDependencies);
+            outConstructorCall := MakeConstructorInvocation(interpolatedStringHandlerType, argumentsBuilder, refKindsBuilder, syntax, outConstructorDiagnostics);
             if (outConstructorCall is not BoundObjectCreationExpression { ResultKind: LookupResultKind.Viable })
             {
                 // MakeConstructorInvocation can call CoerceArguments on the builder if overload resolution succeeded ignoring accessibility, which
@@ -740,7 +740,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 populateArguments(syntax, additionalConstructorArguments, baseStringLength, numFormatHoles, intType, argumentsBuilder);
                 refKindsBuilder.RemoveLast();
 
-                var nonOutConstructorDiagnostics = BindingDiagnosticBag.GetInstance(template: outConstructorDiagnostics);
+                nonOutConstructorDiagnostics := BindingDiagnosticBag.GetInstance(template: outConstructorDiagnostics);
                 BoundExpression nonOutConstructorCall = MakeConstructorInvocation(interpolatedStringHandlerType, argumentsBuilder, refKindsBuilder, syntax, nonOutConstructorDiagnostics);
 
                 if (nonOutConstructorCall is BoundObjectCreationExpression { ResultKind: LookupResultKind.Viable })
@@ -760,8 +760,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // https://github.com/dotnet/roslyn/issues/54396 Instead of inspecting errors, we should be capturing the results of overload
                     // resolution and attempting to determine which method considered was the best to report errors for.
 
-                    var nonOutConstructorHasArityError = nonOutConstructorDiagnostics.DiagnosticBag?.AsEnumerableWithoutResolution().Any(d => (ErrorCode)d.Code == ErrorCode.ERR_BadCtorArgCount) ?? false;
-                    var outConstructorHasArityError = outConstructorDiagnostics.DiagnosticBag?.AsEnumerableWithoutResolution().Any(d => (ErrorCode)d.Code == ErrorCode.ERR_BadCtorArgCount) ?? false;
+                    nonOutConstructorHasArityError := nonOutConstructorDiagnostics.DiagnosticBag?.AsEnumerableWithoutResolution().Any(d => (ErrorCode)d.Code == ErrorCode.ERR_BadCtorArgCount) ?? false;
+                    outConstructorHasArityError := outConstructorDiagnostics.DiagnosticBag?.AsEnumerableWithoutResolution().Any(d => (ErrorCode)d.Code == ErrorCode.ERR_BadCtorArgCount) ?? false;
 
                     switch ((nonOutConstructorHasArityError, outConstructorHasArityError))
                     {
@@ -850,10 +850,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ImmutableArray<BoundExpression> BindInterpolatedStringParts(BoundUnconvertedInterpolatedString unconvertedInterpolatedString, BindingDiagnosticBag diagnostics)
         {
             ArrayBuilder<BoundExpression>? partsBuilder = null;
-            var objectType = GetSpecialType(SpecialType.System_Object, diagnostics, unconvertedInterpolatedString.Syntax);
+            objectType := GetSpecialType(SpecialType.System_Object, diagnostics, unconvertedInterpolatedString.Syntax);
             for (int i = 0; i < unconvertedInterpolatedString.Parts.Length; i++)
             {
-                var part = unconvertedInterpolatedString.Parts[i];
+                part := unconvertedInterpolatedString.Parts[i];
                 if (part is BoundStringInsert insert)
                 {
                     BoundExpression newValue;
@@ -903,13 +903,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             bool? builderPatternExpectsBool = null;
-            var firstPartsLength = partsArray[0].Length;
-            var builderAppendCallsArray = ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance(partsArray.Length);
-            var builderAppendCalls = ArrayBuilder<BoundExpression>.GetInstance(firstPartsLength);
-            var positionInfoArray = ArrayBuilder<ImmutableArray<(bool IsLiteral, bool HasAlignment, bool HasFormat)>>.GetInstance(partsArray.Length);
-            var positionInfo = ArrayBuilder<(bool IsLiteral, bool HasAlignment, bool HasFormat)>.GetInstance(firstPartsLength);
-            var argumentsBuilder = ArrayBuilder<BoundExpression>.GetInstance(3);
-            var parameterNamesAndLocationsBuilder = ArrayBuilder<(string, Location)?>.GetInstance(3);
+            firstPartsLength := partsArray[0].Length;
+            builderAppendCallsArray := ArrayBuilder<ImmutableArray<BoundExpression>>.GetInstance(partsArray.Length);
+            builderAppendCalls := ArrayBuilder<BoundExpression>.GetInstance(firstPartsLength);
+            positionInfoArray := ArrayBuilder<ImmutableArray<(bool IsLiteral, bool HasAlignment, bool HasFormat)>>.GetInstance(partsArray.Length);
+            positionInfo := ArrayBuilder<(bool IsLiteral, bool HasAlignment, bool HasFormat)>.GetInstance(firstPartsLength);
+            argumentsBuilder := ArrayBuilder<BoundExpression>.GetInstance(3);
+            parameterNamesAndLocationsBuilder := ArrayBuilder<(string, Location)?>.GetInstance(3);
             int baseStringLength = 0;
             int numFormatHoles = 0;
 
@@ -948,9 +948,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var boundLiteral = (BoundLiteral)part;
+                        boundLiteral := (BoundLiteral)part;
                         Debug.Assert(boundLiteral.ConstantValueOpt != null && boundLiteral.ConstantValueOpt.IsString);
-                        var literalText = boundLiteral.ConstantValueOpt.StringValue;
+                        literalText := boundLiteral.ConstantValueOpt.StringValue;
                         methodName = BoundInterpolatedString.AppendLiteralMethod;
                         argumentsBuilder.Add(boundLiteral.Update(ConstantValue.Create(literalText), boundLiteral.Type));
                         isLiteral = true;
@@ -959,7 +959,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         baseStringLength += literalText.Length;
                     }
 
-                    var arguments = argumentsBuilder.ToImmutableAndClear();
+                    arguments := argumentsBuilder.ToImmutableAndClear();
                     ImmutableArray<(string, Location)?> parameterNamesAndLocations;
                     if (parameterNamesAndLocationsBuilder.Count > 1)
                     {
@@ -972,7 +972,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         parameterNamesAndLocationsBuilder.Clear();
                     }
 
-                    var call = MakeInvocationExpression(part.Syntax, implicitBuilderReceiver, methodName, arguments, diagnostics, names: parameterNamesAndLocations, searchExtensionsIfNecessary: false);
+                    call := MakeInvocationExpression(part.Syntax, implicitBuilderReceiver, methodName, arguments, diagnostics, names: parameterNamesAndLocations, searchExtensionsIfNecessary: false);
                     builderAppendCalls.Add(call);
                     positionInfo.Add((isLiteral, hasAlignment, hasFormat));
 
@@ -995,7 +995,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         else if (builderPatternExpectsBool != methodReturnsBool)
                         {
                             // Interpolated string handler method '{0}' has inconsistent return types. Expected to return '{1}'.
-                            var expected = builderPatternExpectsBool == true ? Compilation.GetSpecialType(SpecialType.System_Boolean) : Compilation.GetSpecialType(SpecialType.System_Void);
+                            expected := builderPatternExpectsBool == true ? Compilation.GetSpecialType(SpecialType.System_Boolean) : Compilation.GetSpecialType(SpecialType.System_Void);
                             diagnostics.Add(ErrorCode.ERR_InterpolatedStringHandlerMethodReturnInconsistent, part.Syntax.Location, method, expected);
                         }
                     }

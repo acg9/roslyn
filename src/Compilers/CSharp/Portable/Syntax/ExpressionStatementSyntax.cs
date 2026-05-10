@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             get
             {
-                var semicolon = SemicolonToken;
+                semicolon := SemicolonToken;
                 return semicolon.IsMissing && !semicolon.ContainsDiagnostics;
             }
         }

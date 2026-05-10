@@ -71,11 +71,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             LabelSymbol defaultLabel = new GeneratedLabelSymbol("defaultLabel");
-            var builder = new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
+            builder := new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
             BoundDagTemp rootIdentifier = BoundDagTemp.ForOriginalInput(inputExpression);
-            var redundantNodes = PooledHashSet<SyntaxNode>.GetInstance();
+            redundantNodes := PooledHashSet<SyntaxNode>.GetInstance();
 
-            var noPreviousCases = ArrayBuilder<StateForCase>.GetInstance(0);
+            noPreviousCases := ArrayBuilder<StateForCase>.GetInstance(0);
             CheckOrAndAndReachability(noPreviousCases, patternIndex: 0, pattern: pattern, hasUnionMatching: hasUnionMatching, builder: builder, rootIdentifier: rootIdentifier, syntax: syntax, diagnostics: diagnostics, redundantNodes);
             ReportRedundant(redundantNodes, diagnostics);
 
@@ -99,8 +99,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<BoundSwitchExpressionArm> switchArms,
             BindingDiagnosticBag diagnostics)
         {
-            var redundantNodes = PooledHashSet<SyntaxNode>.GetInstance();
-            var existingCases = ArrayBuilder<StateForCase>.GetInstance(switchArms.Length);
+            redundantNodes := PooledHashSet<SyntaxNode>.GetInstance();
+            existingCases := ArrayBuilder<StateForCase>.GetInstance(switchArms.Length);
 
             checkRedundantPatternsForSwitchExpression(compilation, syntax, inputExpression, switchArms, diagnostics, redundantNodes, existingCases);
 
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ArrayBuilder<StateForCase> existingCases)
             {
                 LabelSymbol defaultLabel = new GeneratedLabelSymbol("defaultLabel");
-                var builder = new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
+                builder := new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
                 BoundDagTemp rootIdentifier = BoundDagTemp.ForOriginalInput(inputExpression);
                 int index = 0;
                 foreach (var switchArm in switchArms)
@@ -150,8 +150,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<BoundSwitchSection> switchSections,
             BindingDiagnosticBag diagnostics)
         {
-            var redundantNodes = PooledHashSet<SyntaxNode>.GetInstance();
-            var existingCases = ArrayBuilder<StateForCase>.GetInstance();
+            redundantNodes := PooledHashSet<SyntaxNode>.GetInstance();
+            existingCases := ArrayBuilder<StateForCase>.GetInstance();
 
             checkRedundantPatternsForSwitchStatement(compilation, syntax, inputExpression, switchSections, diagnostics, redundantNodes, existingCases);
 
@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ArrayBuilder<StateForCase> existingCases)
             {
                 LabelSymbol defaultLabel = new GeneratedLabelSymbol("defaultLabel");
-                var builder = new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
+                builder := new DecisionDagBuilder(compilation, defaultLabel: defaultLabel, forLowering: false, BindingDiagnosticBag.Discarded);
                 BoundDagTemp rootIdentifier = BoundDagTemp.ForOriginalInput(inputExpression);
                 int index = 0;
                 foreach (BoundSwitchSection section in switchSections)
@@ -345,7 +345,7 @@ start:
             BindingDiagnosticBag diagnostics,
             PooledHashSet<SyntaxNode> redundantNodes)
         {
-            var context = new ReachabilityAnalysisContext(previousCases, patternIndex, builder, rootIdentifier, syntax, redundantNodes);
+            context := new ReachabilityAnalysisContext(previousCases, patternIndex, builder, rootIdentifier, syntax, redundantNodes);
 
             try
             {
@@ -354,7 +354,7 @@ start:
                     pattern = UnionMatchingRewriter.Rewrite(builder._compilation, pattern);
                 }
 
-                var normalizedPattern = PatternNormalizer.Rewrite(pattern, rootIdentifier.Type);
+                normalizedPattern := PatternNormalizer.Rewrite(pattern, rootIdentifier.Type);
 
 #if ROSLYN_TEST_REDUNDANT_PATTERN
                 context.Logger.AppendLine($"Pattern: {pattern.Syntax.ToString()}");
@@ -367,8 +367,8 @@ start:
                 // but our method for detecting redundancies only detects those in `or` cases (which we bring to the top after normalization).
                 // By analyzing `not A` too we can report more redundancies.
                 // For example: `if (o is not (<any pattern including a redundancy>))`, `if (i is 42 and not 43)` (which is the negation of `not 42 or 43`)
-                var negated = new BoundNegatedPattern(pattern.Syntax, negated: pattern, isUnionMatching: false, pattern.InputType, narrowedType: pattern.InputType);
-                var normalizedNegatedPattern = PatternNormalizer.Rewrite(negated, rootIdentifier.Type);
+                negated := new BoundNegatedPattern(pattern.Syntax, negated: pattern, isUnionMatching: false, pattern.InputType, narrowedType: pattern.InputType);
+                normalizedNegatedPattern := PatternNormalizer.Rewrite(negated, rootIdentifier.Type);
 
 #if ROSLYN_TEST_REDUNDANT_PATTERN
                 context.Logger.AppendLine($"Normalized negated pattern: {normalizedNegatedPattern.DumpSource()}");
@@ -393,7 +393,7 @@ start:
                 ref TemporaryArray<StateForCase> casesBuilder, ref readonly ReachabilityAnalysisContext context)
             {
                 int patternIndex = context.PatternIndex;
-                var previousCases = context.PreviousCases;
+                previousCases := context.PreviousCases;
                 for (int i = 0; i < patternIndex; i++)
                 {
                     casesBuilder.Add(previousCases[i]);
@@ -402,7 +402,7 @@ start:
                 int index = patternIndex;
                 foreach (BoundPattern pattern in set)
                 {
-                    var label = new GeneratedLabelSymbol("orCase");
+                    label := new GeneratedLabelSymbol("orCase");
                     SyntaxNode? diagSyntax = pattern.Syntax;
                     if (pattern.WasCompilerGenerated)
                     {
@@ -422,7 +422,7 @@ start:
             {
                 if (pattern is BoundBinaryPattern binaryPattern)
                 {
-                    var currentCases = ArrayBuilder<BoundPattern>.GetInstance();
+                    currentCases := ArrayBuilder<BoundPattern>.GetInstance();
                     analyzeBinary(currentCases, binaryPattern, wrapIntoParentAndPattern: null, in context);
                     currentCases.Free();
                     return;
@@ -445,7 +445,7 @@ start:
                 {
                     int savedStackCount = currentCases.Count;
 
-                    var patterns = ArrayBuilder<BoundPattern>.GetInstance();
+                    patterns := ArrayBuilder<BoundPattern>.GetInstance();
                     addPatternsFromOrTree(binaryPattern, patterns);
 
                     // In `A1 or ... or Ai or B or ...`, we analyze `B` with `case A1:`, ..., `case Ai:` (with each wrapped as indicated by caller) added to current cases.
@@ -467,7 +467,7 @@ start:
                 }
                 else
                 {
-                    var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+                    stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
                     BoundBinaryPattern? current = binaryPattern;
                     do
                     {
@@ -485,8 +485,8 @@ start:
                     {
                         // Note: lambda intentionally captures
                         bool wasCompilerGenerated = newPattern.WasCompilerGenerated;
-                        var wrappedPattern = new BoundBinaryPattern(newPattern.Syntax, disjunction: false, current.Left, newPattern, current.InputType, newPattern.NarrowedType);
-                        var result = wrapIntoParentAndPattern?.Invoke(wrappedPattern) ?? wrappedPattern;
+                        wrappedPattern := new BoundBinaryPattern(newPattern.Syntax, disjunction: false, current.Left, newPattern, current.InputType, newPattern.NarrowedType);
+                        result := wrapIntoParentAndPattern?.Invoke(wrappedPattern) ?? wrappedPattern;
 
                         if (wasCompilerGenerated)
                         {
@@ -520,7 +520,7 @@ start:
 #endif
 
                 using var casesBuilder = TemporaryArray<StateForCase>.GetInstance(orCases.Count);
-                var labelsToIgnore = PooledHashSet<LabelSymbol>.GetInstance();
+                labelsToIgnore := PooledHashSet<LabelSymbol>.GetInstance();
                 populateStateForCases(orCases, labelsToIgnore, ref casesBuilder.AsRef(), in context);
                 BoundDecisionDag dag = context.Builder.MakeBoundDecisionDag(context.Syntax, ref casesBuilder.AsRef());
 
@@ -549,7 +549,7 @@ start:
             {
                 if (pattern is BoundBinaryPattern { Disjunction: true } orPattern)
                 {
-                    var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+                    stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
 
                     BoundBinaryPattern? current = orPattern;
                     do
@@ -714,7 +714,7 @@ start:
 
             internal static BoundPattern Rewrite(BoundPattern pattern, TypeSymbol inputType)
             {
-                var patternNormalizer = new PatternNormalizer();
+                patternNormalizer := new PatternNormalizer();
                 patternNormalizer.Visit(pattern);
                 return patternNormalizer.GetResult(inputType);
             }
@@ -728,7 +728,7 @@ start:
             {
                 Debug.Assert(_evalSequence is [var first, ..] && first.IsOperand(out _));
 
-                var stack = ArrayBuilder<BoundPattern>.GetInstance();
+                stack := ArrayBuilder<BoundPattern>.GetInstance();
 
                 int evalPosition = 0;
                 do
@@ -737,8 +737,8 @@ start:
 
                     if (operandOrOperation.IsOperation(out bool disjunction, out SyntaxNode? operationSyntax))
                     {
-                        var right = stack.Pop();
-                        var left = stack.Pop();
+                        right := stack.Pop();
+                        left := stack.Pop();
                         TypeSymbol narrowedType = narrowedTypeForBinary(left, right, disjunction);
                         stack.Push(new BoundBinaryPattern(operationSyntax, disjunction, left, right, left.InputType, narrowedType));
                     }
@@ -767,7 +767,7 @@ start:
                 }
                 while (evalPosition < _evalSequence.Count);
 
-                var result = stack.Single();
+                result := stack.Single();
                 stack.Free();
                 _evalSequence.Free();
                 return result;
@@ -833,7 +833,7 @@ start:
                     disjunction = !disjunction;
                 }
 
-                var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+                stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
 
                 BoundBinaryPattern? current = node;
                 do
@@ -843,7 +843,7 @@ start:
                 }
                 while (current != null && current.Disjunction == node.Disjunction);
 
-                var saveExpectingOperandOfDisjunction = _expectingOperandOfDisjunction;
+                saveExpectingOperandOfDisjunction := _expectingOperandOfDisjunction;
                 _expectingOperandOfDisjunction = disjunction;
 
                 current = stack.Pop();
@@ -884,7 +884,7 @@ start:
             // to [..., endOfLeft /*marked on the left of <disjunction>*/, ..., operation]
             private void PushBinaryOperation(SyntaxNode syntax, int endOfLeft, bool disjunction)
             {
-                var left = _evalSequence[endOfLeft];
+                left := _evalSequence[endOfLeft];
                 left.OnTheLeftOfDisjunction = disjunction;
                 _evalSequence[endOfLeft] = left;
 
@@ -918,7 +918,7 @@ start:
 
             public override BoundNode? VisitNegatedPattern(BoundNegatedPattern node)
             {
-                var savedNegated = _negated;
+                savedNegated := _negated;
                 _negated = !_negated;
                 this.Visit(node.Negated);
                 _negated = savedNegated;
@@ -937,7 +937,7 @@ start:
                     return negated;
                 }
 
-                var result = new BoundNegatedPattern(node.Syntax, node, isUnionMatching: false, node.InputType, narrowedType: node.InputType);
+                result := new BoundNegatedPattern(node.Syntax, node, isUnionMatching: false, node.InputType, narrowedType: node.InputType);
                 if (node.WasCompilerGenerated)
                 {
                     result.MakeCompilerGenerated();
@@ -1013,7 +1013,7 @@ start:
 
                 if (pattern is BoundConstantPattern constantPattern)
                 {
-                    var narrowedType = constantPattern.ConstantValue.IsNull ? inputType : constantPattern.NarrowedType;
+                    narrowedType := constantPattern.ConstantValue.IsNull ? inputType : constantPattern.NarrowedType;
                     return constantPattern.Update(constantPattern.Value, constantPattern.ConstantValue, isUnionMatching: false, inputType, narrowedType);
                 }
 
@@ -1037,7 +1037,7 @@ start:
                     new BoundTypeExpression(pattern.Syntax, aliasOpt: null, pattern.InputType),
                     isExplicitNotNullTest: false, isUnionMatching: false, inputType, narrowedType: pattern.InputType).MakeCompilerGenerated();
 
-                var result = new BoundBinaryPattern(pattern.Syntax, disjunction: false, left: typePattern, right: pattern, inputType, pattern.NarrowedType);
+                result := new BoundBinaryPattern(pattern.Syntax, disjunction: false, left: typePattern, right: pattern, inputType, pattern.NarrowedType);
 
                 if (pattern.WasCompilerGenerated)
                 {
@@ -1068,7 +1068,7 @@ start:
                 //   `Type (E1, _, ...) or `Type (F1, _, ...)`.
                 //   If there's no Type, we substitute a null check
 
-                var saveExpectingOperandOfDisjunction = _expectingOperandOfDisjunction;
+                saveExpectingOperandOfDisjunction := _expectingOperandOfDisjunction;
                 int startOfLeft = _evalSequence.Count;
 
                 // All the operands we push from here will be combined in `or` for negation and `and` otherwise
@@ -1112,8 +1112,8 @@ start:
                 ImmutableArray<BoundPositionalSubpattern> deconstruction = node.Deconstruction;
                 if (!deconstruction.IsDefaultOrEmpty)
                 {
-                    var discards = deconstruction.SelectAsArray(d => d.WithPattern(MakeDiscardPattern(d.Syntax, d.Pattern.InputType)));
-                    var saveMakeEvaluationSequenceOperand = _makeEvaluationSequenceOperand;
+                    discards := deconstruction.SelectAsArray(d => d.WithPattern(MakeDiscardPattern(d.Syntax, d.Pattern.InputType)));
+                    saveMakeEvaluationSequenceOperand := _makeEvaluationSequenceOperand;
 
                     int i = 0;
 
@@ -1149,7 +1149,7 @@ start:
 
                 if (!node.Properties.IsDefaultOrEmpty)
                 {
-                    var saveMakeEvaluationSequenceOperand = _makeEvaluationSequenceOperand;
+                    saveMakeEvaluationSequenceOperand := _makeEvaluationSequenceOperand;
                     BoundPropertySubpattern? property = null;
 
                     // Given `newPattern`, produce `DeclaredType { Prop: newPattern }`
@@ -1222,10 +1222,10 @@ start:
 
             public override BoundNode? VisitITuplePattern(BoundITuplePattern ituplePattern)
             {
-                var saveExpectingOperandOfDisjunction = _expectingOperandOfDisjunction;
+                saveExpectingOperandOfDisjunction := _expectingOperandOfDisjunction;
                 int startOfLeft = _evalSequence.Count;
-                var subpatterns = ituplePattern.Subpatterns;
-                var discards = subpatterns.SelectAsArray(d => d.WithPattern(MakeDiscardPattern(d.Syntax, d.Pattern.InputType)));
+                subpatterns := ituplePattern.Subpatterns;
+                discards := subpatterns.SelectAsArray(d => d.WithPattern(MakeDiscardPattern(d.Syntax, d.Pattern.InputType)));
 
                 // all the operands we push from here will be combined in `or` for negation and `and` otherwise
                 _expectingOperandOfDisjunction = _negated;
@@ -1237,7 +1237,7 @@ start:
                 Debug.Assert(_evalSequence.Count == startOfLeft + 1);
 
                 int startOfNestedPatterns = _evalSequence.Count;
-                var saveMakeEvaluationSequenceOperand = _makeEvaluationSequenceOperand;
+                saveMakeEvaluationSequenceOperand := _makeEvaluationSequenceOperand;
                 int i = 0;
 
                 // Given `newPattern`, produce `(..., _, newPattern, _, ...)`
@@ -1285,7 +1285,7 @@ start:
                 // - if we are negating, we can expand it to `not [_, _, ...] or [not L1, _, ...] or [_, not L2, ...] or ...`
                 //   and the `and` and `or` patterns in the resulting element patterns can then be lifted out further.
 
-                var saveExpectingOperandOfDisjunction = _expectingOperandOfDisjunction;
+                saveExpectingOperandOfDisjunction := _expectingOperandOfDisjunction;
                 int startOfLeft = _evalSequence.Count;
 
                 // All the operands we push from here will be combined in `or` for negation and `and` otherwise
@@ -1298,7 +1298,7 @@ start:
                 Debug.Assert(_evalSequence.Count == startOfLeft + 1);
 
                 int startOfNestedPatterns = _evalSequence.Count;
-                var saveMakeEvaluationSequenceOperand = _makeEvaluationSequenceOperand;
+                saveMakeEvaluationSequenceOperand := _makeEvaluationSequenceOperand;
 
                 int i = 0;
                 bool hasSlice = listPattern.HasSlice;
@@ -1332,7 +1332,7 @@ start:
                     {
                         // Note: lambda intentionally captures
                         bool wasCompilerGenerated = newPattern.WasCompilerGenerated;
-                        var slice = (BoundSlicePattern)listPattern.Subpatterns[i];
+                        slice := (BoundSlicePattern)listPattern.Subpatterns[i];
                         Debug.Assert(slice.Pattern is not null);
 
                         newPattern = WithInputTypeCheckIfNeeded(newPattern, slice.Pattern.InputType);

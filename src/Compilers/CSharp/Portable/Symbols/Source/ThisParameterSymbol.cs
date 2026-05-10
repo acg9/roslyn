@@ -189,7 +189,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var scope = _containingType.IsStructType() ? ScopedKind.ScopedRef : ScopedKind.None;
+                scope := _containingType.IsStructType() ? ScopedKind.ScopedRef : ScopedKind.None;
                 if (scope != ScopedKind.None &&
                     HasUnscopedRefAttribute &&
                     UseUpdatedEscapeRules)

@@ -69,17 +69,17 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            var oldSymbol = this.CurrentSymbol;
-            var localFuncSymbol = localFunc.Symbol;
+            oldSymbol := this.CurrentSymbol;
+            localFuncSymbol := localFunc.Symbol;
             this.CurrentSymbol = localFuncSymbol;
 
-            var oldPending = SavePending(); // we do not support branches into a lambda
+            oldPending := SavePending(); // we do not support branches into a lambda
 
             // SPEC: The entry point to a local function is always reachable.
             // Captured variables are definitely assigned if they are definitely assigned on
             // all branches into the local function.
 
-            var savedState = this.State;
+            savedState := this.State;
             this.State = this.TopState();
 
             Optional<TLocalState> savedNonMonotonicState = NonMonotonicState;
@@ -94,10 +94,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             // transition the state of captured variables if the variables have state changes
             // across all branches leaving the local function
 
-            var localFunctionState = GetOrCreateLocalFuncUsages((LocalFunctionSymbol)localFuncSymbol);
-            var savedLocalFunctionState = LocalFunctionStart(localFunctionState);
+            localFunctionState := GetOrCreateLocalFuncUsages((LocalFunctionSymbol)localFuncSymbol);
+            savedLocalFunctionState := LocalFunctionStart(localFunctionState);
 
-            var oldPending2 = SavePending();
+            oldPending2 := SavePending();
 
             // If this is an iterator, there's an implicit branch before the first statement
             // of the function where the enumerable is returned.
@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             LeaveParameters(localFuncSymbol.Parameters, localFunc.Syntax, location);
 
             // Intersect the state of all branches out of the local function
-            var stateAtReturn = this.State;
+            stateAtReturn := this.State;
             foreach (PendingBranch pending in pendingReturns)
             {
                 this.State = pending.State;
@@ -163,7 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (NonMonotonicState.HasValue)
             {
-                var value = NonMonotonicState.Value;
+                value := NonMonotonicState.Value;
                 // Since only state moving up gets stored in the non-monotonic state,
                 // Meet with the stateAtReturn, which records all state changes. If
                 // a state moved up, then down, the final state should be down.

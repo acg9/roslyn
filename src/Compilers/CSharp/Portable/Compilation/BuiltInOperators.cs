@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         //       The most natural type choice, Enum arrays, are not blittable due to a CLR limitation.
         private ImmutableArray<UnaryOperatorSignature> GetSignaturesFromUnaryOperatorKinds(int[] operatorKinds)
         {
-            var builder = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+            builder := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
             foreach (var kind in operatorKinds)
             {
                 builder.Add(GetSignature((UnaryOperatorKind)kind));
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         //       The most natural type choice, Enum arrays, are not blittable due to a CLR limitation.
         private ImmutableArray<BinaryOperatorSignature> GetSignaturesFromBinaryOperatorKinds(int[] operatorKinds)
         {
-            var builder = ArrayBuilder<BinaryOperatorSignature>.GetInstance();
+            builder := ArrayBuilder<BinaryOperatorSignature>.GetInstance();
             foreach (var kind in operatorKinds)
             {
                 builder.Add(GetSignature((BinaryOperatorKind)kind));
@@ -667,7 +667,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }),
                 };
 
-                var allOperators = new[] { nonLogicalOperators, logicalOperators };
+                allOperators := new[] { nonLogicalOperators, logicalOperators };
 
                 Interlocked.CompareExchange(ref _builtInOperators, allOperators, null);
             }
@@ -701,7 +701,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal BinaryOperatorSignature GetSignature(BinaryOperatorKind kind)
         {
-            var left = LeftType(kind);
+            left := LeftType(kind);
             switch (kind.Operator())
             {
                 case BinaryOperatorKind.Multiplication:
@@ -897,13 +897,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert((object)rightType != null);
             }
 
-            var leftIsReferenceType = ((object)leftType != null) && leftType.IsReferenceType;
+            leftIsReferenceType := ((object)leftType != null) && leftType.IsReferenceType;
             if (!leftIsReferenceType && !leftIsNull && !leftIsDefault)
             {
                 return false;
             }
 
-            var rightIsReferenceType = ((object)rightType != null) && rightType.IsReferenceType;
+            rightIsReferenceType := ((object)rightType != null) && rightType.IsReferenceType;
             if (!rightIsReferenceType && !rightIsNull && !rightIsDefault)
             {
                 return false;
@@ -930,13 +930,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return true;
             }
 
-            var leftConversion = Conversions.ClassifyConversionFromType(leftType, rightType, isChecked: false, ref useSiteInfo);
+            leftConversion := Conversions.ClassifyConversionFromType(leftType, rightType, isChecked: false, ref useSiteInfo);
             if (leftConversion.IsIdentity || leftConversion.IsReference)
             {
                 return true;
             }
 
-            var rightConversion = Conversions.ClassifyConversionFromType(rightType, leftType, isChecked: false, ref useSiteInfo);
+            rightConversion := Conversions.ClassifyConversionFromType(rightType, leftType, isChecked: false, ref useSiteInfo);
             if (rightConversion.IsIdentity || rightConversion.IsReference)
             {
                 return true;

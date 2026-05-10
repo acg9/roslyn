@@ -462,7 +462,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 //
                 // See InternalsVisibleToAndStrongNameTests: IvtVirtualCall1, IvtVirtualCall2, IvtVirtual_ParamsAndDynamic.
                 MethodSymbol overridden = m.OverriddenMethod;
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 if ((object)overridden == null ||
                     (accessingTypeOpt is { } && !AccessCheck.IsSymbolAccessible(overridden, accessingTypeOpt, ref discardedUseSiteInfo)) ||
                     (requireSameReturnType && !this.ReturnType.Equals(overridden.ReturnType, TypeCompareKind.AllIgnoreOptions)))
@@ -485,7 +485,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <param name="requireSameReturnType">The returned method must have the same return type.</param>
         internal MethodSymbol GetConstructedLeastOverriddenMethod(NamedTypeSymbol accessingTypeOpt, bool requireSameReturnType)
         {
-            var m = this.ConstructedFrom.GetLeastOverriddenMethodCore(accessingTypeOpt, requireSameReturnType);
+            m := this.ConstructedFrom.GetLeastOverriddenMethodCore(accessingTypeOpt, requireSameReturnType);
             return m.IsGenericMethod ? m.Construct(this.TypeArgumentsWithAnnotations) : m;
         }
 
@@ -547,7 +547,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (this.IsOverride)
                 {
-                    var overriddenMethod = this.OverriddenMethod;
+                    overriddenMethod := this.OverriddenMethod;
                     if ((object)overriddenMethod != null && overriddenMethod.IsConditional)
                     {
                         return overriddenMethod.CallsAreConditionallyOmitted(syntaxTree);
@@ -585,7 +585,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Conditional attributes are inherited by overriding methods.
                 if (this.IsOverride)
                 {
-                    var overriddenMethod = this.OverriddenMethod;
+                    overriddenMethod := this.OverriddenMethod;
                     if ((object)overriddenMethod != null)
                     {
                         return overriddenMethod.IsConditional;
@@ -1023,7 +1023,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return (true, callingConventionTypes);
             }
 
-            var builder = PooledHashSet<INamedTypeSymbolInternal>.GetInstance();
+            builder := PooledHashSet<INamedTypeSymbolInternal>.GetInstance();
             foreach (var callConvTypedConstant in value.Values)
             {
                 Debug.Assert(callConvTypedConstant.Kind == TypedConstantKind.Type);
@@ -1172,8 +1172,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeIsReadOnlyAttribute(this));
             }
 
-            var compilation = this.DeclaringCompilation;
-            var type = this.ReturnTypeWithAnnotations;
+            compilation := this.DeclaringCompilation;
+            type := this.ReturnTypeWithAnnotations;
 
             if (type.Type.ContainsDynamic() && compilation.HasDynamicEmitAttributes(BindingDiagnosticBag.Discarded, Location.None))
             {
@@ -1287,7 +1287,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (methodToAttribute.ShouldCheckRequiredMembers() && methodToAttribute.ContainingType.HasAnyRequiredMembers)
             {
-                var obsoleteData = methodToAttribute.ObsoleteAttributeData;
+                obsoleteData := methodToAttribute.ObsoleteAttributeData;
                 Debug.Assert(obsoleteData != ObsoleteAttributeData.Uninitialized, "getting synthesized attributes before attributes are decoded");
 
                 CSharpCompilation declaringCompilation = methodToAttribute.DeclaringCompilation;

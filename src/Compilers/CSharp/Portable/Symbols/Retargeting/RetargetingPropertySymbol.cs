@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             {
                 if (_lazyType is null)
                 {
-                    var type = this.RetargetingTranslator.Retarget(_underlyingProperty.TypeWithAnnotations, RetargetOptions.RetargetPrimitiveTypesByTypeCode);
+                    type := this.RetargetingTranslator.Retarget(_underlyingProperty.TypeWithAnnotations, RetargetOptions.RetargetPrimitiveTypesByTypeCode);
                     if (type.Type.TryAsDynamicIfNoPia(this.ContainingType, out TypeSymbol asDynamic))
                     {
                         type = TypeWithAnnotations.Create(asDynamic);
@@ -100,7 +100,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<ParameterSymbol> RetargetParameters()
         {
-            var list = _underlyingProperty.Parameters;
+            list := _underlyingProperty.Parameters;
             int count = list.Length;
 
             if (count == 0)
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<PropertySymbol> RetargetExplicitInterfaceImplementations()
         {
-            var impls = _underlyingProperty.ExplicitInterfaceImplementations;
+            impls := _underlyingProperty.ExplicitInterfaceImplementations;
 
             if (impls.IsEmpty)
             {
@@ -175,11 +175,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             // CONSIDER: we could skip the builder until the first time we see a different method after retargeting
 
-            var builder = ArrayBuilder<PropertySymbol>.GetInstance();
+            builder := ArrayBuilder<PropertySymbol>.GetInstance();
 
             for (int i = 0; i < impls.Length; i++)
             {
-                var retargeted = this.RetargetingTranslator.Retarget(impls[i], MemberSignatureComparer.RetargetedExplicitImplementationComparer);
+                retargeted := this.RetargetingTranslator.Retarget(impls[i], MemberSignatureComparer.RetargetedExplicitImplementationComparer);
                 if ((object)retargeted != null)
                 {
                     builder.Add(retargeted);
@@ -237,7 +237,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             if (!_lazyCachedUseSiteInfo.IsInitialized)
             {
-                var result = new UseSiteInfo<AssemblySymbol>(primaryDependency);
+                result := new UseSiteInfo<AssemblySymbol>(primaryDependency);
                 CalculateUseSiteDiagnostic(ref result);
                 _lazyCachedUseSiteInfo.Initialize(primaryDependency, result);
             }

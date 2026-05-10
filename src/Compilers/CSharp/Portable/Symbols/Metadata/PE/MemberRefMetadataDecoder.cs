@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             int arityOffset = 0;
 
-            var containingType = namedType.ContainingType;
+            containingType := namedType.ContainingType;
             if ((object)containingType != null)
             {
                 int containingTypeCumulativeArity;
@@ -124,13 +124,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 switch (memberRefOrMethodDef.Kind)
                 {
                     case HandleKind.MemberReference:
-                        var memberRef = (MemberReferenceHandle)memberRefOrMethodDef;
+                        memberRef := (MemberReferenceHandle)memberRefOrMethodDef;
                         memberName = Module.GetMemberRefNameOrThrow(memberRef);
                         signatureHandle = Module.GetSignatureOrThrow(memberRef);
                         break;
 
                     case HandleKind.MethodDefinition:
-                        var methodDef = (MethodDefinitionHandle)memberRefOrMethodDef;
+                        methodDef := (MethodDefinitionHandle)memberRefOrMethodDef;
                         memberName = Module.GetMethodDefNameOrThrow(methodDef);
                         signatureHandle = Module.GetMethodSignatureOrThrow(methodDef);
                         break;
@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             foreach (Symbol member in targetTypeSymbol.GetMembers(targetMemberName))
             {
-                var field = member as FieldSymbol;
+                field := member as FieldSymbol;
                 TypeWithAnnotations fieldType;
 
                 // Ensure the field symbol matches the { IsByRef, RefCustomModifiers, Type, CustomModifiers } from metadata.
@@ -198,7 +198,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             foreach (Symbol member in targetTypeSymbol.GetMembers(targetMemberName))
             {
-                var method = member as MethodSymbol;
+                method := member as MethodSymbol;
                 if ((object)method != null &&
                     ((byte)method.CallingConvention == targetMemberSignatureHeader.RawValue) &&
                     (targetMemberTypeParamCount == method.Arity) &&
@@ -257,7 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
 
             // CONSIDER: Do we want to add special handling for error types?  Right now, we expect they'll just fail to match.
-            var substituted = candidateParam.TypeWithAnnotations.SubstituteType(candidateMethodTypeMap);
+            substituted := candidateParam.TypeWithAnnotations.SubstituteType(candidateMethodTypeMap);
             if (!TypeSymbol.Equals(substituted.Type, targetParam.Type, TypeCompareKind.CLRSignatureCompareOptions))
             {
                 return false;
@@ -285,7 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             TypeSymbol targetReturnType = targetReturnParam.Type;
 
             // CONSIDER: Do we want to add special handling for error types?  Right now, we expect they'll just fail to match.
-            var substituted = candidateMethodType.SubstituteType(candidateMethodTypeMap);
+            substituted := candidateMethodType.SubstituteType(candidateMethodTypeMap);
             if (!TypeSymbol.Equals(substituted.Type, targetReturnType, TypeCompareKind.CLRSignatureCompareOptions))
             {
                 return false;
@@ -311,7 +311,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return false;
             }
 
-            var n = candidateCustomModifiers.Length;
+            n := candidateCustomModifiers.Length;
             if (targetCustomModifiers.Length != n)
             {
                 return false;
@@ -319,7 +319,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             for (int i = 0; i < n; i++)
             {
-                var targetCustomModifier = targetCustomModifiers[i];
+                targetCustomModifier := targetCustomModifiers[i];
                 CustomModifier candidateCustomModifier = candidateCustomModifiers[i];
 
                 if (targetCustomModifier.IsOptional != candidateCustomModifier.IsOptional ||

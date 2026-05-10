@@ -103,20 +103,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return false;
             }
 
-            var startToken = attributesSyntaxList[0].OpenBracketToken;
-            var endToken = attributesSyntaxList[count - 1].CloseBracketToken;
+            startToken := attributesSyntaxList[0].OpenBracketToken;
+            endToken := attributesSyntaxList[count - 1].CloseBracketToken;
             return IsBetweenTokens(position, startToken, endToken);
         }
 
         internal static bool IsInTypeParameterList(int position, TypeDeclarationSyntax typeDecl)
         {
-            var typeParameterListOpt = typeDecl.TypeParameterList;
+            typeParameterListOpt := typeDecl.TypeParameterList;
             return typeParameterListOpt != null && IsBeforeToken(position, typeParameterListOpt, typeParameterListOpt.GreaterThanToken);
         }
 
         internal static bool IsInParameterList(int position, BaseMethodDeclarationSyntax methodDecl)
         {
-            var parameterList = methodDecl.ParameterList;
+            parameterList := methodDecl.ParameterList;
             return IsBeforeToken(position, parameterList, parameterList.CloseParenToken);
         }
 
@@ -127,7 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             Debug.Assert(methodDecl != null);
 
-            var body = methodDecl.Body;
+            body := methodDecl.Body;
             if (body == null)
             {
                 return IsBeforeToken(position, methodDecl, methodDecl.SemicolonToken);
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             Debug.Assert(accessorDecl != null);
 
-            var body = accessorDecl.Body;
+            body := accessorDecl.Body;
             SyntaxToken lastToken = body == null ? accessorDecl.SemicolonToken : body.CloseBraceToken;
             return IsBeforeToken(position, accessorDecl, lastToken);
         }
@@ -178,12 +178,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             Debug.Assert(constructorDecl != null);
 
-            var initializerOpt = constructorDecl.Initializer;
-            var hasBody = constructorDecl.Body != null || constructorDecl.ExpressionBody != null;
+            initializerOpt := constructorDecl.Initializer;
+            hasBody := constructorDecl.Body != null || constructorDecl.ExpressionBody != null;
 
             if (!hasBody)
             {
-                var nextToken = (SyntaxToken)SyntaxNavigator.Instance.GetNextToken(constructorDecl, predicate: null, stepInto: null);
+                nextToken := (SyntaxToken)SyntaxNavigator.Instance.GetNextToken(constructorDecl, predicate: null, stepInto: null);
                 return initializerOpt == null ?
                     position >= constructorDecl.ParameterList.CloseParenToken.Span.End && IsBeforeToken(position, nextToken) :
                     IsBetweenTokens(position, initializerOpt.ColonToken, nextToken);
@@ -218,9 +218,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return false;
             }
 
-            var explicitInterfaceSpecifier = methodDecl.ExplicitInterfaceSpecifier;
-            var firstNameToken = explicitInterfaceSpecifier == null ? methodDecl.Identifier : explicitInterfaceSpecifier.GetFirstToken();
-            var firstPostNameToken = methodDecl.TypeParameterList.LessThanToken;
+            explicitInterfaceSpecifier := methodDecl.ExplicitInterfaceSpecifier;
+            firstNameToken := explicitInterfaceSpecifier == null ? methodDecl.Identifier : explicitInterfaceSpecifier.GetFirstToken();
+            firstPostNameToken := methodDecl.TypeParameterList.LessThanToken;
 
             // Scope does not include method name.
             return !IsBetweenTokens(position, firstNameToken, firstPostNameToken);
@@ -248,8 +248,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return false;
             }
 
-            var firstNameToken = localFunction.Identifier;
-            var firstPostNameToken = localFunction.TypeParameterList.LessThanToken;
+            firstNameToken := localFunction.Identifier;
+            firstPostNameToken := localFunction.TypeParameterList.LessThanToken;
 
             // Scope does not include local function name.
             return !IsBetweenTokens(position, firstNameToken, firstPostNameToken);
@@ -503,7 +503,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     return IsBetweenTokens(position, firstIncluded, lambdaExpressionOrQueryNode.GetLastToken().GetNextToken());
             }
 
-            var bodyStatement = body as StatementSyntax;
+            bodyStatement := body as StatementSyntax;
             var firstExcluded = bodyStatement != null ?
                 GetFirstExcludedToken(bodyStatement) :
                 (SyntaxToken)SyntaxNavigator.Instance.GetNextToken(body, predicate: null, stepInto: null);

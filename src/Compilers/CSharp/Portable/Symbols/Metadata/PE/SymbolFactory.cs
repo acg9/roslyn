@@ -160,7 +160,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         internal override TypeSymbol MakeUnboundIfGeneric(PEModuleSymbol moduleSymbol, TypeSymbol type)
         {
-            var namedType = type as NamedTypeSymbol;
+            namedType := type as NamedTypeSymbol;
             return ((object)namedType != null && namedType.IsGenericType) ? namedType.AsUnboundGenericType() : type;
         }
 

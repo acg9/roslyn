@@ -17,8 +17,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var rewrittenCondition = VisitExpression(node.Condition);
-            var rewrittenBody = VisitStatement(node.Body);
+            rewrittenCondition := VisitExpression(node.Condition);
+            rewrittenBody := VisitStatement(node.Body);
             Debug.Assert(rewrittenBody is { });
 
             // EnC: We need to insert a hidden sequence point to handle function remapping in case 
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // break:
 
             SyntaxNode syntax = loop.Syntax;
-            var startLabel = new GeneratedLabelSymbol("start");
+            startLabel := new GeneratedLabelSymbol("start");
             BoundStatement ifConditionGotoStart = new BoundConditionalGoto(rewrittenCondition.Syntax, rewrittenCondition, true, startLabel);
             BoundStatement gotoContinue = new BoundGotoStatement(syntax, continueLabel);
 

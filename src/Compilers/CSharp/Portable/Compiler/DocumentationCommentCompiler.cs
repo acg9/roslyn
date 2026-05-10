@@ -283,7 +283,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             void appendMergedExtensionBlocks(IEnumerable<SourceNamedTypeSymbol> extensions)
             {
                 _cancellationToken.ThrowIfCancellationRequested();
-                var docCommentNodesBuilder = ArrayBuilder<DocumentationCommentTriviaSyntax>.GetInstance();
+                docCommentNodesBuilder := ArrayBuilder<DocumentationCommentTriviaSyntax>.GetInstance();
                 if (!collectDocCommentNodes(extensions, docCommentNodesBuilder, out SourceNamedTypeSymbol firstExtension))
                 {
                     docCommentNodesBuilder.Free();
@@ -423,7 +423,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // synthesized record property: emit the matching param doc on containing type as the summary doc of the property.
-            var symbolForDocComments = symbol is SynthesizedRecordPropertySymbol ? symbol.ContainingType : symbol;
+            symbolForDocComments := symbol is SynthesizedRecordPropertySymbol ? symbol.ContainingType : symbol;
             if (!TryGetDocumentationCommentNodes(symbolForDocComments, out var maxDocumentationMode, out var docCommentNodes))
             {
                 // If the XML in any of the doc comments is invalid, skip all further processing (for this symbol) and 
@@ -486,8 +486,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             BeginTemporaryString();
             WriteLine("<member name=\"{0}\">", recordPropertySymbol.GetEscapedDocumentationCommentId());
             Indent();
-            var substitutedTextBuilder = PooledStringBuilder.GetInstance();
-            var includeElementNodesBuilder = _processIncludes ? ArrayBuilder<CSharpSyntaxNode>.GetInstance() : null;
+            substitutedTextBuilder := PooledStringBuilder.GetInstance();
+            includeElementNodesBuilder := _processIncludes ? ArrayBuilder<CSharpSyntaxNode>.GetInstance() : null;
             DocumentationCommentWalker.GetSubstitutedText(_compilation, recordPropertySymbol, paramTags, includeElementNodesBuilder, substitutedTextBuilder.Builder);
             string substitutedText = substitutedTextBuilder.ToStringAndFree();
             string formattedXml = FormatComment(substitutedText);
@@ -828,7 +828,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             nodes = default(ImmutableArray<DocumentationCommentTriviaSyntax>);
 
             ArrayBuilder<DocumentationCommentTriviaSyntax> builder = null;
-            var diagnosticBag = _diagnostics.DiagnosticBag ?? DiagnosticBag.GetInstance();
+            diagnosticBag := _diagnostics.DiagnosticBag ?? DiagnosticBag.GetInstance();
 
             foreach (SyntaxReference reference in symbol.DeclaringSyntaxReferences)
             {

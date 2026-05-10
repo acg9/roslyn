@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal CSDiagnosticInfo Add(ErrorCode code, Location location)
         {
-            var info = new CSDiagnosticInfo(code);
+            info := new CSDiagnosticInfo(code);
             Add(info, location);
             return info;
         }
@@ -166,14 +166,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal CSDiagnosticInfo Add(ErrorCode code, Location location, params object[] args)
         {
-            var info = new CSDiagnosticInfo(code, args);
+            info := new CSDiagnosticInfo(code, args);
             Add(info, location);
             return info;
         }
 
         internal CSDiagnosticInfo Add(ErrorCode code, Location location, ImmutableArray<Symbol> symbols, params object[] args)
         {
-            var info = new CSDiagnosticInfo(code, args, symbols, ImmutableArray<Location>.Empty);
+            info := new CSDiagnosticInfo(code, args, symbols, ImmutableArray<Location>.Empty);
             Add(info, location);
             return info;
         }

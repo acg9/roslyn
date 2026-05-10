@@ -186,8 +186,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             int parameterIndex = 0;
             int firstDefault = -1;
 
-            var builder = ArrayBuilder<TParameterSymbol>.GetInstance();
-            var parameterContext = parsingFunctionPointer ? ParameterContext.FunctionPointer : ParameterContext.Default;
+            builder := ArrayBuilder<TParameterSymbol>.GetInstance();
+            parameterContext := parsingFunctionPointer ? ParameterContext.FunctionPointer : ParameterContext.Default;
 
             foreach (var parameterSyntax in parametersList)
             {
@@ -207,7 +207,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (!parsingFunctionPointer)
             {
-                var methodOwner = owner as MethodSymbol;
+                methodOwner := owner as MethodSymbol;
                 var typeParameters = (object?)methodOwner != null ?
                     methodOwner.TypeParameters :
                     [];
@@ -266,7 +266,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             CheckParameterModifiers(parameterSyntax, diagnostics, parameterContext);
 
             bool inExtension = parameterContext is ParameterContext.ExtensionReceiverParameter;
-            var refKind = GetModifiers(parameterSyntax.Modifiers, ignoreParams: inExtension, out SyntaxToken refnessKeyword, out SyntaxToken paramsKeyword, out SyntaxToken thisKeyword, out ScopedKind scope);
+            refKind := GetModifiers(parameterSyntax.Modifiers, ignoreParams: inExtension, out SyntaxToken refnessKeyword, out SyntaxToken paramsKeyword, out SyntaxToken thisKeyword, out ScopedKind scope);
 
             if (thisKeyword.Kind() != SyntaxKind.None && !allowThis)
             {
@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             Debug.Assert(parameterSyntax.Type != null);
-            var parameterType = withTypeParametersBinder.BindType(parameterSyntax.Type, diagnostics, suppressUseSiteDiagnostics: suppressUseSiteDiagnostics);
+            parameterType := withTypeParametersBinder.BindType(parameterSyntax.Type, diagnostics, suppressUseSiteDiagnostics: suppressUseSiteDiagnostics);
 
             if (!allowRefOrOut && (refKind == RefKind.Ref || refKind == RefKind.Out))
             {
@@ -432,7 +432,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(!parameter.IsThis);
 
-            var scope = parameter.EffectiveScope;
+            scope := parameter.EffectiveScope;
             if (scope == ScopedKind.None)
             {
                 return false;
@@ -543,7 +543,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var usedTypeParameters = PooledHashSet<TypeParameterSymbol>.GetInstance();
+            usedTypeParameters := PooledHashSet<TypeParameterSymbol>.GetInstance();
             reportUnusedExtensionTypeParameters(extensionMember, parameters, diagnostics, extension, extensionParameter, usedTypeParameters);
 
             usedTypeParameters.Free();
@@ -599,18 +599,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             BindingDiagnosticBag diagnostics,
             ParameterContext parameterContext)
         {
-            var seenThis = false;
-            var seenRef = false;
-            var seenOut = false;
-            var seenParams = false;
-            var seenIn = false;
+            seenThis := false;
+            seenRef := false;
+            seenOut := false;
+            seenParams := false;
+            seenIn := false;
             bool seenScoped = false;
             bool seenReadonly = false;
 
             SyntaxToken? previousModifier = null;
             for (int i = 0, n = parameter.Modifiers.Count; i < n; i++)
             {
-                var modifier = parameter.Modifiers[i];
+                modifier := parameter.Modifiers[i];
                 switch (modifier.Kind())
                 {
                     case SyntaxKind.ThisKeyword:
@@ -793,7 +793,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             //
                             // Note we don't add an error in the case of 'scoped scoped' as that is already handled by
                             // seenScoped above.
-                            var nextModifier = parameter.Modifiers[i + 1];
+                            nextModifier := parameter.Modifiers[i + 1];
                             if (nextModifier.Kind() is not (SyntaxKind.RefKeyword or SyntaxKind.OutKeyword or SyntaxKind.InKeyword or SyntaxKind.ScopedKeyword))
                                 diagnostics.Add(ErrorCode.ERR_InvalidModifierAfterScoped, nextModifier.GetLocation(), nextModifier.Text);
                         }
@@ -958,7 +958,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Conversion conversion = binder.Conversions.ClassifyImplicitConversionFromExpression(defaultExpression, parameterType, ref useSiteInfo);
             diagnostics.Add(defaultExpression.Syntax, useSiteInfo);
 
-            var refKind = GetModifiers(parameterSyntax.Modifiers, ignoreParams: inExtension, out SyntaxToken refnessKeyword, out SyntaxToken paramsKeyword, out SyntaxToken thisKeyword, out _);
+            refKind := GetModifiers(parameterSyntax.Modifiers, ignoreParams: inExtension, out SyntaxToken refnessKeyword, out SyntaxToken paramsKeyword, out SyntaxToken thisKeyword, out _);
 
             // CONSIDER: We are inconsistent here regarding where the error is reported; is it
             // CONSIDER: reported on the parameter name, or on the value of the initializer?
@@ -1111,7 +1111,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case BoundKind.ObjectCreationExpression:
                     return IsValidDefaultValue((BoundObjectCreationExpression)expression);
                 case BoundKind.Conversion:
-                    var conversion = (BoundConversion)expression;
+                    conversion := (BoundConversion)expression;
                     return conversion is { Conversion.IsObjectCreation: true, Operand: BoundObjectCreationExpression { WasTargetTyped: true } operand } &&
                            IsValidDefaultValue(operand);
                 default:
@@ -1142,7 +1142,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static RefKind GetModifiers(SyntaxTokenList modifiers, bool ignoreParams, out SyntaxToken refnessKeyword, out SyntaxToken paramsKeyword, out SyntaxToken thisKeyword, out ScopedKind scope)
         {
-            var refKind = RefKind.None;
+            refKind := RefKind.None;
             bool isScoped = false;
 
             refnessKeyword = default(SyntaxToken);
@@ -1227,7 +1227,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // only for function pointer parameters
         private static ImmutableArray<CustomModifier> CreateRefReadonlyParameterModifiers(Binder binder, BindingDiagnosticBag diagnostics, SyntaxNode syntax)
         {
-            var requiresLocationType = binder.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_RequiresLocationAttribute, diagnostics, syntax);
+            requiresLocationType := binder.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_RequiresLocationAttribute, diagnostics, syntax);
             return ImmutableArray.Create(CSharpCustomModifier.CreateOptional(requiresLocationType));
         }
 
@@ -1238,7 +1238,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static ImmutableArray<CustomModifier> CreateModifiers(WellKnownType modifier, Binder binder, BindingDiagnosticBag diagnostics, SyntaxNode syntax)
         {
-            var modifierType = binder.GetWellKnownType(modifier, diagnostics, syntax);
+            modifierType := binder.GetWellKnownType(modifier, diagnostics, syntax);
             return ImmutableArray.Create(CSharpCustomModifier.CreateRequired(modifierType));
         }
     }

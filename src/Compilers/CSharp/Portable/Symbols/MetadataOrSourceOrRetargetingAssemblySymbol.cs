@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected bool IsDirectlyOrIndirectlyReferenced(AssemblySymbol potentialGiverOfAccess)
         {
-            var checkedAssemblies = PooledHashSet<AssemblySymbol>.GetInstance();
+            checkedAssemblies := PooledHashSet<AssemblySymbol>.GetInstance();
             ArrayBuilder<AssemblySymbol> queue = s_assemblySymbolBuilderPool.Allocate();
             queue.EnsureCapacity(
                 this.Modules[0].ReferencedAssemblySymbols.Length +

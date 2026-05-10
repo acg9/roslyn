@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(nodeToBind.Kind() == SyntaxKind.VariableDeclarator || nodeToBind is ExpressionSyntax);
 
-            var syntaxReference = syntax.GetReference();
+            syntaxReference := syntax.GetReference();
             return (typeSyntax == null || typeSyntax.SkipScoped(out _).SkipRef().IsVar)
                 ? new InferrableGlobalExpressionVariable(containingType, modifiers, typeSyntax, name, syntaxReference, locationSpan, containingFieldOpt, nodeToBind)
                 : new GlobalExpressionVariable(containingType, modifiers, typeSyntax, name, syntaxReference, locationSpan);
@@ -77,16 +77,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return _lazyType.Value;
             }
 
-            var typeSyntax = TypeSyntax;
+            typeSyntax := TypeSyntax;
 
-            var compilation = this.DeclaringCompilation;
+            compilation := this.DeclaringCompilation;
 
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             TypeWithAnnotations type;
             bool isVar;
 
-            var binderFactory = compilation.GetBinderFactory(SyntaxTree);
-            var binder = binderFactory.GetBinder(typeSyntax ?? SyntaxNode);
+            binderFactory := compilation.GetBinderFactory(SyntaxTree);
+            binder := binderFactory.GetBinder(typeSyntax ?? SyntaxNode);
 
             if (typeSyntax != null)
             {
@@ -127,7 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private TypeWithAnnotations SetType(BindingDiagnosticBag diagnostics, TypeWithAnnotations type)
         {
-            var originalType = _lazyType?.Value.DefaultType;
+            originalType := _lazyType?.Value.DefaultType;
 
             // In the event that we race to set the type of a field, we should
             // always deduce the same type, unless the cached type is an error.
@@ -184,7 +184,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override void InferFieldType(ConsList<FieldSymbol> fieldsBeingBound, Binder binder)
             {
-                var nodeToBind = _nodeToBind.GetSyntax();
+                nodeToBind := _nodeToBind.GetSyntax();
 
                 if ((object)_containingFieldOpt != null && nodeToBind.Kind() != SyntaxKind.VariableDeclarator)
                 {

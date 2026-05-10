@@ -15,14 +15,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node.Type is { });
             SyntaxNode syntax = node.Syntax;
-            var temps = ArrayBuilder<LocalSymbol>.GetInstance();
-            var stores = ArrayBuilder<BoundExpression>.GetInstance();
+            temps := ArrayBuilder<LocalSymbol>.GetInstance();
+            stores := ArrayBuilder<BoundExpression>.GetInstance();
             Debug.Assert(node.LeftOperand.Type is { });
 
             // Rewrite LHS with temporaries to prevent double-evaluation of side effects, as we'll need to use it multiple times.
             BoundExpression transformedLHS = TransformCompoundAssignmentLHS(node.LeftOperand, stores, temps, node.LeftOperand.HasDynamicType());
             Debug.Assert(transformedLHS.Type is { });
-            var lhsRead = MakeRValue(transformedLHS);
+            lhsRead := MakeRValue(transformedLHS);
             BoundExpression loweredRight = VisitExpression(node.RightOperand);
 
             return node.IsNullableValueTypeAssignment ?
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 // lhsRead ?? (transformedLHS = loweredRight)
-                var leftPlaceholder = new BoundValuePlaceholder(lhsRead.Syntax, lhsRead.Type);
+                leftPlaceholder := new BoundValuePlaceholder(lhsRead.Syntax, lhsRead.Type);
                 BoundExpression conditionalExpression = MakeNullCoalescingOperator(syntax, lhsRead, assignment, leftPlaceholder: leftPlaceholder, leftConversion: leftPlaceholder, BoundNullCoalescingOperatorResultKind.LeftType, node.LeftOperand.Type);
                 Debug.Assert(conditionalExpression.Type is { });
 
@@ -80,7 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // var tmp = lhsRead.GetValueOrDefault()
                 // lhsRead.HasValue ? tmp : { /* sequence */ tmp = loweredRight; transformedLhs = tmp; tmp }
 
-                var leftOperand = node.LeftOperand;
+                leftOperand := node.LeftOperand;
                 if (!TryGetNullableMethod(leftOperand.Syntax,
                                           leftOperand.Type,
                                           SpecialMember.System_Nullable_T_GetValueOrDefault,
@@ -106,7 +106,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // the standard ??= case because it only uses lhsRead once.
                 if (lhsRead.Kind == BoundKind.Call)
                 {
-                    var lhsTemp = _factory.StoreToTemp(lhsRead, out var store);
+                    lhsTemp := _factory.StoreToTemp(lhsRead, out var store);
                     stores.Add(store);
                     temps.Add(lhsTemp.LocalSymbol);
                     lhsRead = lhsTemp;
@@ -120,7 +120,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 temps.Add(tmp.LocalSymbol);
 
                 // tmp = loweredRight;
-                var tmpAssignment = MakeAssignmentOperator(node.Syntax, tmp, loweredRight, used: true, isChecked: false, AssignmentKind.SimpleAssignment);
+                tmpAssignment := MakeAssignmentOperator(node.Syntax, tmp, loweredRight, used: true, isChecked: false, AssignmentKind.SimpleAssignment);
 
                 Debug.Assert(transformedLHS.Type.GetNullableUnderlyingType().Equals(tmp.Type.StrippedType(), TypeCompareKind.AllIgnoreOptions));
 
@@ -136,13 +136,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                         AssignmentKind.NullCoalescingAssignment);
 
                 // lhsRead.HasValue
-                var lhsReadHasValue = BoundCall.Synthesized(leftOperand.Syntax, lhsRead, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, hasValue);
+                lhsReadHasValue := BoundCall.Synthesized(leftOperand.Syntax, lhsRead, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, hasValue);
 
                 // { tmp = b; transformedLhs = tmp; tmp }
-                var alternative = _factory.Sequence(ImmutableArray<LocalSymbol>.Empty, ImmutableArray.Create(tmpAssignment, transformedLhsAssignment), tmp);
+                alternative := _factory.Sequence(ImmutableArray<LocalSymbol>.Empty, ImmutableArray.Create(tmpAssignment, transformedLhsAssignment), tmp);
 
                 // lhsRead.HasValue ? tmp : { /* sequence */ tmp = loweredRight; transformedLhs = tmp; tmp }
-                var ternary = _factory.Conditional(lhsReadHasValue, tmp, alternative, tmp.Type);
+                ternary := _factory.Conditional(lhsReadHasValue, tmp, alternative, tmp.Type);
 
                 return _factory.Sequence(temps.ToImmutableAndFree(), stores.ToImmutableAndFree(), ternary);
             }

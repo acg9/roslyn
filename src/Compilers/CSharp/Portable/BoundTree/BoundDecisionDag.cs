@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_reachableLabels == null)
                 {
-                    var result = ImmutableHashSet.CreateBuilder<LabelSymbol>(Symbols.SymbolEqualityComparer.ConsiderEverything);
+                    result := ImmutableHashSet.CreateBuilder<LabelSymbol>(Symbols.SymbolEqualityComparer.ConsiderEverything);
                     foreach (var node in this.TopologicallySortedNodes)
                     {
                         if (node is BoundLeafDecisionDagNode leaf)
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Cache simplified/translated replacement for each translated dag node. Since we always visit
             // a node's successors before the node, the replacement should always be in the cache when we need it.
-            var replacement = PooledDictionary<BoundDecisionDagNode, BoundDecisionDagNode>.GetInstance();
+            replacement := PooledDictionary<BoundDecisionDagNode, BoundDecisionDagNode>.GetInstance();
 
             // Loop backwards through the topologically sorted nodes to translate them, so that we always visit a node after its successors
             for (int i = sortedNodes.Length - 1; i >= 0; i--)
@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Return the computed replacement root node
-            var newRoot = replacement[this.RootNode];
+            newRoot := replacement[this.RootNode];
             replacement.Free();
             return this.Update(newRoot, this.SuitableForLowering);
         }
@@ -190,7 +190,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         case BoundDagTypeTest d:
                             return inputConstant.IsNull ? (bool?)false : null;
                         case BoundDagRelationalTest d:
-                            var f = ValueSetFactory.ForType(input.Type);
+                            f := ValueSetFactory.ForType(input.Type);
                             if (f is null) return null;
                             return f.Related(d.Relation.Operator(), inputConstant, d.Value);
                         default:
@@ -207,10 +207,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal new string Dump()
         {
-            var allStates = this.TopologicallySortedNodes;
+            allStates := this.TopologicallySortedNodes;
 
-            var resultBuilder = PooledStringBuilder.GetInstance();
-            var result = resultBuilder.Builder;
+            resultBuilder := PooledStringBuilder.GetInstance();
+            result := resultBuilder.Builder;
 
             foreach (var state in allStates)
             {

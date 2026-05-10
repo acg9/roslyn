@@ -30,7 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             out IEnumerable<Symbol> capturedOutside,
             out IEnumerable<MethodSymbol> usedLocalFunctions)
         {
-            var walker = new ReadWriteWalker(compilation, member, node, firstInRegion, lastInRegion, unassignedVariableAddressOfSyntaxes);
+            walker := new ReadWriteWalker(compilation, member, node, firstInRegion, lastInRegion, unassignedVariableAddressOfSyntaxes);
             try
             {
                 bool badRegion = false;
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (!ignoreThisParameter)
                     {
-                        var thisParameter = m.ThisParameter;
+                        thisParameter := m.ThisParameter;
                         if ((object)thisParameter != null && thisParameter.RefKind != RefKind.None)
                         {
                             _readOutside.Add(thisParameter);
@@ -176,14 +176,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expr.FieldSymbol.IsStatic) return;
             if (expr.FieldSymbol.ContainingType.IsReferenceType) return;
-            var receiver = expr.ReceiverOpt;
+            receiver := expr.ReceiverOpt;
             NoteExpressionReadOrWritten(receiver, readOrWritten);
         }
 
         private void NoteExpressionReadOrWritten(BoundExpression receiver, HashSet<Symbol> readOrWritten)
         {
             if (receiver == null) return;
-            var receiverSyntax = receiver.Syntax;
+            receiverSyntax := receiver.Syntax;
             if (receiverSyntax == null) return;
             switch (receiver.Kind)
             {
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.InlineArrayAccess:
                     if (receiverSyntax.Span.OverlapsWith(RegionSpan))
                     {
-                        var elementAccess = (BoundInlineArrayAccess)receiver;
+                        elementAccess := (BoundInlineArrayAccess)receiver;
                         NoteExpressionReadOrWritten(elementAccess.Expression, readOrWritten);
                     }
                     break;
@@ -244,7 +244,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.QueryClause:
                     {
                         base.AssignImpl(node, value, isRef, written, read);
-                        var symbol = ((BoundQueryClause)node).DefinedSymbol;
+                        symbol := ((BoundQueryClause)node).DefinedSymbol;
                         if ((object)symbol != null)
                         {
                             if (written) NoteWrite(symbol, value, read: read, isRef: isRef);
@@ -255,7 +255,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.FieldAccess:
                     {
                         base.AssignImpl(node, value, isRef, written, read);
-                        var fieldAccess = node as BoundFieldAccess;
+                        fieldAccess := node as BoundFieldAccess;
                         if (!IsInside && node.Syntax != null && node.Syntax.Span.Contains(RegionSpan))
                         {
                             NoteReceiverWritten(fieldAccess);
@@ -265,7 +265,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.InlineArrayAccess:
                     {
                         base.AssignImpl(node, value, isRef, written, read);
-                        var elementAccess = (BoundInlineArrayAccess)node;
+                        elementAccess := (BoundInlineArrayAccess)node;
                         if (!IsInside && node.Syntax != null && node.Syntax.Span.Contains(RegionSpan))
                         {
                             NoteReceiverWritten(elementAccess);

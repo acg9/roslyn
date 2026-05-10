@@ -188,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SyntaxKind Kind(this SyntaxToken token)
         {
-            var rawKind = token.RawKind;
+            rawKind := token.RawKind;
             return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.None;
         }
 
@@ -197,7 +197,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SyntaxKind Kind(this SyntaxTrivia trivia)
         {
-            var rawKind = trivia.RawKind;
+            rawKind := trivia.RawKind;
             return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.None;
         }
 
@@ -206,7 +206,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SyntaxKind Kind(this SyntaxNode node)
         {
-            var rawKind = node.RawKind;
+            rawKind := node.RawKind;
             return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.None;
         }
 
@@ -215,7 +215,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SyntaxKind Kind(this SyntaxNodeOrToken nodeOrToken)
         {
-            var rawKind = nodeOrToken.RawKind;
+            rawKind := nodeOrToken.RawKind;
             return IsCSharpKind(rawKind) ? (SyntaxKind)rawKind : SyntaxKind.None;
         }
 
@@ -276,7 +276,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var builder = new SyntaxTokenListBuilder(list.Count + items.Length);
+                builder := new SyntaxTokenListBuilder(list.Count + items.Length);
                 if (index > 0)
                 {
                     builder.Add(list, 0, index);
@@ -351,10 +351,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <returns></returns>
         internal static SeparatedSyntaxList<TOther> AsSeparatedList<TOther>(this SyntaxNodeOrTokenList list) where TOther : SyntaxNode
         {
-            var builder = SeparatedSyntaxListBuilder<TOther>.Create();
+            builder := SeparatedSyntaxListBuilder<TOther>.Create();
             foreach (var i in list)
             {
-                var node = i.AsNode();
+                node := i.AsNode();
                 if (node != null)
                 {
                     builder.Add((TOther)node);
@@ -399,25 +399,25 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static bool HasReferenceDirectives([NotNullWhen(true)] this SyntaxTree? tree)
         {
-            var csharpTree = tree as CSharpSyntaxTree;
+            csharpTree := tree as CSharpSyntaxTree;
             return csharpTree != null && csharpTree.HasReferenceDirectives;
         }
 
         internal static bool HasReferenceOrLoadDirectives([NotNullWhen(true)] this SyntaxTree? tree)
         {
-            var csharpTree = tree as CSharpSyntaxTree;
+            csharpTree := tree as CSharpSyntaxTree;
             return csharpTree != null && csharpTree.HasReferenceOrLoadDirectives;
         }
 
         internal static bool IsAnyPreprocessorSymbolDefined([NotNullWhen(true)] this SyntaxTree? tree, ImmutableArray<string> conditionalSymbols)
         {
-            var csharpTree = tree as CSharpSyntaxTree;
+            csharpTree := tree as CSharpSyntaxTree;
             return csharpTree != null && csharpTree.IsAnyPreprocessorSymbolDefined(conditionalSymbols);
         }
 
         internal static bool IsPreprocessorSymbolDefined([NotNullWhen(true)] this SyntaxTree? tree, string symbolName, int position)
         {
-            var csharpTree = tree as CSharpSyntaxTree;
+            csharpTree := tree as CSharpSyntaxTree;
             return csharpTree != null && csharpTree.IsPreprocessorSymbolDefined(symbolName, position);
         }
 
@@ -437,7 +437,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // where a user can find the other.
         public static Conversion ClassifyConversion(this Compilation? compilation, ITypeSymbol source, ITypeSymbol destination)
         {
-            var cscomp = compilation as CSharpCompilation;
+            cscomp := compilation as CSharpCompilation;
             if (cscomp != null)
             {
                 return cscomp.ClassifyConversion(source, destination);
@@ -455,7 +455,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, OrderingSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(node, cancellationToken);
@@ -471,7 +471,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, SelectOrGroupClauseSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(node, cancellationToken);
@@ -495,7 +495,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(expression, cancellationToken);
@@ -512,7 +512,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetCollectionInitializerSymbolInfo(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetCollectionInitializerSymbolInfo(expression, cancellationToken);
@@ -528,7 +528,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, ConstructorInitializerSyntax constructorInitializer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(constructorInitializer, cancellationToken);
@@ -544,7 +544,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, PrimaryConstructorBaseTypeSyntax constructorInitializer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(constructorInitializer, cancellationToken);
@@ -560,7 +560,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, AttributeSyntax attributeSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(attributeSyntax, cancellationToken);
@@ -576,7 +576,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSymbolInfo(this SemanticModel? semanticModel, CrefSyntax crefSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSymbolInfo(crefSyntax, cancellationToken);
@@ -594,7 +594,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSpeculativeSymbolInfo(this SemanticModel? semanticModel, int position, ExpressionSyntax expression, SpeculativeBindingOption bindingOption)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeSymbolInfo(position, expression, bindingOption);
@@ -612,7 +612,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSpeculativeSymbolInfo(this SemanticModel? semanticModel, int position, CrefSyntax expression, SpeculativeBindingOption bindingOption)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeSymbolInfo(position, expression, bindingOption);
@@ -630,7 +630,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSpeculativeSymbolInfo(this SemanticModel? semanticModel, int position, AttributeSyntax attribute)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeSymbolInfo(position, attribute);
@@ -650,7 +650,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSpeculativeSymbolInfo(this SemanticModel? semanticModel, int position, ConstructorInitializerSyntax constructorInitializer)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeSymbolInfo(position, constructorInitializer);
@@ -671,7 +671,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static SymbolInfo GetSpeculativeSymbolInfo(this SemanticModel? semanticModel, int position, PrimaryConstructorBaseTypeSyntax constructorInitializer)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeSymbolInfo(position, constructorInitializer);
@@ -687,7 +687,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static TypeInfo GetTypeInfo(this SemanticModel? semanticModel, ConstructorInitializerSyntax constructorInitializer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetTypeInfo(constructorInitializer, cancellationToken);
@@ -700,7 +700,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static TypeInfo GetTypeInfo(this SemanticModel? semanticModel, SelectOrGroupClauseSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetTypeInfo(node, cancellationToken);
@@ -716,7 +716,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static TypeInfo GetTypeInfo(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetTypeInfo(expression, cancellationToken);
@@ -732,7 +732,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static TypeInfo GetTypeInfo(this SemanticModel? semanticModel, AttributeSyntax attributeSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetTypeInfo(attributeSyntax, cancellationToken);
@@ -750,7 +750,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static TypeInfo GetSpeculativeTypeInfo(this SemanticModel? semanticModel, int position, ExpressionSyntax expression, SpeculativeBindingOption bindingOption)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeTypeInfo(position, expression, bindingOption);
@@ -763,7 +763,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static Conversion GetConversion(this SemanticModel? semanticModel, SyntaxNode expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetConversion(expression, cancellationToken);
@@ -877,7 +877,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static Conversion GetSpeculativeConversion(this SemanticModel? semanticModel, int position, ExpressionSyntax expression, SpeculativeBindingOption bindingOption)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetSpeculativeConversion(position, expression, bindingOption);
@@ -890,7 +890,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static ForEachStatementInfo GetForEachStatementInfo(this SemanticModel? semanticModel, ForEachStatementSyntax forEachStatement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetForEachStatementInfo(forEachStatement);
@@ -903,7 +903,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static ForEachStatementInfo GetForEachStatementInfo(this SemanticModel? semanticModel, CommonForEachStatementSyntax forEachStatement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetForEachStatementInfo(forEachStatement);
@@ -926,7 +926,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static AwaitExpressionInfo GetAwaitExpressionInfo(this SemanticModel? semanticModel, AwaitExpressionSyntax awaitExpression)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetAwaitExpressionInfo(awaitExpression);
@@ -963,7 +963,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static ImmutableArray<ISymbol> GetMemberGroup(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetMemberGroup(expression, cancellationToken);
@@ -976,7 +976,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static ImmutableArray<ISymbol> GetMemberGroup(this SemanticModel? semanticModel, AttributeSyntax attribute, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetMemberGroup(attribute, cancellationToken);
@@ -989,7 +989,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static ImmutableArray<ISymbol> GetMemberGroup(this SemanticModel? semanticModel, ConstructorInitializerSyntax initializer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetMemberGroup(initializer, cancellationToken);
@@ -1005,7 +1005,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ImmutableArray<IPropertySymbol> GetIndexerGroup(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetIndexerGroup(expression, cancellationToken);
@@ -1018,7 +1018,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static Optional<object> GetConstantValue(this SemanticModel? semanticModel, ExpressionSyntax expression, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetConstantValue(expression, cancellationToken);
@@ -1034,7 +1034,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static QueryClauseInfo GetQueryClauseInfo(this SemanticModel? semanticModel, QueryClauseSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.GetQueryClauseInfo(node, cancellationToken);
@@ -1051,7 +1051,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IAliasSymbol? GetAliasInfo(this SemanticModel? semanticModel, IdentifierNameSyntax nameSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetAliasInfo(nameSyntax, cancellationToken);
         }
 
@@ -1061,7 +1061,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IAliasSymbol? GetSpeculativeAliasInfo(this SemanticModel? semanticModel, int position, IdentifierNameSyntax nameSyntax, SpeculativeBindingOption bindingOption)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetSpeculativeAliasInfo(position, nameSyntax, bindingOption);
         }
 
@@ -1070,7 +1070,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ControlFlowAnalysis? AnalyzeControlFlow(this SemanticModel? semanticModel, StatementSyntax firstStatement, StatementSyntax lastStatement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeControlFlow(firstStatement, lastStatement);
         }
 
@@ -1079,7 +1079,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ControlFlowAnalysis? AnalyzeControlFlow(this SemanticModel? semanticModel, StatementSyntax statement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeControlFlow(statement);
         }
 
@@ -1088,7 +1088,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static DataFlowAnalysis? AnalyzeDataFlow(this SemanticModel? semanticModel, ConstructorInitializerSyntax constructorInitializer)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeDataFlow(constructorInitializer);
         }
 
@@ -1097,7 +1097,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static DataFlowAnalysis? AnalyzeDataFlow(this SemanticModel? semanticModel, PrimaryConstructorBaseTypeSyntax primaryConstructorBaseType)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeDataFlow(primaryConstructorBaseType);
         }
 
@@ -1106,7 +1106,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static DataFlowAnalysis? AnalyzeDataFlow(this SemanticModel? semanticModel, ExpressionSyntax expression)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeDataFlow(expression);
         }
 
@@ -1115,7 +1115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static DataFlowAnalysis? AnalyzeDataFlow(this SemanticModel? semanticModel, StatementSyntax firstStatement, StatementSyntax lastStatement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeDataFlow(firstStatement, lastStatement);
         }
 
@@ -1124,7 +1124,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static DataFlowAnalysis? AnalyzeDataFlow(this SemanticModel? semanticModel, StatementSyntax statement)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.AnalyzeDataFlow(statement);
         }
 
@@ -1135,7 +1135,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModelForMethodBody([NotNullWhen(true)] this SemanticModel? semanticModel, int position, BaseMethodDeclarationSyntax method, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModelForMethodBody(position, method, out speculativeModel);
@@ -1154,7 +1154,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModelForMethodBody([NotNullWhen(true)] this SemanticModel? semanticModel, int position, AccessorDeclarationSyntax accessor, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModelForMethodBody(position, accessor, out speculativeModel);
@@ -1173,7 +1173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, TypeSyntax type, [NotNullWhen(true)] out SemanticModel? speculativeModel, SpeculativeBindingOption bindingOption = SpeculativeBindingOption.BindAsExpression)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, type, out speculativeModel, bindingOption);
@@ -1192,7 +1192,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, CrefSyntax crefSyntax, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, crefSyntax, out speculativeModel);
@@ -1211,7 +1211,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, StatementSyntax statement, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, statement, out speculativeModel);
@@ -1230,7 +1230,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, EqualsValueClauseSyntax initializer, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, initializer, out speculativeModel);
@@ -1249,7 +1249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, ArrowExpressionClauseSyntax expressionBody, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, expressionBody, out speculativeModel);
@@ -1270,7 +1270,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, ConstructorInitializerSyntax constructorInitializer, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, constructorInitializer, out speculativeModel);
@@ -1291,7 +1291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, PrimaryConstructorBaseTypeSyntax constructorInitializer, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, constructorInitializer, out speculativeModel);
@@ -1310,7 +1310,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool TryGetSpeculativeSemanticModel([NotNullWhen(true)] this SemanticModel? semanticModel, int position, AttributeSyntax attribute, [NotNullWhen(true)] out SemanticModel? speculativeModel)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.TryGetSpeculativeSemanticModel(position, attribute, out speculativeModel);
@@ -1331,7 +1331,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             // https://github.com/dotnet/roslyn/issues/60397 : Add an API with ability to specify isChecked?
 
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.ClassifyConversion(expression, destination, isExplicitInSource);
@@ -1349,7 +1349,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static Conversion ClassifyConversion(this SemanticModel? semanticModel, int position, ExpressionSyntax expression, ITypeSymbol destination, bool isExplicitInSource = false)
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             if (csmodel != null)
             {
                 return csmodel.ClassifyConversion(position, expression, destination, isExplicitInSource);
@@ -1365,7 +1365,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, MemberDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1374,7 +1374,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IMethodSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, CompilationUnitSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1384,7 +1384,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static INamespaceSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, NamespaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1396,7 +1396,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static INamespaceSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, FileScopedNamespaceDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
 #pragma warning restore RS0026 // Do not add multiple public overloads with optional parameters
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1405,7 +1405,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static INamedTypeSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, BaseTypeDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1414,7 +1414,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static INamedTypeSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, DelegateDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1423,7 +1423,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IFieldSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, EnumMemberDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1432,7 +1432,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IMethodSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, BaseMethodDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1441,7 +1441,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, BasePropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1450,7 +1450,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IPropertySymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, PropertyDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1459,7 +1459,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IPropertySymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, IndexerDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1468,7 +1468,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IEventSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, EventDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1477,7 +1477,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IPropertySymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, AnonymousObjectMemberDeclaratorSyntax declaratorSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declaratorSyntax, cancellationToken);
         }
 
@@ -1486,7 +1486,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static INamedTypeSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, AnonymousObjectCreationExpressionSyntax declaratorSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declaratorSyntax, cancellationToken);
         }
 
@@ -1495,7 +1495,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static INamedTypeSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, TupleExpressionSyntax declaratorSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declaratorSyntax, cancellationToken);
         }
 
@@ -1504,7 +1504,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, ArgumentSyntax declaratorSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declaratorSyntax, cancellationToken);
         }
 
@@ -1513,7 +1513,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IMethodSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, AccessorDeclarationSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1522,7 +1522,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, SingleVariableDesignationSyntax designationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(designationSyntax, cancellationToken);
         }
 
@@ -1531,7 +1531,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, VariableDeclaratorSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1540,7 +1540,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ISymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, TupleElementSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1549,7 +1549,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ILabelSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, LabeledStatementSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1558,7 +1558,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ILabelSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, SwitchLabelSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1567,7 +1567,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IAliasSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, UsingDirectiveSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1576,7 +1576,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IAliasSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, ExternAliasDirectiveSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1585,7 +1585,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IParameterSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, ParameterSyntax declarationSyntax, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(declarationSyntax, cancellationToken);
         }
 
@@ -1594,7 +1594,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static ITypeParameterSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, TypeParameterSyntax typeParameter, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(typeParameter, cancellationToken);
         }
 
@@ -1605,7 +1605,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static ILocalSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, ForEachStatementSyntax forEachStatement, CancellationToken cancellationToken = default(CancellationToken))
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(forEachStatement);
         }
 
@@ -1616,13 +1616,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static ILocalSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, CatchDeclarationSyntax catchDeclaration, CancellationToken cancellationToken = default(CancellationToken))
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(catchDeclaration);
         }
 
         public static IRangeVariableSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, QueryClauseSyntax queryClause, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(queryClause, cancellationToken);
         }
 
@@ -1631,7 +1631,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IRangeVariableSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, JoinIntoClauseSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(node, cancellationToken);
         }
 
@@ -1640,7 +1640,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static IRangeVariableSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, QueryContinuationSyntax node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(node, cancellationToken);
         }
 
@@ -1651,7 +1651,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static IMethodSymbol? GetDeclaredSymbol(this SemanticModel? semanticModel, LocalFunctionStatementSyntax node, CancellationToken cancellationToken = default(CancellationToken))
 #pragma warning restore RS0026
         {
-            var csmodel = semanticModel as CSharpSemanticModel;
+            csmodel := semanticModel as CSharpSemanticModel;
             return csmodel?.GetDeclaredSymbol(node, cancellationToken);
         }
 
@@ -1660,7 +1660,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <seealso href="https://github.com/dotnet/csharplang/issues/7009"/>
         public static IMethodSymbol? GetInterceptorMethod(this SemanticModel? semanticModel, InvocationExpressionSyntax node, CancellationToken cancellationToken = default)
         {
-            var csModel = semanticModel as CSharpSemanticModel;
+            csModel := semanticModel as CSharpSemanticModel;
             return csModel?.GetInterceptorMethod(node, cancellationToken);
         }
 
@@ -1672,7 +1672,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <seealso href="https://github.com/dotnet/csharplang/issues/7009" />
         public static InterceptableLocation? GetInterceptableLocation(this SemanticModel? semanticModel, InvocationExpressionSyntax node, CancellationToken cancellationToken = default)
         {
-            var csModel = semanticModel as CSharpSemanticModel;
+            csModel := semanticModel as CSharpSemanticModel;
             return csModel?.GetInterceptableLocation(node, cancellationToken);
         }
 

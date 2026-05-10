@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitAsOperator(BoundAsOperator node)
         {
             BoundExpression rewrittenOperand = VisitExpression(node.Operand);
-            var rewrittenTargetType = (BoundTypeExpression)VisitTypeExpression(node.TargetType);
+            rewrittenTargetType := (BoundTypeExpression)VisitTypeExpression(node.TargetType);
             TypeSymbol rewrittenType = VisitType(node.Type);
 
             return MakeAsOperator(node, node.Syntax, rewrittenOperand, rewrittenTargetType, node.OperandPlaceholder, node.OperandConversion, rewrittenType);
@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitTypeExpression(BoundTypeExpression node)
         {
-            var result = base.VisitTypeExpression(node);
+            result := base.VisitTypeExpression(node);
             Debug.Assert(result is { });
             return result;
         }
@@ -46,7 +46,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!_inExpressionLambda)
             {
-                var conversion = BoundNode.GetConversion(operandConversion, operandPlaceholder);
+                conversion := BoundNode.GetConversion(operandConversion, operandPlaceholder);
 
                 ConstantValue constantValue = Binder.GetAsOperatorConstantResult(rewrittenOperand.Type, rewrittenType, conversion.Kind, rewrittenOperand.ConstantValueOpt);
 

@@ -319,13 +319,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         public override int GetLeadingTriviaWidth()
         {
-            var leading = this.GetLeadingTrivia();
+            leading := this.GetLeadingTrivia();
             return leading != null ? leading.FullWidth : 0;
         }
 
         public override int GetTrailingTriviaWidth()
         {
-            var trailing = this.GetTrailingTrivia();
+            trailing := this.GetTrailingTrivia();
             return trailing != null ? trailing.FullWidth : 0;
         }
 
@@ -406,7 +406,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             if (leading)
             {
-                var trivia = this.GetLeadingTrivia();
+                trivia := this.GetLeadingTrivia();
                 if (trivia != null)
                 {
                     trivia.WriteTo(writer, true, true);
@@ -417,7 +417,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             if (trailing)
             {
-                var trivia = this.GetTrailingTrivia();
+                trivia := this.GetTrailingTrivia();
                 if (trivia != null)
                 {
                     trivia.WriteTo(writer, true, true);
@@ -432,15 +432,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 return false;
             }
 
-            var otherToken = (SyntaxToken)other;
+            otherToken := (SyntaxToken)other;
 
             if (this.Text != otherToken.Text)
             {
                 return false;
             }
 
-            var thisLeading = this.GetLeadingTrivia();
-            var otherLeading = otherToken.GetLeadingTrivia();
+            thisLeading := this.GetLeadingTrivia();
+            otherLeading := otherToken.GetLeadingTrivia();
             if (thisLeading != otherLeading)
             {
                 if (thisLeading == null || otherLeading == null)
@@ -454,8 +454,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
             }
 
-            var thisTrailing = this.GetTrailingTrivia();
-            var otherTrailing = otherToken.GetTrailingTrivia();
+            thisTrailing := this.GetTrailingTrivia();
+            otherTrailing := otherToken.GetTrailingTrivia();
             if (thisTrailing != otherTrailing)
             {
                 if (thisTrailing == null || otherTrailing == null)

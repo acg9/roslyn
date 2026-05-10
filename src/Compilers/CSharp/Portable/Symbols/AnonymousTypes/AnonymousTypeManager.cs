@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (diagnostics.AccumulatesDependencies)
             {
-                var dependencies = BindingDiagnosticBag.GetInstance(withDependencies: true, withDiagnostics: false);
+                dependencies := BindingDiagnosticBag.GetInstance(withDependencies: true, withDiagnostics: false);
                 ReportMissingOrErroneousSymbols(dependencies);
                 diagnostics.AddRange(dependencies);
                 dependencies.Free();
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)type != null);
             Debug.Assert(type.IsAnonymousType);
 
-            var anonymous = (AnonymousTypePublicSymbol)type;
+            anonymous := (AnonymousTypePublicSymbol)type;
             return anonymous.Properties[index];
         }
 
@@ -67,8 +67,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static ImmutableArray<TypeWithAnnotations> GetAnonymousTypeFieldTypes(NamedTypeSymbol type)
         {
             Debug.Assert(type.IsAnonymousType);
-            var anonymous = (AnonymousTypeOrDelegatePublicSymbol)type;
-            var fields = anonymous.TypeDescriptor.Fields;
+            anonymous := (AnonymousTypeOrDelegatePublicSymbol)type;
+            fields := anonymous.TypeDescriptor.Fields;
             return fields.SelectAsArray(f => f.TypeWithAnnotations);
         }
 
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!newFieldTypes.IsDefault);
             Debug.Assert(type.IsAnonymousType);
 
-            var anonymous = (AnonymousTypePublicSymbol)type;
+            anonymous := (AnonymousTypePublicSymbol)type;
             return anonymous.Manager.ConstructAnonymousTypeSymbol(anonymous.TypeDescriptor.WithNewFieldsTypes(newFieldTypes), BindingDiagnosticBag.Discarded);
         }
     }

@@ -118,8 +118,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override ImmutableArray<ParameterSymbol> MakeParameters()
         {
-            var sourceParameters = _originalMethod.Parameters;
-            var parameters = ArrayBuilder<ParameterSymbol>.GetInstance(ParameterCount);
+            sourceParameters := _originalMethod.Parameters;
+            parameters := ArrayBuilder<ParameterSymbol>.GetInstance(ParameterCount);
 
             if (!_originalMethod.IsStatic)
             {
@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return 0;
             }
 
-            var ordinal = underlyingParameter.Ordinal;
+            ordinal := underlyingParameter.Ordinal;
 
             if (underlyingParameter.ContainingSymbol.IsStatic)
             {
@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 get
                 {
-                    var originalIndexes = this._underlyingParameter.InterpolatedStringHandlerArgumentIndexes;
+                    originalIndexes := this._underlyingParameter.InterpolatedStringHandlerArgumentIndexes;
                     if (originalIndexes.IsDefaultOrEmpty || this._underlyingParameter.ContainingSymbol.IsStatic)
                     {
                         return originalIndexes;

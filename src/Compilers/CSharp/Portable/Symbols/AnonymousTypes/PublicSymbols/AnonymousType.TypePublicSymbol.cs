@@ -33,12 +33,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 typeDescr.AssertIsGood();
 
-                var fields = typeDescr.Fields;
-                var properties = fields.SelectAsArray((field, i, type) => new AnonymousTypePropertySymbol(type, field, i), this);
+                fields := typeDescr.Fields;
+                properties := fields.SelectAsArray((field, i, type) => new AnonymousTypePropertySymbol(type, field, i), this);
 
                 //  members
                 int membersCount = fields.Length * 2 + 1;
-                var members = ArrayBuilder<Symbol>.GetInstance(membersCount);
+                members := ArrayBuilder<Symbol>.GetInstance(membersCount);
 
                 foreach (var property in properties)
                 {
@@ -68,8 +68,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal override AnonymousTypeOrDelegatePublicSymbol SubstituteTypes(AbstractTypeMap map)
             {
-                var oldFieldTypes = TypeDescriptor.Fields.SelectAsArray(f => f.TypeWithAnnotations);
-                var newFieldTypes = map.SubstituteTypes(oldFieldTypes);
+                oldFieldTypes := TypeDescriptor.Fields.SelectAsArray(f => f.TypeWithAnnotations);
+                newFieldTypes := map.SubstituteTypes(oldFieldTypes);
                 return (oldFieldTypes == newFieldTypes) ?
                     this :
                     new AnonymousTypePublicSymbol(Manager, TypeDescriptor.WithNewFieldsTypes(newFieldTypes));
@@ -89,8 +89,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             public override ImmutableArray<Symbol> GetMembers(string name)
             {
-                var symbols = _nameToSymbols[name];
-                var builder = ArrayBuilder<Symbol>.GetInstance(symbols.Count);
+                symbols := _nameToSymbols[name];
+                builder := ArrayBuilder<Symbol>.GetInstance(symbols.Count);
                 foreach (var symbol in symbols)
                 {
                     builder.Add(symbol);
@@ -124,7 +124,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = t2 as AnonymousTypePublicSymbol;
+                other := t2 as AnonymousTypePublicSymbol;
                 return other is { } && this.TypeDescriptor.Equals(other.TypeDescriptor, comparison);
             }
 

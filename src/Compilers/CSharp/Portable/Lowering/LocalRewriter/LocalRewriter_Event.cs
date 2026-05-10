@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return RewriteWindowsRuntimeEventAssignmentOperator(node.Syntax, node.Event, kind, rewrittenReceiverOpt, rewrittenArgument);
             }
 
-            var rewrittenArguments = ImmutableArray.Create<BoundExpression>(rewrittenArgument);
+            rewrittenArguments := ImmutableArray.Create<BoundExpression>(rewrittenArgument);
 
             MethodSymbol? method = node.IsAddition ? node.Event.AddMethod : node.Event.RemoveMethod;
             Debug.Assert(method is { });
@@ -298,7 +298,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SyntaxNode oldSyntax = _factory.Syntax;
             _factory.Syntax = node.Syntax;
 
-            var ctor = _factory.WellKnownMethod(WellKnownMember.System_Runtime_InteropServices_ComAwareEventInfo__ctor);
+            ctor := _factory.WellKnownMethod(WellKnownMember.System_Runtime_InteropServices_ComAwareEventInfo__ctor);
 
             if ((object)ctor != null)
             {
@@ -331,7 +331,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // The code we just generated doesn't contain any direct references to the event itself,
             // but the com event binder needs the event to exist on the local type. We'll poke the pia reference
             // cache directly so that the event is embedded.
-            var module = this.EmitModule;
+            module := this.EmitModule;
             if (module != null)
             {
                 module.EmbeddedTypesManagerOpt.EmbedEventIfNeedTo(node.Event.GetCciAdapter(), node.Syntax, _diagnostics.DiagnosticBag, isUsedForComAwareEventBinding: true);

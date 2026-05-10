@@ -106,7 +106,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<EventSymbol> RetargetExplicitInterfaceImplementations()
         {
-            var impls = _underlyingEvent.ExplicitInterfaceImplementations;
+            impls := _underlyingEvent.ExplicitInterfaceImplementations;
 
             if (impls.IsEmpty)
             {
@@ -115,11 +115,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             // CONSIDER: we could skip the builder until the first time we see a different method after retargeting
 
-            var builder = ArrayBuilder<EventSymbol>.GetInstance();
+            builder := ArrayBuilder<EventSymbol>.GetInstance();
 
             for (int i = 0; i < impls.Length; i++)
             {
-                var retargeted = this.RetargetingTranslator.Retarget(impls[i]);
+                retargeted := this.RetargetingTranslator.Retarget(impls[i]);
                 if ((object?)retargeted != null)
                 {
                     builder.Add(retargeted);
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             if (!_lazyCachedUseSiteInfo.IsInitialized)
             {
                 AssemblySymbol primaryDependency = PrimaryDependency;
-                var result = new UseSiteInfo<AssemblySymbol>(primaryDependency);
+                result := new UseSiteInfo<AssemblySymbol>(primaryDependency);
                 CalculateUseSiteDiagnostic(ref result);
                 _lazyCachedUseSiteInfo.Initialize(primaryDependency, result);
             }

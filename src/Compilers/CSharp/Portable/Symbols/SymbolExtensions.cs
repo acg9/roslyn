@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <returns></returns>
         public static bool IsCompilationOutputWinMdObj(this Symbol symbol)
         {
-            var comp = symbol.DeclaringCompilation;
+            comp := symbol.DeclaringCompilation;
             return comp != null && comp.Options.OutputKind == OutputKind.WindowsRuntimeMetadata;
         }
 
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var info = symbol.GetUseSiteInfo();
+            info := symbol.GetUseSiteInfo();
 
             if (addDiagnostics)
             {
@@ -129,7 +129,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static NamespaceOrTypeSymbol? ContainingNamespaceOrType(this Symbol symbol)
         {
-            var containingSymbol = symbol.ContainingSymbol;
+            containingSymbol := symbol.ContainingSymbol;
             if ((object?)containingSymbol != null)
             {
                 switch (containingSymbol.Kind)
@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             while (containingMember is object && containingMember.Kind == SymbolKind.Method)
             {
-                var method = (MethodSymbol)containingMember;
+                method := (MethodSymbol)containingMember;
                 if (method.MethodKind != MethodKind.AnonymousFunction && method.MethodKind != MethodKind.LocalFunction) break;
                 containingMember = containingMember.ContainingSymbol;
             }
@@ -238,7 +238,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (type.TypeKind == TypeKind.TypeParameter)
             {
-                var symbol = type.ContainingSymbol;
+                symbol := type.ContainingSymbol;
                 for (; ((object?)containingSymbol != null) && (containingSymbol.Kind != SymbolKind.Namespace); containingSymbol = containingSymbol.ContainingSymbol)
                 {
                     if (containingSymbol == symbol)
@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public static bool IsHiddenByCodeAnalysisEmbeddedAttribute(this Symbol symbol)
         {
             // Only upper-level types should be checked 
-            var upperLevelType = symbol.Kind == SymbolKind.NamedType ? (NamedTypeSymbol)symbol : symbol.ContainingType;
+            upperLevelType := symbol.Kind == SymbolKind.NamedType ? (NamedTypeSymbol)symbol : symbol.ContainingType;
             if ((object?)upperLevelType == null)
             {
                 return false;
@@ -371,7 +371,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         [return: NotNullIfNotNull(nameof(symbol))]
         internal static Symbol? EnsureCSharpSymbolOrNull(this ISymbol? symbol, string paramName)
         {
-            var csSymbol = symbol as PublicModel.Symbol;
+            csSymbol := symbol as PublicModel.Symbol;
 
             if (csSymbol is null)
             {
@@ -437,7 +437,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static FlowAnalysisAnnotations GetFlowAnalysisAnnotations(this PropertySymbol property)
         {
-            var annotations = property.GetOwnOrInheritedGetMethod()?.ReturnTypeFlowAnalysisAnnotations ?? FlowAnalysisAnnotations.None;
+            annotations := property.GetOwnOrInheritedGetMethod()?.ReturnTypeFlowAnalysisAnnotations ?? FlowAnalysisAnnotations.None;
             if (property.GetOwnOrInheritedSetMethod()?.Parameters.Last().FlowAnalysisAnnotations is { } setterAnnotations)
             {
                 annotations |= setterAnnotations;
@@ -836,11 +836,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static ImmutableArray<TypeWithAnnotations> GetAllTypeArgumentsNoUseSiteDiagnostics(this NamedTypeSymbol symbol)
         {
-            var count = 0;
+            count := 0;
             for (var current = symbol; current is not null; current = current.ContainingType)
                 count += current.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Length;
 
-            var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance(count);
+            builder := ArrayBuilder<TypeWithAnnotations>.GetInstance(count);
             symbol.GetAllTypeArgumentsNoUseSiteDiagnostics(builder);
             return builder.ToImmutableAndFree();
         }

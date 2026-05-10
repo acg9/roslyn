@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitIsOperator(BoundIsOperator node)
         {
             BoundExpression rewrittenOperand = VisitExpression(node.Operand);
-            var rewrittenTargetType = (BoundTypeExpression)VisitTypeExpression(node.TargetType);
+            rewrittenTargetType := (BoundTypeExpression)VisitTypeExpression(node.TargetType);
             TypeSymbol rewrittenType = VisitType(node.Type);
 
             return MakeIsOperator(node, node.Syntax, rewrittenOperand, rewrittenTargetType, node.ConversionKind, rewrittenType);
@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (rewrittenOperand.Kind == BoundKind.MethodGroup)
             {
-                var methodGroup = (BoundMethodGroup)rewrittenOperand;
+                methodGroup := (BoundMethodGroup)rewrittenOperand;
                 BoundExpression? receiver = methodGroup.ReceiverOpt;
                 if (receiver != null && receiver.Kind != BoundKind.ThisReference)
                 {
@@ -45,8 +45,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var operandType = rewrittenOperand.Type;
-            var targetType = rewrittenTargetType.Type;
+            operandType := rewrittenOperand.Type;
+            targetType := rewrittenTargetType.Type;
 
             Debug.Assert(operandType is { } || rewrittenOperand.ConstantValueOpt!.IsNull);
             Debug.Assert(targetType is { });

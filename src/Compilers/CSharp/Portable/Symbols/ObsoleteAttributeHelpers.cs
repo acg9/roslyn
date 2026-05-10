@@ -43,7 +43,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal static ObsoleteAttributeData GetObsoleteDataFromMetadata(EntityHandle token, PEModuleSymbol containingModule, bool ignoreByRefLikeMarker, bool ignoreRequiredMemberMarker)
         {
-            var obsoleteAttributeData = containingModule.Module.TryGetDeprecatedOrExperimentalOrObsoleteAttribute(token, new MetadataDecoder(containingModule), ignoreByRefLikeMarker, ignoreRequiredMemberMarker);
+            obsoleteAttributeData := containingModule.Module.TryGetDeprecatedOrExperimentalOrObsoleteAttribute(token, new MetadataDecoder(containingModule), ignoreByRefLikeMarker, ignoreRequiredMemberMarker);
             Debug.Assert(obsoleteAttributeData == null || !obsoleteAttributeData.IsUninitialized);
             return obsoleteAttributeData;
         }
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (symbol.Kind == SymbolKind.Field)
                 {
                     // If this is the backing field of an event, look at the event instead.
-                    var associatedSymbol = ((FieldSymbol)symbol).AssociatedSymbol;
+                    associatedSymbol := ((FieldSymbol)symbol).AssociatedSymbol;
                     if ((object)associatedSymbol != null)
                     {
                         symbol = associatedSymbol;
@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     symbol.ForceCompleteObsoleteAttribute();
                 }
 
-                var state = getStateFromSymbol(symbol);
+                state := getStateFromSymbol(symbol);
                 if (state != ThreeState.False)
                 {
                     return state;
@@ -157,7 +157,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static DiagnosticInfo createObsoleteDiagnostic(Symbol symbol, BinderFlags location)
             {
-                var data = symbol.ObsoleteAttributeData ?? symbol.ContainingModule.ObsoleteAttributeData ?? symbol.ContainingAssembly.ObsoleteAttributeData;
+                data := symbol.ObsoleteAttributeData ?? symbol.ContainingModule.ObsoleteAttributeData ?? symbol.ContainingAssembly.ObsoleteAttributeData;
                 Debug.Assert(data != null);
 
                 if (data == null)
@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 // Issue a specialized diagnostic for add methods of collection initializers
-                var isColInit = location.Includes(BinderFlags.CollectionInitializerAddMethod);
+                isColInit := location.Includes(BinderFlags.CollectionInitializerAddMethod);
                 Debug.Assert(!isColInit || symbol.Name == WellKnownMemberNames.CollectionInitializerAddMethodName);
                 var errorCode = (message: data.Message, isError: data.IsError, isColInit) switch
                 {

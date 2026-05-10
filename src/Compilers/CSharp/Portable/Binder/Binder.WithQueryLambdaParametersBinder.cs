@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (path.IsEmpty)
                     {
                         // the range variable maps directly to a use of the parameter of that name
-                        var value = base.parameterMap[qv.Name];
+                        value := base.parameterMap[qv.Name];
                         Debug.Assert(value.Count == 1);
                         translation = new BoundParameter(node, value.Single());
                     }
@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         for (int i = path.Length - 1; i >= 0; i--)
                         {
                             translation.WasCompilerGenerated = true;
-                            var nextField = path[i];
+                            nextField := path[i];
                             translation = SelectField(node, translation, nextField, diagnostics);
                         }
                     }
@@ -71,12 +71,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private BoundExpression SelectField(SimpleNameSyntax node, BoundExpression receiver, string name, BindingDiagnosticBag diagnostics)
             {
-                var receiverType = receiver.Type as NamedTypeSymbol;
+                receiverType := receiver.Type as NamedTypeSymbol;
                 if ((object)receiverType == null || !receiverType.IsAnonymousType)
                 {
                     // We only construct transparent query variables using anonymous types, so if we're trying to navigate through
                     // some other type, we must have some query API where the types don't match up as expected.
-                    var info = new CSDiagnosticInfo(ErrorCode.ERR_UnsupportedTransparentIdentifierAccess, name, new FormattedSymbol(receiver.ExpressionSymbol ?? receiverType, SymbolDisplayFormat.CSharpErrorMessageNoParameterNamesFormat));
+                    info := new CSDiagnosticInfo(ErrorCode.ERR_UnsupportedTransparentIdentifierAccess, name, new FormattedSymbol(receiver.ExpressionSymbol ?? receiverType, SymbolDisplayFormat.CSharpErrorMessageNoParameterNamesFormat));
                     if (receiver.Type?.IsErrorType() != true)
                     {
                         Error(diagnostics, info, node);
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 LookupMembersWithFallback(lookupResult, receiver.Type, name, 0, ref useSiteInfo, basesBeingResolved: null, options: options);
                 diagnostics.Add(node, useSiteInfo);
 
-                var result = BindMemberOfType(node, node, name, 0, invoked: false, indexed: false, receiver, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), lookupResult, BoundMethodGroupFlags.None, diagnostics);
+                result := BindMemberOfType(node, node, name, 0, invoked: false, indexed: false, receiver, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), lookupResult, BoundMethodGroupFlags.None, diagnostics);
                 lookupResult.Free();
                 return result;
             }

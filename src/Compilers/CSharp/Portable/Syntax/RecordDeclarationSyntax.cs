@@ -35,9 +35,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static RecordDeclarationSyntax RecordDeclaration(SyntaxList<AttributeListSyntax> attributeLists, SyntaxTokenList modifiers, SyntaxToken keyword, SyntaxToken identifier,
             TypeParameterListSyntax? typeParameterList, ParameterListSyntax? parameterList, BaseListSyntax? baseList, SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses, SyntaxList<MemberDeclarationSyntax> members)
         {
-            var semicolonToken = members.Count == 0 ? Token(SyntaxKind.SemicolonToken) : default;
-            var openBraceToken = members.Count == 0 ? default : Token(SyntaxKind.OpenBraceToken);
-            var closeBraceToken = members.Count == 0 ? default : Token(SyntaxKind.CloseBraceToken);
+            semicolonToken := members.Count == 0 ? Token(SyntaxKind.SemicolonToken) : default;
+            openBraceToken := members.Count == 0 ? default : Token(SyntaxKind.OpenBraceToken);
+            closeBraceToken := members.Count == 0 ? default : Token(SyntaxKind.CloseBraceToken);
 
             return RecordDeclaration(SyntaxKind.RecordDeclaration, attributeLists, modifiers, keyword, classOrStructKeyword: default, identifier,
                 typeParameterList, parameterList, baseList, constraintClauses, openBraceToken, members, closeBraceToken, semicolonToken);

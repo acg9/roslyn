@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // check that the corresponding `*ConstantAttribute` is available.
                 foreach (var p in invoke.Parameters)
                 {
-                    var defaultValue = p.ExplicitDefaultConstantValue;
+                    defaultValue := p.ExplicitDefaultConstantValue;
                     if (defaultValue != ConstantValue.NotAvailable)
                     {
                         WellKnownMember? member = defaultValue.SpecialType switch
@@ -101,7 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var resolution = ResolveDelegateOrFunctionPointerMethodGroup(_binder, source, methodSymbol, isFunctionPointer, callingConventionInfo, ref useSiteInfo);
+            resolution := ResolveDelegateOrFunctionPointerMethodGroup(_binder, source, methodSymbol, isFunctionPointer, callingConventionInfo, ref useSiteInfo);
             Debug.Assert(!resolution.IsNonMethodExtensionMember(out _));
 
             var conversion = (resolution.IsEmpty || resolution.HasAnyErrors) ?
@@ -161,9 +161,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol targetType,
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var syntax = node.Syntax;
-            var collectionTypeKind = GetCollectionExpressionTypeKind(Compilation, targetType, out TypeWithAnnotations elementTypeWithAnnotations);
-            var elementType = elementTypeWithAnnotations.Type;
+            syntax := node.Syntax;
+            collectionTypeKind := GetCollectionExpressionTypeKind(Compilation, targetType, out TypeWithAnnotations elementTypeWithAnnotations);
+            elementType := elementTypeWithAnnotations.Type;
             switch (collectionTypeKind)
             {
                 case CollectionExpressionTypeKind.None:
@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             Debug.Assert(elementType is { });
-            var elements = node.Elements;
+            elements := node.Elements;
 
             MethodSymbol? constructor = null;
             bool isExpanded = false;
@@ -203,7 +203,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var builder = ArrayBuilder<Conversion>.GetInstance(elements.Length);
+            builder := ArrayBuilder<Conversion>.GetInstance(elements.Length);
             foreach (var element in elements)
             {
                 Conversion elementConversion = convertElement(element, elementType, ref useSiteInfo);
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol targetType,
             ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var enumeratorInfo = element.EnumeratorInfoOpt;
+            enumeratorInfo := element.EnumeratorInfoOpt;
             if (enumeratorInfo is null)
             {
                 return Conversion.NoConversion;
@@ -266,7 +266,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MethodGroupResolution resolution;
             if ((object)delegateInvokeMethodOpt != null)
             {
-                var analyzedArguments = AnalyzedArguments.GetInstance();
+                analyzedArguments := AnalyzedArguments.GetInstance();
                 GetDelegateOrFunctionPointerArguments(source.Syntax, analyzedArguments, delegateInvokeMethodOpt.Parameters, binder.Compilation);
                 resolution = binder.ResolveMethodGroup(source, analyzedArguments, useSiteInfo: ref useSiteInfo,
                     options: OverloadResolution.Options.InferWithDynamic | OverloadResolution.Options.IsMethodGroupConversion |
@@ -295,7 +295,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return (signature, true, new CallingConventionInfo(signature.CallingConvention, signature.GetCallingConventionModifiers()));
             }
 
-            var delegateType = type.GetDelegateType();
+            delegateType := type.GetDelegateType();
             if ((object)delegateType == null)
             {
                 return (null, false, default);
@@ -314,7 +314,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = binder.GetNewCompoundUseSiteInfo(diagnostics);
             var (invokeMethodOpt, isFunctionPointer, callingConventionInfo) = GetDelegateInvokeOrFunctionPointerMethodIfAvailable(targetType);
-            var resolution = ResolveDelegateOrFunctionPointerMethodGroup(binder, expr, invokeMethodOpt, isFunctionPointer, callingConventionInfo, ref useSiteInfo);
+            resolution := ResolveDelegateOrFunctionPointerMethodGroup(binder, expr, invokeMethodOpt, isFunctionPointer, callingConventionInfo, ref useSiteInfo);
             diagnostics.Add(expr.Syntax, useSiteInfo);
 
             bool hasErrors = resolution.HasAnyErrors;
@@ -334,12 +334,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (resolution.MethodGroup != null)
             {
-                var result = resolution.OverloadResolutionResult;
+                result := resolution.OverloadResolutionResult;
                 if (result != null)
                 {
                     if (result.Succeeded)
                     {
-                        var method = result.BestResult.Member;
+                        method := result.BestResult.Member;
                         Debug.Assert((object)method != null);
                         if (resolution.MethodGroup.IsExtensionMethodGroup)
                         {
@@ -385,7 +385,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             !resolution.IsEmpty &&
                             resolution.ResultKind == LookupResultKind.Viable)
                     {
-                        var overloadDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, diagnostics.AccumulatesDependencies);
+                        overloadDiagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, diagnostics.AccumulatesDependencies);
 
                         result.ReportDiagnostics(
                             binder: binder, location: expr.Syntax.Location, nodeOpt: expr.Syntax, diagnostics: overloadDiagnostics,
@@ -407,9 +407,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public Conversion MethodGroupConversion(SyntaxNode syntax, MethodGroup methodGroup, NamedTypeSymbol delegateType, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var analyzedArguments = AnalyzedArguments.GetInstance();
-            var result = OverloadResolutionResult<MethodSymbol>.GetInstance();
-            var delegateInvokeMethod = delegateType.DelegateInvokeMethod;
+            analyzedArguments := AnalyzedArguments.GetInstance();
+            result := OverloadResolutionResult<MethodSymbol>.GetInstance();
+            delegateInvokeMethod := delegateType.DelegateInvokeMethod;
 
             Debug.Assert((object)delegateInvokeMethod != null && !delegateInvokeMethod.HasUseSiteError,
                          "This method should only be called for valid delegate types");
@@ -424,7 +424,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 options: OverloadResolution.Options.IsMethodGroupConversion,
                 returnRefKind: delegateInvokeMethod.RefKind,
                 returnType: delegateInvokeMethod.ReturnType);
-            var conversion = ToConversion(result, methodGroup, delegateType.DelegateInvokeMethod.ParameterCount);
+            conversion := ToConversion(result, methodGroup, delegateType.DelegateInvokeMethod.ParameterCount);
 
             analyzedArguments.Free();
             result.Free();
@@ -524,8 +524,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert((object)sourceExpression.Type == null);
                 Debug.Assert((object)sourceExpression.ElementType != null);
 
-                var sourceAsPointer = new PointerTypeSymbol(TypeWithAnnotations.Create(sourceExpression.ElementType));
-                var pointerConversion = ClassifyImplicitConversionFromType(sourceAsPointer, destination, ref useSiteInfo);
+                sourceAsPointer := new PointerTypeSymbol(TypeWithAnnotations.Create(sourceExpression.ElementType));
+                pointerConversion := ClassifyImplicitConversionFromType(sourceAsPointer, destination, ref useSiteInfo);
 
                 if (pointerConversion.IsValid)
                 {
@@ -533,11 +533,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var spanType = _binder.GetWellKnownType(WellKnownType.System_Span_T, ref useSiteInfo);
+                    spanType := _binder.GetWellKnownType(WellKnownType.System_Span_T, ref useSiteInfo);
                     if (spanType.TypeKind == TypeKind.Struct && spanType.IsRefLikeType)
                     {
-                        var spanType_T = spanType.Construct(sourceExpression.ElementType);
-                        var spanConversion = ClassifyImplicitConversionFromType(spanType_T, destination, ref useSiteInfo);
+                        spanType_T := spanType.Construct(sourceExpression.ElementType);
+                        spanConversion := ClassifyImplicitConversionFromType(spanType_T, destination, ref useSiteInfo);
 
                         if (spanConversion.Exists)
                         {

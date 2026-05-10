@@ -11,13 +11,13 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         internal static ImmutableArray<BoundExpression> GetChildInitializers(BoundExpression? objectOrCollectionInitializer)
         {
-            var objectInitializerExpression = objectOrCollectionInitializer as BoundObjectInitializerExpression;
+            objectInitializerExpression := objectOrCollectionInitializer as BoundObjectInitializerExpression;
             if (objectInitializerExpression != null)
             {
                 return objectInitializerExpression.Initializers;
             }
 
-            var collectionInitializerExpression = objectOrCollectionInitializer as BoundCollectionInitializerExpression;
+            collectionInitializerExpression := objectOrCollectionInitializer as BoundCollectionInitializerExpression;
             if (collectionInitializerExpression != null)
             {
                 return collectionInitializerExpression.Initializers;

@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             _byteTypeSymbol = systemByteType;
 
-            var annotatedByteType = TypeWithAnnotations.Create(systemByteType);
+            annotatedByteType := TypeWithAnnotations.Create(systemByteType);
 
             var byteArrayType = TypeWithAnnotations.Create(
                 ArrayTypeSymbol.CreateSZArray(

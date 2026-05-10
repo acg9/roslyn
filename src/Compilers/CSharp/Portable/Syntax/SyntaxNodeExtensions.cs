@@ -124,7 +124,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return ((SwitchStatementSyntax)parent).Expression == expression;
 
                 case SyntaxKind.ForStatement:
-                    var forStmt = (ForStatementSyntax)parent;
+                    forStmt := (ForStatementSyntax)parent;
                     return forStmt.Condition == expression || forStmt.Incrementors.FirstOrDefault() == expression;
 
                 case SyntaxKind.ForEachStatement:
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (syntax.Kind() == SyntaxKind.RefType)
             {
-                var refType = (RefTypeSyntax)syntax;
+                refType := (RefTypeSyntax)syntax;
                 refKind = refType.ReadOnlyKeyword.Kind() == SyntaxKind.ReadOnlyKeyword
                     ? RefKind.RefReadOnly
                     : RefKind.Ref;
@@ -257,7 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (diagnostics != null)
                 {
 #if DEBUG
-                    var current = syntax;
+                    current := syntax;
                     if (current.Parent is ScopedTypeSyntax scopedType)
                         current = scopedType;
 
@@ -352,8 +352,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression.Kind() == SyntaxKind.InvocationExpression)
             {
-                var invocation = (InvocationExpressionSyntax)expression;
-                var invocationTarget = invocation.Expression;
+                invocation := (InvocationExpressionSyntax)expression;
+                invocationTarget := invocation.Expression;
 
                 return invocationTarget.Kind() == SyntaxKind.IdentifierName &&
                     ((IdentifierNameSyntax)invocationTarget).IsVar;

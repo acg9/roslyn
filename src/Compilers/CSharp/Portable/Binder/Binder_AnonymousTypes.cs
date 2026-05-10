@@ -23,7 +23,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MessageID.IDS_FeatureAnonymousTypes.CheckFeatureAvailability(diagnostics, node.NewKeyword);
 
             //  prepare
-            var initializers = node.Initializers;
+            initializers := node.Initializers;
             int fieldCount = initializers.Count;
             bool hasError = false;
 
@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             //          correspondence must be preserved all the time including erroneous scenarios
 
             // set of names already used
-            var uniqueFieldNames = PooledHashSet<string>.GetInstance();
+            uniqueFieldNames := PooledHashSet<string>.GetInstance();
 
             for (int i = 0; i < fieldCount; i++)
             {
@@ -182,7 +182,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private bool IsAnonymousTypesAllowed()
         {
-            var member = this.ContainingMemberOrLambda;
+            member := this.ContainingMemberOrLambda;
             if (member is null)
             {
                 return false;

@@ -26,7 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static HashSet<Symbol> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node,
                                                 bool convertInsufficientExecutionStackExceptionToCancelledByStackGuardException = false)
         {
-            var walker = new UnassignedVariablesWalker(compilation, member, node);
+            walker := new UnassignedVariablesWalker(compilation, member, node);
 
             if (convertInsufficientExecutionStackExceptionToCancelledByStackGuardException)
             {
@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             try
             {
                 bool badRegion = false;
-                var result = walker.Analyze(ref badRegion);
+                result := walker.Analyze(ref badRegion);
                 return badRegion ? new HashSet<Symbol>() : result;
             }
             finally

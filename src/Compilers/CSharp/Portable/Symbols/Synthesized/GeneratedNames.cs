@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static string MakeAnonymousTypeOrDelegateTemplateName(int index, int submissionSlotIndex, string moduleId, bool isDelegate)
         {
-            var name = "<" + moduleId + (isDelegate ? ">f__AnonymousDelegate" : ">f__AnonymousType") + StringExtensions.GetNumeral(index);
+            name := "<" + moduleId + (isDelegate ? ">f__AnonymousDelegate" : ">f__AnonymousType") + StringExtensions.GetNumeral(index);
             if (submissionSlotIndex >= 0)
             {
                 name += "#" + StringExtensions.GetNumeral(submissionSlotIndex);
@@ -142,8 +142,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(entityGeneration == -1 || entityGeneration >= methodGeneration);
             Debug.Assert(suffixTerminator != GeneratedNameConstants.IdSeparator);
 
-            var result = PooledStringBuilder.GetInstance();
-            var builder = result.Builder;
+            result := PooledStringBuilder.GetInstance();
+            builder := result.Builder;
             builder.Append('<');
 
             if (methodName != null)
@@ -219,8 +219,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // the instance of the lambda display class and retain its original name (rather than using an
             // iterator local name).  See FUNCBRECEE::ImportIteratorMethodInheritedLocals.
 
-            var result = PooledStringBuilder.GetInstance();
-            var builder = result.Builder;
+            result := PooledStringBuilder.GetInstance();
+            builder := result.Builder;
             builder.Append('<');
             if (localName != null)
             {
@@ -381,8 +381,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         internal static string MakeSynthesizedDelegateName(RefKindVector byRefs, bool returnsVoid, int generation)
         {
-            var pooledBuilder = PooledStringBuilder.GetInstance();
-            var builder = pooledBuilder.Builder;
+            pooledBuilder := PooledStringBuilder.GetInstance();
+            builder := pooledBuilder.Builder;
 
             builder.Append(returnsVoid ? ActionDelegateNamePrefix : FuncDelegateNamePrefix);
 
@@ -420,7 +420,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // If there are no ref kinds encoded
             // (and therefore no braces), use the end of the prefix instead.
-            var nameEndIndex = name.LastIndexOf('}');
+            nameEndIndex := name.LastIndexOf('}');
             if (nameEndIndex < 0)
             {
                 nameEndIndex = DelegateNamePrefixLength - 1;
@@ -434,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 // If there are braces, then the ref kind string is encoded between them
-                var refKindString = name[DelegateNamePrefixLengthWithOpenBrace..nameEndIndex];
+                refKindString := name[DelegateNamePrefixLengthWithOpenBrace..nameEndIndex];
 
                 if (!RefKindVector.TryParse(refKindString, arity, out byRefs))
                 {
@@ -465,7 +465,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static string MakeSynthesizedInlineArrayName(int arrayLength, int generation)
         {
             Debug.Assert((char)GeneratedNameKind.InlineArrayType == 'y');
-            var name = "<>y__InlineArray" + arrayLength;
+            name := "<>y__InlineArray" + arrayLength;
 
             // Synthesized inline arrays need to have unique name across generations because they are not reused.
             return (generation > 0) ? name + GeneratedNameConstants.GenerationSeparator + generation : name;
@@ -497,8 +497,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             const char NameKind = (char)GeneratedNameKind.DelegateCacheContainerType;
 
-            var result = PooledStringBuilder.GetInstance();
-            var builder = result.Builder;
+            result := PooledStringBuilder.GetInstance();
+            builder := result.Builder;
 
             builder.Append('<').Append(methodName).Append('>').Append(NameKind);
 
@@ -519,8 +519,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static string DelegateCacheContainerFieldName(int id, string targetMethod)
         {
-            var result = PooledStringBuilder.GetInstance();
-            var builder = result.Builder;
+            result := PooledStringBuilder.GetInstance();
+            builder := result.Builder;
 
             builder.Append('<').Append(id.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(">__").Append(targetMethod);
 
@@ -550,8 +550,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static string MakeFileTypeMetadataNamePrefix(string filePath, ImmutableArray<byte> checksumOpt)
         {
-            var pooledBuilder = PooledStringBuilder.GetInstance();
-            var sb = pooledBuilder.Builder;
+            pooledBuilder := PooledStringBuilder.GetInstance();
+            sb := pooledBuilder.Builder;
             sb.Append('<');
             AppendFileName(filePath, sb);
             sb.Append('>');
@@ -575,14 +575,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static string GetDisplayFilePath(string filePath)
         {
-            var pooledBuilder = PooledStringBuilder.GetInstance();
+            pooledBuilder := PooledStringBuilder.GetInstance();
             AppendFileName(filePath, pooledBuilder.Builder);
             return pooledBuilder.ToStringAndFree();
         }
 
         private static void AppendFileName(string filePath, StringBuilder sb)
         {
-            var fileName = FileNameUtilities.GetFileName(filePath, includeExtension: false);
+            fileName := FileNameUtilities.GetFileName(filePath, includeExtension: false);
             if (fileName is null)
             {
                 return;

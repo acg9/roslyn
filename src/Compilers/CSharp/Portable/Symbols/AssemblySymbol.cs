@@ -352,7 +352,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 throw new ArgumentNullException(nameof(fullyQualifiedMetadataName));
             }
 
-            var emittedName = MetadataTypeName.FromFullName(fullyQualifiedMetadataName);
+            emittedName := MetadataTypeName.FromFullName(fullyQualifiedMetadataName);
             return TryLookupForwardedMetadataTypeWithCycleDetection(ref emittedName, visitedAssemblies: null);
         }
 
@@ -372,7 +372,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ErrorTypeSymbol CreateMultipleForwardingErrorTypeSymbol(ref MetadataTypeName emittedName, ModuleSymbol forwardingModule, AssemblySymbol destination1, AssemblySymbol destination2)
         {
-            var diagnosticInfo = new CSDiagnosticInfo(ErrorCode.ERR_TypeForwardedToMultipleAssemblies, forwardingModule, this, emittedName.FullName, destination1, destination2);
+            diagnosticInfo := new CSDiagnosticInfo(ErrorCode.ERR_TypeForwardedToMultipleAssemblies, forwardingModule, this, emittedName.FullName, destination1, destination2);
             return new MissingMetadataTypeSymbol.TopLevel(forwardingModule, ref emittedName, diagnosticInfo);
         }
 
@@ -676,7 +676,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 throw new ArgumentNullException(nameof(fullyQualifiedMetadataName));
             }
 
-            var result = this.GetTypeByMetadataName(fullyQualifiedMetadataName, includeReferences: false, isWellKnownType: false, conflicts: out var _);
+            result := this.GetTypeByMetadataName(fullyQualifiedMetadataName, includeReferences: false, isWellKnownType: false, conflicts: out var _);
             Debug.Assert(result?.IsErrorType() != true);
             return result;
         }
@@ -721,7 +721,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (metadataName.IndexOf('+') >= 0)
             {
-                var parts = metadataName.Split(s_nestedTypeNameSeparators);
+                parts := metadataName.Split(s_nestedTypeNameSeparators);
                 Debug.Assert(parts.Length > 0);
                 mdName = MetadataTypeName.FromFullName(parts[0], useCLSCompliantNameArityEncoding);
                 type = GetTopLevelTypeByMetadataName(ref mdName, assemblyOpt: null, includeReferences: includeReferences, isWellKnownType: isWellKnownType,
@@ -811,8 +811,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Type[] genericArguments = typeInfo.GenericTypeArguments;
                 int typeArgumentIndex = 0;
 
-                var currentTypeInfo = typeInfo.IsGenericType ? typeInfo.GetGenericTypeDefinition().GetTypeInfo() : typeInfo;
-                var nestedTypes = ArrayBuilder<System.Reflection.TypeInfo>.GetInstance();
+                currentTypeInfo := typeInfo.IsGenericType ? typeInfo.GetGenericTypeDefinition().GetTypeInfo() : typeInfo;
+                nestedTypes := ArrayBuilder<System.Reflection.TypeInfo>.GetInstance();
                 while (true)
                 {
                     Debug.Assert(currentTypeInfo.IsGenericTypeDefinition || !currentTypeInfo.IsGenericType);
@@ -827,7 +827,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 int i = nestedTypes.Count - 1;
-                var symbol = (NamedTypeSymbol?)GetTypeByReflectionType(nestedTypes[i].AsType());
+                symbol := (NamedTypeSymbol?)GetTypeByReflectionType(nestedTypes[i].AsType());
                 if (symbol is null)
                 {
                     return null;
@@ -895,11 +895,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return symbol;
             }
 
-            var length = symbol.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Length;
-            var typeArgumentSymbols = ArrayBuilder<TypeWithAnnotations>.GetInstance(length);
+            length := symbol.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Length;
+            typeArgumentSymbols := ArrayBuilder<TypeWithAnnotations>.GetInstance(length);
             for (int i = 0; i < length; i++)
             {
-                var argSymbol = GetTypeByReflectionType(typeArguments[currentTypeArgument++]);
+                argSymbol := GetTypeByReflectionType(typeArguments[currentTypeArgument++]);
                 if (argSymbol is null)
                 {
                     return null;
@@ -967,7 +967,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(this is SourceAssemblySymbol,
                 "Never include references for a non-source assembly, because they don't know about aliases.");
 
-            var assemblies = s_symbolPool.Allocate();
+            assemblies := s_symbolPool.Allocate();
 
             // ignore reference aliases if searching for a type from a specific assembly:
             if (assemblyOpt != null)
@@ -1077,7 +1077,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var result = assembly.LookupDeclaredTopLevelMetadataType(ref metadataName);
+            result := assembly.LookupDeclaredTopLevelMetadataType(ref metadataName);
             Debug.Assert(result?.IsErrorType() != true);
             Debug.Assert(result is null || ReferenceEquals(result.ContainingAssembly, assembly));
 

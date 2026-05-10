@@ -107,10 +107,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // NOTE: to match dev10, we're using the value text, rather
             // than the actual text.  For example, "@return" is equivalent
             // to "return".
-            var result = ToAttributeLocation(token.ValueText);
+            result := ToAttributeLocation(token.ValueText);
 
 #if DEBUG
-            var kind = SyntaxFacts.GetKeywordKind(token.ValueText);
+            kind := SyntaxFacts.GetKeywordKind(token.ValueText);
             if (kind == SyntaxKind.None)
             {
                 kind = SyntaxFacts.GetContextualKeywordKind(token.ValueText);

@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static BoundStatement Rewrite(LocalRewriter localRewriter, BoundSwitchStatement node)
             {
-                var rewriter = new SwitchStatementLocalRewriter(node, localRewriter);
+                rewriter := new SwitchStatementLocalRewriter(node, localRewriter);
                 BoundStatement result = rewriter.LowerSwitchStatement(node);
                 rewriter.Free();
                 return result;
@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             protected override LabelSymbol GetDagNodeLabel(BoundDecisionDagNode dag)
             {
-                var result = base.GetDagNodeLabel(dag);
+                result := base.GetDagNodeLabel(dag);
                 if (dag is BoundLeafDecisionDagNode d)
                 {
                     SyntaxNode? section = d.Syntax.Parent;
@@ -71,14 +71,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             private BoundStatement LowerSwitchStatement(BoundSwitchStatement node)
             {
                 _factory.Syntax = node.Syntax;
-                var result = ArrayBuilder<BoundStatement>.GetInstance();
-                var outerVariables = ArrayBuilder<LocalSymbol>.GetInstance();
-                var loweredSwitchGoverningExpression = _localRewriter.VisitExpression(node.Expression);
+                result := ArrayBuilder<BoundStatement>.GetInstance();
+                outerVariables := ArrayBuilder<LocalSymbol>.GetInstance();
+                loweredSwitchGoverningExpression := _localRewriter.VisitExpression(node.Expression);
                 if (!node.WasCompilerGenerated && _localRewriter.Instrument)
                 {
                     // EnC: We need to insert a hidden sequence point to handle function remapping in case
                     // the containing method is edited while methods invoked in the expression are being executed.
-                    var instrumentedExpression = _localRewriter.Instrumenter.InstrumentSwitchStatementExpression(node, loweredSwitchGoverningExpression, _factory);
+                    instrumentedExpression := _localRewriter.Instrumenter.InstrumentSwitchStatementExpression(node, loweredSwitchGoverningExpression, _factory);
                     if (loweredSwitchGoverningExpression.ConstantValueOpt == null)
                     {
                         loweredSwitchGoverningExpression = instrumentedExpression;
@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 foreach (BoundSwitchSection section in node.SwitchSections)
                 {
                     _factory.Syntax = section.Syntax;
-                    var sectionBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+                    sectionBuilder := ArrayBuilder<BoundStatement>.GetInstance();
                     sectionBuilder.AddRange(switchSections[section.Syntax]);
                     foreach (BoundSwitchLabel switchLabel in section.SwitchLabels)
                     {

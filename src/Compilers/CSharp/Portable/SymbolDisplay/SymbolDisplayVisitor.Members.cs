@@ -103,13 +103,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // If at least one accessor is present and all present accessors are readonly, the property should be marked readonly.
 
-            var getMethod = property.GetMethod;
+            getMethod := property.GetMethod;
             if (getMethod is object && !ShouldMethodDisplayReadOnly(getMethod, property))
             {
                 return false;
             }
 
-            var setMethod = property.SetMethod;
+            setMethod := property.SetMethod;
             if (setMethod is object && !ShouldMethodDisplayReadOnly(setMethod, property))
             {
                 return false;
@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 AddPunctuation(SyntaxKind.OpenBraceToken);
 
                 AddAccessor(symbol, symbol.GetMethod, SyntaxKind.GetKeyword);
-                var keywordForSetAccessor = IsInitOnly(symbol.SetMethod) ? SyntaxKind.InitKeyword : SyntaxKind.SetKeyword;
+                keywordForSetAccessor := IsInitOnly(symbol.SetMethod) ? SyntaxKind.InitKeyword : SyntaxKind.SetKeyword;
                 AddAccessor(symbol, symbol.SetMethod, keywordForSetAccessor);
 
                 AddSpace();
@@ -232,7 +232,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             AddAccessibilityIfNeeded(symbol);
             AddMemberModifiersIfNeeded(symbol);
 
-            var accessor = symbol.AddMethod ?? symbol.RemoveMethod;
+            accessor := symbol.AddMethod ?? symbol.RemoveMethod;
             if (accessor is object && ShouldMethodDisplayReadOnly(accessor))
             {
                 AddReadOnlyIfNeeded();
@@ -439,7 +439,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case MethodKind.PropertySet:
                     {
                         isAccessor = true;
-                        var associatedProperty = (IPropertySymbol?)symbol.AssociatedSymbol;
+                        associatedProperty := (IPropertySymbol?)symbol.AssociatedSymbol;
                         if (associatedProperty == null)
                         {
                             goto case MethodKind.Ordinary;
@@ -454,7 +454,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case MethodKind.EventRemove:
                     {
                         isAccessor = true;
-                        var associatedEvent = (IEventSymbol?)symbol.AssociatedSymbol;
+                        associatedEvent := (IEventSymbol?)symbol.AssociatedSymbol;
                         if (associatedEvent == null)
                         {
                             goto case MethodKind.Ordinary;
@@ -473,16 +473,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                         bool useConstructorName = Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.UseMetadataMemberNames)
                             || symbol.ContainingType == null || symbol.ContainingType.IsAnonymousType || symbol.ContainingType.IsExtension;
 
-                        var name = useConstructorName ? symbol.Name : symbol.ContainingType!.Name;
+                        name := useConstructorName ? symbol.Name : symbol.ContainingType!.Name;
 
-                        var partKind = GetPartKindForConstructorOrDestructor(symbol);
+                        partKind := GetPartKindForConstructorOrDestructor(symbol);
 
                         Builder.Add(CreatePart(partKind, symbol, name));
                         break;
                     }
                 case MethodKind.Destructor:
                     {
-                        var partKind = GetPartKindForConstructorOrDestructor(symbol);
+                        partKind := GetPartKindForConstructorOrDestructor(symbol);
 
                         // Note: we are using the metadata name also in the case that symbol.containingType is null, which should never be the case here.
                         if (Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.UseMetadataMemberNames) || symbol.ContainingType == null)
@@ -503,8 +503,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (!Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.UseMetadataMemberNames) &&
                             symbol.GetSymbol()?.OriginalDefinition is SourceUserDefinedOperatorSymbolBase sourceUserDefinedOperatorSymbolBase)
                         {
-                            var operatorName = symbol.MetadataName;
-                            var lastDotPosition = operatorName.LastIndexOf('.');
+                            operatorName := symbol.MetadataName;
+                            lastDotPosition := operatorName.LastIndexOf('.');
 
                             if (lastDotPosition >= 0)
                             {
@@ -590,7 +590,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     AddSpace();
                     AddKeyword(SyntaxKind.UnmanagedKeyword);
 
-                    var conventionTypes = symbol.UnmanagedCallingConventionTypes;
+                    conventionTypes := symbol.UnmanagedCallingConventionTypes;
 
                     if (symbol.CallingConvention != SignatureCallingConvention.Unmanaged || !conventionTypes.IsEmpty)
                     {
@@ -795,10 +795,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             // (e.g. field types, param types, etc), which just want the name whereas parameters are
             // used on their own or in the context of methods.
 
-            var includeType = Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeType);
+            includeType := Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeType);
             var includeName = symbol.Name.Length != 0 && (Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeName) ||
                 (!Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.ExcludeParameterNameIfStandalone) && Builder.Count == 0));
-            var includeBrackets = Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeOptionalBrackets);
+            includeBrackets := Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeOptionalBrackets);
             var includeDefaultValue = Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeDefaultValue) &&
                 Format.ParameterOptions.IncludesOption(SymbolDisplayParameterOptions.IncludeName) &&
                 symbol.HasExplicitDefaultValue &&
@@ -820,7 +820,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     AddSpace();
                 }
-                var kind = symbol.IsThis ? SymbolDisplayPartKind.Keyword : SymbolDisplayPartKind.ParameterName;
+                kind := symbol.IsThis ? SymbolDisplayPartKind.Keyword : SymbolDisplayPartKind.ParameterName;
                 Builder.Add(CreatePart(kind, symbol, symbol.Name));
             }
 
@@ -935,8 +935,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 (containingType == null ||
                  (containingType.TypeKind != TypeKind.Interface && !IsEnumMember(symbol) && !IsLocalFunction(symbol))))
             {
-                var isConst = symbol is IFieldSymbol { IsConst: true };
-                var isRequired = symbol is IFieldSymbol { IsRequired: true } or IPropertySymbol { IsRequired: true };
+                isConst := symbol is IFieldSymbol { IsConst: true };
+                isRequired := symbol is IFieldSymbol { IsRequired: true } or IPropertySymbol { IsRequired: true };
                 if (symbol.IsStatic && !isConst)
                 {
                     AddKeyword(SyntaxKind.StaticKeyword);
@@ -988,7 +988,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var first = true;
+            first := true;
 
             // The display code is called by the debugger; if a developer is debugging Roslyn and attempts
             // to visualize a symbol *during its construction*, the parameters and return type might
@@ -1053,7 +1053,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (Format.MemberOptions.IncludesOption(SymbolDisplayMemberOptions.IncludeExplicitInterface) && !implementedMembers.IsEmpty)
             {
-                var implementedMember = implementedMembers[0];
+                implementedMember := implementedMembers[0];
                 Debug.Assert(implementedMember.ContainingType != null);
 
                 INamedTypeSymbol containingType = implementedMember.ContainingType;

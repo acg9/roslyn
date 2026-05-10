@@ -154,11 +154,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal InMethodBinder GetPrimaryConstructorInMethodBinder(SynthesizedPrimaryConstructor constructor)
         {
-            var typeDecl = constructor.GetSyntax();
+            typeDecl := constructor.GetSyntax();
             Debug.Assert(typeDecl.ParameterList is not null);
 
-            var extraInfo = NodeUsage.ConstructorBodyOrInitializer;
-            var key = BinderFactoryVisitor.CreateBinderCacheKey(typeDecl, extraInfo);
+            extraInfo := NodeUsage.ConstructorBodyOrInitializer;
+            key := BinderFactoryVisitor.CreateBinderCacheKey(typeDecl, extraInfo);
 
             if (!_binderCache.TryGetValue(key, out Binder resultBinder))
             {

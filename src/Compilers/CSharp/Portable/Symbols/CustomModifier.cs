@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static CustomModifier Convert(ModifierInfo<TypeSymbol> customModifier)
         {
-            var modifier = (NamedTypeSymbol)customModifier.Modifier;
+            modifier := (NamedTypeSymbol)customModifier.Modifier;
             return customModifier.IsOptional ? CreateOptional(modifier) : CreateRequired(modifier);
         }
 

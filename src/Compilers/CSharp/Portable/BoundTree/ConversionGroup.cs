@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal string GetDebuggerDisplay()
         {
-            var str = $"#{_id} {Conversion}";
+            str := $"#{_id} {Conversion}";
             if (ExplicitType.HasType)
             {
                 str += $" ({ExplicitType})";

@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             FromClauseSyntax fromClause = null;
             for (SyntaxNode node = queryClause; ; node = node.Parent)
             {
-                var e = node as QueryExpressionSyntax;
+                e := node as QueryExpressionSyntax;
                 if (e != null)
                 {
                     fromClause = e.FromClause;
@@ -85,9 +85,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             bool nonUnique = false;
-            var originalType = instanceType.OriginalDefinition;
-            var ienumerable_t = Compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerable_T);
-            var iqueryable_t = Compilation.GetWellKnownType(WellKnownType.System_Linq_IQueryable_T);
+            originalType := instanceType.OriginalDefinition;
+            ienumerable_t := Compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerable_T);
+            iqueryable_t := Compilation.GetWellKnownType(WellKnownType.System_Linq_IQueryable_T);
             bool isIenumerable = TypeSymbol.Equals(originalType, ienumerable_t, TypeCompareKind.ConsiderEverything2) || HasUniqueInterface(instanceType, ienumerable_t, ref nonUnique, ref useSiteInfo);
             bool isQueryable = TypeSymbol.Equals(originalType, iqueryable_t, TypeCompareKind.ConsiderEverything2) || HasUniqueInterface(instanceType, iqueryable_t, ref nonUnique, ref useSiteInfo);
             return isIenumerable != isQueryable && !nonUnique;
@@ -123,9 +123,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool HasCastToQueryProvider(TypeSymbol instanceType, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var originalType = instanceType.OriginalDefinition;
-            var ienumerable = Compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
-            var iqueryable = Compilation.GetWellKnownType(WellKnownType.System_Linq_IQueryable);
+            originalType := instanceType.OriginalDefinition;
+            ienumerable := Compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
+            iqueryable := Compilation.GetWellKnownType(WellKnownType.System_Linq_IQueryable);
             bool isIenumerable = TypeSymbol.Equals(originalType, ienumerable, TypeCompareKind.ConsiderEverything2) || HasUniqueInterface(instanceType, ienumerable, ref useSiteInfo);
             bool isQueryable = TypeSymbol.Equals(originalType, iqueryable, TypeCompareKind.ConsiderEverything2) || HasUniqueInterface(instanceType, iqueryable, ref useSiteInfo);
             return isIenumerable != isQueryable;
@@ -137,7 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (parent.Kind() == SyntaxKind.JoinClause)
                 {
-                    var join = (JoinClauseSyntax)parent;
+                    join := (JoinClauseSyntax)parent;
                     if (join.LeftExpression.Span.Contains(node.Span) && join.Identifier.ValueText == node.Identifier.ValueText) return true;
                 }
             }
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (parent.Kind() == SyntaxKind.JoinClause)
                 {
-                    var join = (JoinClauseSyntax)parent;
+                    join := (JoinClauseSyntax)parent;
                     if (join.RightExpression.Span.Contains(node.Span)) return true;
                 }
             }
@@ -219,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol type = null;
             if (arg.Kind == BoundKind.UnboundLambda)
             {
-                var unbound = (UnboundLambda)arg;
+                unbound := (UnboundLambda)arg;
                 foreach (var t in unbound.Data.InferredReturnTypes())
                 {
                     if (!t.IsErrorType())

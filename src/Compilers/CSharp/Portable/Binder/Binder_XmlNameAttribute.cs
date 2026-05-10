@@ -18,16 +18,16 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Diagnostics are generated in a separate pass when we emit.
         internal ImmutableArray<Symbol> BindXmlNameAttribute(XmlNameAttributeSyntax syntax, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var identifier = syntax.Identifier;
+            identifier := syntax.Identifier;
 
             if (identifier.IsMissing)
             {
                 return ImmutableArray<Symbol>.Empty;
             }
 
-            var name = identifier.Identifier.ValueText;
+            name := identifier.Identifier.ValueText;
 
-            var lookupResult = LookupResult.GetInstance();
+            lookupResult := LookupResult.GetInstance();
             this.LookupSymbolsWithFallback(lookupResult, name, arity: 0, useSiteInfo: ref useSiteInfo);
 
             if (lookupResult.Kind == LookupResultKind.Empty)

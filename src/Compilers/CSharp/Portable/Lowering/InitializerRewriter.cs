@@ -21,8 +21,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!boundInitializers.IsDefault);
             Debug.Assert((method.MethodKind == MethodKind.Constructor) || (method.MethodKind == MethodKind.StaticConstructor));
 
-            var sourceMethod = method as SourceMemberMethodSymbol;
-            var syntax = ((object)sourceMethod != null) ? sourceMethod.SyntaxNode : method.GetNonNullSyntaxNode();
+            sourceMethod := method as SourceMemberMethodSymbol;
+            syntax := ((object)sourceMethod != null) ? sourceMethod.SyntaxNode : method.GetNonNullSyntaxNode();
             return new BoundTypeOrInstanceInitializers(syntax, boundInitializers.SelectAsArray(RewriteInitializersAsStatements));
         }
 
@@ -30,9 +30,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(!boundInitializers.IsDefault);
 
-            var boundStatements = ArrayBuilder<BoundStatement>.GetInstance(boundInitializers.Length);
-            var submissionResultType = method.ResultType;
-            var hasSubmissionResultType = (object)submissionResultType != null;
+            boundStatements := ArrayBuilder<BoundStatement>.GetInstance(boundInitializers.Length);
+            submissionResultType := method.ResultType;
+            hasSubmissionResultType := (object)submissionResultType != null;
             BoundStatement lastStatement = null;
             BoundExpression trailingExpression = null;
 
@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     method.DeclaringCompilation.IsSubmissionSyntaxTree(initializer.SyntaxTree))
                 {
                     lastStatement = ((BoundGlobalStatementInitializer)initializer).Statement;
-                    var expression = GetTrailingScriptExpression(lastStatement);
+                    expression := GetTrailingScriptExpression(lastStatement);
                     if (expression != null &&
                         (object)expression.Type != null &&
                         !expression.Type.IsVoidType())
@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static BoundStatement RewriteFieldInitializer(BoundFieldEqualsValue fieldInit)
         {
-            var field = fieldInit.Field;
+            field := fieldInit.Field;
             SyntaxNode syntax = fieldInit.Syntax;
             syntax = (syntax as EqualsValueClauseSyntax)?.Value ?? syntax; //we want the attached sequence point to indicate the value node
             var boundReceiver = field.IsStatic ? null :

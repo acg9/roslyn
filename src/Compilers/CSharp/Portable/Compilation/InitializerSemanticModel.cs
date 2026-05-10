@@ -149,8 +149,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SymbolKind.Field:
                     {
-                        var field = (FieldSymbol)this.MemberSymbol;
-                        var enumField = field as SourceEnumConstantSymbol;
+                        field := (FieldSymbol)this.MemberSymbol;
+                        enumField := field as SourceEnumConstantSymbol;
                         if ((object)enumField != null)
                         {
                             return binder.BindEnumConstantInitializer(enumField, equalsValue, diagnostics);
@@ -163,14 +163,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case SymbolKind.Property:
                     {
-                        var property = (SourcePropertySymbol)this.MemberSymbol;
+                        property := (SourcePropertySymbol)this.MemberSymbol;
                         BoundFieldEqualsValue result = binder.BindFieldInitializer(property.BackingField, equalsValue, diagnostics);
                         return new BoundPropertyEqualsValue(result.Syntax, property, result.Locals, result.Value);
                     }
 
                 case SymbolKind.Parameter:
                     {
-                        var parameter = (ParameterSymbol)this.MemberSymbol;
+                        parameter := (ParameterSymbol)this.MemberSymbol;
                         return binder.BindParameterDefaultValue(
                             equalsValue,
                             parameter,
@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override bool TryGetSpeculativeSemanticModelCore(SyntaxTreeSemanticModel parentModel, int position, EqualsValueClauseSyntax initializer, out PublicSemanticModel speculativeModel)
         {
-            var binder = this.GetEnclosingBinder(position);
+            binder := this.GetEnclosingBinder(position);
             if (binder == null)
             {
                 speculativeModel = null;

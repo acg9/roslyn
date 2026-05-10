@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static ImmutableArray<Symbol> UnwrapErrorCandidates(ImmutableArray<Symbol> candidateSymbols)
         {
-            var candidate = candidateSymbols.IsEmpty ? null : candidateSymbols[0] as ErrorTypeSymbol;
+            candidate := candidateSymbols.IsEmpty ? null : candidateSymbols[0] as ErrorTypeSymbol;
             return ((object?)candidate != null && !candidate.CandidateSymbols.IsEmpty) ? candidate.CandidateSymbols : candidateSymbols;
         }
 
@@ -290,7 +290,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            var other = t2 as ExtendedErrorTypeSymbol;
+            other := t2 as ExtendedErrorTypeSymbol;
             if ((object?)other == null || _unreported || other._unreported)
             {
                 return false;

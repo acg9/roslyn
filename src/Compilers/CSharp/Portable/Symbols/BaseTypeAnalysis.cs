@@ -21,10 +21,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)on != null);
             Debug.Assert(on.IsDefinition);
 
-            var hs = PooledHashSet<Symbol>.GetInstance();
+            hs := PooledHashSet<Symbol>.GetInstance();
             TypeDependsClosure(depends, depends.DeclaringCompilation, hs);
 
-            var result = hs.Contains(on);
+            result := hs.Contains(on);
             hs.Free();
 
             return result;
@@ -66,11 +66,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)on != null);
             Debug.Assert(on.IsDefinition);
 
-            var hs = PooledHashSet<NamedTypeSymbol>.GetInstance();
-            var typesWithCycle = PooledHashSet<NamedTypeSymbol>.GetInstance();
+            hs := PooledHashSet<NamedTypeSymbol>.GetInstance();
+            typesWithCycle := PooledHashSet<NamedTypeSymbol>.GetInstance();
             StructDependsClosure(depends, hs, typesWithCycle, ConsList<NamedTypeSymbol>.Empty.Prepend(on));
 
-            var result = typesWithCycle.Contains(on);
+            result := typesWithCycle.Contains(on);
             typesWithCycle.Free();
             hs.Free();
 
@@ -113,8 +113,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 foreach (var member in type.GetMembersUnordered())
                 {
-                    var field = member as FieldSymbol;
-                    var fieldType = field?.NonPointerType();
+                    field := member as FieldSymbol;
+                    fieldType := field?.NonPointerType();
                     if (fieldType is null || fieldType.TypeKind != TypeKind.Struct || field.IsStatic)
                     {
                         continue;
@@ -146,12 +146,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // The code below should be kept in sync with NamedTypeSymbol.GetManagedKind in VB
 
             var (isManaged, hasGenerics) = INamedTypeSymbolInternal.Helpers.IsManagedTypeHelper(type);
-            var definitelyManaged = isManaged == ThreeState.True;
+            definitelyManaged := isManaged == ThreeState.True;
             if (isManaged == ThreeState.Unknown)
             {
                 // Otherwise, we have to build and inspect the closure of depended-upon types.
-                var hs = PooledHashSet<Symbol>.GetInstance();
-                var result = dependsOnDefinitelyManagedType(type, hs, ref useSiteInfo);
+                hs := PooledHashSet<Symbol>.GetInstance();
+                result := dependsOnDefinitelyManagedType(type, hs, ref useSiteInfo);
                 definitelyManaged = result.definitelyManaged;
                 hasGenerics = hasGenerics || result.hasGenerics;
                 hs.Free();
@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 Debug.Assert((object)type != null);
 
-                var hasGenerics = false;
+                hasGenerics := false;
                 if (partialClosure.Add(type))
                 {
                     foreach (var member in type.GetInstanceFieldsAndEvents())
@@ -224,7 +224,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                         else
                         {
-                            var result = INamedTypeSymbolInternal.Helpers.IsManagedTypeHelper(fieldNamedType);
+                            result := INamedTypeSymbolInternal.Helpers.IsManagedTypeHelper(fieldNamedType);
                             hasGenerics = hasGenerics || result.hasGenerics;
                             // NOTE: don't use ManagedKind.get on a NamedTypeSymbol - that could lead
                             // to infinite recursion.

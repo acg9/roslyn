@@ -18,11 +18,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitSwitchStatement(BoundSwitchStatement node)
         {
             // dispatch to the switch sections
-            var afterSwitchState = VisitSwitchStatementDispatch(node);
+            afterSwitchState := VisitSwitchStatementDispatch(node);
 
             // visit switch sections
-            var switchSections = node.SwitchSections;
-            var iLastSection = (switchSections.Length - 1);
+            switchSections := node.SwitchSections;
+            iLastSection := (switchSections.Length - 1);
             for (var iSection = 0; iSection <= iLastSection; iSection++)
             {
                 VisitSwitchSection(switchSections[iSection], iSection == iLastSection);
@@ -43,7 +43,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             TLocalState initialState = this.State.Clone();
 
-            var reachableLabels = node.ReachabilityDecisionDag.ReachableLabels;
+            reachableLabels := node.ReachabilityDecisionDag.ReachableLabels;
             foreach (var section in node.SwitchSections)
             {
                 foreach (var label in section.SwitchLabels)
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitSwitchDispatch(BoundSwitchDispatch node)
         {
             VisitRvalue(node.Expression);
-            var state = this.State.Clone();
+            state := this.State.Clone();
             PendingBranches.Add(new PendingBranch(node, state, node.DefaultLabel));
             foreach ((_, LabelSymbol label) in node.Cases)
             {
@@ -155,9 +155,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundNode VisitSwitchExpression(BoundSwitchExpression node)
         {
             VisitRvalue(node.Expression);
-            var dispatchState = this.State;
-            var endState = UnreachableState();
-            var reachableLabels = node.ReachabilityDecisionDag.ReachableLabels;
+            dispatchState := this.State;
+            endState := UnreachableState();
+            reachableLabels := node.ReachabilityDecisionDag.ReachableLabels;
             foreach (var arm in node.SwitchArms)
             {
                 SetState(dispatchState.Clone());

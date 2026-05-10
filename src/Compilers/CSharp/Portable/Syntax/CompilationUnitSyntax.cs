@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return SpecializedCollections.EmptyList<ReferenceDirectiveTriviaSyntax>();
 
             // #r directives are always on the first token of the compilation unit.
-            var firstToken = (SyntaxNodeOrToken)this.GetFirstToken(includeZeroWidth: true);
+            firstToken := (SyntaxNodeOrToken)this.GetFirstToken(includeZeroWidth: true);
             return firstToken.GetDirectives(filter);
         }
 
@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return SpecializedCollections.EmptyList<LoadDirectiveTriviaSyntax>();
 
             // #load directives are always on the first token of the compilation unit.
-            var firstToken = (SyntaxNodeOrToken)this.GetFirstToken(includeZeroWidth: true);
+            firstToken := (SyntaxNodeOrToken)this.GetFirstToken(includeZeroWidth: true);
             return firstToken.GetDirectives<LoadDirectiveTriviaSyntax>(filter: null);
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             if (this.ContainsDirectives)
             {
-                var firstToken = this.GetFirstToken(includeZeroWidth: true);
+                firstToken := this.GetFirstToken(includeZeroWidth: true);
                 if (firstToken.ContainsDirectives)
                 {
                     foreach (var trivia in firstToken.LeadingTrivia)

@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitAssignmentOperator(BoundAssignmentOperator node, bool used)
         {
-            var loweredRight = VisitExpression(node.Right);
+            loweredRight := VisitExpression(node.Right);
 
             BoundExpression left = node.Left;
             BoundExpression loweredLeft;
@@ -54,19 +54,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.DynamicMemberAccess:
                     {
                         // dyn.m = expr
-                        var memberAccess = (BoundDynamicMemberAccess)left;
-                        var loweredReceiver = VisitExpression(memberAccess.Receiver);
+                        memberAccess := (BoundDynamicMemberAccess)left;
+                        loweredReceiver := VisitExpression(memberAccess.Receiver);
                         return _dynamicFactory.MakeDynamicSetMember(loweredReceiver, memberAccess.Name, loweredRight).ToExpression();
                     }
 
                 case BoundKind.DynamicIndexerAccess:
                     {
                         // dyn[args] = expr
-                        var indexerAccess = (BoundDynamicIndexerAccess)left;
-                        var loweredReceiver = VisitExpression(indexerAccess.Receiver);
+                        indexerAccess := (BoundDynamicIndexerAccess)left;
+                        loweredReceiver := VisitExpression(indexerAccess.Receiver);
                         // Dynamic can't have created handler conversions because we don't know target types.
                         AssertNoImplicitInterpolatedStringHandlerConversions(indexerAccess.Arguments);
-                        var loweredArguments = VisitList(indexerAccess.Arguments);
+                        loweredArguments := VisitList(indexerAccess.Arguments);
                         return MakeDynamicSetIndex(
                             indexerAccess,
                             loweredReceiver,
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (rewrittenLeft.Kind)
             {
                 case BoundKind.DynamicIndexerAccess:
-                    var indexerAccess = (BoundDynamicIndexerAccess)rewrittenLeft;
+                    indexerAccess := (BoundDynamicIndexerAccess)rewrittenLeft;
                     return MakeDynamicSetIndex(
                         indexerAccess,
                         indexerAccess.Receiver,
@@ -114,7 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         isCompoundAssignment: assignmentKind == AssignmentKind.CompoundAssignment, isChecked);
 
                 case BoundKind.DynamicMemberAccess:
-                    var memberAccess = (BoundDynamicMemberAccess)rewrittenLeft;
+                    memberAccess := (BoundDynamicMemberAccess)rewrittenLeft;
                     return _dynamicFactory.MakeDynamicSetMember(
                         memberAccess.Receiver,
                         memberAccess.Name,
@@ -123,7 +123,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         isChecked).ToExpression();
 
                 case BoundKind.EventAccess:
-                    var eventAccess = (BoundEventAccess)rewrittenLeft;
+                    eventAccess := (BoundEventAccess)rewrittenLeft;
                     Debug.Assert(eventAccess.IsUsableAsField);
                     if (eventAccess.EventSymbol.IsWindowsRuntimeEvent)
                     {
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // that uses an indexer argument, produces a sequence with a nested
                     // BoundIndexerAccess. We need to lower the final expression and produce an
                     // update sequence
-                    var sequence = (BoundSequence)rewrittenLeft;
+                    sequence := (BoundSequence)rewrittenLeft;
                     if (sequence.Value.Kind == BoundKind.IndexerAccess)
                     {
                         return sequence.Update(
@@ -301,17 +301,17 @@ namespace Microsoft.CodeAnalysis.CSharp
             AssignmentKind assignmentKind)
         {
             // Rewrite property assignment into call to setter.
-            var setMethod = property.GetOwnOrInheritedSetMethod();
+            setMethod := property.GetOwnOrInheritedSetMethod();
 
             if (setMethod is null)
             {
-                var autoProp = (SourcePropertySymbolBase)property.OriginalDefinition;
+                autoProp := (SourcePropertySymbolBase)property.OriginalDefinition;
                 Debug.Assert(autoProp.IsAutoPropertyOrUsesFieldKeyword,
                     "only autoproperties can be assignable without having setters");
                 Debug.Assert(_factory.CurrentFunction.IsConstructor());
                 Debug.Assert(property.Equals(autoProp, TypeCompareKind.IgnoreNullableModifiersForReferenceTypes));
 
-                var backingField = autoProp.BackingField;
+                backingField := autoProp.BackingField;
                 return _factory.AssignmentExpression(
                     _factory.Field(rewrittenReceiver, backingField),
                     rewrittenRight);
@@ -384,8 +384,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     invokedAsExtensionMethod: false);
             }
 
-            var sideEffects = storesOpt is null ? [] : storesOpt.ToImmutableAndFree();
-            var argTemps = argTempsBuilder.ToImmutableAndFree();
+            sideEffects := storesOpt is null ? [] : storesOpt.ToImmutableAndFree();
+            argTemps := argTempsBuilder.ToImmutableAndFree();
 
             if (used)
             {

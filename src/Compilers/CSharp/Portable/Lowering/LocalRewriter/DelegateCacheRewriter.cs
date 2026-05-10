@@ -33,7 +33,7 @@ internal sealed class DelegateCacheRewriter
 
     internal static bool CanRewrite(BoundDelegateCreationExpression boundDelegateCreation)
     {
-        var targetMethod = boundDelegateCreation.MethodOpt;
+        targetMethod := boundDelegateCreation.MethodOpt;
 
         Debug.Assert(targetMethod is { });
 
@@ -44,14 +44,14 @@ internal sealed class DelegateCacheRewriter
     {
         Debug.Assert(boundDelegateCreation.MethodOpt is { });
 
-        var oldSyntax = _factory.Syntax;
+        oldSyntax := _factory.Syntax;
         _factory.Syntax = boundDelegateCreation.Syntax;
 
-        var cacheContainer = GetOrAddCacheContainer(boundDelegateCreation);
-        var cacheField = cacheContainer.GetOrAddCacheField(_factory, boundDelegateCreation);
+        cacheContainer := GetOrAddCacheContainer(boundDelegateCreation);
+        cacheField := cacheContainer.GetOrAddCacheField(_factory, boundDelegateCreation);
 
-        var boundCacheField = _factory.Field(receiver: null, cacheField);
-        var rewrittenNode = _factory.Coalesce(boundCacheField, _factory.AssignmentExpression(boundCacheField, boundDelegateCreation));
+        boundCacheField := _factory.Field(receiver: null, cacheField);
+        rewrittenNode := _factory.Coalesce(boundCacheField, _factory.AssignmentExpression(boundCacheField, boundDelegateCreation));
 
         _factory.Syntax = oldSyntax;
 
@@ -63,7 +63,7 @@ internal sealed class DelegateCacheRewriter
         Debug.Assert(_factory.ModuleBuilderOpt is { });
         Debug.Assert(_factory.CurrentFunction is { });
 
-        var generation = _factory.ModuleBuilderOpt.CurrentGenerationOrdinal;
+        generation := _factory.ModuleBuilderOpt.CurrentGenerationOrdinal;
 
         DelegateCacheContainer? container;
 
@@ -91,7 +91,7 @@ internal sealed class DelegateCacheRewriter
 
         if (!TryGetOwnerFunctionOrExtensionType(_factory.CurrentFunction, boundDelegateCreation, out Symbol? owner))
         {
-            var typeCompilationState = _factory.CompilationState;
+            typeCompilationState := _factory.CompilationState;
             container = typeCompilationState.ConcreteDelegateCacheContainer;
 
             if (container is { })
@@ -104,7 +104,7 @@ internal sealed class DelegateCacheRewriter
         }
         else
         {
-            var containers = _genericCacheContainers ??= new Dictionary<Symbol, DelegateCacheContainer>(ReferenceEqualityComparer.Instance);
+            containers := _genericCacheContainers ??= new Dictionary<Symbol, DelegateCacheContainer>(ReferenceEqualityComparer.Instance);
 
             if (containers.TryGetValue(owner, out container))
             {
@@ -122,7 +122,7 @@ internal sealed class DelegateCacheRewriter
 
     private static bool TryGetOwnerFunctionOrExtensionType(MethodSymbol currentFunction, BoundDelegateCreationExpression boundDelegateCreation, [NotNullWhen(true)] out Symbol? owner)
     {
-        var targetMethod = boundDelegateCreation.MethodOpt;
+        targetMethod := boundDelegateCreation.MethodOpt;
         Debug.Assert(targetMethod is { });
 
         if (targetMethod.MethodKind == MethodKind.LocalFunction)
@@ -166,7 +166,7 @@ internal sealed class DelegateCacheRewriter
         // If this is hit, feel free to change but please also add tests.
         Debug.Assert(targetMethod.MethodKind == MethodKind.Ordinary);
 
-        var usedTypeParameters = PooledHashSet<TypeParameterSymbol>.GetInstance();
+        usedTypeParameters := PooledHashSet<TypeParameterSymbol>.GetInstance();
         try
         {
             if ((targetMethod.IsAbstract || targetMethod.IsVirtual) && boundDelegateCreation.Argument is BoundTypeExpression typeExpression)
@@ -174,7 +174,7 @@ internal sealed class DelegateCacheRewriter
                 FindTypeParameters(typeExpression.Type, usedTypeParameters);
             }
 
-            var delegateType = boundDelegateCreation.Type;
+            delegateType := boundDelegateCreation.Type;
 
             FindTypeParameters(delegateType, usedTypeParameters);
             FindTypeParameters(targetMethod, usedTypeParameters);

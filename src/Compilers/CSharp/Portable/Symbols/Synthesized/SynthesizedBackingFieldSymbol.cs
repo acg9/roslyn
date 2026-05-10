@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = this.DeclaringCompilation;
+            compilation := this.DeclaringCompilation;
 
             // do not emit CompilerGenerated attributes for fields inside compiler generated types:
             if (!this.ContainingType.IsImplicitlyDeclared)
@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // The backing field for a partial property may have been calculated for either
             // the definition part or the implementation part. Regardless, we should use
             // the attributes from the definition part.
-            var property = (_property as SourcePropertySymbol)?.SourcePartialDefinitionPart ?? _property;
+            property := (_property as SourcePropertySymbol)?.SourcePartialDefinitionPart ?? _property;
             return property.GetAttributeDeclarations();
         }
 
@@ -139,7 +139,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return false;
                 }
 
-                var propertyType = _property.TypeWithAnnotations;
+                propertyType := _property.TypeWithAnnotations;
                 if (propertyType.NullableAnnotation != NullableAnnotation.NotAnnotated
                     || !_property.UsesFieldKeyword)
                 {
@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_inferredNullableAnnotation == (int)NullableAnnotation.Ignored)
             {
-                var inferredAnnotation = ComputeInferredNullableAnnotation();
+                inferredAnnotation := ComputeInferredNullableAnnotation();
                 Debug.Assert(inferredAnnotation is not NullableAnnotation.Ignored);
                 Interlocked.CompareExchange(ref _inferredNullableAnnotation, (int)inferredAnnotation, (int)NullableAnnotation.Ignored);
             }
@@ -187,10 +187,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (getAccessor.IsAutoPropertyAccessor)
                 return NullableAnnotation.NotAnnotated;
 
-            var binder = getAccessor.TryGetBodyBinder() ?? throw ExceptionUtilities.UnexpectedValue(getAccessor);
-            var boundGetAccessor = binder.BindMethodBody(getAccessor.SyntaxNode, BindingDiagnosticBag.Discarded);
+            binder := getAccessor.TryGetBodyBinder() ?? throw ExceptionUtilities.UnexpectedValue(getAccessor);
+            boundGetAccessor := binder.BindMethodBody(getAccessor.SyntaxNode, BindingDiagnosticBag.Discarded);
 
-            var annotatedDiagnostics = nullableAnalyzeAndFilterDiagnostics(assumedNullableAnnotation: NullableAnnotation.Annotated);
+            annotatedDiagnostics := nullableAnalyzeAndFilterDiagnostics(assumedNullableAnnotation: NullableAnnotation.Annotated);
             if (annotatedDiagnostics.IsEmptyWithoutResolution)
             {
                 // If the pass where the field was annotated results in no diagnostics at all, then the property is null-resilient and the not-annotated pass can be skipped.
@@ -198,7 +198,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return NullableAnnotation.Annotated;
             }
 
-            var notAnnotatedDiagnostics = nullableAnalyzeAndFilterDiagnostics(assumedNullableAnnotation: NullableAnnotation.NotAnnotated);
+            notAnnotatedDiagnostics := nullableAnalyzeAndFilterDiagnostics(assumedNullableAnnotation: NullableAnnotation.NotAnnotated);
             if (notAnnotatedDiagnostics.IsEmptyWithoutResolution)
             {
                 // annotated pass had diagnostics, and not-annotated pass had no diagnostics.
@@ -208,7 +208,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // Both annotated and not-annotated cases had nullable warnings.
-            var notAnnotatedDiagnosticsSet = new HashSet<Diagnostic>(notAnnotatedDiagnostics.AsEnumerable(), SameDiagnosticComparer.Instance);
+            notAnnotatedDiagnosticsSet := new HashSet<Diagnostic>(notAnnotatedDiagnostics.AsEnumerable(), SameDiagnosticComparer.Instance);
             notAnnotatedDiagnostics.Free();
 
             foreach (var diagnostic in annotatedDiagnostics.AsEnumerable())
@@ -227,14 +227,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             DiagnosticBag nullableAnalyzeAndFilterDiagnostics(NullableAnnotation assumedNullableAnnotation)
             {
-                var diagnostics = DiagnosticBag.GetInstance();
+                diagnostics := DiagnosticBag.GetInstance();
                 NullableWalker.AnalyzeIfNeeded(binder, boundGetAccessor, boundGetAccessor.Syntax, diagnostics, symbolAndGetterNullResilienceData: (getAccessor, new NullableWalker.GetterNullResilienceData(_property.BackingField, assumedNullableAnnotation)));
                 if (diagnostics.IsEmptyWithoutResolution)
                 {
                     return diagnostics;
                 }
 
-                var filteredDiagnostics = DiagnosticBag.GetInstance();
+                filteredDiagnostics := DiagnosticBag.GetInstance();
                 _ = DeclaringCompilation.FilterAndAppendAndFreeDiagnostics(filteredDiagnostics, ref diagnostics, cancellationToken: default);
                 return filteredDiagnostics;
             }
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
             Debug.Assert(arguments.Diagnostics is BindingDiagnosticBag);
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
 
@@ -282,7 +282,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void CheckForFieldTargetedAttribute(BindingDiagnosticBag diagnostics)
         {
-            var languageVersion = this.DeclaringCompilation.LanguageVersion;
+            languageVersion := this.DeclaringCompilation.LanguageVersion;
             if (languageVersion.AllowAttributesOnBackingFields())
             {
                 return;

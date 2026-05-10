@@ -890,12 +890,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 case SymbolKind.Method:
                     MethodSymbol method = (MethodSymbol)member;
-                    var methodReturnType = method.ReturnTypeWithAnnotations;
+                    methodReturnType := method.ReturnTypeWithAnnotations;
                     return methodReturnType.CustomModifiers.Any() || method.RefCustomModifiers.Any() ||
                            methodReturnType.Type.HasCustomModifiers(flagNonDefaultArraySizesOrLowerBounds: false);
                 case SymbolKind.Property:
                     PropertySymbol property = (PropertySymbol)member;
-                    var propertyType = property.TypeWithAnnotations;
+                    propertyType := property.TypeWithAnnotations;
                     return propertyType.CustomModifiers.Any() || property.RefCustomModifiers.Any() ||
                            propertyType.Type.HasCustomModifiers(flagNonDefaultArraySizesOrLowerBounds: false);
                 case SymbolKind.Event:
@@ -1069,7 +1069,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         private static bool IsOverriddenSymbolAccessible(Symbol overridden, NamedTypeSymbol overridingContainingType)
         {
-            var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             return AccessCheck.IsSymbolAccessible(overridden.OriginalDefinition, overridingContainingType.OriginalDefinition, ref discardedUseSiteInfo);
         }
     }

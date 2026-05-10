@@ -31,12 +31,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             CompilationTestData? testData,
             CancellationToken cancellationToken)
         {
-            var diagnostics = DiagnosticBag.GetInstance();
+            diagnostics := DiagnosticBag.GetInstance();
 
-            var emitOptions = EmitOptions.Default.WithDebugInformationFormat(baseline.HasPortablePdb ? DebugInformationFormat.PortablePdb : DebugInformationFormat.Pdb);
-            var runtimeMDVersion = compilation.GetRuntimeMetadataVersion(emitOptions, diagnostics);
-            var serializationProperties = compilation.ConstructModuleSerializationProperties(emitOptions, runtimeMDVersion, baseline.ModuleVersionId);
-            var manifestResources = SpecializedCollections.EmptyEnumerable<ResourceDescription>();
+            emitOptions := EmitOptions.Default.WithDebugInformationFormat(baseline.HasPortablePdb ? DebugInformationFormat.PortablePdb : DebugInformationFormat.Pdb);
+            runtimeMDVersion := compilation.GetRuntimeMetadataVersion(emitOptions, diagnostics);
+            serializationProperties := compilation.ConstructModuleSerializationProperties(emitOptions, runtimeMDVersion, baseline.ModuleVersionId);
+            manifestResources := SpecializedCollections.EmptyEnumerable<ResourceDescription>();
 
             if (!GetPredefinedHotReloadExceptionTypeConstructor(compilation, diagnostics, out var predefinedHotReloadExceptionConstructor))
             {
@@ -53,16 +53,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             PEDeltaAssemblyBuilder moduleBeingBuilt;
             try
             {
-                var sourceAssembly = compilation.SourceAssembly;
-                var initialBaseline = baseline.InitialBaseline;
+                sourceAssembly := compilation.SourceAssembly;
+                initialBaseline := baseline.InitialBaseline;
 
-                var previousSourceAssembly = ((CSharpCompilation)baseline.Compilation).SourceAssembly;
+                previousSourceAssembly := ((CSharpCompilation)baseline.Compilation).SourceAssembly;
 
                 // Hydrate symbols from initial metadata. Once we do so it is important to reuse these symbols across all generations,
                 // in order for the symbol matcher to be able to use reference equality once it maps symbols to initial metadata.
-                var metadataSymbols = PEDeltaAssemblyBuilder.GetOrCreateMetadataSymbols(initialBaseline, sourceAssembly.DeclaringCompilation);
-                var metadataDecoder = (MetadataDecoder)metadataSymbols.MetadataDecoder;
-                var metadataAssembly = (PEAssemblySymbol)metadataDecoder.ModuleSymbol.ContainingAssembly;
+                metadataSymbols := PEDeltaAssemblyBuilder.GetOrCreateMetadataSymbols(initialBaseline, sourceAssembly.DeclaringCompilation);
+                metadataDecoder := (MetadataDecoder)metadataSymbols.MetadataDecoder;
+                metadataAssembly := (PEAssemblySymbol)metadataDecoder.ModuleSymbol.ContainingAssembly;
 
                 var sourceToMetadata = new CSharpSymbolMatcher(
                     sourceAssembly: sourceAssembly,
@@ -118,8 +118,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             }
 
             EmitBaseline? newBaseline = null;
-            var updatedMethods = ArrayBuilder<MethodDefinitionHandle>.GetInstance();
-            var changedTypes = ArrayBuilder<TypeDefinitionHandle>.GetInstance();
+            updatedMethods := ArrayBuilder<MethodDefinitionHandle>.GetInstance();
+            changedTypes := ArrayBuilder<TypeDefinitionHandle>.GetInstance();
 
             if (compilation.Compile(
                 moduleBeingBuilt,
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return true;
             }
 
-            var type = compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_HotReloadException);
+            type := compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_HotReloadException);
             if (type.Kind == SymbolKind.ErrorType)
             {
                 // type is missing and will be synthesized

@@ -144,7 +144,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         // Null checks do not check conversions, therefore we can pass discarded use-site info,
                         // and not ask consumers to pass it to us.
-                        var discardedInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                        discardedInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                         bool? result = EvaluateNodeForInputValue(_root, null, ref discardedInfo);
                         Debug.Assert(result.HasValue);
                         _lazyIncludesNull = result.GetValueOrDefault();
@@ -203,8 +203,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case AndNode andNode:
                     {
-                        var leftResult = EvaluateNodeForInputValue(andNode.Left, inputValue, ref useSiteInfo);
-                        var rightResult = EvaluateNodeForInputValue(andNode.Right, inputValue, ref useSiteInfo);
+                        leftResult := EvaluateNodeForInputValue(andNode.Left, inputValue, ref useSiteInfo);
+                        rightResult := EvaluateNodeForInputValue(andNode.Right, inputValue, ref useSiteInfo);
                         if (leftResult == false || rightResult == false)
                             return false;
                         if (leftResult == true && rightResult == true)
@@ -215,8 +215,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case OrNode orNode:
                     {
-                        var leftResult = EvaluateNodeForInputValue(orNode.Left, inputValue, ref useSiteInfo);
-                        var rightResult = EvaluateNodeForInputValue(orNode.Right, inputValue, ref useSiteInfo);
+                        leftResult := EvaluateNodeForInputValue(orNode.Left, inputValue, ref useSiteInfo);
+                        rightResult := EvaluateNodeForInputValue(orNode.Right, inputValue, ref useSiteInfo);
                         if (leftResult == true || rightResult == true)
                             return true;
                         if (leftResult == false && rightResult == false)
@@ -388,10 +388,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public override string ToString()
         {
-            var copy = new TypeUnionValueSet(_typesInUnion, _root, _conversions);
+            copy := new TypeUnionValueSet(_typesInUnion, _root, _conversions);
             string prefix = "";
 
-            var discardedInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            discardedInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             if (copy.IsEmpty(ref discardedInfo))
             {
                 prefix += "Empty: ";

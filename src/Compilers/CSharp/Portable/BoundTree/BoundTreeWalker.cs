@@ -33,12 +33,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             // which is typically the "trivial" expression x where x is the query
             // variable.  So that we can make sense of x in this
             // context, we store the unoptimized form and visit this extra argument.
-            var qc = unoptimizedForm as BoundQueryClause;
+            qc := unoptimizedForm as BoundQueryClause;
             if (qc != null) unoptimizedForm = qc.Value;
-            var call = unoptimizedForm as BoundCall;
+            call := unoptimizedForm as BoundCall;
             if (call != null && (object)call.Method != null)
             {
-                var arguments = call.Arguments;
+                arguments := call.Arguments;
                 if (call.Method.Name == "Select")
                 {
                     this.Visit(arguments[arguments.Length - 1]);
@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return base.VisitBinaryOperator(node);
             }
 
-            var rightOperands = ArrayBuilder<BoundExpression>.GetInstance();
+            rightOperands := ArrayBuilder<BoundExpression>.GetInstance();
 
             rightOperands.Push(node.Right);
 
@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return base.VisitBinaryPattern(node);
             }
 
-            var rightOperands = ArrayBuilder<BoundPattern>.GetInstance();
+            rightOperands := ArrayBuilder<BoundPattern>.GetInstance();
 
             rightOperands.Push(node.Right);
             rightOperands.Push(binary.Right);
@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.ReceiverOpt is BoundCall receiver1)
             {
-                var calls = ArrayBuilder<BoundCall>.GetInstance();
+                calls := ArrayBuilder<BoundCall>.GetInstance();
 
                 calls.Push(node);
 
@@ -236,7 +236,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Visit(node.Condition);
                 Visit(node.Consequence);
-                var alternative = node.AlternativeOpt;
+                alternative := node.AlternativeOpt;
                 if (alternative is null)
                 {
                     break;

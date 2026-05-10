@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeMap typeMap;
             ImmutableArray<TypeParameterSymbol> typeParameters;
 
-            var lambdaFrame = ContainingType as SynthesizedClosureEnvironment;
+            lambdaFrame := ContainingType as SynthesizedClosureEnvironment;
             switch (closureKind)
             {
                 case ClosureKind.Singleton: // all type parameters on method (except the top level method's)
@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!structEnvironments.IsDefaultOrEmpty && typeParameters.Length != 0)
             {
-                var constructedStructClosures = ArrayBuilder<NamedTypeSymbol>.GetInstance();
+                constructedStructClosures := ArrayBuilder<NamedTypeSymbol>.GetInstance();
                 foreach (var env in structEnvironments)
                 {
                     NamedTypeSymbol constructed;
@@ -88,8 +88,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var originals = env.ConstructedFromTypeParameters;
-                        var newArgs = typeMap.SubstituteTypeParameters(originals);
+                        originals := env.ConstructedFromTypeParameters;
+                        newArgs := typeMap.SubstituteTypeParameters(originals);
                         constructed = env.Construct(newArgs);
                     }
                     constructedStructClosures.Add(constructed);
@@ -110,7 +110,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void EnsureAttributesExist(TypeCompilationState compilationState)
         {
-            var moduleBuilder = compilationState.ModuleBuilderOpt;
+            moduleBuilder := compilationState.ModuleBuilderOpt;
             if (moduleBuilder is null)
             {
                 return;
@@ -155,7 +155,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static DeclarationModifiers MakeDeclarationModifiers(ClosureKind closureKind, MethodSymbol originalMethod)
         {
-            var mods = closureKind == ClosureKind.ThisOnly ? DeclarationModifiers.Private : DeclarationModifiers.Internal;
+            mods := closureKind == ClosureKind.ThisOnly ? DeclarationModifiers.Private : DeclarationModifiers.Internal;
 
             if (closureKind == ClosureKind.Static)
             {

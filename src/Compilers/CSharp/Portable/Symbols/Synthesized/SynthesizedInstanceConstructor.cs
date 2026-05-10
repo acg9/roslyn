@@ -267,13 +267,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override int CalculateLocalSyntaxOffset(int localPosition, SyntaxTree localTree)
         {
-            var containingType = (SourceMemberContainerTypeSymbol)this.ContainingType;
+            containingType := (SourceMemberContainerTypeSymbol)this.ContainingType;
             return containingType.CalculateSyntaxOffsetInSynthesizedConstructor(localPosition, localTree, isStatic: false);
         }
 
         internal sealed override UseSiteInfo<AssemblySymbol> GetUseSiteInfo()
         {
-            var result = new UseSiteInfo<AssemblySymbol>(PrimaryDependency);
+            result := new UseSiteInfo<AssemblySymbol>(PrimaryDependency);
             MergeUseSiteInfo(ref result, ReturnTypeWithAnnotations.Type.GetUseSiteInfo());
             return result;
         }
@@ -285,7 +285,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected void GenerateMethodBodyCore(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var factory = new SyntheticBoundNodeFactory(this, this.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            factory := new SyntheticBoundNodeFactory(this, this.GetNonNullSyntaxNode(), compilationState, diagnostics);
             factory.CurrentFunction = this;
             if (ContainingType.BaseTypeNoUseSiteDiagnostics is MissingMetadataTypeSymbol)
             {
@@ -294,7 +294,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var baseConstructorCall = Binder.GenerateBaseParameterlessConstructorInitializer(this, diagnostics);
+            baseConstructorCall := Binder.GenerateBaseParameterlessConstructorInitializer(this, diagnostics);
             if (baseConstructorCall == null)
             {
                 // .ctor was not found or was inaccessible
@@ -302,12 +302,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var statements = ArrayBuilder<BoundStatement>.GetInstance();
+            statements := ArrayBuilder<BoundStatement>.GetInstance();
             statements.Add(factory.ExpressionStatement(baseConstructorCall));
             GenerateMethodBodyStatements(factory, statements, diagnostics);
             statements.Add(factory.Return());
 
-            var block = factory.Block(statements.ToImmutableAndFree());
+            block := factory.Block(statements.ToImmutableAndFree());
 
             factory.CloseMethod(block);
         }

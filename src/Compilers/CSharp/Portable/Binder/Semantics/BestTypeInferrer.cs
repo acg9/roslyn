@@ -16,10 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static NullableAnnotation GetNullableAnnotation(ArrayBuilder<TypeWithAnnotations> types)
         {
 #if DEBUG
-            var example = types.FirstOrDefault(t => t.HasType);
+            example := types.FirstOrDefault(t => t.HasType);
 #endif
 
-            var result = NullableAnnotation.NotAnnotated;
+            result := NullableAnnotation.NotAnnotated;
             foreach (var type in types)
             {
 #if DEBUG
@@ -93,9 +93,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Perform best type inference on candidate types.
-            var builder = ArrayBuilder<TypeSymbol>.GetInstance(candidateTypes.Count);
+            builder := ArrayBuilder<TypeSymbol>.GetInstance(candidateTypes.Count);
             builder.AddRange(candidateTypes);
-            var result = GetBestType(builder, conversions, ref useSiteInfo);
+            result := GetBestType(builder, conversions, ref useSiteInfo);
             builder.Free();
 
             if (result is FunctionTypeSymbol functionType)
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ArrayBuilder<TypeSymbol> candidateTypes = ArrayBuilder<TypeSymbol>.GetInstance();
             try
             {
-                var conversionsWithoutNullability = conversions.WithNullability(false);
+                conversionsWithoutNullability := conversions.WithNullability(false);
 
                 Debug.Assert(!NullableWalker.IsTargetTypedExpression(expr1));
                 if (expr1.Type is { } type1)
@@ -210,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var better = Better(best, type, conversions, ref useSiteInfo);
+                    better := Better(best, type, conversions, ref useSiteInfo);
 
                     if (better is null)
                     {
@@ -286,9 +286,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return type1;
             }
 
-            var conversionsWithoutNullability = conversions.WithNullability(false);
-            var t1tot2 = conversionsWithoutNullability.ClassifyImplicitConversionFromTypeWhenNeitherOrBothFunctionTypes(type1, type2, ref useSiteInfo).Exists;
-            var t2tot1 = conversionsWithoutNullability.ClassifyImplicitConversionFromTypeWhenNeitherOrBothFunctionTypes(type2, type1, ref useSiteInfo).Exists;
+            conversionsWithoutNullability := conversions.WithNullability(false);
+            t1tot2 := conversionsWithoutNullability.ClassifyImplicitConversionFromTypeWhenNeitherOrBothFunctionTypes(type1, type2, ref useSiteInfo).Exists;
+            t2tot1 := conversionsWithoutNullability.ClassifyImplicitConversionFromTypeWhenNeitherOrBothFunctionTypes(type2, type1, ref useSiteInfo).Exists;
 
             if (t1tot2 && t2tot1)
             {

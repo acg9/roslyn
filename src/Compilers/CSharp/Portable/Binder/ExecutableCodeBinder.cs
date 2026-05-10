@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (_memberSymbol is SynthesizedSimpleProgramEntryPointSymbol entryPoint && _root == entryPoint.SyntaxNode)
             {
-                var scopeOwner = new SimpleProgramBinder(this, entryPoint);
+                scopeOwner := new SimpleProgramBinder(this, entryPoint);
                 map = LocalBinderFactory.BuildMap(_memberSymbol, _root, scopeOwner, _binderUpdatedHandler);
                 map.Add(_root, scopeOwner);
             }
@@ -107,14 +107,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var parameters = iterator.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: true);
+            parameters := iterator.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: true);
 
             foreach (var parameter in parameters)
             {
                 bool isReceiverParameter = parameter.IsExtensionParameter();
                 if (parameter.RefKind != RefKind.None)
                 {
-                    var location = isReceiverParameter ? iterator.GetFirstLocation() : parameter.GetFirstLocation();
+                    location := isReceiverParameter ? iterator.GetFirstLocation() : parameter.GetFirstLocation();
                     diagnostics.Add(ErrorCode.ERR_BadIteratorArgType, location);
                 }
                 else if (parameter.Type.IsPointerOrFunctionPointer() && !isReceiverParameter)
@@ -137,7 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 MessageID.IDS_FeatureRefUnsafeInIteratorAsync.CheckFeatureAvailability(diagnostics, compilation, errorLocation);
             }
 
-            var returnType = iterator.ReturnType;
+            returnType := iterator.ReturnType;
             RefKind refKind = iterator.RefKind;
             TypeWithAnnotations elementType = InMethodBinder.GetIteratorElementTypeFromReturnType(compilation, refKind, returnType, errorLocation, diagnostics);
 

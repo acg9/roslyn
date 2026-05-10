@@ -83,8 +83,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public string ToRefKindString()
         {
-            var pooledBuilder = PooledStringBuilder.GetInstance();
-            var builder = pooledBuilder.Builder;
+            pooledBuilder := PooledStringBuilder.GetInstance();
+            builder := pooledBuilder.Builder;
 
             builder.Append('{');
 
@@ -136,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             Debug.Assert(firstWord is not null);
 
-            var bitVector = BitVector.FromWords(firstWord.Value, otherWords?.ToArrayAndFree() ?? Array.Empty<ulong>(), capacity * BitsPerRefKind);
+            bitVector := BitVector.FromWords(firstWord.Value, otherWords?.ToArrayAndFree() ?? Array.Empty<ulong>(), capacity * BitsPerRefKind);
             result = new RefKindVector(bitVector);
             return true;
         }

@@ -46,7 +46,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // There is no scenario where suppression goes away
             Debug.Assert(suppress || !this.IsSuppressed);
 
-            var result = (BoundExpression)MemberwiseClone();
+            result := (BoundExpression)MemberwiseClone();
             result.IsSuppressed = suppress;
             return result;
         }
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if ((Kind != BoundKind.Local && Kind != BoundKind.Parameter) || this.WasConverted)
                 return this;
 
-            var result = (BoundExpression)MemberwiseClone();
+            result := (BoundExpression)MemberwiseClone();
             result.WasConverted = true;
             return result;
 #else

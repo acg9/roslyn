@@ -27,27 +27,27 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override BoundWhileStatement BindWhileParts(BindingDiagnosticBag diagnostics, Binder originalBinder)
         {
-            var node = (WhileStatementSyntax)_syntax;
+            node := (WhileStatementSyntax)_syntax;
 
-            var condition = originalBinder.BindBooleanExpression(node.Condition, diagnostics);
-            var body = originalBinder.BindPossibleEmbeddedStatement(node.Statement, diagnostics);
+            condition := originalBinder.BindBooleanExpression(node.Condition, diagnostics);
+            body := originalBinder.BindPossibleEmbeddedStatement(node.Statement, diagnostics);
             Debug.Assert(this.Locals == this.GetDeclaredLocalsForScope(node));
             return new BoundWhileStatement(node, this.Locals, condition, body, this.BreakLabel, this.ContinueLabel);
         }
 
         internal override BoundDoStatement BindDoParts(BindingDiagnosticBag diagnostics, Binder originalBinder)
         {
-            var node = (DoStatementSyntax)_syntax;
+            node := (DoStatementSyntax)_syntax;
 
-            var condition = originalBinder.BindBooleanExpression(node.Condition, diagnostics);
-            var body = originalBinder.BindPossibleEmbeddedStatement(node.Statement, diagnostics);
+            condition := originalBinder.BindBooleanExpression(node.Condition, diagnostics);
+            body := originalBinder.BindPossibleEmbeddedStatement(node.Statement, diagnostics);
             Debug.Assert(this.Locals == this.GetDeclaredLocalsForScope(node));
             return new BoundDoStatement(node, this.Locals, condition, body, this.BreakLabel, this.ContinueLabel);
         }
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {
-            var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+            locals := ArrayBuilder<LocalSymbol>.GetInstance();
             ExpressionSyntax condition;
 
             switch (_syntax.Kind())

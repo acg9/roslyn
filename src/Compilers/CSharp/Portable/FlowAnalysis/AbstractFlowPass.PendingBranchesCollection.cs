@@ -85,14 +85,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal void Add(PendingBranch branch)
             {
-                var label = branch.Label;
+                label := branch.Label;
                 if (label is null)
                 {
                     _unlabeledBranches.Add(branch);
                 }
                 else
                 {
-                    var branches = GetOrAddLabeledBranches(label);
+                    branches := GetOrAddLabeledBranches(label);
                     branches.Add(branch);
                 }
             }
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     foreach (var pair in collection._labeledBranches)
                     {
-                        var branches = GetOrAddLabeledBranches(pair.Key);
+                        branches := GetOrAddLabeledBranches(pair.Key);
                         branches.AddRange(pair.Value);
                     }
                 }

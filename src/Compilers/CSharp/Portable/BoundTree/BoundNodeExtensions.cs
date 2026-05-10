@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static bool ContainsAwaitExpression(this ImmutableArray<BoundExpression> expressions)
         {
-            var visitor = new ContainsAwaitVisitor();
+            visitor := new ContainsAwaitVisitor();
             foreach (var expression in expressions)
             {
                 visitor.Visit(expression);
@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Action<BoundBinaryOperator, TArg>? binaryOperatorCallback = null)
             where TInterpolatedStringType : BoundInterpolatedStringBase
         {
-            var stack = ArrayBuilder<BoundBinaryOperator>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryOperator>.GetInstance();
 
             pushLeftNodes(binary, stack, arg, binaryOperatorCallback);
 
@@ -188,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             int i = 0;
 
-            var result = doRewrite(binary, arg, interpolatedStringFactory, binaryOperatorFactory, ref i);
+            result := doRewrite(binary, arg, interpolatedStringFactory, binaryOperatorFactory, ref i);
 
             return result;
 
@@ -200,7 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ref int i)
             {
                 TResult? result = default;
-                var originalStack = ArrayBuilder<BoundBinaryOperator>.GetInstance();
+                originalStack := ArrayBuilder<BoundBinaryOperator>.GetInstance();
 
                 pushLeftNodes(binary, originalStack);
 

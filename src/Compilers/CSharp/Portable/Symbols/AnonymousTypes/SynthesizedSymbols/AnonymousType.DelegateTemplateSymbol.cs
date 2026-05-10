@@ -44,17 +44,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 TypeParameters = CreateTypeParameters(this, parameterCount, returnsVoid: voidReturnTypeOpt is { }, hasParamsArray: false);
                 NameAndIndex = new NameAndIndex(name, index: 0);
 
-                var constructor = new SynthesizedDelegateConstructor(this, objectType, intPtrType);
+                constructor := new SynthesizedDelegateConstructor(this, objectType, intPtrType);
                 // https://github.com/dotnet/roslyn/issues/56808: Synthesized delegates should include BeginInvoke() and EndInvoke().
-                var invokeMethod = createInvokeMethod(this, refKinds, voidReturnTypeOpt);
+                invokeMethod := createInvokeMethod(this, refKinds, voidReturnTypeOpt);
                 _members = CreateMembers(constructor, invokeMethod);
 
                 static SynthesizedDelegateInvokeMethod createInvokeMethod(AnonymousDelegateTemplateSymbol containingType, RefKindVector refKinds, TypeSymbol? voidReturnTypeOpt)
                 {
-                    var typeParams = containingType.TypeParameters;
+                    typeParams := containingType.TypeParameters;
 
                     int parameterCount = typeParams.Length - (voidReturnTypeOpt is null ? 1 : 0);
-                    var parameters = ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
+                    parameters := ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
                     for (int i = 0; i < parameterCount; i++)
                     {
                         parameters.Add(
@@ -62,10 +62,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
 
                     // if we are given Void type the method returns Void, otherwise its return type is the last type parameter of the delegate:
-                    var returnType = TypeWithAnnotations.Create(voidReturnTypeOpt ?? typeParams[parameterCount]);
-                    var returnRefKind = (refKinds.IsNull || voidReturnTypeOpt is { }) ? RefKind.None : refKinds[parameterCount];
+                    returnType := TypeWithAnnotations.Create(voidReturnTypeOpt ?? typeParams[parameterCount]);
+                    returnRefKind := (refKinds.IsNull || voidReturnTypeOpt is { }) ? RefKind.None : refKinds[parameterCount];
 
-                    var method = new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
+                    method := new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
                     parameters.Free();
                     return method;
                 }
@@ -73,9 +73,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             private static ImmutableArray<TypeParameterSymbol> CreateTypeParameters(AnonymousDelegateTemplateSymbol containingType, int parameterCount, bool returnsVoid, bool hasParamsArray)
             {
-                var allowRefLikeTypes = containingType.ContainingAssembly.RuntimeSupportsByRefLikeGenerics;
+                allowRefLikeTypes := containingType.ContainingAssembly.RuntimeSupportsByRefLikeGenerics;
 
-                var typeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance(parameterCount + (returnsVoid ? 0 : 1));
+                typeParameters := ArrayBuilder<TypeParameterSymbol>.GetInstance(parameterCount + (returnsVoid ? 0 : 1));
                 for (int i = 0; i < parameterCount; i++)
                 {
                     typeParameters.Add(new AnonymousTypeManager.AnonymousTypeParameterSymbol(containingType, i, "T" + (i + 1),
@@ -110,25 +110,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     returnsVoid: typeDescr.Fields[^1].Type.IsVoidType(),
                     hasParamsArray: typeDescr.Fields is [.., { IsParams: true }, _]);
 
-                var constructor = new SynthesizedDelegateConstructor(this, manager.System_Object, manager.System_IntPtr);
+                constructor := new SynthesizedDelegateConstructor(this, manager.System_Object, manager.System_IntPtr);
                 // https://github.com/dotnet/roslyn/issues/56808: Synthesized delegates should include BeginInvoke() and EndInvoke().
-                var invokeMethod = createInvokeMethod(this, typeDescr.Fields);
+                invokeMethod := createInvokeMethod(this, typeDescr.Fields);
                 _members = CreateMembers(constructor, invokeMethod);
 
                 static SynthesizedDelegateInvokeMethod createInvokeMethod(
                     AnonymousDelegateTemplateSymbol containingType,
                     ImmutableArray<AnonymousTypeField> fields)
                 {
-                    var typeParams = containingType.TypeParameters;
-                    var returnParameter = fields[^1];
-                    var returnsVoid = returnParameter.Type.IsVoidType();
+                    typeParams := containingType.TypeParameters;
+                    returnParameter := fields[^1];
+                    returnsVoid := returnParameter.Type.IsVoidType();
 
-                    var parameterCount = fields.Length - 1;
-                    var parameters = ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
+                    parameterCount := fields.Length - 1;
+                    parameters := ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
                     for (int i = 0; i < parameterCount; i++)
                     {
-                        var field = fields[i];
-                        var type = TypeWithAnnotations.Create(typeParams[i]);
+                        field := fields[i];
+                        type := TypeWithAnnotations.Create(typeParams[i]);
 
                         // Replace `T` with `T[]` for params array.
                         if (field.IsParams)
@@ -143,10 +143,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
 
                     // if we are given Void type the method returns Void, otherwise its return type is the last type parameter of the delegate
-                    var returnType = TypeWithAnnotations.Create(returnsVoid ? returnParameter.Type : typeParams[parameterCount]);
-                    var returnRefKind = returnParameter.RefKind;
+                    returnType := TypeWithAnnotations.Create(returnsVoid ? returnParameter.Type : typeParams[parameterCount]);
+                    returnRefKind := returnParameter.RefKind;
 
-                    var method = new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
+                    method := new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
                     parameters.Free();
                     return method;
                 }
@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else
                 {
-                    var typeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance(typeParameterCount);
+                    typeParameters := ArrayBuilder<TypeParameterSymbol>.GetInstance(typeParameterCount);
                     for (int i = 0; i < typeParameterCount; i++)
                     {
                         typeParameters.Add(new AnonymousTypeParameterSymbol(this, i, "T" + (i + 1),
@@ -184,9 +184,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     typeMap = new TypeMap(typeParametersToSubstitute, TypeParameters, allowAlpha: true);
                 }
 
-                var constructor = new SynthesizedDelegateConstructor(this, manager.System_Object, manager.System_IntPtr);
+                constructor := new SynthesizedDelegateConstructor(this, manager.System_Object, manager.System_IntPtr);
                 // https://github.com/dotnet/roslyn/issues/56808: Synthesized delegates should include BeginInvoke() and EndInvoke().
-                var invokeMethod = createInvokeMethod(this, typeDescr.Fields, typeMap);
+                invokeMethod := createInvokeMethod(this, typeDescr.Fields, typeMap);
                 _members = CreateMembers(constructor, invokeMethod);
 
                 static SynthesizedDelegateInvokeMethod createInvokeMethod(
@@ -194,20 +194,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ImmutableArray<AnonymousTypeField> fields,
                     TypeMap typeMap)
                 {
-                    var parameterCount = fields.Length - 1;
-                    var parameters = ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
+                    parameterCount := fields.Length - 1;
+                    parameters := ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
                     for (int i = 0; i < parameterCount; i++)
                     {
-                        var field = fields[i];
+                        field := fields[i];
                         parameters.Add(
                             new SynthesizedDelegateInvokeMethod.ParameterDescription(typeMap.SubstituteType(field.Type), field.RefKind, field.Scope, field.DefaultValue, isParams: field.IsParams, hasUnscopedRefAttribute: field.HasUnscopedRefAttribute));
                     }
 
-                    var returnParameter = fields[^1];
-                    var returnType = typeMap.SubstituteType(returnParameter.Type);
-                    var returnRefKind = returnParameter.RefKind;
+                    returnParameter := fields[^1];
+                    returnType := typeMap.SubstituteType(returnParameter.Type);
+                    returnRefKind := returnParameter.RefKind;
 
-                    var method = new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
+                    method := new SynthesizedDelegateInvokeMethod(containingType, parameters, returnType, returnRefKind);
                     parameters.Free();
                     return method;
                 }
@@ -248,7 +248,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-                var compilation = ContainingSymbol.DeclaringCompilation;
+                compilation := ContainingSymbol.DeclaringCompilation;
                 AddSynthesizedAttribute(ref attributes,
                     compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
             }

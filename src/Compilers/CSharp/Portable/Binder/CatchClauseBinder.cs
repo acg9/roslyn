@@ -26,9 +26,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {
-            var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+            locals := ArrayBuilder<LocalSymbol>.GetInstance();
 
-            var declarationOpt = _syntax.Declaration;
+            declarationOpt := _syntax.Declaration;
             if ((declarationOpt != null) && (declarationOpt.Identifier.Kind() != SyntaxKind.None))
             {
                 locals.Add(SourceLocalSymbol.MakeLocal(this.ContainingMemberOrLambda, this, allowRefKind: false, allowScoped: false, declarationOpt.Type, declarationOpt.Identifier, LocalDeclarationKind.CatchVariable, initializer: null));

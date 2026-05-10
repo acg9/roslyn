@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 TypeCompilationState compilationState,
                 DiagnosticBag diagnostics)
             {
-                var methodsConvertedToDelegates = PooledHashSet<MethodSymbol>.GetInstance();
+                methodsConvertedToDelegates := PooledHashSet<MethodSymbol>.GetInstance();
                 var scopeTree = ScopeTreeBuilder.Build(
                     node,
                     method,
@@ -147,14 +147,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (function.CapturedEnvironments.Count > 0)
                     {
-                        var capturedEnvs = PooledHashSet<ClosureEnvironment>.GetInstance();
+                        capturedEnvs := PooledHashSet<ClosureEnvironment>.GetInstance();
                         capturedEnvs.AddAll(function.CapturedEnvironments);
 
                         // Find the nearest captured class environment, if one exists
-                        var curScope = scope;
+                        curScope := scope;
                         while (curScope != null)
                         {
-                            var env = curScope.DeclaredEnvironment;
+                            env := curScope.DeclaredEnvironment;
                             if (!(env is null) && capturedEnvs.Remove(env) && !env.IsStruct)
                             {
                                 function.ContainingEnvironmentOpt = env;
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
 
                         // Now we need to walk up the scopes to find environment captures
-                        var oldEnv = curScope?.DeclaredEnvironment;
+                        oldEnv := curScope?.DeclaredEnvironment;
                         curScope = curScope?.Parent;
                         while (curScope != null)
                         {
@@ -173,7 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 break;
                             }
 
-                            var env = curScope.DeclaredEnvironment;
+                            env := curScope.DeclaredEnvironment;
                             if (!(env is null))
                             {
                                 if (!env.IsStruct)
@@ -215,7 +215,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return;
                 }
 
-                var env = ScopeTree.DeclaredEnvironment;
+                env := ScopeTree.DeclaredEnvironment;
 
                 // If it does exist, 'this' is always in the top-level environment
                 if (env is null)
@@ -274,7 +274,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     ScopeTree.DeclaredEnvironment = null;
                     VisitNestedFunctions(ScopeTree, (scope, nested) =>
                     {
-                        var index = nested.CapturedEnvironments.IndexOf(env);
+                        index := nested.CapturedEnvironments.IndexOf(env);
                         if (index >= 0)
                         {
                             nested.CapturedEnvironments.RemoveAt(index);
@@ -289,7 +289,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     // Currently all variables declared in the same scope are added
                     // to the same closure environment
-                    var variablesInEnvironment = scope.DeclaredVariables;
+                    variablesInEnvironment := scope.DeclaredVariables;
 
                     // Don't create empty environments
                     if (variablesInEnvironment.Count == 0)
@@ -310,7 +310,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // definitely be the case. If we are in a variant interface, we always force
                     // creation of a display class.
                     bool isStruct = VarianceSafety.GetEnclosingVariantInterface(_topLevelMethod) is null;
-                    var closures = new SetWithInsertionOrder<NestedFunction>();
+                    closures := new SetWithInsertionOrder<NestedFunction>();
                     bool addedItem;
 
                     // This loop is O(n), where n is the length of the chain
@@ -339,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     } while (addedItem == true);
 
                     // Next create the environment and add it to the declaration scope
-                    var env = new ClosureEnvironment(variablesInEnvironment, isStruct);
+                    env := new ClosureEnvironment(variablesInEnvironment, isStruct);
                     Debug.Assert(scope.DeclaredEnvironment is null);
                     scope.DeclaredEnvironment = env;
 
@@ -361,11 +361,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// <returns></returns>
             private PooledDictionary<Scope, PooledHashSet<NestedFunction>> CalculateFunctionsCapturingScopeVariables()
             {
-                var closuresCapturingScopeVariables = PooledDictionary<Scope, PooledHashSet<NestedFunction>>.GetInstance();
+                closuresCapturingScopeVariables := PooledDictionary<Scope, PooledHashSet<NestedFunction>>.GetInstance();
 
                 // calculate functions which directly capture a scope
 
-                var environmentsToScopes = PooledDictionary<ClosureEnvironment, Scope>.GetInstance();
+                environmentsToScopes := PooledDictionary<ClosureEnvironment, Scope>.GetInstance();
 
                 VisitScopeTree(ScopeTree, scope =>
                 {
@@ -397,7 +397,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (scope.DeclaredEnvironment is null)
                         continue;
 
-                    var currentScope = scope;
+                    currentScope := scope;
                     while (currentScope.DeclaredEnvironment is null || currentScope.DeclaredEnvironment.CapturesParent)
                     {
                         currentScope = currentScope.Parent;
@@ -431,7 +431,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             private void MergeEnvironments()
             {
-                var closuresCapturingScopeVariables = CalculateFunctionsCapturingScopeVariables();
+                closuresCapturingScopeVariables := CalculateFunctionsCapturingScopeVariables();
 
                 // now we merge environments into their parent environments if it is safe to do so
                 foreach (var (scope, closuresCapturingScope) in closuresCapturingScopeVariables)
@@ -439,14 +439,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (closuresCapturingScope.Count == 0)
                         continue;
 
-                    var scopeEnv = scope.DeclaredEnvironment;
+                    scopeEnv := scope.DeclaredEnvironment;
 
                     // structs don't allocate, so no point merging them
                     if (scopeEnv.IsStruct)
                         continue;
 
-                    var bestScope = scope;
-                    var currentScope = scope;
+                    bestScope := scope;
+                    currentScope := scope;
 
                     // Walk up the scope tree, checking at each point if it is:
                     // a) semantically safe to merge the scope's environment into it's parent scope's environment
@@ -457,18 +457,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (!currentScope.CanMergeWithParent)
                             break;
 
-                        var parentScope = currentScope.Parent;
+                        parentScope := currentScope.Parent;
 
                         // we skip any scopes which do not have any captured variables, and try to merge into the parent scope instead.
                         // We also skip any struct environments as they don't allocate, so no point merging them
-                        var env = parentScope.DeclaredEnvironment;
+                        env := parentScope.DeclaredEnvironment;
                         if (env is null || env.IsStruct)
                         {
                             currentScope = parentScope;
                             continue;
                         }
 
-                        var closuresCapturingParentScope = closuresCapturingScopeVariables[parentScope];
+                        closuresCapturingParentScope := closuresCapturingScopeVariables[parentScope];
 
                         // if more closures reference one scope's environments than the other scope's environments,
                         // then merging the two environments would increase the number of objects referencing some variables, 
@@ -486,7 +486,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     // do the actual work of merging the closure environments
 
-                    var targetEnv = bestScope.DeclaredEnvironment;
+                    targetEnv := bestScope.DeclaredEnvironment;
 
                     foreach (var variable in scopeEnv.CapturedVariables)
                     {
@@ -529,14 +529,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(syntax != null);
 
-                var parentClosure = environment.Parent?.SynthesizedEnvironment;
+                parentClosure := environment.Parent?.SynthesizedEnvironment;
 
                 // Frames are created and assigned top-down, so the parent scope's environment has to be assigned at this point.
                 // This may not be true if environments are merged in release build.
                 Debug.Assert(_slotAllocator == null || environment.Parent is null || parentClosure is not null);
 
                 rudeEdit = parentClosure?.RudeEdit;
-                var parentClosureId = parentClosure?.ClosureId;
+                parentClosureId := parentClosure?.ClosureId;
 
                 var structCaptures = _slotAllocator != null && environment.IsStruct
                     ? environment.CapturedVariables.SelectAsArray(v => v is ThisParameterSymbol ? GeneratedNames.ThisProxyFieldName() : v.Name)
@@ -571,7 +571,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return null;
                 }
 
-                var currentScope = startingScope;
+                currentScope := startingScope;
                 while (currentScope != null)
                 {
                     switch (variable.Kind)
@@ -608,7 +608,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             public static Scope GetScopeParent(Scope treeRoot, BoundNode scopeNode)
             {
-                var correspondingScope = GetScopeWithMatchingBoundNode(treeRoot, scopeNode);
+                correspondingScope := GetScopeWithMatchingBoundNode(treeRoot, scopeNode);
                 return correspondingScope.Parent;
             }
 
@@ -629,7 +629,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     foreach (var nestedScope in currentScope.NestedScopes)
                     {
-                        var found = Helper(nestedScope);
+                        found := Helper(nestedScope);
                         if (found != null)
                         {
                             return found;
@@ -648,7 +648,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </returns>
             public static (NestedFunction, Scope) GetVisibleNestedFunction(Scope startingScope, MethodSymbol functionSymbol)
             {
-                var currentScope = startingScope;
+                currentScope := startingScope;
                 while (currentScope != null)
                 {
                     foreach (var function in currentScope.NestedFunctions)
@@ -682,7 +682,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     foreach (var nestedScope in scope.NestedScopes)
                     {
-                        var found = helper(nestedScope);
+                        found := helper(nestedScope);
                         if (found != null)
                         {
                             return found;

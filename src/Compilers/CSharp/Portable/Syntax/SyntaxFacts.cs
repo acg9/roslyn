@@ -21,13 +21,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool IsAliasQualifier(SyntaxNode node)
         {
-            var p = node.Parent as AliasQualifiedNameSyntax;
+            p := node.Parent as AliasQualifiedNameSyntax;
             return p != null && p.Alias == node;
         }
 
         public static bool IsAttributeName(SyntaxNode node)
         {
-            var parent = node.Parent;
+            parent := node.Parent;
             if (parent == null || !IsName(node.Kind()))
             {
                 return false;
@@ -36,15 +36,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (parent.Kind())
             {
                 case QualifiedName:
-                    var qn = (QualifiedNameSyntax)parent;
+                    qn := (QualifiedNameSyntax)parent;
                     return qn.Right == node ? IsAttributeName(parent) : false;
 
                 case AliasQualifiedName:
-                    var an = (AliasQualifiedNameSyntax)parent;
+                    an := (AliasQualifiedNameSyntax)parent;
                     return an.Name == node ? IsAttributeName(parent) : false;
             }
 
-            var p = node.Parent as AttributeSyntax;
+            p := node.Parent as AttributeSyntax;
             return p != null && p.Name == node;
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsInvoked(ExpressionSyntax node)
         {
             node = (ExpressionSyntax)SyntaxFactory.GetStandaloneExpression(node);
-            var inv = node.Parent as InvocationExpressionSyntax;
+            inv := node.Parent as InvocationExpressionSyntax;
             return inv != null && inv.Expression == node;
         }
 
@@ -64,13 +64,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsIndexed(ExpressionSyntax node)
         {
             node = (ExpressionSyntax)SyntaxFactory.GetStandaloneExpression(node);
-            var indexer = node.Parent as ElementAccessExpressionSyntax;
+            indexer := node.Parent as ElementAccessExpressionSyntax;
             return indexer != null && indexer.Expression == node;
         }
 
         public static bool IsNamespaceAliasQualifier(ExpressionSyntax node)
         {
-            var parent = node.Parent as AliasQualifiedNameSyntax;
+            parent := node.Parent as AliasQualifiedNameSyntax;
             return parent != null && parent.Alias == node;
         }
 
@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsInTypeOnlyContext(ExpressionSyntax node)
         {
             node = SyntaxFactory.GetStandaloneExpression(node);
-            var parent = node.Parent;
+            parent := node.Parent;
             if (parent != null)
             {
                 switch (parent.Kind())
@@ -242,7 +242,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (node != null)
             {
                 node = SyntaxFactory.GetStandaloneExpression(node);
-                var parent = node.Parent;
+                parent := node.Parent;
                 if (parent != null)
                 {
                     switch (parent.Kind())
@@ -280,13 +280,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var parent1 = node.Parent;
+            parent1 := node.Parent;
             if (parent1 == null || !parent1.IsKind(NameColon))
             {
                 return false;
             }
 
-            var parent2 = parent1.Parent;
+            parent2 := parent1.Parent;
             if (parent2.IsKind(SyntaxKind.Subpattern))
             {
                 return true;
@@ -297,7 +297,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var parent3 = parent2.Parent;
+            parent3 := parent2.Parent;
             if (parent3 == null)
             {
                 return false;
@@ -313,7 +313,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var parent4 = parent3.Parent;
+            parent4 := parent3.Parent;
             if (parent4 == null)
             {
                 return false;
@@ -342,7 +342,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool IsFixedStatementExpression(SyntaxNode node)
         {
-            var current = node.Parent;
+            current := node.Parent;
             // Dig through parens because dev10 does (even though the spec doesn't say so)
             // Dig through casts because there's a special error code (CS0254) for such casts.
             while (current != null && (current.IsKind(ParenthesizedExpression) || current.IsKind(CastExpression))) current = current.Parent;
@@ -420,7 +420,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
 
                 case ConditionalAccessExpression:
-                    var access = (ConditionalAccessExpressionSyntax)syntax;
+                    access := (ConditionalAccessExpressionSyntax)syntax;
                     return IsStatementExpression(access.WhenNotNull);
 
                 // Allow missing IdentifierNames; they will show up in error cases
@@ -470,8 +470,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
 
                 case SyntaxKind.DeclarationExpression:
-                    var declaration = (DeclarationExpressionSyntax)syntax;
-                    var designationKind = declaration.Designation.Kind();
+                    declaration := (DeclarationExpressionSyntax)syntax;
+                    designationKind := declaration.Designation.Kind();
                     if (designationKind == SyntaxKind.ParenthesizedVariableDesignation ||
                         designationKind == SyntaxKind.DiscardDesignation)
                     {
@@ -574,12 +574,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (node is null)
                 return false;
 
-            var stack = ArrayBuilder<GreenNode>.GetInstance();
+            stack := ArrayBuilder<GreenNode>.GetInstance();
             stack.Push(node.Green);
 
             while (stack.Count > 0)
             {
-                var current = stack.Pop();
+                current := stack.Pop();
                 Debug.Assert(node.Green == current || current is not Syntax.InternalSyntax.MemberDeclarationSyntax and not Syntax.InternalSyntax.TypeDeclarationSyntax);
 
                 if (current is null)

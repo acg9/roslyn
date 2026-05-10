@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 DeclarationModifiers.Private |
                 syntax.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: false, diagnostics: _declarationDiagnostics);
 
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
             Debug.Assert(diagnostics.DependenciesBag is { });
 
@@ -125,8 +125,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             GetAttributes();
             GetReturnTypeAttributes();
 
-            var compilation = DeclaringCompilation;
-            var location = Syntax.Identifier.GetLocation();
+            compilation := DeclaringCompilation;
+            location := Syntax.Identifier.GetLocation();
 
             if (CallerUnsafeMode == CallerUnsafeMode.Explicit)
             {
@@ -144,7 +144,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             AsyncMethodChecks(addTo);
 
-            var diagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: false, withDependencies: addTo.AccumulatesDependencies);
+            diagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: false, withDependencies: addTo.AccumulatesDependencies);
             if (IsEntryPointCandidate && !IsGenericMethod &&
                 ContainingSymbol is SynthesizedSimpleProgramEntryPointSymbol &&
                 compilation.HasEntryPointSignature(this, diagnostics).IsCandidate)
@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             SyntaxToken arglistToken;
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
             Debug.Assert(diagnostics.DependenciesBag is { });
 
@@ -217,7 +217,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // Note: we don't need to warn on annotations used in #nullable disable context for local functions, as this is handled in binding already
 
-            var isVararg = arglistToken.Kind() == SyntaxKind.ArgListKeyword;
+            isVararg := arglistToken.Kind() == SyntaxKind.ArgListKeyword;
             if (isVararg)
             {
                 diagnostics.Add(ErrorCode.ERR_IllegalVarArgs, arglistToken.GetLocation());
@@ -257,7 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
             Debug.Assert(diagnostics.DependenciesBag is { });
 
@@ -265,7 +265,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(returnTypeSyntax is not ScopedTypeSyntax);
             TypeWithAnnotations returnType = WithTypeParametersBinder.BindType(returnTypeSyntax.SkipScoped(out _).SkipRef(), diagnostics);
 
-            var compilation = DeclaringCompilation;
+            compilation := DeclaringCompilation;
 
             // Skip some diagnostics when the local function is not associated with a compilation
             // (specifically, local functions nested in expressions in the EE).
@@ -331,7 +331,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 // It is an error to be an extension method, but we need to compute it to report it
-                var firstParam = Syntax.ParameterList.Parameters.FirstOrDefault();
+                firstParam := Syntax.ParameterList.Parameters.FirstOrDefault();
                 return firstParam != null &&
                     !firstParam.IsArgList &&
                     firstParam.Modifiers.Any(SyntaxKind.ThisKeyword);
@@ -425,7 +425,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void ReportAttributesDisallowed(SyntaxList<AttributeListSyntax> attributes, BindingDiagnosticBag diagnostics)
         {
-            var diagnosticInfo = MessageID.IDS_FeatureLocalFunctionAttributes.GetFeatureAvailabilityDiagnosticInfo((CSharpParseOptions)syntaxReferenceOpt.SyntaxTree.Options);
+            diagnosticInfo := MessageID.IDS_FeatureLocalFunctionAttributes.GetFeatureAvailabilityDiagnosticInfo((CSharpParseOptions)syntaxReferenceOpt.SyntaxTree.Options);
             if (diagnosticInfo is object)
             {
                 foreach (var attrList in attributes)
@@ -437,11 +437,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ImmutableArray<SourceMethodTypeParameterSymbol> MakeTypeParameters(BindingDiagnosticBag diagnostics)
         {
-            var result = ArrayBuilder<SourceMethodTypeParameterSymbol>.GetInstance();
-            var typeParameters = Syntax.TypeParameterList?.Parameters ?? default;
+            result := ArrayBuilder<SourceMethodTypeParameterSymbol>.GetInstance();
+            typeParameters := Syntax.TypeParameterList?.Parameters ?? default;
             for (int ordinal = 0; ordinal < typeParameters.Count; ordinal++)
             {
-                var parameter = typeParameters[ordinal];
+                parameter := typeParameters[ordinal];
                 if (parameter.VarianceKeyword.Kind() != SyntaxKind.None)
                 {
                     diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, parameter.VarianceKeyword.GetLocation());
@@ -449,9 +449,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 ReportAttributesDisallowed(parameter.AttributeLists, diagnostics);
 
-                var identifier = parameter.Identifier;
-                var location = identifier.GetLocation();
-                var name = identifier.ValueText ?? "";
+                identifier := parameter.Identifier;
+                location := identifier.GetLocation();
+                name := identifier.ValueText ?? "";
 
                 foreach (var @param in result)
                 {
@@ -464,7 +464,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 SourceMemberContainerTypeSymbol.ReportReservedTypeName(identifier.Text, this.DeclaringCompilation, diagnostics.DiagnosticBag, location);
 
-                var tpEnclosing = ContainingSymbol.FindEnclosingTypeParameter(name);
+                tpEnclosing := ContainingSymbol.FindEnclosingTypeParameter(name);
                 if ((object?)tpEnclosing != null)
                 {
                     ErrorCode typeError;
@@ -502,8 +502,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 GetTypeParameterConstraintKinds();
 
-                var syntax = Syntax;
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                syntax := Syntax;
+                diagnostics := BindingDiagnosticBag.GetInstance();
                 Debug.Assert(diagnostics.DiagnosticBag is { });
                 Debug.Assert(diagnostics.DependenciesBag is { });
 
@@ -532,7 +532,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_lazyTypeParameterConstraintKinds.IsDefault)
             {
-                var syntax = Syntax;
+                syntax := Syntax;
                 var constraints = this.MakeTypeParameterConstraintKinds(
                     WithTypeParametersBinder,
                     TypeParameters,
@@ -557,7 +557,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if ((object)this == symbol) return true;
 
-            var localFunction = symbol as LocalFunctionSymbol;
+            localFunction := symbol as LocalFunctionSymbol;
             return localFunction?.Syntax == Syntax;
         }
     }

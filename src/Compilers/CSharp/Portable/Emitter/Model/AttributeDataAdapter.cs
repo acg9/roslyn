@@ -18,13 +18,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         ImmutableArray<Cci.IMetadataExpression> Cci.ICustomAttribute.GetArguments(EmitContext context)
         {
-            var commonArgs = this.CommonConstructorArguments;
+            commonArgs := this.CommonConstructorArguments;
             if (commonArgs.IsEmpty)
             {
                 return ImmutableArray<Cci.IMetadataExpression>.Empty;
             }
 
-            var builder = ArrayBuilder<Cci.IMetadataExpression>.GetInstance();
+            builder := ArrayBuilder<Cci.IMetadataExpression>.GetInstance();
             foreach (var argument in commonArgs)
             {
                 Debug.Assert(argument.Kind != TypedConstantKind.Error);
@@ -55,13 +55,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         ImmutableArray<Cci.IMetadataNamedArgument> Cci.ICustomAttribute.GetNamedArguments(EmitContext context)
         {
-            var commonArgs = this.CommonNamedArguments;
+            commonArgs := this.CommonNamedArguments;
             if (commonArgs.IsEmpty)
             {
                 return ImmutableArray<Cci.IMetadataNamedArgument>.Empty;
             }
 
-            var builder = ArrayBuilder<Cci.IMetadataNamedArgument>.GetInstance();
+            builder := ArrayBuilder<Cci.IMetadataNamedArgument>.GetInstance();
             foreach (var namedArgument in commonArgs)
             {
                 builder.Add(CreateMetadataNamedArgument(namedArgument.Key, namedArgument.Value, context));
@@ -119,8 +119,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private MetadataCreateArray CreateMetadataArray(TypedConstant argument, EmitContext context)
         {
             Debug.Assert(!argument.Values.IsDefault);
-            var values = argument.Values;
-            var arrayType = ((PEModuleBuilder)context.Module).Translate((ArrayTypeSymbol)argument.TypeInternal);
+            values := argument.Values;
+            arrayType := ((PEModuleBuilder)context.Module).Translate((ArrayTypeSymbol)argument.TypeInternal);
 
             if (values.Length == 0)
             {
@@ -129,7 +129,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                ImmutableArray<Cci.IMetadataExpression>.Empty);
             }
 
-            var metadataExprs = new Cci.IMetadataExpression[values.Length];
+            metadataExprs := new Cci.IMetadataExpression[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
                 metadataExprs[i] = CreateMetadataExpression(values[i], context);
@@ -143,9 +143,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private static MetadataTypeOf CreateType(TypedConstant argument, EmitContext context)
         {
             Debug.Assert(argument.ValueInternal != null);
-            var moduleBeingBuilt = (PEModuleBuilder)context.Module;
-            var syntaxNodeOpt = (CSharpSyntaxNode)context.SyntaxNode;
-            var diagnostics = context.Diagnostics;
+            moduleBeingBuilt := (PEModuleBuilder)context.Module;
+            syntaxNodeOpt := (CSharpSyntaxNode)context.SyntaxNode;
+            diagnostics := context.Diagnostics;
             return new MetadataTypeOf(moduleBeingBuilt.Translate((TypeSymbol)argument.ValueInternal, syntaxNodeOpt, diagnostics),
                                       moduleBeingBuilt.Translate((TypeSymbol)argument.TypeInternal, syntaxNodeOpt, diagnostics));
         }
@@ -158,10 +158,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private Cci.IMetadataNamedArgument CreateMetadataNamedArgument(string name, TypedConstant argument, EmitContext context)
         {
-            var symbol = LookupName(name);
-            var value = CreateMetadataExpression(argument, context);
+            symbol := LookupName(name);
+            value := CreateMetadataExpression(argument, context);
             TypeSymbol type;
-            var fieldSymbol = symbol as FieldSymbol;
+            fieldSymbol := symbol as FieldSymbol;
             if ((object)fieldSymbol != null)
             {
                 type = fieldSymbol.Type;
@@ -177,7 +177,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private Symbol LookupName(string name)
         {
-            var type = this.AttributeClass;
+            type := this.AttributeClass;
             while ((object)type != null)
             {
                 foreach (var member in type.GetMembers(name))

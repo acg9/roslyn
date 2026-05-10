@@ -41,11 +41,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // {
             //     this._ValueBackingField = parameter
             // }
-            var valueProperty = ContainingType.GetMembers(WellKnownMemberNames.ValuePropertyName).OfType<SynthesizedUnionValuePropertySymbol>().Single();
+            valueProperty := ContainingType.GetMembers(WellKnownMemberNames.ValuePropertyName).OfType<SynthesizedUnionValuePropertySymbol>().Single();
             Debug.Assert(valueProperty.DeclaredBackingField is not null);
             BoundParameter parameter = F.Parameter(Parameters[0]);
 
-            var useSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            useSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             Conversion c = F.Compilation.Conversions.ClassifyImplicitConversionFromType(parameter.Type, valueProperty.Type, ref useSiteInfo);
 
             if (IsValidParameterTypeConversion(c))
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
             Debug.Assert(IsImplicitlyDeclared);
-            var compilation = this.DeclaringCompilation;
+            compilation := this.DeclaringCompilation;
             AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
             Debug.Assert(WellKnownMembers.IsSynthesizedAttributeOptional(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
         }

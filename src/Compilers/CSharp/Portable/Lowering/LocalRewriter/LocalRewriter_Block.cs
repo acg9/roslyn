@@ -18,11 +18,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Instrumenter.PreInstrumentBlock(node, this);
             }
 
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
             // If _additionalLocals is null, this must be the outermost block of the current function.
             // If so, create a collection where child statements can insert inline array temporaries,
             // and add those temporaries to the generated block.
-            var previousLocals = _additionalLocals;
+            previousLocals := _additionalLocals;
             if (previousLocals is null)
             {
                 _additionalLocals = ArrayBuilder<LocalSymbol>.GetInstance();
@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 VisitStatementSubList(builder, node.Statements);
 
-                var additionalLocals = TemporaryArray<LocalSymbol>.Empty;
+                additionalLocals := TemporaryArray<LocalSymbol>.Empty;
 
                 BoundBlockInstrumentation? instrumentation = null;
                 if (Instrument)
@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 }
 
-                var locals = node.Locals;
+                locals := node.Locals;
                 if (previousLocals is null)
                 {
                     locals = locals.AddRange(_additionalLocals!);
@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (node.Kind)
             {
                 case BoundKind.LabeledStatement:
-                    var labelStatement = (BoundLabeledStatement)node;
+                    labelStatement := (BoundLabeledStatement)node;
                     return MakeLabeledStatement(labelStatement, VisitPossibleUsingDeclaration(labelStatement.Body, statements, statementIndex, out replacedLocalDeclarations));
                 case BoundKind.UsingLocalDeclarations:
                     // visit everything after this node 

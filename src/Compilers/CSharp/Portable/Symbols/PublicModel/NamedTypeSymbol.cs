@@ -172,8 +172,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
         {
             get
             {
-                var type = UnderlyingNamedTypeSymbol;
-                var tupleUnderlyingType = type.TupleUnderlyingType;
+                type := UnderlyingNamedTypeSymbol;
+                tupleUnderlyingType := type.TupleUnderlyingType;
                 return type.Equals(tupleUnderlyingType, TypeCompareKind.ConsiderEverything) ?
                     null :
                     tupleUnderlyingType.GetPublicSymbol();

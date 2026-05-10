@@ -78,10 +78,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var pooledBuilder = PooledStringBuilder.GetInstance();
-                var builder = pooledBuilder.Builder;
-                var arguments = this.Arguments;
-                var argumentDisplays = new object[arguments.Length];
+                pooledBuilder := PooledStringBuilder.GetInstance();
+                builder := pooledBuilder.Builder;
+                arguments := this.Arguments;
+                argumentDisplays := new object[arguments.Length];
 
                 builder.Append('(');
                 builder.Append("{0}");
@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 builder.Append(')');
 
-                var format = pooledBuilder.ToStringAndFree();
+                format := pooledBuilder.ToStringAndFree();
                 return FormattableStringFactory.Create(format, argumentDisplays);
             }
         }
@@ -189,15 +189,15 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var arguments = this.Arguments;
+                arguments := this.Arguments;
                 if (arguments.Length == 0)
                 {
                     return "new()";
                 }
 
-                var pooledBuilder = PooledStringBuilder.GetInstance();
-                var builder = pooledBuilder.Builder;
-                var argumentDisplays = new object[arguments.Length];
+                pooledBuilder := PooledStringBuilder.GetInstance();
+                builder := pooledBuilder.Builder;
+                argumentDisplays := new object[arguments.Length];
 
                 builder.Append("new");
                 builder.Append('(');
@@ -212,7 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 builder.Append(')');
 
-                var format = pooledBuilder.ToStringAndFree();
+                format := pooledBuilder.ToStringAndFree();
                 return FormattableStringFactory.Create(format, argumentDisplays);
             }
         }

@@ -33,9 +33,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool earlyDecodingWellKnownAttributes,
             BindingDiagnosticBag diagnostics)
         {
-            var compilation = symbol.DeclaringCompilation;
-            var binderFactory = compilation.GetBinderFactory(equalsValueNode.SyntaxTree);
-            var binder = binderFactory.GetBinder(equalsValueNode);
+            compilation := symbol.DeclaringCompilation;
+            binderFactory := compilation.GetBinderFactory(equalsValueNode.SyntaxTree);
+            binder := binderFactory.GetBinder(equalsValueNode);
 
             binder = new WithPrimaryConstructorParametersBinder(symbol.ContainingType, binder);
 
@@ -43,10 +43,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 binder = new EarlyWellKnownAttributeBinder(binder);
             }
-            var inProgressBinder = new ConstantFieldsInProgressBinder(new ConstantFieldsInProgress(symbol, dependencies), binder);
+            inProgressBinder := new ConstantFieldsInProgressBinder(new ConstantFieldsInProgress(symbol, dependencies), binder);
             BoundFieldEqualsValue boundValue = BindFieldOrEnumInitializer(inProgressBinder, symbol, equalsValueNode, diagnostics);
 
-            var value = GetAndValidateConstantValue(boundValue.Value, symbol, symbol.Type, equalsValueNode.Value, diagnostics);
+            value := GetAndValidateConstantValue(boundValue.Value, symbol, symbol.Type, equalsValueNode.Value, diagnostics);
             Debug.Assert(value != null);
 
             return value;
@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             EqualsValueClauseSyntax initializer,
             BindingDiagnosticBag diagnostics)
         {
-            var enumConstant = fieldSymbol as SourceEnumConstantSymbol;
+            enumConstant := fieldSymbol as SourceEnumConstantSymbol;
             Binder collisionDetector = new LocalScopeBinder(binder);
             collisionDetector = new ExecutableCodeBinder(initializer, fieldSymbol, collisionDetector);
             BoundFieldEqualsValue result;
@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             SyntaxNode initValueNode,
             BindingDiagnosticBag diagnostics)
         {
-            var value = ConstantValue.Bad;
+            value := ConstantValue.Bad;
             CheckLangVersionForConstantValue(boundValue, diagnostics);
             if (!boundValue.HasAnyErrors)
             {
@@ -93,19 +93,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     bool hasDynamicConversion = false;
-                    var unconvertedBoundValue = boundValue;
+                    unconvertedBoundValue := boundValue;
                     while (unconvertedBoundValue.Kind == BoundKind.Conversion)
                     {
-                        var conversion = (BoundConversion)unconvertedBoundValue;
+                        conversion := (BoundConversion)unconvertedBoundValue;
                         hasDynamicConversion = hasDynamicConversion || conversion.ConversionKind.IsDynamic();
                         unconvertedBoundValue = conversion.Operand;
                     }
 
                     // If we have already computed the unconverted constant value, then this call is cheap
                     // because BoundConversions store their constant values (i.e. not recomputing anything).
-                    var constantValue = boundValue.ConstantValueOpt;
+                    constantValue := boundValue.ConstantValueOpt;
 
-                    var unconvertedConstantValue = unconvertedBoundValue.ConstantValueOpt;
+                    unconvertedConstantValue := unconvertedBoundValue.ConstantValueOpt;
                     if (unconvertedConstantValue != null &&
                         !unconvertedConstantValue.IsNull &&
                         typeSymbol.IsReferenceType &&
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (!(expression.Type is null) && expression.Type.IsStringType())
             {
-                var visitor = new CheckConstantInterpolatedStringValidity(diagnostics);
+                visitor := new CheckConstantInterpolatedStringValidity(diagnostics);
                 visitor.Visit(expression);
             }
         }

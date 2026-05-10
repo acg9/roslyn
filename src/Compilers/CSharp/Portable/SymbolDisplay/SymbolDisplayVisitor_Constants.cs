@@ -42,10 +42,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override void AddLiteralValue(SpecialType type, object value)
         {
             Debug.Assert(value.GetType().GetTypeInfo().IsPrimitive || value is string || value is decimal);
-            var valueString = SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
+            valueString := SymbolDisplay.FormatPrimitive(value, quoteStrings: true, useHexadecimalNumbers: false);
             Debug.Assert(valueString != null);
 
-            var kind = SymbolDisplayPartKind.NumericLiteral;
+            kind := SymbolDisplayPartKind.NumericLiteral;
             switch (type)
             {
                 case SpecialType.System_Boolean:

@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static BoundPattern Rewrite(CSharpCompilation compilation, BoundPattern pattern)
         {
-            var result = new UnionMatchingRewriter(compilation).Visit(pattern);
+            result := new UnionMatchingRewriter(compilation).Visit(pattern);
             Debug.Assert(result != pattern);
             return RewritePatternWithUnionMatchingToPropertyPattern((BoundPattern)result);
         }
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             PropertySymbol? valueProperty = Binder.GetUnionTypeValuePropertyNoUseSiteDiagnostics((NamedTypeSymbol)unionMatchingInputType.StrippedType());
 
-            var member = new BoundPropertySubpatternMember(innerPattern.Syntax, receiver: null, valueProperty, type: innerPattern.InputType, hasErrors: valueProperty is null).MakeCompilerGenerated();
+            member := new BoundPropertySubpatternMember(innerPattern.Syntax, receiver: null, valueProperty, type: innerPattern.InputType, hasErrors: valueProperty is null).MakeCompilerGenerated();
 
             return new BoundPatternWithUnionMatching(
                 syntax: innerPattern.Syntax,
@@ -238,7 +238,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitBinaryPattern(BoundBinaryPattern node)
         {
-            var binaryPatternStack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+            binaryPatternStack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
             BoundBinaryPattern? currentNode = node;
 
             do
@@ -249,10 +249,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(binaryPatternStack.Count > 0);
 
-            var binaryPattern = binaryPatternStack.Pop();
+            binaryPattern := binaryPatternStack.Pop();
             BoundPattern result = (BoundPattern)Visit(binaryPattern.Left);
 #if DEBUG
-            var narrowedTypeCandidates = ArrayBuilder<TypeSymbol>.GetInstance(2);
+            narrowedTypeCandidates := ArrayBuilder<TypeSymbol>.GetInstance(2);
 
             if (result is BoundPatternWithUnionMatching unionPattern)
             {
@@ -294,7 +294,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (node.Disjunction)
                 {
                     preboundLeft = RewritePatternWithUnionMatchingToPropertyPattern(preboundLeft);
-                    var right = RewritePatternWithUnionMatchingToPropertyPattern((BoundPattern)rewriter.Visit(node.Right));
+                    right := RewritePatternWithUnionMatchingToPropertyPattern((BoundPattern)rewriter.Visit(node.Right));
 
 #if DEBUG
                     // Here we are verifying that the narrowed type computed during the initial binding phase in
@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     // Compute the common type. This algorithm is quadratic, but disjunctive patterns are unlikely to be huge
                     Binder.CollectDisjunctionTypes(right, narrowedTypeCandidates, hasUnionMatching: false);
-                    var discardedSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    discardedSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     TypeSymbol? leastSpecific = Binder.LeastSpecificType(narrowedTypeCandidates, rewriter._compilation.Conversions, ref discardedSiteInfo);
                     Debug.Assert(node.NarrowedType.Equals(leastSpecific ?? node.InputType, TypeCompareKind.ConsiderEverything));
 #endif
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var right = (BoundPattern)rewriter.Visit(node.Right);
+                    right := (BoundPattern)rewriter.Visit(node.Right);
 
                     BoundPattern result = makeConjunction(node.Syntax, preboundLeft, right, makeCompilerGenerated: node.WasCompilerGenerated);
 
@@ -347,7 +347,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         //          rightUnionPattern.ValuePattern,
                         //          inputType: left.InputType).MakeCompilerGenerated();
 
-                        var stack = ArrayBuilder<BoundPatternWithUnionMatching>.GetInstance();
+                        stack := ArrayBuilder<BoundPatternWithUnionMatching>.GetInstance();
 
                         stack.Push(rightUnionPattern);
 
@@ -358,7 +358,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
 
                         Debug.Assert(rightUnionPattern.LeftOfPendingConjunction is not BoundPatternWithUnionMatching);
-                        var leftOfPendingConjunction = makeConjunction(node, left, rightUnionPattern.LeftOfPendingConjunction, makeCompilerGenerated: true);
+                        leftOfPendingConjunction := makeConjunction(node, left, rightUnionPattern.LeftOfPendingConjunction, makeCompilerGenerated: true);
 
                         do
                         {
@@ -447,7 +447,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 while (true)
                 {
-                    var unionType = unionMatchingInputType.StrippedType();
+                    unionType := unionMatchingInputType.StrippedType();
 
                     BoundPattern result = new BoundRecursivePattern(
                         syntax: valuePattern.Syntax,

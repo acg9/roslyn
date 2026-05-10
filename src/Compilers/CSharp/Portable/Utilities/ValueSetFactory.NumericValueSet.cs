@@ -61,8 +61,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         throw new ArgumentException();
 
                     // Prefer a value near zero.
-                    var gz = new NumericValueSetFactory<T>(_tc).Related(BinaryOperatorKind.GreaterThanOrEqual, _tc.Zero);
-                    var t = (NumericValueSet<T>)this.Intersect(gz);
+                    gz := new NumericValueSetFactory<T>(_tc).Related(BinaryOperatorKind.GreaterThanOrEqual, _tc.Zero);
+                    t := (NumericValueSet<T>)this.Intersect(gz);
                     if (!t.IsEmpty)
                         return _tc.ToConstantValue(t._intervals[0].first);
                     return _tc.ToConstantValue(this._intervals[this._intervals.Length - 1].last);
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (_intervals.Length == 0)
                     return AllValues(_tc);
 
-                var builder = ArrayBuilder<(T first, T last)>.GetInstance();
+                builder := ArrayBuilder<(T first, T last)>.GetInstance();
 
                 // add a prefix if apropos.
                 if (_tc.Related(LessThan, _tc.MinValue, _intervals[0].first))
@@ -161,18 +161,18 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<T> Intersect(IConstantValueSet<T> o)
             {
-                var other = (NumericValueSet<T>)o;
+                other := (NumericValueSet<T>)o;
                 Debug.Assert(this._tc.GetType() == other._tc.GetType());
 
-                var builder = ArrayBuilder<(T first, T last)>.GetInstance();
-                var left = this._intervals;
-                var right = other._intervals;
+                builder := ArrayBuilder<(T first, T last)>.GetInstance();
+                left := this._intervals;
+                right := other._intervals;
                 int l = 0;
                 int r = 0;
                 while (l < left.Length && r < right.Length)
                 {
-                    var leftInterval = left[l];
-                    var rightInterval = right[r];
+                    leftInterval := left[l];
+                    rightInterval := right[r];
                     if (_tc.Related(LessThan, leftInterval.last, rightInterval.first))
                     {
                         l++;
@@ -215,7 +215,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (builder.Count > 0 && (tc.Related(Equal, tc.MinValue, first) || tc.Related(GreaterThanOrEqual, builder.Last().last, tc.Prev(first))))
                 {
                     // merge with previous interval when adjacent
-                    var oldLastInterval = builder.Pop();
+                    oldLastInterval := builder.Pop();
                     oldLastInterval.last = Max(last, oldLastInterval.last, tc);
                     builder.Push(oldLastInterval);
                 }
@@ -238,18 +238,18 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<T> Union(IConstantValueSet<T> o)
             {
-                var other = (NumericValueSet<T>)o;
+                other := (NumericValueSet<T>)o;
                 Debug.Assert(this._tc.GetType() == other._tc.GetType());
 
-                var builder = ArrayBuilder<(T first, T last)>.GetInstance();
-                var left = this._intervals;
-                var right = other._intervals;
+                builder := ArrayBuilder<(T first, T last)>.GetInstance();
+                left := this._intervals;
+                right := other._intervals;
                 int l = 0;
                 int r = 0;
                 while (l < left.Length && r < right.Length)
                 {
-                    var leftInterval = left[l];
-                    var rightInterval = right[r];
+                    leftInterval := left[l];
+                    rightInterval := right[r];
                     if (_tc.Related(LessThan, leftInterval.last, rightInterval.first))
                     {
                         Add(builder, leftInterval.first, leftInterval.last, _tc);
@@ -270,14 +270,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 while (l < left.Length)
                 {
-                    var leftInterval = left[l];
+                    leftInterval := left[l];
                     Add(builder, leftInterval.first, leftInterval.last, _tc);
                     l++;
                 }
 
                 while (r < right.Length)
                 {
-                    var rightInterval = right[r];
+                    rightInterval := right[r];
                     Add(builder, rightInterval.first, rightInterval.last, _tc);
                     r++;
                 }
@@ -298,7 +298,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     values[i] = tc.Random(random);
                 }
                 Array.Sort(values);
-                var builder = ArrayBuilder<(T first, T last)>.GetInstance();
+                builder := ArrayBuilder<(T first, T last)>.GetInstance();
                 for (int i = 0, n = values.Length; i < n; i += 2)
                 {
                     T first = values[i];

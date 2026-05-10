@@ -89,20 +89,20 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return UnaryOperatorKind.Error;
                 }
                 int kindIndex = kind.OperatorIndex();
-                var result = (kindIndex >= s_opkind.Length) ? UnaryOperatorKind.Error : s_opkind[kindIndex][index];
+                result := (kindIndex >= s_opkind.Length) ? UnaryOperatorKind.Error : s_opkind[kindIndex][index];
                 return result == UnaryOperatorKind.Error ? result : result | kind;
             }
         }
 
         private void UnaryOperatorEasyOut(UnaryOperatorKind kind, BoundExpression operand, UnaryOperatorOverloadResolutionResult result)
         {
-            var operandType = operand.Type;
+            operandType := operand.Type;
             if (operandType is null)
             {
                 return;
             }
 
-            var easyOut = UnopEasyOut.OpKind(kind, operandType);
+            easyOut := UnopEasyOut.OpKind(kind, operandType);
 
             if (easyOut == UnaryOperatorKind.Error)
             {

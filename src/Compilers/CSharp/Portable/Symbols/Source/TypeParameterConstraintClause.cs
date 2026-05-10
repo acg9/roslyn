@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(constraintClauses.Length == typeParameters.Length);
 
-            var isValueTypeMap = new SmallDictionary<TypeParameterSymbol, bool>(ReferenceEqualityComparer.Instance);
+            isValueTypeMap := new SmallDictionary<TypeParameterSymbol, bool>(ReferenceEqualityComparer.Instance);
 
             foreach (TypeParameterSymbol typeParameter in typeParameters)
             {
@@ -199,7 +199,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(constraintClauses.Length == typeParameters.Length);
 
-            var isReferenceTypeFromConstraintTypesMap = new SmallDictionary<TypeParameterSymbol, bool>(ReferenceEqualityComparer.Instance);
+            isReferenceTypeFromConstraintTypesMap := new SmallDictionary<TypeParameterSymbol, bool>(ReferenceEqualityComparer.Instance);
 
             foreach (TypeParameterSymbol typeParameter in typeParameters)
             {

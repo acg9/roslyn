@@ -27,12 +27,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isNullableAnalysisEnabled,
             BindingDiagnosticBag diagnostics)
         {
-            var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
-            var nameToken = syntax.Identifier;
+            interfaceSpecifier := syntax.ExplicitInterfaceSpecifier;
+            nameToken := syntax.Identifier;
 
             TypeSymbol explicitInterfaceType;
-            var name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
-            var location = new SourceLocation(nameToken);
+            name := ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
+            location := new SourceLocation(nameToken);
 
             var methodKind = interfaceSpecifier == null
                 ? MethodKind.Ordinary
@@ -114,15 +114,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters, ImmutableArray<TypeParameterConstraintClause> DeclaredConstraintsForOverrideOrImplementation) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var syntax = GetSyntax();
-            var withTypeParamsBinder = this.DeclaringCompilation.GetBinderFactory(syntax.SyntaxTree).GetBinder(syntax.ReturnType, syntax, this);
+            syntax := GetSyntax();
+            withTypeParamsBinder := this.DeclaringCompilation.GetBinderFactory(syntax.SyntaxTree).GetBinder(syntax.ReturnType, syntax, this);
 
             // Constraint checking for parameter and return types must be delayed until
             // the method has been added to the containing type member list since
             // evaluating the constraints may depend on accessing this method from
             // the container (comparing this method to others to find overrides for
             // instance). Constraints are checked in AfterAddingTypeMembersChecks.
-            var signatureBinder = withTypeParamsBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
+            signatureBinder := withTypeParamsBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
 
             ImmutableArray<ParameterSymbol> parameters = ParameterHelpers.MakeParameters(
                 signatureBinder, this, syntax.ParameterList, out _,
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 addRefReadOnlyModifier: IsVirtual || IsAbstract,
                 diagnostics: diagnostics).Cast<SourceParameterSymbol, ParameterSymbol>();
 
-            var returnTypeSyntax = syntax.ReturnType;
+            returnTypeSyntax := syntax.ReturnType;
             Debug.Assert(returnTypeSyntax is not ScopedTypeSyntax);
 
             returnTypeSyntax = returnTypeSyntax.SkipScoped(out _).SkipRef();
@@ -207,15 +207,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (IsExtensionMethod)
             {
                 // Note: SynthesizedExtensionMarker implements similar checks, which should be kept in sync.
-                var syntax = GetSyntax();
-                var parameter0Type = this.Parameters[0].TypeWithAnnotations;
-                var parameter0RefKind = this.Parameters[0].RefKind;
+                syntax := GetSyntax();
+                parameter0Type := this.Parameters[0].TypeWithAnnotations;
+                parameter0RefKind := this.Parameters[0].RefKind;
                 if (!parameter0Type.Type.IsValidExtensionParameterType())
                 {
                     // Duplicate Dev10 behavior by selecting the parameter type.
-                    var parameterSyntax = syntax.ParameterList.Parameters[0];
+                    parameterSyntax := syntax.ParameterList.Parameters[0];
                     Debug.Assert(parameterSyntax.Type != null);
-                    var loc = parameterSyntax.Type.Location;
+                    loc := parameterSyntax.Type.Location;
                     diagnostics.Add(ErrorCode.ERR_BadTypeforThis, loc, parameter0Type.Type);
                 }
                 else if (parameter0RefKind == RefKind.Ref && !parameter0Type.Type.IsValueType)
@@ -235,9 +235,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     // Duplicate Dev10 behavior by selecting the containing type identifier. However if there
                     // is no containing type (in the interactive case for instance), select the method identifier.
-                    var typeDecl = syntax.Parent as TypeDeclarationSyntax;
-                    var identifier = (typeDecl != null) ? typeDecl.Identifier : syntax.Identifier;
-                    var loc = identifier.GetLocation();
+                    typeDecl := syntax.Parent as TypeDeclarationSyntax;
+                    identifier := (typeDecl != null) ? typeDecl.Identifier : syntax.Identifier;
+                    loc := identifier.GetLocation();
                     diagnostics.Add(ErrorCode.ERR_BadExtensionAgg, loc);
                 }
                 else if (!IsStatic)
@@ -258,11 +258,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static void CheckExtensionAttributeAvailability(CSharpCompilation compilation, Location location, BindingDiagnosticBag diagnostics)
         {
-            var attributeConstructor = Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor, out var useSiteInfo);
+            attributeConstructor := Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor, out var useSiteInfo);
 
             if ((object)attributeConstructor == null)
             {
-                var memberDescriptor = WellKnownMembers.GetDescriptor(WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor);
+                memberDescriptor := WellKnownMembers.GetDescriptor(WellKnownMember.System_Runtime_CompilerServices_ExtensionAttribute__ctor);
                 // do not use Binder.ReportUseSiteErrorForAttributeCtor in this case, because we'll need to report a special error id, not a generic use site error.
                 diagnostics.Add(
                     ErrorCode.ERR_ExtensionAttrNotFound,
@@ -423,7 +423,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var sourceContainer = this.ContainingType as SourceMemberContainerTypeSymbol;
+                sourceContainer := this.ContainingType as SourceMemberContainerTypeSymbol;
                 if ((object)sourceContainer != null && sourceContainer.AnyMemberHasAttributes)
                 {
                     return this.GetSyntax().AttributeLists;
@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override void ForceComplete(SourceLocation locationOpt, Predicate<Symbol> filter, CancellationToken cancellationToken)
         {
-            var implementingPart = this.SourcePartialImplementation;
+            implementingPart := this.SourcePartialImplementation;
             if ((object)implementingPart != null)
             {
                 implementingPart.ForceComplete(locationOpt, filter, cancellationToken);
@@ -467,7 +467,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override void PartialMethodChecks(BindingDiagnosticBag diagnostics)
         {
-            var implementingPart = this.SourcePartialImplementation;
+            implementingPart := this.SourcePartialImplementation;
             if ((object)implementingPart != null)
             {
                 PartialMethodChecks(this, implementingPart, diagnostics);
@@ -599,7 +599,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!ReferenceEquals(definition, implementation));
             Debug.Assert(definition.Arity == implementation.Arity);
 
-            var typeParameters1 = definition.TypeParameters;
+            typeParameters1 := definition.TypeParameters;
 
             int arity = typeParameters1.Length;
             if (arity == 0)
@@ -607,17 +607,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var typeParameters2 = implementation.TypeParameters;
-            var indexedTypeParameters = IndexedTypeParameterSymbol.Take(arity);
-            var typeMap1 = new TypeMap(typeParameters1, indexedTypeParameters, allowAlpha: true);
-            var typeMap2 = new TypeMap(typeParameters2, indexedTypeParameters, allowAlpha: true);
+            typeParameters2 := implementation.TypeParameters;
+            indexedTypeParameters := IndexedTypeParameterSymbol.Take(arity);
+            typeMap1 := new TypeMap(typeParameters1, indexedTypeParameters, allowAlpha: true);
+            typeMap2 := new TypeMap(typeParameters2, indexedTypeParameters, allowAlpha: true);
 
             // Report any mismatched method constraints.
             const TypeCompareKind typeComparison = TypeCompareKind.IgnoreDynamicAndTupleNames | TypeCompareKind.IgnoreNullableModifiersForReferenceTypes;
             for (int i = 0; i < arity; i++)
             {
-                var typeParameter1 = typeParameters1[i];
-                var typeParameter2 = typeParameters2[i];
+                typeParameter1 := typeParameters1[i];
+                typeParameter2 := typeParameters2[i];
 
                 if (!MemberSignatureComparer.HaveSameConstraints(typeParameter1, typeMap1, typeParameter2, typeMap2, typeComparison))
                 {
@@ -672,7 +672,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 for (int i = 0; i < declaredConstraints.Length; i++)
                 {
-                    var typeParameter = this.TypeParameters[i];
+                    typeParameter := this.TypeParameters[i];
                     ErrorCode report;
 
                     switch (declaredConstraints[i].Constraints & (TypeParameterConstraintKind.ReferenceType | TypeParameterConstraintKind.ValueType | TypeParameterConstraintKind.Default))
@@ -716,7 +716,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (this.ReturnType?.IsErrorType() == true && GetSyntax().ReturnType is IdentifierNameSyntax { Identifier.RawContextualKind: (int)SyntaxKind.PartialKeyword })
             {
-                var available = MessageID.IDS_FeaturePartialEventsAndConstructors.CheckFeatureAvailability(diagnostics, DeclaringCompilation, ReturnTypeLocation);
+                available := MessageID.IDS_FeaturePartialEventsAndConstructors.CheckFeatureAvailability(diagnostics, DeclaringCompilation, ReturnTypeLocation);
                 Debug.Assert(!available, "Should have been parsed as partial constructor.");
             }
         }
@@ -732,11 +732,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // This is needed to make sure we can detect 'public' modifier specified explicitly and
             // check it against language version below.
-            var defaultAccess = isInterface && !isExplicitInterfaceImplementation ? DeclarationModifiers.None : DeclarationModifiers.Private;
+            defaultAccess := isInterface && !isExplicitInterfaceImplementation ? DeclarationModifiers.None : DeclarationModifiers.Private;
 
             // Check that the set of modifiers is allowed
-            var allowedModifiers = DeclarationModifiers.Partial | DeclarationModifiers.Unsafe;
-            var defaultInterfaceImplementationModifiers = DeclarationModifiers.None;
+            allowedModifiers := DeclarationModifiers.Partial | DeclarationModifiers.Unsafe;
+            defaultInterfaceImplementationModifiers := DeclarationModifiers.None;
 
             if (!isExplicitInterfaceImplementation)
             {
@@ -1032,7 +1032,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 // Compute the type parameters.  If empty (the common case), directly point at the singleton to reduce
                 // the amount of pointers-to-arrays this type needs to store.
-                var typeParameters = MakeTypeParameters(syntax, diagnostics);
+                typeParameters := MakeTypeParameters(syntax, diagnostics);
                 _typeParameterInfo = typeParameters.IsEmpty
                     ? TypeParameterInfo.Empty
                     : new TypeParameterInfo { LazyTypeParameters = typeParameters };
@@ -1058,7 +1058,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected sealed override MethodSymbol FindExplicitlyImplementedMethod(BindingDiagnosticBag diagnostics)
             {
-                var syntax = GetSyntax();
+                syntax := GetSyntax();
                 return this.FindExplicitlyImplementedMethod(isOperator: false, _explicitInterfaceType, syntax.Identifier.ValueText, syntax.ExplicitInterfaceSpecifier, diagnostics);
             }
 
@@ -1077,8 +1077,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     GetTypeParameterConstraintKinds();
 
-                    var diagnostics = BindingDiagnosticBag.GetInstance();
-                    var syntax = GetSyntax();
+                    diagnostics := BindingDiagnosticBag.GetInstance();
+                    syntax := GetSyntax();
                     var withTypeParametersBinder =
                         this.DeclaringCompilation
                         .GetBinderFactory(syntax.SyntaxTree)
@@ -1105,7 +1105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_typeParameterInfo.LazyTypeParameterConstraintKinds.IsDefault)
                 {
-                    var syntax = GetSyntax();
+                    syntax := GetSyntax();
                     var withTypeParametersBinder =
                         this.DeclaringCompilation
                         .GetBinderFactory(syntax.SyntaxTree)
@@ -1128,7 +1128,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if ((object)_explicitInterfaceType != null)
                 {
-                    var syntax = this.GetSyntax();
+                    syntax := this.GetSyntax();
                     Debug.Assert(syntax.ExplicitInterfaceSpecifier != null);
                     _explicitInterfaceType.CheckAllConstraints(DeclaringCompilation, conversions, new SourceLocation(syntax.ExplicitInterfaceSpecifier.Name), diagnostics);
                 }
@@ -1155,24 +1155,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     typeMap = new ExplicitInterfaceMethodTypeParameterMap(this);
                 }
 
-                var typeParameters = syntax.TypeParameterList.Parameters;
-                var result = ArrayBuilder<TypeParameterSymbol>.GetInstance();
+                typeParameters := syntax.TypeParameterList.Parameters;
+                result := ArrayBuilder<TypeParameterSymbol>.GetInstance();
 
                 for (int ordinal = 0; ordinal < typeParameters.Count; ordinal++)
                 {
-                    var parameter = typeParameters[ordinal];
+                    parameter := typeParameters[ordinal];
                     if (parameter.VarianceKeyword.Kind() != SyntaxKind.None)
                     {
                         diagnostics.Add(ErrorCode.ERR_IllegalVarianceSyntax, parameter.VarianceKeyword.GetLocation());
                     }
 
-                    var identifier = parameter.Identifier;
-                    var location = identifier.GetLocation();
-                    var name = identifier.ValueText;
+                    identifier := parameter.Identifier;
+                    location := identifier.GetLocation();
+                    name := identifier.ValueText;
 
                     // Note: It is not an error to have a type parameter named the same as its enclosing method: void M<M>() {}
 
-                    var tpEnclosing = ContainingType.FindEnclosingTypeParameter(name);
+                    tpEnclosing := ContainingType.FindEnclosingTypeParameter(name);
                     bool checkForDuplicates = true;
 
                     if ((object)tpEnclosing != null)
@@ -1203,8 +1203,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     SourceMemberContainerTypeSymbol.ReportReservedTypeName(identifier.Text, this.DeclaringCompilation, diagnostics.DiagnosticBag, location);
 
-                    var syntaxRefs = ImmutableArray.Create(parameter.GetReference());
-                    var locations = ImmutableArray.Create(location);
+                    syntaxRefs := ImmutableArray.Create(parameter.GetReference());
+                    locations := ImmutableArray.Create(location);
                     var typeParameter = (typeMap != null) ?
                         (TypeParameterSymbol)new SourceOverridingMethodTypeParameterSymbol(
                             typeMap,

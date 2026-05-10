@@ -113,7 +113,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal string GetOutputTempDebuggerDisplay()
         {
-            var id = Id;
+            id := Id;
             return id switch
             {
                 -1 => "<uninitialized>",
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MethodSymbol method = DeconstructMethod;
             int extensionExtra = method.IsStatic ? 1 : 0;
             int count = method.ParameterCount - extensionExtra;
-            var builder = ArrayBuilder<BoundDagTemp>.GetInstance(count);
+            builder := ArrayBuilder<BoundDagTemp>.GetInstance(count);
             for (int i = 0; i < count; i++)
             {
                 ParameterSymbol parameter = method.Parameters[i + extensionExtra];
@@ -359,7 +359,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override OneOrMany<BoundDagTemp> AllOutputs()
         {
-            var builder = MakeOutParameterTemps();
+            builder := MakeOutParameterTemps();
             if (!DeconstructMethod.ReturnsVoid)
             {
                 builder.Add(MakeReturnValueTemp());

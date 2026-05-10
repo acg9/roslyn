@@ -58,8 +58,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override BoundNode VisitTryStatement(BoundTryStatement node)
             {
-                var origSeenYield = _seenYield;
-                var origLabels = this.currentLabels;
+                origSeenYield := _seenYield;
+                origLabels := this.currentLabels;
 
                 // sibling try blocks do not see each other's yields
                 _seenYield = false;
@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     // this try yields !
 
-                    var yieldingTryLabels = _labelsInYieldingTrys;
+                    yieldingTryLabels := _labelsInYieldingTrys;
                     if (yieldingTryLabels == null)
                     {
                         _labelsInYieldingTrys = yieldingTryLabels = new Dictionary<BoundTryStatement, HashSet<LabelSymbol>>();
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if ((object)label != null)
             {
-                var currentLabels = this.currentLabels;
+                currentLabels := this.currentLabels;
                 if (currentLabels == null)
                 {
                     this.currentLabels = currentLabels = new HashSet<LabelSymbol>();

@@ -67,8 +67,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (_lazyRoot == null)
                 {
                     // Parse the syntax tree
-                    var tree = SyntaxFactory.ParseSyntaxTree(_text, _options, _path, cancellationToken);
-                    var root = CloneNodeAsRoot((CSharpSyntaxNode)tree.GetRoot(cancellationToken));
+                    tree := SyntaxFactory.ParseSyntaxTree(_text, _options, _path, cancellationToken);
+                    root := CloneNodeAsRoot((CSharpSyntaxNode)tree.GetRoot(cancellationToken));
 
                     Interlocked.CompareExchange(ref _lazyRoot, root, null);
                 }

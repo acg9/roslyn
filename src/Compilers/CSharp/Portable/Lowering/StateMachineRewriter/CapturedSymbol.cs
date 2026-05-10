@@ -38,8 +38,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg)
         {
-            var frame = makeFrame(this.HoistedField.ContainingType, arg);
-            var field = this.HoistedField.AsMember((NamedTypeSymbol)frame.Type);
+            frame := makeFrame(this.HoistedField.ContainingType, arg);
+            field := this.HoistedField.AsMember((NamedTypeSymbol)frame.Type);
             return new BoundFieldAccess(node, frame, field, constantValueOpt: null);
         }
     }
@@ -56,8 +56,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundExpression Replacement<TArg>(SyntaxNode node, Func<NamedTypeSymbol, TArg, BoundExpression> makeFrame, TArg arg)
         {
-            var frame = makeFrame(this.HoistedField.ContainingType, arg);
-            var field = this.HoistedField.AsMember((NamedTypeSymbol)frame.Type);
+            frame := makeFrame(this.HoistedField.ContainingType, arg);
+            field := this.HoistedField.AsMember((NamedTypeSymbol)frame.Type);
             return new BoundFieldAccess(node, frame, field, constantValueOpt: null);
         }
     }

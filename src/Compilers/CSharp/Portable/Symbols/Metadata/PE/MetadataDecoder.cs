@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return new UnsupportedMetadataTypeSymbol(); // type parameter not associated with a method
             }
 
-            var typeParameters = _methodContextOpt.TypeParameters;
+            typeParameters := _methodContextOpt.TypeParameters;
 
             if (typeParameters.Length <= position)
             {
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         protected override TypeSymbol LookupNestedTypeDefSymbol(TypeSymbol container, ref MetadataTypeName emittedName)
         {
-            var result = container.LookupMetadataType(ref emittedName);
+            result := container.LookupMetadataType(ref emittedName);
             Debug.Assert(result?.IsErrorType() != true);
 
             return result ?? new MissingMetadataTypeSymbol.Nested((NamedTypeSymbol)container, ref emittedName);
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             int referencedAssemblyIndex,
             ref MetadataTypeName emittedName)
         {
-            var assembly = moduleSymbol.GetReferencedAssemblySymbol(referencedAssemblyIndex);
+            assembly := moduleSymbol.GetReferencedAssemblySymbol(referencedAssemblyIndex);
             if ((object)assembly == null)
             {
                 return new UnsupportedMetadataTypeSymbol();
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     else
                     {
                         isNoPiaLocalType = false;
-                        var result = m.LookupTopLevelMetadataType(ref emittedName);
+                        result := m.LookupTopLevelMetadataType(ref emittedName);
                         Debug.Assert(result?.IsErrorType() != true);
 
                         return result ?? new MissingMetadataTypeSymbol.TopLevel(m, ref emittedName);
@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             // Go through all assemblies referenced by the current module and
             // find the one which *exactly* matches the given identity.
             // No unification will be performed
-            var assemblies = this.moduleSymbol.GetReferencedAssemblies();
+            assemblies := this.moduleSymbol.GetReferencedAssemblies();
             for (int i = 0; i < assemblies.Length; i++)
             {
                 if (identity.Equals(assemblies[i]))
@@ -230,7 +230,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 case SymbolKind.ErrorType:
                     goto case SymbolKind.NamedType;
                 case SymbolKind.NamedType:
-                    var namedType = (NamedTypeSymbol)symbol;
+                    namedType := (NamedTypeSymbol)symbol;
                     AssemblySymbol containingAssembly = symbol.OriginalDefinition.ContainingAssembly;
                     int i;
 
@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                     do
                     {
-                        var arguments = namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                        arguments := namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
                         int count = arguments.Length;
 
                         for (i = 0; i < count; i++)
@@ -504,7 +504,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 // We're going to use a special decoder that can generate usable symbols for type parameters without full context.
                 // (We're not just using a different type - we're also changing the type context.)
-                var memberRefDecoder = new MemberRefMetadataDecoder(moduleSymbol, typeSymbol);
+                memberRefDecoder := new MemberRefMetadataDecoder(moduleSymbol, typeSymbol);
 
                 return (MethodSymbol)memberRefDecoder.FindMember(targetMethodDef, methodsOnly: true);
             }
@@ -544,7 +544,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 Debug.Assert(scope.Kind == SymbolKind.NamedType || scope.Kind == SymbolKind.ErrorType);
 
                 // We only want to consider members that are at or above "scope" in the type hierarchy.
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 if (!TypeSymbol.Equals(scope, targetTypeSymbol, TypeCompareKind.ConsiderEverything2) &&
                     !(targetTypeSymbol.IsInterfaceType()
                         ? scope.AllInterfacesNoUseSiteDiagnostics.IndexOf((NamedTypeSymbol)targetTypeSymbol, 0, SymbolEqualityComparer.CLRSignature) != -1
@@ -561,9 +561,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             // We're going to use a special decoder that can generate usable symbols for type parameters without full context.
             // (We're not just using a different type - we're also changing the type context.)
-            var memberRefDecoder = new MemberRefMetadataDecoder(moduleSymbol, targetTypeSymbol.OriginalDefinition);
+            memberRefDecoder := new MemberRefMetadataDecoder(moduleSymbol, targetTypeSymbol.OriginalDefinition);
 
-            var definition = memberRefDecoder.FindMember(memberRef, methodsOnly);
+            definition := memberRefDecoder.FindMember(memberRef, methodsOnly);
 
             if (definition is not null && !targetTypeSymbol.IsDefinition)
             {

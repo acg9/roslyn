@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private bool IsEmptyStructType(TypeSymbol type, ConsList<NamedTypeSymbol> typesWithMembersOfThisType)
         {
-            var nts = type as NamedTypeSymbol;
+            nts := type as NamedTypeSymbol;
             if ((object)nts == null || !IsTrackableStructType(nts))
             {
                 return false;
@@ -124,7 +124,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static bool IsTrackableStructType(TypeSymbol type)
         {
             if ((object)type == null) return false;
-            var nts = type.OriginalDefinition as NamedTypeSymbol;
+            nts := type.OriginalDefinition as NamedTypeSymbol;
             if ((object)nts == null) return false;
             return nts.IsStructType() && !nts.SpecialType.CanOptimizeBehavior() && !nts.KnownCircularStruct;
         }
@@ -142,10 +142,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     continue;
                 }
-                var field = GetActualField(member, type);
+                field := GetActualField(member, type);
                 if ((object)field != null)
                 {
-                    var actualFieldType = field.Type;
+                    actualFieldType := field.Type;
                     if (!IsEmptyStructType(actualFieldType, typesWithMembersOfThisType))
                     {
                         return false;
@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         ///
         public IEnumerable<FieldSymbol> GetStructInstanceFields(TypeSymbol type)
         {
-            var nts = type as NamedTypeSymbol;
+            nts := type as NamedTypeSymbol;
             if ((object)nts == null)
             {
                 return SpecializedCollections.EmptyEnumerable<FieldSymbol>();
@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     continue;
                 }
-                var field = GetActualField(member, type);
+                field := GetActualField(member, type);
                 if ((object)field != null)
                 {
                     yield return field;
@@ -194,7 +194,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (member.Kind)
             {
                 case SymbolKind.Field:
-                    var field = (FieldSymbol)member;
+                    field := (FieldSymbol)member;
                     // Do not report virtual tuple fields.
                     // They are additional aliases to the fields of the underlying struct or nested extensions.
                     // and as such are already accounted for via the nonvirtual fields.
@@ -206,7 +206,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return (field.IsFixedSizeBuffer || ShouldIgnoreStructField(field, field.Type)) ? null : field.AsMember(type);
 
                 case SymbolKind.Event:
-                    var eventSymbol = (EventSymbol)member;
+                    eventSymbol := (EventSymbol)member;
                     return (!eventSymbol.HasAssociatedField || ShouldIgnoreStructField(eventSymbol, eventSymbol.Type)) ? null : eventSymbol.AssociatedField.AsMember(type);
             }
 

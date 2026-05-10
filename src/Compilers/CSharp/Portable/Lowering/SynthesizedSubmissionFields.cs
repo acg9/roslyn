@@ -60,7 +60,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return _hostObjectField;
             }
 
-            var hostObjectTypeSymbol = _compilation.GetHostObjectTypeSymbol();
+            hostObjectTypeSymbol := _compilation.GetHostObjectTypeSymbol();
             if ((object)hostObjectTypeSymbol != null && hostObjectTypeSymbol.Kind != SymbolKind.ErrorType)
             {
                 return _hostObjectField = new SynthesizedFieldSymbol(

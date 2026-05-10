@@ -146,13 +146,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<StateMachineFieldSymbol> rootScopeHoistedLocals;
             TryUnwrapBoundStateMachineScope(ref rewrittenBody, out rootScopeHoistedLocals);
 
-            var bodyBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            bodyBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             bodyBuilder.Add(F.HiddenSequencePoint());
             bodyBuilder.Add(F.Assignment(F.Local(cachedState), F.Field(F.This(), stateField)));
             bodyBuilder.Add(CacheThisIfNeeded());
 
-            var exceptionLocal = F.SynthesizedLocal(F.WellKnownType(WellKnownType.System_Exception));
+            exceptionLocal := F.SynthesizedLocal(F.WellKnownType(WellKnownType.System_Exception));
             bodyBuilder.Add(
                 GenerateTopLevelTry(
                     F.Block(ImmutableArray<LocalSymbol>.Empty,
@@ -169,8 +169,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             bodyBuilder.Add(F.Label(_exprReturnLabel));
 
             // this.state = finishedState
-            var stateDone = F.Assignment(F.Field(F.This(), stateField), F.Literal(StateMachineState.FinishedState));
-            var block = body.Syntax as BlockSyntax;
+            stateDone := F.Assignment(F.Field(F.This(), stateField), F.Literal(StateMachineState.FinishedState));
+            block := body.Syntax as BlockSyntax;
             if (block == null)
             {
                 // this happens, for example, in (async () => await e) where there is no block syntax
@@ -191,9 +191,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             bodyBuilder.Add(F.Label(_exitLabel));
             bodyBuilder.Add(F.Return());
 
-            var newStatements = bodyBuilder.ToImmutableAndFree();
+            newStatements := bodyBuilder.ToImmutableAndFree();
 
-            var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+            locals := ArrayBuilder<LocalSymbol>.GetInstance();
             locals.Add(cachedState);
             if ((object)cachedThis != null) locals.Add(cachedThis);
             if ((object)_exprRetValue != null) locals.Add(_exprRetValue);
@@ -268,14 +268,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected virtual BoundStatement GenerateCleanupForExit(ImmutableArray<StateMachineFieldSymbol> rootHoistedLocals)
         {
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // Cleanup all hoisted local variables
             // so that they can be collected by GC if needed
             foreach (var hoistedLocal in rootHoistedLocals)
             {
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
-                var isManagedType = hoistedLocal.Type.IsManagedType(ref useSiteInfo);
+                useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
+                isManagedType := hoistedLocal.Type.IsManagedType(ref useSiteInfo);
                 F.Diagnostics.Add(hoistedLocal.GetFirstLocationOrNone(), useSiteInfo);
                 if (!isManagedType)
                 {
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (node.Expression.Kind == BoundKind.AssignmentOperator)
             {
-                var expression = (BoundAssignmentOperator)node.Expression;
+                expression := (BoundAssignmentOperator)node.Expression;
                 if (expression.Right.Kind == BoundKind.AwaitExpression)
                 {
                     return VisitAwaitExpression((BoundAwaitExpression)expression.Right, resultPlace: expression.Left);
@@ -350,8 +350,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(node.AwaitableInfo.RuntimeAsyncAwaitCall is null);
             BoundStatement preamble = MakeAwaitPreamble();
 
-            var expression = (BoundExpression)Visit(node.Expression);
-            var awaitablePlaceholder = node.AwaitableInfo.AwaitableInstancePlaceholder;
+            expression := (BoundExpression)Visit(node.Expression);
+            awaitablePlaceholder := node.AwaitableInfo.AwaitableInstancePlaceholder;
 
             if (awaitablePlaceholder != null)
             {
@@ -376,7 +376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // It transfers the awaiter objects from the old version of the MoveNext method to the new one.
             Debug.Assert(node.Syntax.IsKind(SyntaxKind.AwaitExpression) || node.WasCompilerGenerated);
 
-            var awaiterTemp = F.SynthesizedLocal(getAwaiter.Type, syntax: node.Syntax, kind: SynthesizedLocalKind.Awaiter);
+            awaiterTemp := F.SynthesizedLocal(getAwaiter.Type, syntax: node.Syntax, kind: SynthesizedLocalKind.Awaiter);
             var awaitIfIncomplete = F.Block(
                     // temp $awaiterTemp = <expr>.GetAwaiter();
                     F.Assignment(
@@ -401,7 +401,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 F.Assignment(resultPlace, getResultCall) :
                 F.ExpressionStatement(getResultCall);
 
-            var statementsBuilder = ArrayBuilder<BoundStatement>.GetInstance(preamble is null ? 2 : 3);
+            statementsBuilder := ArrayBuilder<BoundStatement>.GetInstance(preamble is null ? 2 : 3);
             if (preamble is not null)
             {
                 statementsBuilder.Add(preamble);
@@ -466,7 +466,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundBlock GenerateAwaitForIncompleteTask(LocalSymbol awaiterTemp, BoundAwaitExpressionDebugInfo debugInfo)
         {
-            var awaitSyntax = awaiterTemp.GetDeclaratorSyntax();
+            awaitSyntax := awaiterTemp.GetDeclaratorSyntax();
             AddResumableState(awaitSyntax, debugInfo.AwaitId, out StateMachineState stateNumber, out GeneratedLabelSymbol resumeLabel);
 
             TypeSymbol awaiterFieldType = awaiterTemp.Type.IsVerifierReference()
@@ -475,7 +475,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             FieldSymbol awaiterField = GetAwaiterField(awaiterFieldType);
 
-            var blockBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            blockBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             blockBuilder.Add(
                 // this.state = cachedState = stateForLabel
@@ -581,7 +581,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             LocalSymbol thisTemp = (F.CurrentType.TypeKind == TypeKind.Class) ? F.SynthesizedLocal(F.CurrentType) : null;
 
-            var blockBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            blockBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             blockBuilder.Add(
                 F.Assignment(
@@ -642,7 +642,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             LocalSymbol thisTemp = (F.CurrentType.TypeKind == TypeKind.Class) ? F.SynthesizedLocal(F.CurrentType) : null;
 
-            var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             var useUnsafeOnCompleted = F.Compilation.Conversions.ClassifyImplicitConversionFromType(
                 loweredAwaiterType,
                 F.Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_ICriticalNotifyCompletion),

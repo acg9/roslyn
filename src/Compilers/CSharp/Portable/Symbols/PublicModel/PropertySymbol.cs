@@ -120,7 +120,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
         {
             if (_underlying.IsExtensionBlockMember() && SourceMemberContainerTypeSymbol.IsAllowedExtensionMember(_underlying))
             {
-                var csharpReceiver = receiverType.EnsureCSharpSymbolOrNull(nameof(receiverType));
+                csharpReceiver := receiverType.EnsureCSharpSymbolOrNull(nameof(receiverType));
                 return (IPropertySymbol?)SourceNamedTypeSymbol.ReduceExtensionMember(compilation: null, _underlying, csharpReceiver, wasExtensionFullyInferred: out _).GetPublicSymbol();
             }
 

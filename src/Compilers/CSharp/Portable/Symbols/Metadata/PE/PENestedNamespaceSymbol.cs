@@ -125,7 +125,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         protected override void EnsureAllMembersLoaded()
         {
-            var typesByNS = Volatile.Read(ref _typesByNS);
+            typesByNS := Volatile.Read(ref _typesByNS);
 
             if (typesByNS == null)
             {

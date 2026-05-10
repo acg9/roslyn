@@ -94,7 +94,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         internal sealed override ImmutableArray<NamedTypeSymbol> GetEmbeddedTypes(BindingDiagnosticBag diagnostics)
         {
-            var builder = ArrayBuilder<NamedTypeSymbol>.GetInstance();
+            builder := ArrayBuilder<NamedTypeSymbol>.GetInstance();
 
             CreateEmbeddedAttributesIfNeeded(diagnostics);
 
@@ -133,10 +133,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             {
                 if (lazyFiles.IsDefault)
                 {
-                    var builder = ArrayBuilder<Cci.IFileReference>.GetInstance();
+                    builder := ArrayBuilder<Cci.IFileReference>.GetInstance();
                     try
                     {
-                        var modules = _sourceAssembly.Modules;
+                        modules := _sourceAssembly.Modules;
                         for (int i = 1; i < modules.Length; i++)
                         {
                             builder.Add((Cci.IFileReference)Translate(modules[i], context.Diagnostics));
@@ -175,12 +175,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         protected override void AddEmbeddedResourcesFromAddedModules(ArrayBuilder<Cci.ManagedResource> builder, DiagnosticBag diagnostics)
         {
-            var modules = _sourceAssembly.Modules;
+            modules := _sourceAssembly.Modules;
             int count = modules.Length;
 
             for (int i = 1; i < count; i++)
             {
-                var file = (Cci.IFileReference)Translate(modules[i], diagnostics);
+                file := (Cci.IFileReference)Translate(modules[i], diagnostics);
 
                 try
                 {
@@ -219,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             if ((object)_lazyNullableAttribute != null)
             {
-                var constructorIndex = (member == WellKnownMember.System_Runtime_CompilerServices_NullableAttribute__ctorTransformFlags) ? 1 : 0;
+                constructorIndex := (member == WellKnownMember.System_Runtime_CompilerServices_NullableAttribute__ctorTransformFlags) ? 1 : 0;
                 return SynthesizedAttributeData.Create(
                     Compilation,
                     _lazyNullableAttribute.Constructors[constructorIndex],
@@ -262,7 +262,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             if ((object)_lazyNativeIntegerAttribute != null)
             {
-                var constructorIndex = (member == WellKnownMember.System_Runtime_CompilerServices_NativeIntegerAttribute__ctorTransformFlags) ? 1 : 0;
+                constructorIndex := (member == WellKnownMember.System_Runtime_CompilerServices_NativeIntegerAttribute__ctorTransformFlags) ? 1 : 0;
                 return SynthesizedAttributeData.Create(
                     Compilation,
                     _lazyNativeIntegerAttribute.Constructors[constructorIndex],
@@ -428,7 +428,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 needsAttributes |= EmbeddableAttributes.NullablePublicOnlyAttribute;
             }
 
-            var sourceModule = (SourceModuleSymbol)Compilation.SourceModule;
+            sourceModule := (SourceModuleSymbol)Compilation.SourceModule;
 
             if (sourceModule.RequiresRefSafetyRulesAttribute() &&
                 Compilation.CheckIfAttributeShouldBeEmbedded(EmbeddableAttributes.RefSafetyRulesAttribute, diagnostics, Location.None))
@@ -453,7 +453,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return;
             }
 
-            var createParameterlessEmbeddedAttributeSymbol = new Func<string, NamespaceSymbol, BindingDiagnosticBag, SynthesizedEmbeddedAttributeSymbol>(CreateParameterlessEmbeddedAttributeSymbol);
+            createParameterlessEmbeddedAttributeSymbol := new Func<string, NamespaceSymbol, BindingDiagnosticBag, SynthesizedEmbeddedAttributeSymbol>(CreateParameterlessEmbeddedAttributeSymbol);
 
             CreateAttributeIfNeeded(
                 ref _lazyEmbeddedAttribute,
@@ -672,7 +672,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             Debug.Assert(!allowUserDefinedAttribute || typeof(T) == typeof(NamedTypeSymbol));
             if (symbol is null)
             {
-                var userDefinedAttribute = getExistingType(description);
+                userDefinedAttribute := getExistingType(description);
 
                 if (userDefinedAttribute is not null)
                 {
@@ -687,7 +687,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     }
                 }
 
-                var containingNamespace = GetOrSynthesizeNamespace(description.Namespace);
+                containingNamespace := GetOrSynthesizeNamespace(description.Namespace);
 
                 symbol = factory(description.Name, containingNamespace, diagnostics);
                 Debug.Assert(symbol.Constructors.Length == description.Signatures.Length);
@@ -702,8 +702,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             NamedTypeSymbol? getExistingType(AttributeDescription description)
             {
-                var attributeMetadataName = MetadataTypeName.FromFullName(description.FullName);
-                var userDefinedAttribute = _sourceAssembly.SourceModule.LookupTopLevelMetadataType(ref attributeMetadataName);
+                attributeMetadataName := MetadataTypeName.FromFullName(description.FullName);
+                userDefinedAttribute := _sourceAssembly.SourceModule.LookupTopLevelMetadataType(ref attributeMetadataName);
                 Debug.Assert(userDefinedAttribute is null || (object)userDefinedAttribute.ContainingModule == _sourceAssembly.SourceModule);
                 Debug.Assert(userDefinedAttribute?.IsErrorType() != true);
 
@@ -714,11 +714,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         protected NamespaceSymbol GetOrSynthesizeNamespace(string namespaceFullName)
         {
-            var result = SourceModule.GlobalNamespace;
+            result := SourceModule.GlobalNamespace;
 
             foreach (var partName in namespaceFullName.Split('.'))
             {
-                var subnamespace = (NamespaceSymbol)result.GetMembers(partName).FirstOrDefault(m => m.Kind == SymbolKind.Namespace);
+                subnamespace := (NamespaceSymbol)result.GetMembers(partName).FirstOrDefault(m => m.Kind == SymbolKind.Namespace);
                 if (subnamespace == null)
                 {
                     subnamespace = new SynthesizedNamespaceSymbol(result, partName);
@@ -733,21 +733,21 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private NamedTypeSymbol GetWellKnownType(WellKnownType type, BindingDiagnosticBag diagnostics)
         {
-            var result = _sourceAssembly.DeclaringCompilation.GetWellKnownType(type);
+            result := _sourceAssembly.DeclaringCompilation.GetWellKnownType(type);
             Binder.ReportUseSite(result, diagnostics, Location.None);
             return result;
         }
 
         private NamedTypeSymbol GetSpecialType(SpecialType type, BindingDiagnosticBag diagnostics)
         {
-            var result = _sourceAssembly.DeclaringCompilation.GetSpecialType(type);
+            result := _sourceAssembly.DeclaringCompilation.GetSpecialType(type);
             Binder.ReportUseSite(result, diagnostics, Location.None);
             return result;
         }
 
         private void EnsureAttributeUsageAttributeMembersAvailable(BindingDiagnosticBag diagnostics)
         {
-            var compilation = _sourceAssembly.DeclaringCompilation;
+            compilation := _sourceAssembly.DeclaringCompilation;
             Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_AttributeUsageAttribute__ctor, diagnostics, Location.None);
             Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_AttributeUsageAttribute__AllowMultiple, diagnostics, Location.None);
             Binder.GetWellKnownTypeMember(compilation, WellKnownMember.System_AttributeUsageAttribute__Inherited, diagnostics, Location.None);

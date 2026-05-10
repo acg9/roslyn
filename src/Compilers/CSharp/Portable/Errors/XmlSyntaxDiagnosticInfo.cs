@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override string GetMessage(IFormatProvider? formatProvider = null)
         {
-            var culture = formatProvider as CultureInfo;
+            culture := formatProvider as CultureInfo;
 
             string messagePrefix = this.MessageProvider.LoadMessage(this.Code, culture);
             string message = ErrorFacts.GetMessage(_xmlErrorCode, culture);

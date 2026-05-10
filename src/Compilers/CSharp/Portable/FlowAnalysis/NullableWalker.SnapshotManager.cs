@@ -53,14 +53,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             internal (VariablesSnapshot, LocalStateSnapshot) GetSnapshot(int position)
             {
                 Snapshot incrementalSnapshot = GetSnapshotForPosition(position);
-                var sharedState = _walkerSharedStates[incrementalSnapshot.SharedStateIndex];
+                sharedState := _walkerSharedStates[incrementalSnapshot.SharedStateIndex];
                 return (sharedState.Variables, incrementalSnapshot.VariableState);
             }
 
             internal TypeWithAnnotations? GetUpdatedTypeForLocalSymbol(SourceLocalSymbol symbol)
             {
-                var snapshot = GetSnapshotForPosition(symbol.IdentifierToken.SpanStart);
-                var sharedState = _walkerSharedStates[snapshot.SharedStateIndex];
+                snapshot := GetSnapshotForPosition(symbol.IdentifierToken.SpanStart);
+                sharedState := _walkerSharedStates[snapshot.SharedStateIndex];
                 if (sharedState.Variables.TryGetType(symbol, out var updatedType))
                 {
                     return updatedType;
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private Snapshot GetSnapshotForPosition(int position)
             {
-                var snapshotIndex = _incrementalSnapshots.BinarySearch(position, BinarySearchComparer);
+                snapshotIndex := _incrementalSnapshots.BinarySearch(position, BinarySearchComparer);
 
                 if (snapshotIndex < 0)
                 {
@@ -122,7 +122,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 foreach (var ((expr, originalSymbol), updatedSymbol) in _updatedSymbolsMap)
                 {
-                    var debugText = expr?.Syntax.ToFullString() ?? originalSymbol.ToDisplayString();
+                    debugText := expr?.Syntax.ToFullString() ?? originalSymbol.ToDisplayString();
                     RoslynDebug.Assert((object)originalSymbol != updatedSymbol, $"Recorded exact same symbol for {debugText}");
                     RoslynDebug.Assert(originalSymbol is object, $"Recorded null original symbol for {debugText}");
                     RoslynDebug.Assert(updatedSymbol is object, $"Recorded null updated symbol for {debugText}");
@@ -172,16 +172,16 @@ Now {updatedSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}");
                     Debug.Assert(_symbolToSlot.Count == _walkerStates.Count);
                     Debug.Assert(_symbolToSlot.Count > 0);
                     _symbolToSlot.Free();
-                    var snapshotsArray = EnumerableExtensions.SelectAsArray<KeyValuePair<int, Snapshot>, (int, Snapshot)>(_incrementalSnapshots, (kvp) => (kvp.Key, kvp.Value));
+                    snapshotsArray := EnumerableExtensions.SelectAsArray<KeyValuePair<int, Snapshot>, (int, Snapshot)>(_incrementalSnapshots, (kvp) => (kvp.Key, kvp.Value));
 
-                    var updatedSymbols = _updatedSymbolMap.ToImmutable();
+                    updatedSymbols := _updatedSymbolMap.ToImmutable();
                     return new SnapshotManager(_walkerStates.ToImmutableAndFree(), snapshotsArray, updatedSymbols);
                 }
 
                 internal int EnterNewWalker(Symbol symbol)
                 {
                     RoslynDebug.Assert(symbol is object);
-                    var previousSlot = _currentWalkerSlot;
+                    previousSlot := _currentWalkerSlot;
 
                     // Because we potentially run multiple passes, we
                     // need to make sure we use the same final shared

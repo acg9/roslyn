@@ -33,13 +33,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (expressionSyntax != null)
             {
-                var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+                locals := ArrayBuilder<LocalSymbol>.GetInstance();
                 ExpressionVariableFinder.FindExpressionVariables(this, locals, expressionSyntax);
                 return locals.ToImmutableAndFree();
             }
             else
             {
-                var locals = ArrayBuilder<LocalSymbol>.GetInstance(declarationSyntax.Variables.Count);
+                locals := ArrayBuilder<LocalSymbol>.GetInstance(declarationSyntax.Variables.Count);
 
                 // gather expression-declared variables from invalid array dimensions. eg. using(int[x is var y] z = new int[0])
                 declarationSyntax.Type.VisitRankSpecifiers((rankSpecifier, args) =>
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert((expressionSyntax == null) ^ (declarationSyntax == null)); // Can't have both or neither.
 
-            var boundUsingStatement = BindUsingStatementOrDeclarationFromParts((CSharpSyntaxNode)expressionSyntax ?? declarationSyntax, _syntax.UsingKeyword, _syntax.AwaitKeyword, originalBinder, this, diagnostics);
+            boundUsingStatement := BindUsingStatementOrDeclarationFromParts((CSharpSyntaxNode)expressionSyntax ?? declarationSyntax, _syntax.UsingKeyword, _syntax.AwaitKeyword, originalBinder, this, diagnostics);
             Debug.Assert(boundUsingStatement is BoundUsingStatement);
             return boundUsingStatement;
         }
@@ -155,7 +155,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     hasErrors |= ReportUseSite(awaitableTypeOpt, diagnostics, awaitKeyword);
-                    var placeholder = new BoundAwaitableValuePlaceholder(syntax, awaitableTypeOpt).MakeCompilerGenerated();
+                    placeholder := new BoundAwaitableValuePlaceholder(syntax, awaitableTypeOpt).MakeCompilerGenerated();
                     awaitOpt = originalBinder.BindAwaitInfo(placeholder, syntax, diagnostics, ref hasErrors);
                 }
             }
@@ -206,7 +206,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         diagnostics.AddRangeAndFree(patternDiagnostics);
                         MessageID.IDS_FeatureDisposalPattern.CheckFeatureAvailability(diagnostics, originalBinder.Compilation, syntax.Location);
 
-                        var argumentsBuilder = ArrayBuilder<BoundExpression>.GetInstance(disposeMethod.ParameterCount);
+                        argumentsBuilder := ArrayBuilder<BoundExpression>.GetInstance(disposeMethod.ParameterCount);
                         ImmutableArray<int> argsToParams = default;
 
                         originalBinder.BindDefaultArguments(
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var disposeMethod = originalBinder.Compilation.GetSpecialTypeMember(SpecialMember.System_IDisposable__Dispose);
+                        disposeMethod := originalBinder.Compilation.GetSpecialTypeMember(SpecialMember.System_IDisposable__Dispose);
                         if (disposeMethod != null)
                         {
                             originalBinder.ReportDiagnosticsIfUnsafeMemberAccess(diagnostics, disposeMethod, syntax);
@@ -280,7 +280,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             bool implementsInterface(bool fromExpression, NamedTypeSymbol targetInterface, BindingDiagnosticBag diagnostics)
             {
-                var conversions = originalBinder.Conversions;
+                conversions := originalBinder.Conversions;
                 CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = originalBinder.GetNewCompoundUseSiteInfo(diagnostics);
                 bool result;
                 bool needSupportForRefStructInterfaces;

@@ -62,7 +62,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             private void ComputeLabelSet(BoundDecisionDag decisionDag)
             {
                 // Nodes with more than one predecessor are assigned a label
-                var hasPredecessor = PooledHashSet<BoundDecisionDagNode>.GetInstance();
+                hasPredecessor := PooledHashSet<BoundDecisionDagNode>.GetInstance();
                 foreach (BoundDecisionDagNode node in decisionDag.TopologicallySortedNodes)
                 {
                     switch (node)
@@ -345,7 +345,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // in a different section via the use of a local function), so we need to analyze all
                 // of the when clauses to see if they are all simple enough to conclude that they do
                 // not mutate pattern variables.
-                var mightAssignWalker = new WhenClauseMightAssignPatternVariableWalker();
+                mightAssignWalker := new WhenClauseMightAssignPatternVariableWalker();
                 bool canShareTemps =
                     !decisionDag.TopologicallySortedNodes
                     .Any(static (node, mightAssignWalker) => node is BoundWhenDecisionDagNode w && mightAssignWalker.MightAssignSomething(w.WhenExpression), mightAssignWalker);
@@ -371,7 +371,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _loweredDecisionDag = ArrayBuilder<BoundStatement>.GetInstance();
                 ComputeLabelSet(decisionDag);
                 ImmutableArray<BoundDecisionDagNode> sortedNodes = decisionDag.TopologicallySortedNodes;
-                var firstNode = sortedNodes[0];
+                firstNode := sortedNodes[0];
                 switch (firstNode)
                 {
                     case BoundWhenDecisionDagNode _:
@@ -386,7 +386,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 LowerWhenClauses(sortedNodes);
 
                 ImmutableArray<BoundDecisionDagNode> nodesToLower = sortedNodes.WhereAsArray(n => n.Kind != BoundKind.WhenDecisionDagNode && n.Kind != BoundKind.LeafDecisionDagNode);
-                var loweredNodes = PooledHashSet<BoundDecisionDagNode>.GetInstance();
+                loweredNodes := PooledHashSet<BoundDecisionDagNode>.GetInstance();
                 for (int i = 0, length = nodesToLower.Length; i < length; i++)
                 {
                     BoundDecisionDagNode node = nodesToLower[i];
@@ -425,7 +425,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 loweredNodes.Free();
-                var result = _loweredDecisionDag.ToImmutableAndFree();
+                result := _loweredDecisionDag.ToImmutableAndFree();
                 _loweredDecisionDag = null;
                 return result;
             }
@@ -447,8 +447,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     TryLowerTypeTestAndCast(testNode.Test, evaluationNode.Evaluation, out BoundExpression sideEffect, out BoundExpression test)
                     )
                 {
-                    var whenTrue = evaluationNode.Next;
-                    var whenFalse = testNode.WhenFalse;
+                    whenTrue := evaluationNode.Next;
+                    whenFalse := testNode.WhenFalse;
                     bool canEliminateEvaluationNode = !this._dagNodeLabels.ContainsKey(evaluationNode);
 
                     if (canEliminateEvaluationNode)
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (!canGenerateSwitchDispatch(node))
                     return false;
 
-                var input = ((BoundTestDecisionDagNode)node).Test.Input;
+                input := ((BoundTestDecisionDagNode)node).Test.Input;
                 ValueDispatchNode n = GatherValueDispatchNodes(node, loweredNodes, input);
                 LowerValueDispatchNode(n, _tempAllocator.GetTemp(input));
                 return true;
@@ -526,8 +526,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                             return false;
 
                         Debug.Assert(!loweredNodes.Contains(test2));
-                        var t1 = test1.Test;
-                        var t2 = test2.Test;
+                        t1 := test1.Test;
+                        t2 := test2.Test;
                         if (!(t1 is BoundDagValueTest || t1 is BoundDagRelationalTest))
                             return false;
                         if (!(t2 is BoundDagValueTest || t2 is BoundDagRelationalTest))
@@ -569,7 +569,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 if (!(node is BoundTestDecisionDagNode testNode && testNode.Test.Input.Equals(input)))
                 {
-                    var label = GetDagNodeLabel(node);
+                    label := GetDagNodeLabel(node);
                     return new ValueDispatchNode.LeafDispatchNode(node.Syntax, label);
                 }
 
@@ -578,15 +578,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundDagRelationalTest relational:
                         {
                             loweredNodes.Add(testNode);
-                            var whenTrue = GatherValueDispatchNodes(testNode.WhenTrue, loweredNodes, input, fac);
-                            var whenFalse = GatherValueDispatchNodes(testNode.WhenFalse, loweredNodes, input, fac);
+                            whenTrue := GatherValueDispatchNodes(testNode.WhenTrue, loweredNodes, input, fac);
+                            whenFalse := GatherValueDispatchNodes(testNode.WhenFalse, loweredNodes, input, fac);
                             return ValueDispatchNode.RelationalDispatch.CreateBalanced(testNode.Syntax, relational.Value, relational.OperatorKind, whenTrue: whenTrue, whenFalse: whenFalse);
                         }
                     case BoundDagValueTest value:
                         {
                             // Gather up the (value, label) pairs, starting with the first one
                             loweredNodes.Add(testNode);
-                            var cases = ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
+                            cases := ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
                             cases.Add((value: value.Value, label: GetDagNodeLabel(testNode.WhenTrue)));
                             BoundTestDecisionDagNode previous = testNode;
                             while (previous.WhenFalse is BoundTestDecisionDagNode p &&
@@ -600,12 +600,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 previous = p;
                             }
 
-                            var otherwise = GatherValueDispatchNodes(previous.WhenFalse, loweredNodes, input, fac);
+                            otherwise := GatherValueDispatchNodes(previous.WhenFalse, loweredNodes, input, fac);
                             return PushEqualityTestsIntoTree(value.Syntax, otherwise, cases.ToImmutableAndFree(), fac);
                         }
                     default:
                         {
-                            var label = GetDagNodeLabel(node);
+                            label := GetDagNodeLabel(node);
                             return new ValueDispatchNode.LeafDispatchNode(node.Syntax, label);
                         }
                 }
@@ -634,7 +634,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         Debug.Assert(cases.Length == whenTrueCases.Length + whenFalseCases.Length);
                         whenTrue = PushEqualityTestsIntoTree(syntax, whenTrue, whenTrueCases, fac);
                         whenFalse = PushEqualityTestsIntoTree(syntax, whenFalse, whenFalseCases, fac);
-                        var result = rel.WithTrueAndFalseChildren(whenTrue: whenTrue, whenFalse: whenFalse);
+                        result := rel.WithTrueAndFalseChildren(whenTrue: whenTrue, whenFalse: whenFalse);
                         return result;
                     default:
                         throw ExceptionUtilities.UnexpectedValue(otherwise);
@@ -643,8 +643,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 (ImmutableArray<(ConstantValue value, LabelSymbol label)> whenTrueCases, ImmutableArray<(ConstantValue value, LabelSymbol label)> whenFalseCases)
                     splitCases(ImmutableArray<(ConstantValue value, LabelSymbol label)> cases, BinaryOperatorKind op, ConstantValue value)
                 {
-                    var whenTrueBuilder = ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
-                    var whenFalseBuilder = ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
+                    whenTrueBuilder := ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
+                    whenFalseBuilder := ArrayBuilder<(ConstantValue value, LabelSymbol label)>.GetInstance();
                     op = op.Operator();
                     foreach (var pair in cases)
                     {
@@ -675,7 +675,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private void LowerRelationalDispatchNode(ValueDispatchNode.RelationalDispatch rel, BoundExpression input)
             {
-                var test = MakeRelationalTest(rel.Syntax, input, rel.Operator, rel.Value);
+                test := MakeRelationalTest(rel.Syntax, input, rel.Operator, rel.Value);
                 if (rel.WhenTrue is ValueDispatchNode.LeafDispatchNode whenTrue)
                 {
                     LabelSymbol trueLabel = whenTrue.Label;
@@ -712,8 +712,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 int IComparer<(ConstantValue value, LabelSymbol label)>.Compare((ConstantValue value, LabelSymbol label) left, (ConstantValue value, LabelSymbol label) right)
                 {
-                    var x = left.value;
-                    var y = right.value;
+                    x := left.value;
+                    y := right.value;
                     Debug.Assert(x.Discriminator switch
                     {
                         ConstantValueTypeDiscriminator.Decimal => true,
@@ -755,7 +755,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     LengthBasedStringSwitchData lengthBasedDispatchOpt = null;
                     if (isStringInput || isSpanInput || isReadOnlySpanInput)
                     {
-                        var stringPatternInput = isStringInput ? StringPatternInput.String : (isSpanInput ? StringPatternInput.SpanChar : StringPatternInput.ReadOnlySpanChar);
+                        stringPatternInput := isStringInput ? StringPatternInput.String : (isSpanInput ? StringPatternInput.SpanChar : StringPatternInput.ReadOnlySpanChar);
 
                         if (!this._localRewriter._compilation.FeatureDisableLengthBasedSwitch &&
                             this._factory.Compilation.Options.OptimizationLevel == OptimizationLevel.Release &&
@@ -777,7 +777,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    var dispatch = new BoundSwitchDispatch(node.Syntax, input, node.Cases, defaultLabel, lengthBasedDispatchOpt);
+                    dispatch := new BoundSwitchDispatch(node.Syntax, input, node.Cases, defaultLabel, lengthBasedDispatchOpt);
                     _loweredDecisionDag.Add(dispatch);
                 }
                 else if (input.Type.IsNativeIntegerType)
@@ -811,7 +811,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             throw ExceptionUtilities.UnexpectedValue(input.Type);
                     }
 
-                    var dispatch = new BoundSwitchDispatch(node.Syntax, input, cases, defaultLabel, lengthBasedStringSwitchDataOpt: null);
+                    dispatch := new BoundSwitchDispatch(node.Syntax, input, cases, defaultLabel, lengthBasedStringSwitchDataOpt: null);
                     _loweredDecisionDag.Add(dispatch);
                 }
                 else
@@ -826,7 +826,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         _ => throw ExceptionUtilities.UnexpectedValue(input.Type.SpecialType)
                     };
 
-                    var cases = node.Cases.Sort(new CasesComparer(input.Type));
+                    cases := node.Cases.Sort(new CasesComparer(input.Type));
                     lowerFloatDispatch(0, cases.Length);
 
                     void lowerFloatDispatch(int firstIndex, int count)
@@ -843,7 +843,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         else
                         {
                             int half = count / 2;
-                            var gt = _factory.GenerateLabel("greaterThanMidpoint");
+                            gt := _factory.GenerateLabel("greaterThanMidpoint");
                             _loweredDecisionDag.Add(_factory.ConditionalGoto(MakeRelationalTest(node.Syntax, input, lessThanOrEqualOperator, cases[firstIndex + half - 1].value), gt, jumpIfTrue: false));
                             lowerFloatDispatch(firstIndex, half);
                             _loweredDecisionDag.Add(_factory.Label(gt));
@@ -856,7 +856,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 bool hasLengthBasedDispatchRequiredMembers(StringPatternInput stringPatternInput)
                 {
-                    var compilation = _localRewriter._compilation;
+                    compilation := _localRewriter._compilation;
                     var lengthMember = stringPatternInput switch
                     {
                         StringPatternInput.String => compilation.GetSpecialTypeMember(SpecialMember.System_String__Length),
@@ -901,7 +901,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             private void EnsureStringHashFunction(int labelsCount, SyntaxNode syntaxNode, StringPatternInput stringPatternInput)
             {
-                var module = _localRewriter.EmitModule;
+                module := _localRewriter.EmitModule;
                 if (module == null)
                 {
                     // we're not generating code, so we don't need the hash function
@@ -928,7 +928,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // If we have already generated the helper, possibly for another switch
                 // or on another thread, we don't need to regenerate it.
-                var privateImplClass = module.GetPrivateImplClass(syntaxNode, _localRewriter._diagnostics.DiagnosticBag);
+                privateImplClass := module.GetPrivateImplClass(syntaxNode, _localRewriter._diagnostics.DiagnosticBag);
                 if (privateImplClass.PrivateImplementationDetails.GetMethod(stringPatternInput switch
                 {
                     StringPatternInput.String => CodeAnalysis.CodeGen.PrivateImplementationDetails.SynthesizedStringHashFunctionName,
@@ -1007,13 +1007,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 int nextWhenNodeIdentifier = 0;
                 // Prepared maps for `when` nodes and expressions
-                var whenExpressionMap = PooledDictionary<BoundExpression, (LabelSymbol LabelToWhenExpression, ArrayBuilder<BoundWhenDecisionDagNode> WhenNodes)>.GetInstance();
-                var whenNodeMap = PooledDictionary<BoundWhenDecisionDagNode, (LabelSymbol LabelToWhenExpression, int WhenNodeIdentifier)>.GetInstance();
+                whenExpressionMap := PooledDictionary<BoundExpression, (LabelSymbol LabelToWhenExpression, ArrayBuilder<BoundWhenDecisionDagNode> WhenNodes)>.GetInstance();
+                whenNodeMap := PooledDictionary<BoundWhenDecisionDagNode, (LabelSymbol LabelToWhenExpression, int WhenNodeIdentifier)>.GetInstance();
                 foreach (BoundDecisionDagNode node in sortedNodes)
                 {
                     if (node is BoundWhenDecisionDagNode whenNode)
                     {
-                        var whenExpression = whenNode.WhenExpression;
+                        whenExpression := whenNode.WhenExpression;
                         if (whenExpression is not null && whenExpression.ConstantValueOpt != ConstantValue.True)
                         {
                             LabelSymbol labelToWhenExpression;
@@ -1025,7 +1025,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             else
                             {
                                 labelToWhenExpression = _factory.GenerateLabel("sharedWhenExpression");
-                                var list = ArrayBuilder<BoundWhenDecisionDagNode>.GetInstance();
+                                list := ArrayBuilder<BoundWhenDecisionDagNode>.GetInstance();
                                 list.Add(whenNode);
                                 whenExpressionMap.Add(whenExpression, (labelToWhenExpression, list));
                             }
@@ -1061,7 +1061,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 bool tryLowerAsJumpToSharedWhenExpression(BoundWhenDecisionDagNode whenNode)
                 {
-                    var whenExpression = whenNode.WhenExpression;
+                    whenExpression := whenNode.WhenExpression;
                     if (!isSharedWhenExpression(whenExpression))
                     {
                         return false;
@@ -1072,7 +1072,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     sectionBuilder.Add(_factory.Label(labelToSectionScope));
 
                     _whenNodeIdentifierLocal ??= _factory.SynthesizedLocal(_factory.SpecialType(SpecialType.System_Int32));
-                    var found = whenNodeMap.TryGetValue(whenNode, out var whenNodeInfo);
+                    found := whenNodeMap.TryGetValue(whenNode, out var whenNodeInfo);
                     Debug.Assert(found);
 
                     // whenNodeIdentifierLocal = whenNodeIdentifier;
@@ -1091,8 +1091,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return;
                     }
 
-                    var whenClauseSyntax = whenNodes[0].Syntax;
-                    var whenTrueLabel = GetDagNodeLabel(whenNodes[0].WhenTrue);
+                    whenClauseSyntax := whenNodes[0].Syntax;
+                    whenTrueLabel := GetDagNodeLabel(whenNodes[0].WhenTrue);
                     Debug.Assert(whenNodes.Count > 1);
                     Debug.Assert(whenNodes.All(n => n.Syntax == whenClauseSyntax));
                     Debug.Assert(whenNodes.All(n => n.WhenExpression == whenExpression));
@@ -1104,7 +1104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     lowerBindings(whenNodes[0].Bindings, sectionBuilder);
                     addConditionalGoto(whenExpression, whenClauseSyntax, whenTrueLabel, sectionBuilder);
 
-                    var whenFalseSwitchSections = ArrayBuilder<SyntheticSwitchSection>.GetInstance();
+                    whenFalseSwitchSections := ArrayBuilder<SyntheticSwitchSection>.GetInstance();
                     foreach (var whenNode in whenNodes)
                     {
                         var (_, whenNodeIdentifier) = whenNodeMap[whenNode];
@@ -1157,15 +1157,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     // We need to assign the pattern variables in the code where they are in scope, so we produce a branch
                     // to the section where they are in scope and evaluate the when clause there.
-                    var whenTrue = (BoundLeafDecisionDagNode)whenClause.WhenTrue;
+                    whenTrue := (BoundLeafDecisionDagNode)whenClause.WhenTrue;
                     LabelSymbol labelToSectionScope = GetDagNodeLabel(whenClause);
 
                     ArrayBuilder<BoundStatement> sectionBuilder = BuilderForSection(whenClause.Syntax);
                     sectionBuilder.Add(_factory.Label(labelToSectionScope));
                     lowerBindings(whenClause.Bindings, sectionBuilder);
 
-                    var whenFalse = whenClause.WhenFalse;
-                    var trueLabel = GetDagNodeLabel(whenTrue);
+                    whenFalse := whenClause.WhenFalse;
+                    trueLabel := GetDagNodeLabel(whenTrue);
                     if (whenClause.WhenExpression != null && whenClause.WhenExpression.ConstantValueOpt != ConstantValue.True)
                     {
                         addConditionalGoto(whenClause.WhenExpression, whenClause.Syntax, trueLabel, sectionBuilder);

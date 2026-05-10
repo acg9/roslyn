@@ -101,7 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static NullabilityInfo ToNullabilityInfo(this NullableAnnotation annotation, TypeSymbol type)
         {
-            var flowState = TypeWithAnnotations.Create(type, annotation).ToTypeWithState().State;
+            flowState := TypeWithAnnotations.Create(type, annotation).ToTypeWithState().State;
             return new NullabilityInfo(ToPublicAnnotation(type, annotation), flowState.ToPublicFlowState());
         }
 

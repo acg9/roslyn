@@ -31,9 +31,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters)
             MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
-            var annotation = ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.Annotated;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
+            annotation := ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.Annotated;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_Boolean, location, diagnostics)),
                     Parameters: ImmutableArray.Create<ParameterSymbol>(
                                     new SourceSimpleParameterSymbol(owner: this,
@@ -45,11 +45,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
 
             try
             {
-                var other = F.Parameter(Parameters[0]);
+                other := F.Parameter(Parameters[0]);
                 BoundExpression? retExpr;
 
                 // This method is the strongly-typed Equals method where the parameter type is
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 // field1 == other.field1 && ... && fieldN == other.fieldN
-                var fields = ArrayBuilder<FieldSymbol>.GetInstance();
+                fields := ArrayBuilder<FieldSymbol>.GetInstance();
                 bool foundBadField = false;
                 foreach (var f in ContainingType.GetFieldsToEmit())
                 {
@@ -139,7 +139,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         fields.Add(f);
 
-                        var parameterType = f.Type;
+                        parameterType := f.Type;
                         if (parameterType.IsPointerOrFunctionPointer() || parameterType.IsRestrictedType())
                         {
                             // We'll have reported a diagnostic elsewhere (SourceMemberFieldSymbol.TypeChecks)

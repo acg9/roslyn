@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.InlineArrayAccess:
                     {
-                        var elementAccess = (BoundInlineArrayAccess)node;
+                        elementAccess := (BoundInlineArrayAccess)node;
 
                         if (!elementAccess.IsValue)
                         {
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                 case BoundKind.ObjectInitializerMember:
-                    var member = (BoundObjectInitializerMember)node;
+                    member := (BoundObjectInitializerMember)node;
                     if (member.HasErrors)
                         return RefKind.None;
 
@@ -111,7 +111,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return true;
             }
 
-            var constValue = node.ConstantValueOpt;
+            constValue := node.ConstantValueOpt;
             if (constValue != null)
             {
                 return constValue.IsDefaultValue;
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static bool HasDynamicType(this BoundExpression node)
         {
-            var type = node.Type;
+            type := node.Type;
             return type is { } && type.IsDynamic();
         }
 
@@ -136,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(expr.Kind is BoundKind.MethodGroup or BoundKind.UnboundLambda);
 
-            var delegateType = expr.GetFunctionType()?.GetInternalDelegateType();
+            delegateType := expr.GetFunctionType()?.GetInternalDelegateType();
             delegateType?.AddUseSiteInfo(ref useSiteInfo);
 
             // Report bad or missing System.Runtime.InteropServices.InAttribute for a 'ref readonly' returning delegate
@@ -182,7 +182,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.MethodGroup:
                     // Special case: if we are looking for info on "M" in "new Action(M)" in the context of a parent 
                     // then we want to get the symbol that overload resolution chose for M, not on the whole method group M.
-                    var delegateCreation = parent as BoundDelegateCreationExpression;
+                    delegateCreation := parent as BoundDelegateCreationExpression;
                     if (delegateCreation != null && delegateCreation.MethodOpt is { })
                     {
                         symbols.Add(delegateCreation.MethodOpt);
@@ -202,8 +202,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
 
                 case BoundKind.DelegateCreationExpression:
-                    var expr = (BoundDelegateCreationExpression)node;
-                    var ctor = expr.Type.GetMembers(WellKnownMemberNames.InstanceConstructorName).FirstOrDefault();
+                    expr := (BoundDelegateCreationExpression)node;
+                    ctor := expr.Type.GetMembers(WellKnownMemberNames.InstanceConstructorName).FirstOrDefault();
                     if (ctor is { })
                     {
                         symbols.Add(ctor);
@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // and we should use those as the symbols displayed for the call. If it did succeed
                     // then we did not stash any symbols; just fall through to the default case.
 
-                    var originalMethods = ((BoundCall)node).OriginalMethodsOpt;
+                    originalMethods := ((BoundCall)node).OriginalMethodsOpt;
                     if (originalMethods.IsDefault)
                     {
                         goto default;
@@ -228,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // Same behavior as for a BoundCall: if overload resolution failed, pull out stashed candidates;
                     // otherwise use the default behavior.
 
-                    var originalIndexers = ((BoundIndexerAccess)node).OriginalIndexersOpt;
+                    originalIndexers := ((BoundIndexerAccess)node).OriginalIndexersOpt;
                     if (originalIndexers.IsDefault)
                     {
                         goto default;
@@ -237,7 +237,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
 
                 default:
-                    var symbol = node.ExpressionSymbol;
+                    symbol := node.ExpressionSymbol;
                     if (symbol is { })
                     {
                         symbols.Add(symbol);

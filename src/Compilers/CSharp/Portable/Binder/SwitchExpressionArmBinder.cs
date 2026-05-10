@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ? armBinder.BindBooleanExpression(node.WhenClause.Condition, diagnostics)
                 : null;
             BoundExpression armResult = armBinder.BindValue(node.Expression, diagnostics, BindValueKind.RValue);
-            var label = new GeneratedLabelSymbol("arm");
+            label := new GeneratedLabelSymbol("arm");
             return new BoundSwitchExpressionArm(node, locals, pattern, hasUnionMatching, whenClause, armResult, label, hasErrors | pattern.HasErrors);
         }
     }

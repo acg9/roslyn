@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<Symbol> RetargetMembers(ImmutableArray<Symbol> underlyingMembers)
         {
-            var builder = ArrayBuilder<Symbol>.GetInstance(underlyingMembers.Length);
+            builder := ArrayBuilder<Symbol>.GetInstance(underlyingMembers.Length);
 
             foreach (Symbol s in underlyingMembers)
             {
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (_lazyTypeMembers.IsDefault)
             {
-                var typeMembers = RetargetTypeMembers(_underlyingNamespace.GetTypeMembers());
+                typeMembers := RetargetTypeMembers(_underlyingNamespace.GetTypeMembers());
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyTypeMembers, typeMembers);
             }
 
@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<NamedTypeSymbol> RetargetTypeMembers(ImmutableArray<NamedTypeSymbol> underlyingMembers)
         {
-            var builder = ArrayBuilder<NamedTypeSymbol>.GetInstance(underlyingMembers.Length);
+            builder := ArrayBuilder<NamedTypeSymbol>.GetInstance(underlyingMembers.Length);
 
             foreach (NamedTypeSymbol t in underlyingMembers)
             {

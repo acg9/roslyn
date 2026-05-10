@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return AttributeTargets.Field;
 
                 case SymbolKind.Method:
-                    var method = (MethodSymbol)this;
+                    method := (MethodSymbol)this;
                     switch (method.MethodKind)
                     {
                         case MethodKind.Constructor:
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                 case SymbolKind.NamedType:
-                    var namedType = (NamedTypeSymbol)this;
+                    namedType := (NamedTypeSymbol)this;
                     switch (namedType.TypeKind)
                     {
                         case TypeKind.Class:
@@ -150,8 +150,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             out BoundAttribute? boundAttribute,
             out ObsoleteAttributeData? obsoleteData)
         {
-            var type = arguments.AttributeType;
-            var syntax = arguments.AttributeSyntax;
+            type := arguments.AttributeType;
+            syntax := arguments.AttributeSyntax;
 
             ObsoleteAttributeKind kind;
             if (CSharpAttributeData.IsTargetEarlyAttribute(type, syntax, AttributeDescription.ObsoleteAttribute))
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!SyntaxFacts.IsValidIdentifier((string?)arguments.Attribute.CommonConstructorArguments[0].ValueInternal))
                 {
-                    var attrArgumentLocation = arguments.Attribute.GetAttributeArgumentLocation(parameterIndex: 0);
+                    attrArgumentLocation := arguments.Attribute.GetAttributeArgumentLocation(parameterIndex: 0);
                     arguments.Diagnostics.DiagnosticBag.Add(ErrorCode.ERR_InvalidExperimentalDiagID, attrArgumentLocation);
                 }
             }
@@ -310,8 +310,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Action<AttributeSyntax>? beforeAttributePartBound = null,
             Action<AttributeSyntax>? afterAttributePartBound = null)
         {
-            var diagnostics = BindingDiagnosticBag.GetInstance();
-            var compilation = this.DeclaringCompilation;
+            diagnostics := BindingDiagnosticBag.GetInstance();
+            compilation := this.DeclaringCompilation;
 
             ImmutableArray<Binder> binders;
             BoundAttribute[]? boundAttributeArray;
@@ -334,7 +334,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 // Bind the attribute types and then early decode them.
-                var attributeTypesBuilder = new NamedTypeSymbol[totalAttributesCount];
+                attributeTypesBuilder := new NamedTypeSymbol[totalAttributesCount];
 
                 Binder.BindAttributeTypes(binders, attributesToBind, this, attributeTypesBuilder, beforeAttributePartBound, afterAttributePartBound, diagnostics);
 
@@ -356,7 +356,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 this.PostEarlyDecodeWellKnownAttributeTypes();
 
                 // Bind the attribute in two stages - early and normal.
-                var attributeDataArray = new CSharpAttributeData[totalAttributesCount];
+                attributeDataArray := new CSharpAttributeData[totalAttributesCount];
                 boundAttributeArray = interestedInDiagnostics ? new BoundAttribute[totalAttributesCount] : null;
 
                 // Early bind and decode some well-known attributes.
@@ -421,7 +421,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         Debug.Assert(boundAttributeArray is not null);
                         for (var i = 0; i < totalAttributesCount; i++)
                         {
-                            var boundAttribute = boundAttributeArray[i];
+                            boundAttribute := boundAttributeArray[i];
                             Debug.Assert(boundAttribute is not null);
                             Binder attributeBinder = binders[i];
                             if (boundAttribute.Constructor is { } ctor)
@@ -468,7 +468,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     //    2. Collect obsolete diagnostics reported within the span of those locations.
                     //    3. Remove the collected diagnostics, if any.
 
-                    var builder = ArrayBuilder<Location>.GetInstance();
+                    builder := ArrayBuilder<Location>.GetInstance();
                     int totalAttributesCount = attributesToBind.Length;
 
                     Debug.Assert(totalAttributesCount == boundAttributes.Length);
@@ -488,7 +488,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (builder.Count != 0)
                     {
-                        var toRemove = new HashSet<Diagnostic>(ReferenceEqualityComparer.Instance);
+                        toRemove := new HashSet<Diagnostic>(ReferenceEqualityComparer.Instance);
 
                         //    2. Collect obsolete diagnostics reported within the span of those locations.
                         foreach (Diagnostic d in diagnostics.DiagnosticBag.AsEnumerableWithoutResolution())
@@ -512,7 +512,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         //    3. Remove the collected diagnostics, if any.
                         if (toRemove.Count != 0)
                         {
-                            var filtered = BindingDiagnosticBag.GetInstance();
+                            filtered := BindingDiagnosticBag.GetInstance();
 
                             filtered.AddDependencies(diagnostics);
 
@@ -544,16 +544,16 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         protected ImmutableArray<(CSharpAttributeData, BoundAttribute)> BindAttributes(OneOrMany<SyntaxList<AttributeListSyntax>> attributeDeclarations, Binder? rootBinder)
         {
-            var boundAttributeArrayBuilder = ArrayBuilder<(CSharpAttributeData, BoundAttribute)>.GetInstance();
+            boundAttributeArrayBuilder := ArrayBuilder<(CSharpAttributeData, BoundAttribute)>.GetInstance();
             foreach (var attributeListSyntaxList in attributeDeclarations)
             {
-                var binder = GetAttributeBinder(attributeListSyntaxList, DeclaringCompilation, rootBinder);
+                binder := GetAttributeBinder(attributeListSyntaxList, DeclaringCompilation, rootBinder);
                 foreach (var attributeListSyntax in attributeListSyntaxList)
                 {
                     foreach (var attributeSyntax in attributeListSyntax.Attributes)
                     {
-                        var boundType = binder.BindType(attributeSyntax.Name, BindingDiagnosticBag.Discarded);
-                        var boundTypeSymbol = (NamedTypeSymbol)boundType.Type;
+                        boundType := binder.BindType(attributeSyntax.Name, BindingDiagnosticBag.Discarded);
+                        boundTypeSymbol := (NamedTypeSymbol)boundType.Type;
                         var boundAttribute = binder.GetAttribute(attributeSyntax, boundTypeSymbol,
                             beforeAttributePartBound: null, afterAttributePartBound: null, BindingDiagnosticBag.Discarded);
                         boundAttributeArrayBuilder.Add(boundAttribute);
@@ -595,7 +595,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Binder rootBinderOpt,
             out ImmutableArray<Binder> binders)
         {
-            var attributeTarget = (IAttributeTargetSymbol)this;
+            attributeTarget := (IAttributeTargetSymbol)this;
 
             ArrayBuilder<AttributeSyntax> syntaxBuilder = null;
             ArrayBuilder<Binder> bindersBuilder = null;
@@ -603,7 +603,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int listIndex = 0; listIndex < attributeDeclarationSyntaxLists.Count; listIndex++)
             {
-                var attributeDeclarationSyntaxList = attributeDeclarationSyntaxLists[listIndex];
+                attributeDeclarationSyntaxList := attributeDeclarationSyntaxLists[listIndex];
                 if (attributeDeclarationSyntaxList.Any())
                 {
                     int prevCount = attributesToBindCount;
@@ -619,7 +619,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 bindersBuilder = new ArrayBuilder<Binder>();
                             }
 
-                            var attributesToBind = attributeDeclarationSyntax.Attributes;
+                            attributesToBind := attributeDeclarationSyntax.Attributes;
                             if (attributeMatchesOpt is null)
                             {
                                 syntaxBuilder.AddRange(attributesToBind);
@@ -643,7 +643,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         Debug.Assert(bindersBuilder != null);
 
-                        var binder = GetAttributeBinder(attributeDeclarationSyntaxList, compilation, rootBinderOpt);
+                        binder := GetAttributeBinder(attributeDeclarationSyntaxList, compilation, rootBinderOpt);
 
                         for (int i = 0; i < attributesToBindCount - prevCount; i++)
                         {
@@ -673,7 +673,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #nullable enable
         protected Binder GetAttributeBinder(SyntaxList<AttributeListSyntax> attributeDeclarationSyntaxList, CSharpCompilation compilation, Binder? rootBinder = null)
         {
-            var binder = rootBinder ?? compilation.GetBinderFactory(attributeDeclarationSyntaxList.Node!.SyntaxTree).GetBinder(attributeDeclarationSyntaxList.Node);
+            binder := rootBinder ?? compilation.GetBinderFactory(attributeDeclarationSyntaxList.Node!.SyntaxTree).GetBinder(attributeDeclarationSyntaxList.Node);
             binder = new ContextualAttributeBinder(binder, this);
             Debug.Assert(!binder.InAttributeArgument || this is MethodSymbol { MethodKind: MethodKind.LambdaMethod or MethodKind.LocalFunction }, "Possible cycle in attribute binding");
             return binder;
@@ -706,7 +706,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (isOwner &&
                 targetOpt.Identifier.ToAttributeLocation() == AttributeLocation.Module)
             {
-                var parseOptions = (CSharpParseOptions)targetOpt.SyntaxTree.Options;
+                parseOptions := (CSharpParseOptions)targetOpt.SyntaxTree.Options;
                 if (parseOptions.LanguageVersion == LanguageVersion.CSharp1)
                     diagnostics.Add(ErrorCode.WRN_NonECMAFeature, targetOpt.GetLocation(), MessageID.IDS_FeatureModuleAttrLoc);
             }
@@ -788,8 +788,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(attributeDataArray != null);
             Debug.Assert(!attributeDataArray.Contains((attr) => attr != null));
 
-            var earlyBinder = new EarlyWellKnownAttributeBinder(binders[0]);
-            var arguments = new EarlyDecodeWellKnownAttributeArguments<EarlyWellKnownAttributeBinder, NamedTypeSymbol, AttributeSyntax, AttributeLocation>();
+            earlyBinder := new EarlyWellKnownAttributeBinder(binders[0]);
+            arguments := new EarlyDecodeWellKnownAttributeArguments<EarlyWellKnownAttributeBinder, NamedTypeSymbol, AttributeSyntax, AttributeLocation>();
             arguments.SymbolPart = symbolPart;
 
             for (int i = 0; i < boundAttributeTypes.Length; i++)
@@ -830,7 +830,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int i = 0; i < attributeTypes.Length; i++)
             {
-                var attributeType = attributeTypes[i];
+                attributeType := attributeTypes[i];
 
                 if (!attributeType.IsErrorType())
                 {
@@ -861,7 +861,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             int totalAttributesCount = boundAttributes.Length;
             HashSet<NamedTypeSymbol> uniqueAttributeTypes = new HashSet<NamedTypeSymbol>();
-            var arguments = new DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation>();
+            arguments := new DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation>();
             arguments.Diagnostics = diagnostics;
             arguments.AttributesCount = totalAttributesCount;
             arguments.SymbolPart = symbolPart;

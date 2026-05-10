@@ -79,7 +79,7 @@ internal sealed class InterceptableLocation1 : InterceptableLocation
 
     public override string GetDisplayLocation()
     {
-        var mappedPath = _resolver?.NormalizePath(_path, baseFilePath: null) ?? _path;
+        mappedPath := _resolver?.NormalizePath(_path, baseFilePath: null) ?? _path;
         // e.g. `C:\project\src\Program.cs(12,34)`
         // or, with a typical pathmap setup, `/_/src/Program.cs(12,34)`
         return $"{mappedPath}({_lineNumberOneIndexed},{_characterNumberOneIndexed})";
@@ -99,14 +99,14 @@ internal sealed class InterceptableLocation1 : InterceptableLocation
 
             string makeData()
             {
-                var builder = PooledBlobBuilder.GetInstance();
+                builder := PooledBlobBuilder.GetInstance();
                 builder.WriteBytes(_checksum, start: 0, 16);
                 builder.WriteInt32(_position);
 
-                var displayFileName = Path.GetFileName(_path);
+                displayFileName := Path.GetFileName(_path);
                 builder.WriteUTF8(displayFileName);
 
-                var bytes = builder.ToArray();
+                bytes := builder.ToArray();
                 builder.Free();
                 return Convert.ToBase64String(bytes);
             }
@@ -146,8 +146,8 @@ internal sealed class InterceptableLocation1 : InterceptableLocation
             return null;
         }
 
-        var hash = bytes.AsMemory(start: hashIndex, length: hashSize);
-        var position = BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(start: positionIndex));
+        hash := bytes.AsMemory(start: hashIndex, length: hashSize);
+        position := BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(start: positionIndex));
 
         string displayFileName;
         try

@@ -117,7 +117,7 @@ internal sealed class SynthesizedEmbeddedMemorySafetyRulesAttributeSymbol : Synt
 
     public override ImmutableArray<Symbol> GetMembers(string name)
     {
-        var builder = GetMemberBuilder(static s => s);
+        builder := GetMemberBuilder(static s => s);
         builder.RemoveAll(static (s, name) => s.Name != name, name);
         return builder.ToImmutableAndFree();
     }

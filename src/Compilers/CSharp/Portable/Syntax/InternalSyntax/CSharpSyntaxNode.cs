@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             int offset = 0;
             for (int i = 0; i < index; i++)
             {
-                var child = this.GetSlot(i);
+                child := this.GetSlot(i);
                 if (child != null)
                 {
                     offset += child.FullWidth;
@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 for (int i = 0, n = node.SlotCount; i < n; i++)
                 {
-                    var child = node.GetSlot(i);
+                    child := node.GetSlot(i);
                     if (child != null)
                     {
                         stack = ApplyDirectivesToListOrNode(child, stack);
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             if (this.ContainsDirectives)
             {
-                var list = new List<DirectiveTriviaSyntax>(32);
+                list := new List<DirectiveTriviaSyntax>(32);
                 GetDirectives(this, list);
                 return list;
             }
@@ -190,14 +190,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             if (node != null && node.ContainsDirectives)
             {
-                var d = node as DirectiveTriviaSyntax;
+                d := node as DirectiveTriviaSyntax;
                 if (d != null)
                 {
                     directives.Add(d);
                 }
                 else
                 {
-                    var t = node as SyntaxToken;
+                    t := node as SyntaxToken;
                     if (t != null)
                     {
                         GetDirectives(t.GetLeadingTrivia(), directives);
@@ -283,14 +283,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 return null;
             }
 
-            var parent = trivia.Token.Parent;
+            parent := trivia.Token.Parent;
             if (parent is null)
             {
                 return CSharp.Syntax.StructuredTriviaSyntax.Create(trivia);
             }
 
             SyntaxNode structure;
-            var structsInParent = s_structuresTable.GetOrCreateValue(parent);
+            structsInParent := s_structuresTable.GetOrCreateValue(parent);
             lock (structsInParent)
             {
                 if (!structsInParent.TryGetValue(trivia, out structure))

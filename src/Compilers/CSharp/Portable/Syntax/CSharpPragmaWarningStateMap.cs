@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         protected override WarningStateMapEntry[] CreateWarningStateMapEntries(SyntaxTree syntaxTree)
         {
             // Accumulate all the pragma warning directives, in source code order
-            var directives = ArrayBuilder<DirectiveTriviaSyntax>.GetInstance();
+            directives := ArrayBuilder<DirectiveTriviaSyntax>.GetInstance();
             GetAllPragmaWarningDirectives(syntaxTree, directives);
 
             // Create the pragma warning map.
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     continue;
                 }
 
-                var w = (PragmaWarningDirectiveTriviaSyntax)d;
+                w := (PragmaWarningDirectiveTriviaSyntax)d;
 
                 // Ignore directives with errors (i.e., Unrecognized #pragma directive)
                 if (!w.DisableOrRestoreKeyword.IsMissing && !w.WarningKeyword.IsMissing)
@@ -79,22 +79,22 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         // This mapping also contains a global warning option, accumulated of all #pragma up to the current line position.
         private static WarningStateMapEntry[] CreatePragmaWarningStateEntries(ArrayBuilder<DirectiveTriviaSyntax> directiveList)
         {
-            var entries = new WarningStateMapEntry[directiveList.Count + 1];
-            var index = 0;
+            entries := new WarningStateMapEntry[directiveList.Count + 1];
+            index := 0;
 
             // Captures the mapping of a warning number to the reporting option, accumulated of all #pragma up to the current directive.
-            var accumulatedSpecificWarningState = ImmutableDictionary.Create<string, PragmaWarningState>();
+            accumulatedSpecificWarningState := ImmutableDictionary.Create<string, PragmaWarningState>();
 
             // Captures the general reporting option, accumulated of all #pragma up to the current directive.
-            var accumulatedGeneralWarningState = PragmaWarningState.Default;
+            accumulatedGeneralWarningState := PragmaWarningState.Default;
 
-            var current = new WarningStateMapEntry(0, PragmaWarningState.Default, accumulatedSpecificWarningState);
+            current := new WarningStateMapEntry(0, PragmaWarningState.Default, accumulatedSpecificWarningState);
             entries[index] = current;
 
             while (index < directiveList.Count)
             {
-                var currentDirective = directiveList[index];
-                var currentPragmaDirective = (PragmaWarningDirectiveTriviaSyntax)currentDirective;
+                currentDirective := directiveList[index];
+                currentPragmaDirective := (PragmaWarningDirectiveTriviaSyntax)currentDirective;
 
                 // Compute the directive state
                 PragmaWarningState directiveState = currentPragmaDirective.DisableOrRestoreKeyword.Kind() switch
@@ -117,14 +117,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     // Compute warning numbers from the current directive's codes
                     for (int x = 0; x < currentPragmaDirective.ErrorCodes.Count; x++)
                     {
-                        var currentErrorCode = currentPragmaDirective.ErrorCodes[x];
+                        currentErrorCode := currentPragmaDirective.ErrorCodes[x];
                         if (currentErrorCode.IsMissing || currentErrorCode.ContainsDiagnostics)
                             continue;
 
-                        var errorId = string.Empty;
+                        errorId := string.Empty;
                         if (currentErrorCode.Kind() == SyntaxKind.NumericLiteralExpression)
                         {
-                            var token = ((LiteralExpressionSyntax)currentErrorCode).Token;
+                            token := ((LiteralExpressionSyntax)currentErrorCode).Token;
                             errorId = MessageProvider.Instance.GetIdForErrorCode((int)token.Value!);
                         }
                         else if (currentErrorCode.Kind() == SyntaxKind.IdentifierName)

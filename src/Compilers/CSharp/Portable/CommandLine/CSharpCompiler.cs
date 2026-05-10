@@ -42,18 +42,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<AnalyzerConfigOptionsResult> analyzerConfigOptions,
             AnalyzerConfigOptionsResult globalConfigOptions)
         {
-            var parseOptions = Arguments.ParseOptions;
+            parseOptions := Arguments.ParseOptions;
 
             // We compute script parse options once so we don't have to do it repeatedly in
             // case there are many script files.
-            var scriptParseOptions = parseOptions.WithKind(SourceCodeKind.Script);
+            scriptParseOptions := parseOptions.WithKind(SourceCodeKind.Script);
 
             bool hadErrors = false;
 
-            var sourceFiles = Arguments.SourceFiles;
-            var trees = new SyntaxTree?[sourceFiles.Length];
-            var normalizedFilePaths = new string?[sourceFiles.Length];
-            var diagnosticBag = DiagnosticBag.GetInstance();
+            sourceFiles := Arguments.SourceFiles;
+            trees := new SyntaxTree?[sourceFiles.Length];
+            normalizedFilePaths := new string?[sourceFiles.Length];
+            diagnosticBag := DiagnosticBag.GetInstance();
 
             if (Arguments.CompilationOptions.ConcurrentBuild)
             {
@@ -95,11 +95,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            var diagnostics = new List<DiagnosticInfo>();
-            var uniqueFilePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            diagnostics := new List<DiagnosticInfo>();
+            uniqueFilePaths := new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < sourceFiles.Length; i++)
             {
-                var normalizedFilePath = normalizedFilePaths[i];
+                normalizedFilePath := normalizedFilePaths[i];
                 Debug.Assert(normalizedFilePath != null);
                 Debug.Assert(sourceFiles[i].IsInputRedirected || PathUtilities.IsAbsolute(normalizedFilePath));
 
@@ -122,8 +122,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var assemblyIdentityComparer = DesktopAssemblyIdentityComparer.Default;
-            var appConfigPath = this.Arguments.AppConfigPath;
+            assemblyIdentityComparer := DesktopAssemblyIdentityComparer.Default;
+            appConfigPath := this.Arguments.AppConfigPath;
             if (appConfigPath != null)
             {
                 try
@@ -144,18 +144,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var xmlFileResolver = new LoggingXmlFileResolver(Arguments.BaseDirectory, touchedFilesLogger);
-            var sourceFileResolver = new LoggingSourceFileResolver(ImmutableArray<string>.Empty, Arguments.BaseDirectory, Arguments.PathMap, touchedFilesLogger);
+            xmlFileResolver := new LoggingXmlFileResolver(Arguments.BaseDirectory, touchedFilesLogger);
+            sourceFileResolver := new LoggingSourceFileResolver(ImmutableArray<string>.Empty, Arguments.BaseDirectory, Arguments.PathMap, touchedFilesLogger);
 
             MetadataReferenceResolver referenceDirectiveResolver;
-            var resolvedReferences = ResolveMetadataReferences(diagnostics, touchedFilesLogger, out referenceDirectiveResolver);
+            resolvedReferences := ResolveMetadataReferences(diagnostics, touchedFilesLogger, out referenceDirectiveResolver);
             if (ReportDiagnostics(diagnostics, consoleOutput, errorLogger, compilation: null))
             {
                 return null;
             }
 
-            var loggingFileSystem = new LoggingStrongNameFileSystem(touchedFilesLogger, _tempDirectory);
-            var optionsProvider = new CompilerSyntaxTreeOptionsProvider(trees, analyzerConfigOptions, globalConfigOptions);
+            loggingFileSystem := new LoggingStrongNameFileSystem(touchedFilesLogger, _tempDirectory);
+            optionsProvider := new CompilerSyntaxTreeOptionsProvider(trees, analyzerConfigOptions, globalConfigOptions);
 
             return CSharpCompilation.Create(
                 Arguments.CompilationName,
@@ -178,8 +178,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             DiagnosticBag diagnostics,
             out string? normalizedFilePath)
         {
-            var fileDiagnostics = new List<DiagnosticInfo>();
-            var content = TryReadFileContent(file, fileDiagnostics, out normalizedFilePath);
+            fileDiagnostics := new List<DiagnosticInfo>();
+            content := TryReadFileContent(file, fileDiagnostics, out normalizedFilePath);
 
             if (content == null)
             {
@@ -242,12 +242,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(Arguments.CompilationOptions.OutputKind.IsApplication());
 
-            var comp = (CSharpCompilation)compilation;
+            comp := (CSharpCompilation)compilation;
 
             Symbol? entryPoint = comp.ScriptClass;
             if (entryPoint is null)
             {
-                var method = comp.GetEntryPoint(cancellationToken);
+                method := comp.GetEntryPoint(cancellationToken);
                 if (method is object)
                 {
                     entryPoint = method.PartialImplementationPart ?? method;
@@ -282,8 +282,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override void PrintLangVersions(TextWriter consoleOutput)
         {
             consoleOutput.WriteLine(ErrorFacts.GetMessage(MessageID.IDS_LangVersions, Culture));
-            var defaultVersion = LanguageVersion.Default.MapSpecifiedToEffectiveVersion();
-            var latestVersion = LanguageVersion.Latest.MapSpecifiedToEffectiveVersion();
+            defaultVersion := LanguageVersion.Default.MapSpecifiedToEffectiveVersion();
+            latestVersion := LanguageVersion.Latest.MapSpecifiedToEffectiveVersion();
             foreach (var v in (LanguageVersion[])Enum.GetValues(typeof(LanguageVersion)))
             {
                 if (v == defaultVersion)
@@ -350,7 +350,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             foreach (LineDirectiveTriviaSyntax directive in tree.GetRoot().GetDirectives(
                 d => d.IsActive && !d.HasErrors && d.Kind() == SyntaxKind.LineDirectiveTrivia))
             {
-                var path = (string?)directive.File.Value;
+                path := (string?)directive.File.Value;
                 if (path == null)
                 {
                     continue;

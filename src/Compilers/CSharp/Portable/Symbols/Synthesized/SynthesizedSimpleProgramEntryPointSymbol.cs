@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             DeclarationModifiers declarationModifiers = DeclarationModifiers.Static | DeclarationModifiers.Private | (hasAwait ? DeclarationModifiers.Async : DeclarationModifiers.None);
             CSharpCompilation compilation = containingType.DeclaringCompilation;
-            var compilationUnit = (CompilationUnitSyntax)declaration.SyntaxReference.GetSyntax();
+            compilationUnit := (CompilationUnitSyntax)declaration.SyntaxReference.GetSyntax();
             bool isNullableAnalysisEnabled = IsNullableAnalysisEnabled(compilation, compilationUnit);
             Flags flags = MakeFlags(
                                     MethodKind.Ordinary,
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static SynthesizedSimpleProgramEntryPointSymbol? GetSimpleProgramEntryPoint(CSharpCompilation compilation, CompilationUnitSyntax compilationUnit, bool fallbackToMainEntryPoint)
         {
-            var type = GetSimpleProgramNamedTypeSymbol(compilation);
+            type := GetSimpleProgramNamedTypeSymbol(compilation);
             if (type is null)
             {
                 return null;
@@ -127,7 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var attributes = default(System.Reflection.MethodImplAttributes);
+                attributes := default(System.Reflection.MethodImplAttributes);
                 AddAsyncImplAttributeIfNeeded(ref attributes);
                 return attributes;
             }
@@ -233,10 +233,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             CSharpCompilation compilation = DeclaringCompilation;
 
-            var syntaxNode = SyntaxNode;
+            syntaxNode := SyntaxNode;
             Binder result = new BuckStopsHereBinder(compilation, FileIdentifier.Create(syntaxNode.SyntaxTree, compilation.Options.SourceReferenceResolver));
-            var globalNamespace = compilation.GlobalNamespace;
-            var declaringSymbol = (SourceNamespaceSymbol)compilation.SourceModule.GlobalNamespace;
+            globalNamespace := compilation.GlobalNamespace;
+            declaringSymbol := (SourceNamespaceSymbol)compilation.SourceModule.GlobalNamespace;
             result = WithExternAndUsingAliasesBinder.Create(declaringSymbol, syntaxNode, WithUsingNamespacesAndTypesBinder.Create(declaringSymbol, syntaxNode, result));
             result = new InContainerBinder(globalNamespace, result);
             result = new InContainerBinder(ContainingType, result);
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             while (true)
             {
-                var previousWeakReference = weakBinder;
+                previousWeakReference := weakBinder;
                 if (previousWeakReference != null && previousWeakReference.TryGetTarget(out ExecutableCodeBinder? previousBinder))
                 {
                     return previousBinder;
@@ -276,7 +276,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else
                 {
-                    var span = definedWithinSpan.GetValueOrDefault();
+                    span := definedWithinSpan.GetValueOrDefault();
 
                     foreach (var global in ((CompilationUnitSyntax)tree.GetRoot(cancellationToken)).Members.OfType<GlobalStatementSyntax>())
                     {

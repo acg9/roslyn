@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 _boundBody = boundBody;
             }
 
-            var sourceMethod = method as SourceMemberMethodSymbol;
+            sourceMethod := method as SourceMemberMethodSymbol;
             (BlockSyntax blockBody, ArrowExpressionClauseSyntax expressionBody) = sourceMethod?.Bodies ?? default;
             _methodBodySyntaxOpt = (SyntaxNode)blockBody ?? expressionBody ?? sourceMethod?.SyntaxNode;
         }
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         {
             get
             {
-                var result = _returnTemp;
+                result := _returnTemp;
                 if (result == null)
                 {
                     Debug.Assert(!_method.ReturnsVoid, "returning something from void method?");
@@ -173,24 +173,24 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                         ? LocalSlotConstraints.None
                         : LocalSlotConstraints.ByRef;
 
-                    var returnTypeWithAnnotations = _method.ReturnTypeWithAnnotations;
+                    returnTypeWithAnnotations := _method.ReturnTypeWithAnnotations;
                     if (_method.IsAsync && _module.Compilation.IsRuntimeAsyncEnabledIn(_method))
                     {
                         // The return type of the method is either Task<T> or ValueTask<T>. The il of the method is
                         // actually going to appear to return a T, not the wrapper task type. So we need to
                         // translate the return type to the actual type that will be returned.
 
-                        var returnType = returnTypeWithAnnotations.Type;
+                        returnType := returnTypeWithAnnotations.Type;
                         Debug.Assert(((InternalSpecialType)returnType.OriginalDefinition.ExtendedSpecialType) is InternalSpecialType.System_Threading_Tasks_ValueTask_T or InternalSpecialType.System_Threading_Tasks_Task_T);
 
                         returnTypeWithAnnotations = ((NamedTypeSymbol)returnType).TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[0];
                     }
 
-                    var bodySyntax = _methodBodySyntaxOpt;
+                    bodySyntax := _methodBodySyntaxOpt;
                     if (_ilEmitStyle == ILEmitStyle.Debug && bodySyntax != null)
                     {
                         int syntaxOffset = _method.CalculateLocalSyntaxOffset(LambdaUtilities.GetDeclaratorPosition(bodySyntax), bodySyntax.SyntaxTree);
-                        var localSymbol = new SynthesizedLocal(_method, returnTypeWithAnnotations, SynthesizedLocalKind.FunctionReturnValue, bodySyntax);
+                        localSymbol := new SynthesizedLocal(_method, returnTypeWithAnnotations, SynthesizedLocalKind.FunctionReturnValue, bodySyntax);
 
                         result = _builder.LocalSlotManager.DeclareLocal(
                             type: _module.Translate(localSymbol.Type, bodySyntax, _diagnostics.DiagnosticBag),
@@ -254,8 +254,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             }
             else
             {
-                var yieldPointBuilder = ArrayBuilder<int>.GetInstance();
-                var resumePointBuilder = ArrayBuilder<int>.GetInstance();
+                yieldPointBuilder := ArrayBuilder<int>.GetInstance();
+                resumePointBuilder := ArrayBuilder<int>.GetInstance();
                 int n = yieldPoints.Count;
                 for (int i = 0; i < n; i++)
                 {
@@ -369,13 +369,13 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private void EmitSymbolToken(MethodSymbol method, SyntaxNode syntaxNode, BoundArgListOperator optArgList, bool encodeAsRawDefinitionToken = false)
         {
-            var methodRef = _module.Translate(method, syntaxNode, _diagnostics.DiagnosticBag, optArgList, needDeclaration: encodeAsRawDefinitionToken);
+            methodRef := _module.Translate(method, syntaxNode, _diagnostics.DiagnosticBag, optArgList, needDeclaration: encodeAsRawDefinitionToken);
             _builder.EmitToken(methodRef, syntaxNode, encodeAsRawDefinitionToken ? Cci.MetadataWriter.RawTokenEncoding.RowId : 0);
         }
 
         private void EmitSymbolToken(FieldSymbol symbol, SyntaxNode syntaxNode)
         {
-            var fieldRef = _module.Translate(symbol, syntaxNode, _diagnostics.DiagnosticBag);
+            fieldRef := _module.Translate(symbol, syntaxNode, _diagnostics.DiagnosticBag);
             _builder.EmitToken(fieldRef, syntaxNode);
         }
 
@@ -448,7 +448,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
             for (int i = sequencePoints.Count - 1; i >= 0; i--)
             {
-                var span = sequencePoints[i].Span;
+                span := sequencePoints[i].Span;
                 if (span == RawSequencePoint.HiddenSequencePointSpan)
                     continue;
 
@@ -478,7 +478,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             if (!_emitPdbSequencePoints)
                 return;
 
-            var label = new object();
+            label := new object();
             // The IL builder is eager to discard unreachable code, so
             // we fool it by branching on a condition that is always true at runtime.
             _builder.EmitConstantValue(ConstantValue.Create(true), syntaxNode);
@@ -549,7 +549,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 // release in reverse order to keep same temps on top of the temp stack if possible
                 for (int i = _expressionTemps.Count - 1; i >= 0; i--)
                 {
-                    var temp = _expressionTemps[i];
+                    temp := _expressionTemps[i];
                     FreeTemp(temp);
                 }
 

@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override Diagnostic CreateDiagnostic(int code, Location location, params object[] args)
         {
-            var info = new CSDiagnosticInfo((ErrorCode)code, args, ImmutableArray<Symbol>.Empty, ImmutableArray<Location>.Empty);
+            info := new CSDiagnosticInfo((ErrorCode)code, args, ImmutableArray<Symbol>.Empty, ImmutableArray<Location>.Empty);
             return new CSDiagnostic(info, location);
         }
 
@@ -261,19 +261,19 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override void ReportInvalidAttributeArgument(DiagnosticBag diagnostics, SyntaxNode attributeSyntax, int parameterIndex, AttributeData attribute)
         {
-            var node = (AttributeSyntax)attributeSyntax;
+            node := (AttributeSyntax)attributeSyntax;
             diagnostics.Add(ErrorCode.ERR_InvalidAttributeArgument, ((CSharpAttributeData)attribute).GetAttributeArgumentLocation(parameterIndex), node.GetErrorDisplayName());
         }
 
         protected override void ReportInvalidNamedArgument(DiagnosticBag diagnostics, SyntaxNode attributeSyntax, int namedArgumentIndex, ITypeSymbol attributeClass, string parameterName)
         {
-            var node = (AttributeSyntax)attributeSyntax;
+            node := (AttributeSyntax)attributeSyntax;
             diagnostics.Add(ErrorCode.ERR_InvalidNamedArgument, node.ArgumentList.Arguments[namedArgumentIndex].Location, parameterName);
         }
 
         protected override void ReportParameterNotValidForType(DiagnosticBag diagnostics, SyntaxNode attributeSyntax, int namedArgumentIndex)
         {
-            var node = (AttributeSyntax)attributeSyntax;
+            node := (AttributeSyntax)attributeSyntax;
             diagnostics.Add(ErrorCode.ERR_ParameterNotValidForType, node.ArgumentList.Arguments[namedArgumentIndex].Location);
         }
 
@@ -289,13 +289,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override void ReportAttributeParameterRequired(DiagnosticBag diagnostics, SyntaxNode attributeSyntax, string parameterName)
         {
-            var node = (AttributeSyntax)attributeSyntax;
+            node := (AttributeSyntax)attributeSyntax;
             diagnostics.Add(ErrorCode.ERR_AttributeParameterRequired1, node.Name.Location, parameterName);
         }
 
         protected override void ReportAttributeParameterRequired(DiagnosticBag diagnostics, SyntaxNode attributeSyntax, string parameterName1, string parameterName2)
         {
-            var node = (AttributeSyntax)attributeSyntax;
+            node := (AttributeSyntax)attributeSyntax;
             diagnostics.Add(ErrorCode.ERR_AttributeParameterRequired2, node.Name.Location, parameterName1, parameterName2);
         }
 

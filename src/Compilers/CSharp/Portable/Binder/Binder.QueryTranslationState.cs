@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static RangeVariableMap RangeVariableMap(params RangeVariableSymbol[] parameters)
             {
-                var result = new RangeVariableMap();
+                result := new RangeVariableMap();
                 foreach (var vars in parameters)
                 {
                     result.Add(vars, ImmutableArray<string>.Empty);
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public RangeVariableMap RangeVariableMap()
             {
-                var result = new RangeVariableMap();
+                result := new RangeVariableMap();
                 foreach (var vars in allRangeVariables.Keys)
                 {
                     result.Add(vars, allRangeVariables[vars].ToImmutable());
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             internal RangeVariableSymbol AddRangeVariable(Binder binder, SyntaxToken identifier, BindingDiagnosticBag diagnostics)
             {
                 string name = identifier.ValueText;
-                var result = new RangeVariableSymbol(name, binder.ContainingMemberOrLambda, identifier.GetLocation());
+                result := new RangeVariableSymbol(name, binder.ContainingMemberOrLambda, identifier.GetLocation());
                 bool error = false;
 
                 Debug.Assert(identifier.Parent is { });
@@ -89,7 +89,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (!error && (object)diagnostics != BindingDiagnosticBag.Discarded)
                 {
-                    var collisionDetector = new LocalScopeBinder(binder);
+                    collisionDetector := new LocalScopeBinder(binder);
                     collisionDetector.ValidateDeclarationNameConflictsInScope(result, diagnostics);
                 }
 
@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal RangeVariableSymbol TransparentRangeVariable(Binder binder)
             {
-                var transparentIdentifier = TransparentRangeVariableName();
+                transparentIdentifier := TransparentRangeVariableName();
                 return new RangeVariableSymbol(transparentIdentifier, binder.ContainingMemberOrLambda, null, true);
             }
 

@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var info = MarshallingInformation;
+                info := MarshallingInformation;
                 return info != null ? info.UnmanagedType : 0;
             }
         }

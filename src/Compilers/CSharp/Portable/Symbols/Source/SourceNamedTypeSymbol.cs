@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 SeparatedSyntaxList<BaseTypeSyntax> inheritedTypeDecls = bases.Types;
 
-                var baseBinder = this.DeclaringCompilation.GetBinder(bases);
+                baseBinder := this.DeclaringCompilation.GetBinder(bases);
                 baseBinder = baseBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
 
                 if ((object)backupLocation == null)
@@ -148,15 +148,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return ImmutableArray<TypeParameterSymbol>.Empty;
             }
 
-            var typeParameterMismatchReported = false;
-            var typeParameterNames = new string[declaration.Arity];
-            var typeParameterVarianceKeywords = new string[declaration.Arity];
-            var parameterBuilders1 = new List<List<TypeParameterBuilder>>();
+            typeParameterMismatchReported := false;
+            typeParameterNames := new string[declaration.Arity];
+            typeParameterVarianceKeywords := new string[declaration.Arity];
+            parameterBuilders1 := new List<List<TypeParameterBuilder>>();
 
             foreach (var syntaxRef in this.SyntaxReferences)
             {
-                var typeDecl = (CSharpSyntaxNode)syntaxRef.GetSyntax();
-                var syntaxTree = syntaxRef.SyntaxTree;
+                typeDecl := (CSharpSyntaxNode)syntaxRef.GetSyntax();
+                syntaxTree := syntaxRef.SyntaxTree;
 
                 TypeParameterListSyntax tpl;
                 SyntaxKind typeKind = typeDecl.Kind();
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 MessageID.IDS_FeatureGenerics.CheckFeatureAvailability(diagnostics, tpl.LessThanToken);
 
                 bool isInterfaceOrDelegate = typeKind == SyntaxKind.InterfaceDeclaration || typeKind == SyntaxKind.DelegateDeclaration;
-                var parameterBuilder = new List<TypeParameterBuilder>();
+                parameterBuilder := new List<TypeParameterBuilder>();
                 parameterBuilders1.Add(parameterBuilder);
                 int i = 0;
                 foreach (var tp in tpl.Parameters)
@@ -202,9 +202,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         }
                     }
 
-                    var name = typeParameterNames[i];
-                    var location = new SourceLocation(tp.Identifier);
-                    var varianceKind = typeParameterVarianceKeywords[i];
+                    name := typeParameterNames[i];
+                    location := new SourceLocation(tp.Identifier);
+                    varianceKind := typeParameterVarianceKeywords[i];
 
                     ReportReservedTypeName(tp.Identifier.Text, this.DeclaringCompilation, diagnostics.DiagnosticBag, location);
 
@@ -224,7 +224,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                         if (!ReferenceEquals(ContainingType, null))
                         {
-                            var tpEnclosing = ContainingType.FindEnclosingTypeParameter(name);
+                            tpEnclosing := ContainingType.FindEnclosingTypeParameter(name);
                             if ((object)tpEnclosing != null)
                             {
                                 // Type parameter '{0}' has the same name as the type parameter from outer type '{1}'
@@ -262,8 +262,8 @@ next:;
                 }
             }
 
-            var parameterBuilders2 = parameterBuilders1.Transpose(); // type arguments are positional
-            var parameters = parameterBuilders2.Select((builders, i) => builders[0].MakeSymbol(i, builders, diagnostics));
+            parameterBuilders2 := parameterBuilders1.Transpose(); // type arguments are positional
+            parameters := parameterBuilders2.Select((builders, i) => builders[0].MakeSymbol(i, builders, diagnostics));
             return parameters.AsImmutable();
         }
 
@@ -272,7 +272,7 @@ next:;
         /// </summary>
         internal ImmutableArray<TypeWithAnnotations> GetTypeParameterConstraintTypes(int ordinal)
         {
-            var constraintTypes = GetTypeParameterConstraintTypes();
+            constraintTypes := GetTypeParameterConstraintTypes();
             return (constraintTypes.Length > 0) ? constraintTypes[ordinal] : ImmutableArray<TypeWithAnnotations>.Empty;
         }
 
@@ -282,7 +282,7 @@ next:;
             {
                 GetTypeParameterConstraintKinds();
 
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                diagnostics := BindingDiagnosticBag.GetInstance();
                 if (ImmutableInterlocked.InterlockedInitialize(
                         ref _typeParameterInfo.LazyTypeParameterConstraintTypes,
                         MakeTypeParameterConstraintTypes(diagnostics)))
@@ -301,7 +301,7 @@ next:;
         /// </summary>
         internal TypeParameterConstraintKind GetTypeParameterConstraintKind(int ordinal)
         {
-            var constraintKinds = GetTypeParameterConstraintKinds();
+            constraintKinds := GetTypeParameterConstraintKinds();
             return (constraintKinds.Length > 0) ? constraintKinds[ordinal] : TypeParameterConstraintKind.None;
         }
 
@@ -320,8 +320,8 @@ next:;
 
         private ImmutableArray<ImmutableArray<TypeWithAnnotations>> MakeTypeParameterConstraintTypes(BindingDiagnosticBag diagnostics)
         {
-            var typeParameters = this.TypeParameters;
-            var results = ImmutableArray<TypeParameterConstraintClause>.Empty;
+            typeParameters := this.TypeParameters;
+            results := ImmutableArray<TypeParameterConstraintClause>.Empty;
 
             int arity = typeParameters.Length;
             if (arity > 0)
@@ -331,15 +331,15 @@ next:;
 
                 foreach (var decl in declaration.Declarations)
                 {
-                    var syntaxRef = decl.SyntaxReference;
-                    var constraintClauses = GetConstraintClauses((CSharpSyntaxNode)syntaxRef.GetSyntax(), out TypeParameterListSyntax typeParameterList);
+                    syntaxRef := decl.SyntaxReference;
+                    constraintClauses := GetConstraintClauses((CSharpSyntaxNode)syntaxRef.GetSyntax(), out TypeParameterListSyntax typeParameterList);
 
                     if (skipPartialDeclarationsWithoutConstraintClauses && constraintClauses.Count == 0)
                     {
                         continue;
                     }
 
-                    var binderFactory = this.DeclaringCompilation.GetBinderFactory(syntaxRef.SyntaxTree);
+                    binderFactory := this.DeclaringCompilation.GetBinderFactory(syntaxRef.SyntaxTree);
                     Binder binder;
                     ImmutableArray<TypeParameterConstraintClause> constraints;
 
@@ -401,8 +401,8 @@ next:;
 
         private ImmutableArray<TypeParameterConstraintKind> MakeTypeParameterConstraintKinds()
         {
-            var typeParameters = this.TypeParameters;
-            var results = ImmutableArray<TypeParameterConstraintClause>.Empty;
+            typeParameters := this.TypeParameters;
+            results := ImmutableArray<TypeParameterConstraintClause>.Empty;
 
             int arity = typeParameters.Length;
             if (arity > 0)
@@ -412,15 +412,15 @@ next:;
 
                 foreach (var decl in declaration.Declarations)
                 {
-                    var syntaxRef = decl.SyntaxReference;
-                    var constraintClauses = GetConstraintClauses((CSharpSyntaxNode)syntaxRef.GetSyntax(), out TypeParameterListSyntax typeParameterList);
+                    syntaxRef := decl.SyntaxReference;
+                    constraintClauses := GetConstraintClauses((CSharpSyntaxNode)syntaxRef.GetSyntax(), out TypeParameterListSyntax typeParameterList);
 
                     if (skipPartialDeclarationsWithoutConstraintClauses && constraintClauses.Count == 0)
                     {
                         continue;
                     }
 
-                    var binderFactory = this.DeclaringCompilation.GetBinderFactory(syntaxRef.SyntaxTree);
+                    binderFactory := this.DeclaringCompilation.GetBinderFactory(syntaxRef.SyntaxTree);
                     Binder binder;
                     ImmutableArray<TypeParameterConstraintClause> constraints;
 
@@ -480,11 +480,11 @@ next:;
                 case SyntaxKind.RecordDeclaration:
                 case SyntaxKind.RecordStructDeclaration:
                 case SyntaxKind.ExtensionBlockDeclaration:
-                    var typeDeclaration = (TypeDeclarationSyntax)node;
+                    typeDeclaration := (TypeDeclarationSyntax)node;
                     typeParameterList = typeDeclaration.TypeParameterList;
                     return typeDeclaration.ConstraintClauses;
                 case SyntaxKind.DelegateDeclaration:
-                    var delegateDeclaration = (DelegateDeclarationSyntax)node;
+                    delegateDeclaration := (DelegateDeclarationSyntax)node;
                     typeParameterList = delegateDeclaration.TypeParameterList;
                     return delegateDeclaration.ConstraintClauses;
                 default:
@@ -505,14 +505,14 @@ next:;
             }
 
             ArrayBuilder<TypeParameterConstraintClause> builder = null;
-            var typeParameters = TypeParameters;
+            typeParameters := TypeParameters;
             int arity = typeParameters.Length;
 
             Debug.Assert(constraintClauses.Length == arity);
 
             for (int i = 0; i < arity; i++)
             {
-                var constraint = constraintClauses[i];
+                constraint := constraintClauses[i];
 
                 ImmutableArray<TypeWithAnnotations> originalConstraintTypes = constraint.ConstraintTypes;
                 ArrayBuilder<TypeWithAnnotations> mergedConstraintTypes = null;
@@ -635,7 +635,7 @@ next:;
 
             static SmallDictionary<TypeWithAnnotations, int> toDictionary(ImmutableArray<TypeWithAnnotations> constraintTypes, IEqualityComparer<TypeWithAnnotations> comparer)
             {
-                var result = new SmallDictionary<TypeWithAnnotations, int>(comparer);
+                result := new SmallDictionary<TypeWithAnnotations, int>(comparer);
 
                 for (int i = constraintTypes.Length - 1; i >= 0; i--)
                 {
@@ -658,14 +658,14 @@ next:;
             }
 
             ArrayBuilder<TypeParameterConstraintClause> builder = null;
-            var typeParameters = TypeParameters;
+            typeParameters := TypeParameters;
             int arity = typeParameters.Length;
 
             Debug.Assert(constraintClauses.Length == arity);
 
             for (int i = 0; i < arity; i++)
             {
-                var constraint = constraintClauses[i];
+                constraint := constraintClauses[i];
 
                 TypeParameterConstraintKind mergedKind = constraint.Constraints;
                 ImmutableArray<TypeWithAnnotations> originalConstraintTypes = constraint.ConstraintTypes;
@@ -756,7 +756,7 @@ next:;
             {
                 if (_typeParameterInfo.LazyTypeParameters.IsDefault)
                 {
-                    var diagnostics = BindingDiagnosticBag.GetInstance();
+                    diagnostics := BindingDiagnosticBag.GetInstance();
                     if (ImmutableInterlocked.InterlockedInitialize(
                             ref _typeParameterInfo.LazyTypeParameters,
                             MakeTypeParameters(diagnostics)))
@@ -844,7 +844,7 @@ next:;
         /// </remarks>
         private CustomAttributesBag<CSharpAttributeData> GetAttributesBag()
         {
-            var bag = _lazyCustomAttributesBag;
+            bag := _lazyCustomAttributesBag;
             if (bag != null && bag.IsSealed)
             {
                 return bag;
@@ -852,7 +852,7 @@ next:;
 
             if (LoadAndValidateAttributes(OneOrMany.Create(this.GetAttributeDeclarations()), ref _lazyCustomAttributesBag))
             {
-                var completed = state.NotePartComplete(CompletionPart.Attributes);
+                completed := state.NotePartComplete(CompletionPart.Attributes);
                 Debug.Assert(completed);
             }
 
@@ -877,7 +877,7 @@ next:;
         /// </remarks>
         private TypeWellKnownAttributeData GetDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -895,7 +895,7 @@ next:;
         /// </remarks>
         internal TypeEarlyWellKnownAttributeData? GetEarlyDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -975,7 +975,7 @@ next:;
                     AttributeUsageInfo info = this.DecodeAttributeUsageAttribute(attributeData, arguments.AttributeSyntax, diagnose: false);
                     if (!info.IsNull)
                     {
-                        var typeData = arguments.GetOrCreateData<TypeEarlyWellKnownAttributeData>();
+                        typeData := arguments.GetOrCreateData<TypeEarlyWellKnownAttributeData>();
                         if (typeData.AttributeUsageInfo.IsNull)
                         {
                             typeData.AttributeUsageInfo = info;
@@ -1040,7 +1040,7 @@ next:;
                     Debug.Assert(attributeData.CommonConstructorArguments[0].Kind == TypedConstantKind.Type);
                     TypeSymbol? builderType = attributeData.CommonConstructorArguments[0].ValueInternal as TypeSymbol;
                     string? methodName = attributeData.GetConstructorArgument<string>(1, SpecialType.System_String);
-                    var data = new CollectionBuilderAttributeData(builderType, methodName);
+                    data := new CollectionBuilderAttributeData(builderType, methodName);
                     arguments.GetOrCreateData<TypeEarlyWellKnownAttributeData>().CollectionBuilder = data;
 
                     if (!hasAnyDiagnostics)
@@ -1092,10 +1092,10 @@ next:;
         {
             get
             {
-                var lazyCustomAttributesBag = _lazyCustomAttributesBag;
+                lazyCustomAttributesBag := _lazyCustomAttributesBag;
                 if (lazyCustomAttributesBag != null && lazyCustomAttributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
                 {
-                    var data = (TypeEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
+                    data := (TypeEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
                     return data != null ? data.ObsoleteAttributeData : null;
                 }
 
@@ -1115,9 +1115,9 @@ next:;
         protected sealed override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
             Debug.Assert(arguments.AttributeSyntaxOpt is { });
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
 
@@ -1205,7 +1205,7 @@ next:;
             }
             else if (attribute.IsTargetAttribute(AttributeDescription.CollectionBuilderAttribute))
             {
-                var builderType = attribute.CommonConstructorArguments[0].ValueInternal as TypeSymbol;
+                builderType := attribute.CommonConstructorArguments[0].ValueInternal as TypeSymbol;
                 if (!IsValidCollectionBuilderType(builderType))
                 {
                     diagnostics.Add(ErrorCode.ERR_CollectionBuilderAttributeInvalidType, arguments.AttributeSyntaxOpt.Name.Location);
@@ -1253,7 +1253,7 @@ next:;
             }
             else
             {
-                var compilation = this.DeclaringCompilation;
+                compilation := this.DeclaringCompilation;
                 if (attribute.IsSecurityAttribute(compilation))
                 {
                     attribute.DecodeSecurityAttribute<TypeWellKnownAttributeData>(this, compilation, ref arguments);
@@ -1301,7 +1301,7 @@ next:;
 
             foreach (SyntaxList<AttributeListSyntax> list in attributeLists)
             {
-                var syntaxTree = list.Node.SyntaxTree;
+                syntaxTree := list.Node.SyntaxTree;
                 QuickAttributeChecker checker = this.DeclaringCompilation.GetBinderFactory(list.Node.SyntaxTree).GetBinder(list.Node).QuickAttributeChecker;
 
                 foreach (AttributeListSyntax attrList in list)
@@ -1361,7 +1361,7 @@ next:;
 
         private void DecodeCoClassAttribute(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
 
             if (this.IsInterfaceType() && (!arguments.HasDecodedData || (object)((TypeWellKnownAttributeData)arguments.DecodedData).ComImportCoClass == null))
@@ -1369,7 +1369,7 @@ next:;
                 TypedConstant argument = attribute.CommonConstructorArguments[0];
                 Debug.Assert(argument.Kind == TypedConstantKind.Type);
 
-                var coClassType = argument.ValueInternal as NamedTypeSymbol;
+                coClassType := argument.ValueInternal as NamedTypeSymbol;
                 if ((object)coClassType != null && coClassType.TypeKind == TypeKind.Class)
                 {
                     arguments.GetOrCreateData<TypeWellKnownAttributeData>().ComImportCoClass = coClassType;
@@ -1398,7 +1398,7 @@ next:;
 #nullable enable
         internal sealed override bool HasCollectionBuilderAttribute(out TypeSymbol? builderType, out string? methodName)
         {
-            var attributeData = GetEarlyDecodedWellKnownAttributeData()?.CollectionBuilder;
+            attributeData := GetEarlyDecodedWellKnownAttributeData()?.CollectionBuilder;
             if (attributeData == null)
             {
                 builderType = null;
@@ -1443,7 +1443,7 @@ next:;
                     return true;
                 }
 
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSpecialNameAttribute;
             }
         }
@@ -1452,7 +1452,7 @@ next:;
         {
             get
             {
-                var data = GetEarlyDecodedWellKnownAttributeData();
+                data := GetEarlyDecodedWellKnownAttributeData();
                 return (data != null && data.HasCodeAnalysisEmbeddedAttribute)
                     // If this is Microsoft.CodeAnalysis.EmbeddedAttribute, we'll synthesize EmbeddedAttribute even if it's not applied.
                     || this.IsMicrosoftCodeAnalysisEmbeddedAttribute();
@@ -1463,7 +1463,7 @@ next:;
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasCompilerLoweringPreserveAttribute;
             }
         }
@@ -1507,7 +1507,7 @@ next:;
         {
             get
             {
-                var data = this.GetDecodedWellKnownAttributeData();
+                data := this.GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSerializableAttribute;
             }
         }
@@ -1516,7 +1516,7 @@ next:;
         {
             get
             {
-                var data = this.GetDecodedWellKnownAttributeData();
+                data := this.GetDecodedWellKnownAttributeData();
                 return data?.HasSkipLocalsInitAttribute != true && (ContainingType?.AreLocalsZeroed ?? ContainingModule.AreLocalsZeroed);
             }
         }
@@ -1532,7 +1532,7 @@ next:;
 
         private bool HasInstanceFields()
         {
-            var fields = this.GetFieldsToEmit();
+            fields := this.GetFieldsToEmit();
             foreach (var field in fields)
             {
                 if (!field.IsStatic)
@@ -1548,7 +1548,7 @@ next:;
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
 
                 if (data is { HasExtendedLayoutAttribute: true })
                 {
@@ -1579,7 +1579,7 @@ next:;
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasStructLayoutAttribute;
             }
         }
@@ -1588,7 +1588,7 @@ next:;
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return (data != null && data.HasStructLayoutAttribute) ? data.MarshallingCharSet : DefaultMarshallingCharSet;
             }
         }
@@ -1597,7 +1597,7 @@ next:;
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data is { HasExtendedLayoutAttribute: true };
             }
         }
@@ -1606,7 +1606,7 @@ next:;
         {
             get
             {
-                var data = this.GetDecodedWellKnownAttributeData();
+                data := this.GetDecodedWellKnownAttributeData();
                 return data != null && data.HasDeclarativeSecurity;
             }
         }
@@ -1615,15 +1615,15 @@ next:;
         {
             get
             {
-                var data = this.GetDecodedWellKnownAttributeData();
+                data := this.GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSecurityCriticalAttributes;
             }
         }
 
         internal sealed override IEnumerable<Microsoft.Cci.SecurityAttribute> GetSecurityInformation()
         {
-            var attributesBag = this.GetAttributesBag();
-            var wellKnownData = (TypeWellKnownAttributeData)attributesBag.DecodedWellKnownAttributeData;
+            attributesBag := this.GetAttributesBag();
+            wellKnownData := (TypeWellKnownAttributeData)attributesBag.DecodedWellKnownAttributeData;
             if (wellKnownData != null)
             {
                 SecurityWellKnownAttributeData securityData = wellKnownData.SecurityInformation;
@@ -1638,7 +1638,7 @@ next:;
 
         internal override ImmutableArray<string> GetAppliedConditionalSymbols()
         {
-            var data = GetEarlyDecodedWellKnownAttributeData();
+            data := GetEarlyDecodedWellKnownAttributeData();
             return data != null ? data.ConditionalSymbols : ImmutableArray<string>.Empty;
         }
 
@@ -1651,7 +1651,7 @@ next:;
             Debug.Assert(_lazyCustomAttributesBag.IsDecodedWellKnownAttributeDataComputed);
             Debug.Assert(symbolPart == AttributeLocation.None);
 
-            var data = (TypeWellKnownAttributeData)decodedData;
+            data := (TypeWellKnownAttributeData)decodedData;
 
             if (this.IsComImport)
             {
@@ -1666,14 +1666,14 @@ next:;
 
                 if (this.TypeKind == TypeKind.Class)
                 {
-                    var baseType = this.BaseTypeNoUseSiteDiagnostics;
+                    baseType := this.BaseTypeNoUseSiteDiagnostics;
                     if ((object)baseType != null && baseType.SpecialType != SpecialType.System_Object)
                     {
                         // CS0424: '{0}': a class with the ComImport attribute cannot specify a base class
                         diagnostics.Add(ErrorCode.ERR_ComImportWithBase, this.GetFirstLocation(), this.Name);
                     }
 
-                    var initializers = this.StaticInitializers;
+                    initializers := this.StaticInitializers;
                     if (!initializers.IsDefaultOrEmpty)
                     {
                         foreach (var initializerGroup in initializers)
@@ -1758,7 +1758,7 @@ next:;
             {
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeIsByRefLikeAttribute(this));
 
-                var obsoleteData = ObsoleteAttributeData;
+                obsoleteData := ObsoleteAttributeData;
                 Debug.Assert(obsoleteData != ObsoleteAttributeData.Uninitialized, "getting synthesized attributes before attributes are decoded");
 
                 if (!this.IsRestrictedType(ignoreSpanLikeTypes: true))
@@ -1791,7 +1791,7 @@ next:;
             if (this.Indexers.Any())
             {
                 string defaultMemberName = this.Indexers.First().MetadataName; // UNDONE: IndexerNameAttribute
-                var defaultMemberNameConstant = new TypedConstant(compilation.GetSpecialType(SpecialType.System_String), TypedConstantKind.Primitive, defaultMemberName);
+                defaultMemberNameConstant := new TypedConstant(compilation.GetSpecialType(SpecialType.System_String), TypedConstantKind.Primitive, defaultMemberName);
 
                 AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(
                     WellKnownMember.System_Reflection_DefaultMemberAttribute__ctor,
@@ -1821,7 +1821,7 @@ next:;
                 // the original type symbol that is being replaced by this type symbol.
                 // The "#{generation}" suffix is appended to the TypeDef name in the metadata writer,
                 // but not to the attribute value.
-                var originalType = this;
+                originalType := this;
 
                 AddSynthesizedAttribute(
                     ref attributes,
@@ -1836,7 +1836,7 @@ next:;
                 // This is Microsoft.CodeAnalysis.EmbeddedAttribute, and the user didn't manually apply this attribute to itself. Grab the parameterless constructor
                 // and apply it; if there isn't a parameterless constructor, there would have been a declaration diagnostic
 
-                var parameterlessConstructor = InstanceConstructors.FirstOrDefault(c => c.ParameterCount == 0);
+                parameterlessConstructor := InstanceConstructors.FirstOrDefault(c => c.ParameterCount == 0);
 
                 if (parameterlessConstructor is not null)
                 {
@@ -2098,7 +2098,7 @@ next:;
                 // If the containing type is an extension, we'll have already reported an error
                 if (ContainingType is null || !ContainingType.IsStatic || ContainingType.Arity != 0 || ContainingType.ContainingType is not null)
                 {
-                    var syntax = (ExtensionBlockDeclarationSyntax)this.GetNonNullSyntaxNode();
+                    syntax := (ExtensionBlockDeclarationSyntax)this.GetNonNullSyntaxNode();
                     diagnostics.Add(ErrorCode.ERR_BadExtensionContainingType, syntax.Keyword);
                 }
             }

@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         private CustomAttributesBag<CSharpAttributeData> GetAttributesBag()
         {
-            var bag = _lazyCustomAttributesBag;
+            bag := _lazyCustomAttributesBag;
             if (bag != null && bag.IsSealed)
             {
                 return bag;
@@ -89,7 +89,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (LoadAndValidateAttributes(this.GetAttributeDeclarations(), ref _lazyCustomAttributesBag))
             {
-                var completed = state.NotePartComplete(CompletionPart.Attributes);
+                completed := state.NotePartComplete(CompletionPart.Attributes);
                 Debug.Assert(completed);
             }
 
@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         protected FieldWellKnownAttributeData GetDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -143,16 +143,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var containingSourceType = (SourceMemberContainerTypeSymbol)ContainingType;
+                containingSourceType := (SourceMemberContainerTypeSymbol)ContainingType;
                 if (!containingSourceType.AnyMemberHasAttributes)
                 {
                     return null;
                 }
 
-                var lazyCustomAttributesBag = _lazyCustomAttributesBag;
+                lazyCustomAttributesBag := _lazyCustomAttributesBag;
                 if (lazyCustomAttributesBag != null && lazyCustomAttributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
                 {
-                    var data = (CommonFieldEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
+                    data := (CommonFieldEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
                     return data != null ? data.ObsoleteAttributeData : null;
                 }
 
@@ -163,9 +163,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
             Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
 
@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static FlowAnalysisAnnotations DecodeFlowAnalysisAttributes(FieldWellKnownAttributeData attributeData)
         {
-            var annotations = FlowAnalysisAnnotations.None;
+            annotations := FlowAnalysisAnnotations.None;
             if (attributeData != null)
             {
                 if (attributeData.HasAllowNullAttribute) annotations |= FlowAnalysisAnnotations.AllowNull;
@@ -267,9 +267,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (!attrValue.IsBad)
             {
-                var data = arguments.GetOrCreateData<FieldWellKnownAttributeData>();
+                data := arguments.GetOrCreateData<FieldWellKnownAttributeData>();
                 ConstantValue constValue;
-                var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+                diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
                 if (this.IsConst)
                 {
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(_lazyCustomAttributesBag.IsDecodedWellKnownAttributeDataComputed);
             Debug.Assert(symbolPart == AttributeLocation.None);
 
-            var data = (FieldWellKnownAttributeData)decodedData;
+            data := (FieldWellKnownAttributeData)decodedData;
             int? fieldOffset = data != null ? data.Offset : null;
 
             if (fieldOffset.HasValue)
@@ -355,7 +355,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSpecialNameAttribute;
             }
         }
@@ -364,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasNonSerializedAttribute;
             }
         }
@@ -373,7 +373,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null ? data.MarshallingInformation : null;
             }
         }
@@ -382,7 +382,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null ? data.Offset : null;
             }
         }
@@ -396,8 +396,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeIsReadOnlyAttribute(this));
             }
 
-            var compilation = this.DeclaringCompilation;
-            var type = this.TypeWithAnnotations;
+            compilation := this.DeclaringCompilation;
+            type := this.TypeWithAnnotations;
 
             if (type.Type.ContainsDynamic())
             {

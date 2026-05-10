@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
         {
             if ((object)_lazySystemStringType == (object)ErrorTypeSymbol.UnknownResultType)
             {
-                var typeSymbol = ModuleBeingBuilt.Compilation.GetSpecialType(SpecialType.System_String);
+                typeSymbol := ModuleBeingBuilt.Compilation.GetSpecialType(SpecialType.System_String);
 
                 UseSiteInfo<AssemblySymbol> info = typeSymbol.GetUseSiteInfo();
 
@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 
         internal override CSharpAttributeData CreateSynthesizedAttribute(WellKnownMember constructor, ImmutableArray<TypedConstant> constructorArguments, ImmutableArray<KeyValuePair<string, TypedConstant>> namedArguments, SyntaxNode syntaxNodeOpt, DiagnosticBag diagnostics)
         {
-            var ctor = GetWellKnownMethod(constructor, syntaxNodeOpt, diagnostics);
+            ctor := GetWellKnownMethod(constructor, syntaxNodeOpt, diagnostics);
             if ((object)ctor == null)
             {
                 return null;
@@ -194,7 +194,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 
         internal override CSharpAttributeData CreateSynthesizedAttribute(SpecialMember constructor, ImmutableArray<TypedConstant> constructorArguments, ImmutableArray<KeyValuePair<string, TypedConstant>> namedArguments, SyntaxNode syntaxNodeOpt, DiagnosticBag diagnostics)
         {
-            var ctor = GetSpecialMethod(constructor, syntaxNodeOpt, diagnostics);
+            ctor := GetSpecialMethod(constructor, syntaxNodeOpt, diagnostics);
             if ((object)ctor == null)
             {
                 return null;
@@ -252,8 +252,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 
         protected override void ReportNameCollisionBetweenEmbeddedTypes(EmbeddedType typeA, EmbeddedType typeB, DiagnosticBag diagnostics)
         {
-            var underlyingTypeA = typeA.UnderlyingNamedType;
-            var underlyingTypeB = typeB.UnderlyingNamedType;
+            underlyingTypeA := typeA.UnderlyingNamedType;
+            underlyingTypeB := typeB.UnderlyingNamedType;
             Error(diagnostics, ErrorCode.ERR_InteropTypesWithSameNameAndGuid, null,
                                 underlyingTypeA.AdaptedNamedTypeSymbol,
                                 underlyingTypeA.AdaptedSymbol.ContainingAssembly,
@@ -262,7 +262,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
 
         protected override void ReportNameCollisionWithAlreadyDeclaredType(EmbeddedType type, DiagnosticBag diagnostics)
         {
-            var underlyingType = type.UnderlyingNamedType;
+            underlyingType := type.UnderlyingNamedType;
             Error(diagnostics, ErrorCode.ERR_LocalTypeNameClash, null,
                             underlyingType.AdaptedNamedTypeSymbol,
                             underlyingType.AdaptedSymbol.ContainingAssembly);
@@ -420,7 +420,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
         {
             Debug.Assert(namedType.IsDefinition);
 
-            var adapter = namedType.GetCciAdapter();
+            adapter := namedType.GetCciAdapter();
             EmbeddedType embedded = new EmbeddedType(this, adapter);
             EmbeddedType cached = EmbeddedTypesMap.GetOrAdd(adapter, embedded);
 
@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
             // Therefore, the following check can be as simple as:
             Debug.Assert(!IsFrozen, "Set of embedded types is frozen.");
 
-            var noPiaIndexer = new Cci.TypeReferenceIndexer(new EmitContext(ModuleBeingBuilt, syntaxNodeOpt, diagnostics, metadataOnly: false, includePrivateMembers: true));
+            noPiaIndexer := new Cci.TypeReferenceIndexer(new EmitContext(ModuleBeingBuilt, syntaxNodeOpt, diagnostics, metadataOnly: false, includePrivateMembers: true));
 
             // Make sure we embed all types referenced by the type declaration: implemented interfaces, etc.
             noPiaIndexer.VisitTypeDefinitionNoMembers(embedded);
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
             // Embed types referenced by this field declaration.
             EmbedReferences(embedded, syntaxNodeOpt, diagnostics);
 
-            var containerKind = field.AdaptedFieldSymbol.ContainingType.TypeKind;
+            containerKind := field.AdaptedFieldSymbol.ContainingType.TypeKind;
 
             // Structures may contain only public instance fields.
             if (containerKind == TypeKind.Interface || containerKind == TypeKind.Delegate ||
@@ -584,8 +584,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
             Debug.Assert(property.AdaptedPropertySymbol.IsDefinition);
 
             // Make sure accessors are embedded.
-            var getMethod = property.AdaptedPropertySymbol.GetMethod?.GetCciAdapter();
-            var setMethod = property.AdaptedPropertySymbol.SetMethod?.GetCciAdapter();
+            getMethod := property.AdaptedPropertySymbol.GetMethod?.GetCciAdapter();
+            setMethod := property.AdaptedPropertySymbol.SetMethod?.GetCciAdapter();
 
             EmbeddedMethod embeddedGet = (object)getMethod != null ? EmbedMethod(type, getMethod, syntaxNodeOpt, diagnostics) : null;
             EmbeddedMethod embeddedSet = (object)setMethod != null ? EmbedMethod(type, setMethod, syntaxNodeOpt, diagnostics) : null;
@@ -619,8 +619,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
             Debug.Assert(@event.AdaptedSymbol.IsDefinition);
 
             // Make sure accessors are embedded.
-            var addMethod = @event.AdaptedEventSymbol.AddMethod?.GetCciAdapter();
-            var removeMethod = @event.AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
+            addMethod := @event.AdaptedEventSymbol.AddMethod?.GetCciAdapter();
+            removeMethod := @event.AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
 
             EmbeddedMethod embeddedAdd = (object)addMethod != null ? EmbedMethod(type, addMethod, syntaxNodeOpt, diagnostics) : null;
             EmbeddedMethod embeddedRemove = (object)removeMethod != null ? EmbedMethod(type, removeMethod, syntaxNodeOpt, diagnostics) : null;
@@ -685,7 +685,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit.NoPia
         protected override CSharpAttributeData CreateCompilerGeneratedAttribute()
         {
             Debug.Assert(WellKnownMembers.IsSynthesizedAttributeOptional(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
-            var compilation = ModuleBeingBuilt.Compilation;
+            compilation := ModuleBeingBuilt.Compilation;
             return compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor);
         }
     }

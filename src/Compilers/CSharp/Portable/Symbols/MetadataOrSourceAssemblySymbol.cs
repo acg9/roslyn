@@ -191,7 +191,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazySpecialTypeMembers == null)
                 {
-                    var specialTypeMembers = new Symbol[(int)SpecialMember.Count];
+                    specialTypeMembers := new Symbol[(int)SpecialMember.Count];
 
                     for (int i = 0; i < specialTypeMembers.Length; i++)
                     {
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     Interlocked.CompareExchange(ref _lazySpecialTypeMembers, specialTypeMembers, null);
                 }
 
-                var descriptor = SpecialMembers.GetDescriptor(member);
+                descriptor := SpecialMembers.GetDescriptor(member);
                 NamedTypeSymbol type = GetDeclaredSpecialType(descriptor.DeclaringSpecialType);
                 Symbol result = null;
 

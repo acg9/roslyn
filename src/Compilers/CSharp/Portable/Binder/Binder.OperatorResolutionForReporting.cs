@@ -86,7 +86,7 @@ internal partial class Binder
                 return false;
             }
 
-            var results = ArrayBuilder<(MethodSymbol?, OperatorAnalysisResultKind)>.GetInstance();
+            results := ArrayBuilder<(MethodSymbol?, OperatorAnalysisResultKind)>.GetInstance();
             populateResults(results, resultToUse);
 
             bool reported = tryReportDiagnostics(node, binder, results, leftDisplay, rightDisplay, diagnostics);
@@ -128,7 +128,7 @@ internal partial class Binder
                 // There is much room to improve diagnostics on inapplicable candidates, but for now we just report the candidate if there is a single one.
                 if (results is [{ member: { } inapplicableMember }])
                 {
-                    var toReport = nodeToReport(node);
+                    toReport := nodeToReport(node);
                     if (rightDisplay is null)
                     {
                         // error: Operator cannot be applied to operand of type '{0}'. The closest inapplicable candidate is '{1}'
@@ -171,7 +171,7 @@ internal partial class Binder
                     case OverloadResolutionResult<MethodSymbol> r1:
                         foreach (var res in r1.ResultsBuilder)
                         {
-                            var kind = mapKind(res.Result.Kind);
+                            kind := mapKind(res.Result.Kind);
                             if (kind > bestKind)
                             {
                                 bestKind = kind;

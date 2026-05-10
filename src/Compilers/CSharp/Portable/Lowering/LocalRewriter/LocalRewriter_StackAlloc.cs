@@ -24,8 +24,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundNode VisitStackAllocArrayCreationBase(BoundStackAllocArrayCreationBase stackAllocNode)
         {
-            var rewrittenCount = VisitExpression(stackAllocNode.Count);
-            var type = stackAllocNode.Type;
+            rewrittenCount := VisitExpression(stackAllocNode.Count);
+            type := stackAllocNode.Type;
             Debug.Assert(type is { });
 
             if (rewrittenCount.ConstantValueOpt?.Int32Value == 0)
@@ -34,9 +34,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return _factory.Default(type);
             }
 
-            var elementType = stackAllocNode.ElementType;
+            elementType := stackAllocNode.ElementType;
 
-            var initializerOpt = stackAllocNode.InitializerOpt;
+            initializerOpt := stackAllocNode.InitializerOpt;
             if (initializerOpt != null)
             {
                 initializerOpt = initializerOpt.Update(VisitList(initializerOpt.Initializers));
@@ -44,16 +44,16 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (type.IsPointerType())
             {
-                var stackSize = RewriteStackAllocCountToSize(rewrittenCount, elementType);
+                stackSize := RewriteStackAllocCountToSize(rewrittenCount, elementType);
                 return new BoundConvertedStackAllocExpression(stackAllocNode.Syntax, elementType, stackSize, initializerOpt, type);
             }
             else if (TypeSymbol.Equals(type.OriginalDefinition, _compilation.GetWellKnownType(WellKnownType.System_Span_T), TypeCompareKind.ConsiderEverything2))
             {
-                var spanType = (NamedTypeSymbol)type;
-                var sideEffects = ArrayBuilder<BoundExpression>.GetInstance();
-                var locals = ArrayBuilder<LocalSymbol>.GetInstance();
-                var countTemp = CaptureExpressionInTempIfNeeded(rewrittenCount, sideEffects, locals, SynthesizedLocalKind.Spill);
-                var stackSize = RewriteStackAllocCountToSize(countTemp, elementType);
+                spanType := (NamedTypeSymbol)type;
+                sideEffects := ArrayBuilder<BoundExpression>.GetInstance();
+                locals := ArrayBuilder<LocalSymbol>.GetInstance();
+                countTemp := CaptureExpressionInTempIfNeeded(rewrittenCount, sideEffects, locals, SynthesizedLocalKind.Spill);
+                stackSize := RewriteStackAllocCountToSize(countTemp, elementType);
                 stackAllocNode = new BoundConvertedStackAllocExpression(
                     stackAllocNode.Syntax, elementType, stackSize, initializerOpt, _compilation.CreatePointerTypeSymbol(elementType));
 
@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // hoisted/spilled into some state machine.  If that temp local needs to be spilled that will result in an
                 // error.
                 _needsSpilling = true;
-                var tempAccess = _factory.StoreToTemp(constructorCall, out BoundAssignmentOperator tempAssignment, syntaxOpt: stackAllocNode.Syntax);
+                tempAccess := _factory.StoreToTemp(constructorCall, out BoundAssignmentOperator tempAssignment, syntaxOpt: stackAllocNode.Syntax);
                 sideEffects.Add(tempAssignment);
                 locals.Add(tempAccess.LocalSymbol);
                 return new BoundSpillSequence(
@@ -116,17 +116,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression sizeOfExpression = _factory.Sizeof(elementType);
 
-            var sizeConst = sizeOfExpression.ConstantValueOpt;
+            sizeConst := sizeOfExpression.ConstantValueOpt;
             if (sizeConst != null)
             {
                 int size = sizeConst.Int32Value;
                 Debug.Assert(size > 0);
 
                 // common case: stackalloc int[123]
-                var countConst = countExpression.ConstantValueOpt;
+                countConst := countExpression.ConstantValueOpt;
                 if (countConst != null)
                 {
-                    var count = countConst.Int32Value;
+                    count := countConst.Int32Value;
                     long folded = unchecked((uint)count * size);
 
                     if (folded < uint.MaxValue)

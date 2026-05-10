@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // immediate child can handle every particular state.
             private void AddState(StateMachineState state, IteratorFinallyFrame innerHandler)
             {
-                var knownStates = this.knownStates;
+                knownStates := this.knownStates;
                 if (knownStates == null)
                 {
                     this.knownStates = knownStates = new Dictionary<StateMachineState, IteratorFinallyFrame>();
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return label;
                 }
 
-                var proxyLabels = this.proxyLabels;
+                proxyLabels := this.proxyLabels;
                 if (proxyLabels == null)
                 {
                     this.proxyLabels = proxyLabels = new Dictionary<LabelSymbol, LabelSymbol>();

@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         internal static SyntaxTrivia Whitespace(string text, bool elastic = false)
         {
-            var trivia = SyntaxTrivia.Create(SyntaxKind.WhitespaceTrivia, text);
+            trivia := SyntaxTrivia.Create(SyntaxKind.WhitespaceTrivia, text);
             if (!elastic)
             {
                 return trivia;

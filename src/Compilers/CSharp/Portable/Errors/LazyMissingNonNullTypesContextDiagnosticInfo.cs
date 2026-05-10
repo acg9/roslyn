@@ -45,13 +45,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static void AddAll(Binder binder, SyntaxToken questionToken, TypeWithAnnotations? type, DiagnosticBag diagnostics)
         {
-            var location = questionToken.GetLocation();
+            location := questionToken.GetLocation();
 
-            var rawInfos = ArrayBuilder<DiagnosticInfo>.GetInstance();
+            rawInfos := ArrayBuilder<DiagnosticInfo>.GetInstance();
             GetRawDiagnosticInfos(binder, questionToken, rawInfos);
             foreach (var rawInfo in rawInfos)
             {
-                var info = (type.HasValue) ? new LazyMissingNonNullTypesContextDiagnosticInfo(type.Value, rawInfo) : rawInfo;
+                info := (type.HasValue) ? new LazyMissingNonNullTypesContextDiagnosticInfo(type.Value, rawInfo) : rawInfo;
                 diagnostics.Add(info, location);
             }
 
@@ -61,10 +61,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static void GetRawDiagnosticInfos(Binder binder, SyntaxToken questionToken, ArrayBuilder<DiagnosticInfo> infos)
         {
             Debug.Assert(questionToken.SyntaxTree != null);
-            var tree = (CSharpSyntaxTree)questionToken.SyntaxTree;
+            tree := (CSharpSyntaxTree)questionToken.SyntaxTree;
 
             const MessageID featureId = MessageID.IDS_FeatureNullableReferenceTypes;
-            var info = featureId.GetFeatureAvailabilityDiagnosticInfo(tree.Options);
+            info := featureId.GetFeatureAvailabilityDiagnosticInfo(tree.Options);
             if (info is object)
             {
                 infos.Add(info);

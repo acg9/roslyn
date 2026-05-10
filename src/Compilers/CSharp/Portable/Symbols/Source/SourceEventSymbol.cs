@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             _syntaxRef = syntax.GetReference();
 
-            var isExplicitInterfaceImplementation = interfaceSpecifierSyntaxOpt != null;
+            isExplicitInterfaceImplementation := interfaceSpecifierSyntaxOpt != null;
             _modifiers = MakeModifiers(modifiers, isExplicitInterfaceImplementation, isFieldLike, _location, diagnostics, out _, out _hasExplicitAccessModifier);
             this.CheckAccessibility(_location, diagnostics, isExplicitInterfaceImplementation);
         }
@@ -204,7 +204,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         private CustomAttributesBag<CSharpAttributeData> GetAttributesBag()
         {
-            var bag = _lazyCustomAttributesBag;
+            bag := _lazyCustomAttributesBag;
             if (bag != null && bag.IsSealed)
             {
                 return bag;
@@ -226,7 +226,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (bagCreatedOnThisThread)
             {
                 DeclaringCompilation.SymbolDeclaredEvent(this);
-                var wasCompletedThisThread = _state.NotePartComplete(CompletionPart.Attributes);
+                wasCompletedThisThread := _state.NotePartComplete(CompletionPart.Attributes);
                 Debug.Assert(wasCompletedThisThread);
             }
 
@@ -269,7 +269,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         protected CommonEventWellKnownAttributeData GetDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -286,7 +286,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         internal CommonEventEarlyWellKnownAttributeData GetEarlyDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
 
             if (attributesBag == null || !attributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
             {
@@ -328,10 +328,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return null;
                 }
 
-                var lazyCustomAttributesBag = _lazyCustomAttributesBag;
+                lazyCustomAttributesBag := _lazyCustomAttributesBag;
                 if (lazyCustomAttributesBag != null && lazyCustomAttributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
                 {
-                    var data = (CommonEventEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
+                    data := (CommonEventEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData;
                     return data != null ? data.ObsoleteAttributeData : null;
                 }
 
@@ -341,10 +341,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override void DecodeWellKnownAttributeImpl(ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
             if (attribute.IsTargetAttribute(AttributeDescription.SpecialNameAttribute))
             {
@@ -379,8 +379,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = this.DeclaringCompilation;
-            var type = this.TypeWithAnnotations;
+            compilation := this.DeclaringCompilation;
+            type := this.TypeWithAnnotations;
 
             if (type.Type.ContainsDynamic())
             {
@@ -416,7 +416,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSpecialNameAttribute;
             }
         }
@@ -528,11 +528,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                    out bool hasExplicitAccessModifier)
         {
             bool isInterface = this.ContainingType.IsInterface;
-            var defaultAccess = isInterface && !explicitInterfaceImplementation ? DeclarationModifiers.Public : DeclarationModifiers.Private;
-            var defaultInterfaceImplementationModifiers = DeclarationModifiers.None;
+            defaultAccess := isInterface && !explicitInterfaceImplementation ? DeclarationModifiers.Public : DeclarationModifiers.Private;
+            defaultInterfaceImplementationModifiers := DeclarationModifiers.None;
 
             // Check that the set of modifiers is allowed
-            var allowedModifiers = DeclarationModifiers.Partial | DeclarationModifiers.Unsafe;
+            allowedModifiers := DeclarationModifiers.Partial | DeclarationModifiers.Unsafe;
             if (!explicitInterfaceImplementation)
             {
                 allowedModifiers |= DeclarationModifiers.New |
@@ -611,7 +611,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!IsStatic || ContainingType.IsInterface || (!IsAbstract && !IsVirtual)); // Otherwise should have been reported and cleared earlier.
 
             Location location = this.GetFirstLocation();
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
             bool isExplicitInterfaceImplementationInInterface = ContainingType.IsInterface && IsExplicitInterfaceImplementation;
 
             if (this.DeclaredAccessibility == Accessibility.Private && (IsVirtual || (IsAbstract && !isExplicitInterfaceImplementationInInterface) || IsOverride))
@@ -854,8 +854,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void AfterAddingTypeMembersChecks(ConversionsBase conversions, BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = this.GetFirstLocation();
+            compilation := DeclaringCompilation;
+            location := this.GetFirstLocation();
 
             this.CheckModifiersAndType(diagnostics);
             this.Type.CheckAllConstraints(compilation, conversions, location, diagnostics);
@@ -873,7 +873,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (CallerUnsafeMode == CallerUnsafeMode.Explicit)
             {
-                var modifiers = (CSharpSyntaxNode as MemberDeclarationSyntax)?.Modifiers ?? default;
+                modifiers := (CSharpSyntaxNode as MemberDeclarationSyntax)?.Modifiers ?? default;
                 compilation.EnsureRequiresUnsafeAttributeExists(diagnostics, modifiers.GetUnsafeOrExternLocation(location), modifyCompilation: true);
             }
 

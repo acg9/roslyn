@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var ignoreNullable = (compareKind & TypeCompareKind.AllNullableIgnoreOptions) != 0;
+            ignoreNullable := (compareKind & TypeCompareKind.AllNullableIgnoreOptions) != 0;
             return ignoreNullable ||
                 (TypeWithAnnotations.Equals(otherLocal.TypeWithAnnotations, compareKind) &&
                  ContainingSymbol.Equals(otherLocal.ContainingSymbol, compareKind));

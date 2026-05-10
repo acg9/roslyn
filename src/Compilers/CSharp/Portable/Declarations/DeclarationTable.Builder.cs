@@ -29,7 +29,7 @@ internal partial class DeclarationTable
 
         public static Builder GetInstance(DeclarationTable table)
         {
-            var builder = s_builderPool.Allocate();
+            builder := s_builderPool.Allocate();
 
             builder._table = table;
 
@@ -57,7 +57,7 @@ internal partial class DeclarationTable
             RealizeAdds();
             RealizeRemoves();
 
-            var result = _table;
+            result := _table;
 
             _table = DeclarationTable.Empty;
             s_builderPool.Free(this);
@@ -72,7 +72,7 @@ internal partial class DeclarationTable
                 return;
             }
 
-            var lastDeclaration = _addedLazyRootDeclarations[_addedLazyRootDeclarations.Count - 1];
+            lastDeclaration := _addedLazyRootDeclarations[_addedLazyRootDeclarations.Count - 1];
             if (_addedLazyRootDeclarations.Count == 1)
             {
                 // We can only re-use the cache if we don't already have a 'latest' item for the decl table.
@@ -97,7 +97,7 @@ internal partial class DeclarationTable
                     _addedLazyRootDeclarations.Insert(0, _table._latestLazyRootDeclaration);
                 }
 
-                var newOlderRootDeclarations = _table._allOlderRootDeclarations.AddRange(_addedLazyRootDeclarations);
+                newOlderRootDeclarations := _table._allOlderRootDeclarations.AddRange(_addedLazyRootDeclarations);
 
                 _table = new DeclarationTable(newOlderRootDeclarations, lastDeclaration, cache: null);
             }
@@ -114,7 +114,7 @@ internal partial class DeclarationTable
 
             if (_removedLazyRootDeclarations.Count == 1)
             {
-                var firstDeclaration = _removedLazyRootDeclarations[0];
+                firstDeclaration := _removedLazyRootDeclarations[0];
 
                 // We can only reuse the cache if we're removing the decl that was just added.
                 if (_table._latestLazyRootDeclaration == firstDeclaration)
@@ -133,10 +133,10 @@ internal partial class DeclarationTable
             }
             else
             {
-                var isLatestRemoved = _table._latestLazyRootDeclaration != null && _removedLazyRootDeclarations.Contains(_table._latestLazyRootDeclaration);
+                isLatestRemoved := _table._latestLazyRootDeclaration != null && _removedLazyRootDeclarations.Contains(_table._latestLazyRootDeclaration);
 
-                var newOlderRootDeclarations = _table._allOlderRootDeclarations.RemoveRange(_removedLazyRootDeclarations);
-                var newLatestLazyRootDeclaration = isLatestRemoved ? null : _table._latestLazyRootDeclaration;
+                newOlderRootDeclarations := _table._allOlderRootDeclarations.RemoveRange(_removedLazyRootDeclarations);
+                newLatestLazyRootDeclaration := isLatestRemoved ? null : _table._latestLazyRootDeclaration;
 
                 _table = new DeclarationTable(newOlderRootDeclarations, newLatestLazyRootDeclaration, cache: null);
             }

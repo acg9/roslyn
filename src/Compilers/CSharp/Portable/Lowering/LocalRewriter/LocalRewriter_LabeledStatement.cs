@@ -15,7 +15,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var rewrittenBody = VisitStatement(node.Body);
+            rewrittenBody := VisitStatement(node.Body);
             return MakeLabeledStatement(node, rewrittenBody);
         }
 
@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (this.Instrument)
             {
-                var labeledSyntax = node.Syntax as LabeledStatementSyntax;
+                labeledSyntax := node.Syntax as LabeledStatementSyntax;
                 if (labeledSyntax != null)
                 {
                     labelStatement = Instrumenter.InstrumentLabelStatement(node, labelStatement);

@@ -29,8 +29,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         internal static TRoot Replace<TRoot>(TRoot root, SyntaxToken oldToken, SyntaxToken newToken, int diagnosticOffsetDelta)
             where TRoot : CSharpSyntaxNode
         {
-            var replacer = new SyntaxFirstTokenReplacer(oldToken, newToken, diagnosticOffsetDelta);
-            var newRoot = (TRoot)replacer.Visit(root);
+            replacer := new SyntaxFirstTokenReplacer(oldToken, newToken, diagnosticOffsetDelta);
+            newRoot := (TRoot)replacer.Visit(root);
             Debug.Assert(replacer._foundOldToken);
             return newRoot;
         }
@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 if (!_foundOldToken)
                 {
-                    var token = node as SyntaxToken;
+                    token := node as SyntaxToken;
                     if (token != null)
                     {
                         Debug.Assert(token == _oldToken);
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 return node;
             }
 
-            var numDiagnostics = oldDiagnostics.Length;
+            numDiagnostics := oldDiagnostics.Length;
             DiagnosticInfo[] newDiagnostics = new DiagnosticInfo[numDiagnostics];
             for (int i = 0; i < numDiagnostics; i++)
             {

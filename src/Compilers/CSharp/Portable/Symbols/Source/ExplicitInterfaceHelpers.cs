@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static string GetMemberNameWithoutInterfaceName(string fullName)
         {
-            var idx = fullName.LastIndexOf('.');
+            idx := fullName.LastIndexOf('.');
             Debug.Assert(idx < fullName.Length);
             return (idx > 0) ? fullName.Substring(idx + 1) : fullName; //don't consider leading dots
         }
@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #nullable enable
         public static ImmutableArray<T> SubstituteExplicitInterfaceImplementations<T>(ImmutableArray<T> unsubstitutedExplicitInterfaceImplementations, TypeMap map) where T : Symbol
         {
-            var builder = ArrayBuilder<T>.GetInstance();
+            builder := ArrayBuilder<T>.GetInstance();
             foreach (var unsubstitutedPropertyImplemented in unsubstitutedExplicitInterfaceImplementations)
             {
                 builder.Add(SubstituteExplicitInterfaceImplementation(unsubstitutedPropertyImplemented, map));
@@ -127,11 +127,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static T SubstituteExplicitInterfaceImplementation<T>(T unsubstitutedPropertyImplemented, TypeMap map) where T : Symbol
         {
-            var unsubstitutedInterfaceType = unsubstitutedPropertyImplemented.ContainingType;
+            unsubstitutedInterfaceType := unsubstitutedPropertyImplemented.ContainingType;
             Debug.Assert((object)unsubstitutedInterfaceType != null);
-            var explicitInterfaceType = map.SubstituteNamedType(unsubstitutedInterfaceType);
+            explicitInterfaceType := map.SubstituteNamedType(unsubstitutedInterfaceType);
             Debug.Assert((object)explicitInterfaceType != null);
-            var name = unsubstitutedPropertyImplemented.Name; //should already be unqualified
+            name := unsubstitutedPropertyImplemented.Name; //should already be unqualified
 
             foreach (var candidateMember in explicitInterfaceType.GetMembers(name))
             {
@@ -189,8 +189,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var memberLocation = implementingMember.GetFirstLocation();
-            var containingType = implementingMember.ContainingType;
+            memberLocation := implementingMember.GetFirstLocation();
+            containingType := implementingMember.ContainingType;
 
             switch (containingType.TypeKind)
             {
@@ -207,14 +207,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (!explicitInterfaceType.IsInterfaceType())
             {
                 //we'd like to highlight just the type part of the name
-                var explicitInterfaceSyntax = explicitInterfaceSpecifierSyntax.Name;
-                var location = new SourceLocation(explicitInterfaceSyntax);
+                explicitInterfaceSyntax := explicitInterfaceSpecifierSyntax.Name;
+                location := new SourceLocation(explicitInterfaceSyntax);
 
                 diagnostics.Add(ErrorCode.ERR_ExplicitInterfaceImplementationNotInterface, location, explicitInterfaceType);
                 return null;
             }
 
-            var explicitInterfaceNamedType = (NamedTypeSymbol)explicitInterfaceType;
+            explicitInterfaceNamedType := (NamedTypeSymbol)explicitInterfaceType;
 
             // 13.4.1: "For an explicit interface member implementation to be valid, the class or struct must name an
             // interface in its base class list that contains a member ..."
@@ -223,8 +223,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (setCount == 0 || !set.Contains(explicitInterfaceNamedType, Symbols.SymbolEqualityComparer.ObliviousNullableModifierMatchesAny))
             {
                 //we'd like to highlight just the type part of the name
-                var explicitInterfaceSyntax = explicitInterfaceSpecifierSyntax.Name;
-                var location = new SourceLocation(explicitInterfaceSyntax);
+                explicitInterfaceSyntax := explicitInterfaceSpecifierSyntax.Name;
+                location := new SourceLocation(explicitInterfaceSyntax);
 
                 if (setCount > 0 && set.Contains(explicitInterfaceNamedType, Symbols.SymbolEqualityComparer.IgnoringNullable))
                 {
@@ -239,10 +239,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // Found a matching member without checking the return type.
-            var foundMatchingMemberWithoutReturnTypeComparer = false;
+            foundMatchingMemberWithoutReturnTypeComparer := false;
             // Setting this flag to true does not imply that an interface member has been successfully implemented.
             // It just indicates that a corresponding interface member has been found (there may still be errors).
-            var foundMatchingMember = false;
+            foundMatchingMember := false;
 
             Symbol matchingMemberWithoutReturnTypeComparer = null;
             Symbol implementedMember = null;
@@ -255,7 +255,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var hasParamsParam = implementingMember.HasParamsParameter();
+            hasParamsParam := implementingMember.HasParamsParameter();
 
             foreach (Symbol interfaceMember in explicitInterfaceNamedType.GetMembers(interfaceMemberName))
             {
@@ -277,8 +277,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     continue;
                 }
 
-                var implementingMemberTypeMap = MemberSignatureComparer.GetTypeMap(implementingMember);
-                var interfaceMemberTypeMap = MemberSignatureComparer.GetTypeMap(interfaceMember);
+                implementingMemberTypeMap := MemberSignatureComparer.GetTypeMap(implementingMember);
+                interfaceMemberTypeMap := MemberSignatureComparer.GetTypeMap(interfaceMember);
                 if (MemberSignatureComparer.HaveSameReturnTypes(
                         implementingMember,
                         implementingMemberTypeMap,
@@ -327,7 +327,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     var errorType = implementingMember.Kind is SymbolKind.Method
                         ? ErrorCode.ERR_ExplicitInterfaceMemberReturnTypeMismatch
                         : ErrorCode.ERR_ExplicitInterfaceMemberTypeMismatch;
-                    var returnType = matchingMemberWithoutReturnTypeComparer.GetTypeOrReturnType();
+                    returnType := matchingMemberWithoutReturnTypeComparer.GetTypeOrReturnType();
                     diagnostics.Add(errorType, memberLocation, implementingMember, returnType, matchingMemberWithoutReturnTypeComparer);
                 }
                 else
@@ -339,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Make sure implemented member is accessible
             if ((object)implementedMember != null)
             {
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, implementingMember.ContainingAssembly);
+                useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, implementingMember.ContainingAssembly);
 
                 if (!AccessCheck.IsSymbolAccessible(implementedMember, implementingMember.ContainingType, ref useSiteInfo, throughTypeOpt: null))
                 {
@@ -350,13 +350,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     switch (implementedMember.Kind)
                     {
                         case SymbolKind.Property:
-                            var propertySymbol = (PropertySymbol)implementedMember;
+                            propertySymbol := (PropertySymbol)implementedMember;
                             checkAccessorIsAccessibleIfImplementable(propertySymbol.GetMethod);
                             checkAccessorIsAccessibleIfImplementable(propertySymbol.SetMethod);
                             break;
 
                         case SymbolKind.Event:
-                            var eventSymbol = (EventSymbol)implementedMember;
+                            eventSymbol := (EventSymbol)implementedMember;
                             checkAccessorIsAccessibleIfImplementable(eventSymbol.AddMethod);
                             checkAccessorIsAccessibleIfImplementable(eventSymbol.RemoveMethod);
                             break;
@@ -391,7 +391,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (implementingMember.ContainsTupleNames() && MemberSignatureComparer.ConsideringTupleNamesCreatesDifference(implementingMember, implementedMember))
             {
                 // it is ok to explicitly implement with no tuple names, for compatibility with C# 6, but otherwise names should match
-                var memberLocation = implementingMember.GetFirstLocation();
+                memberLocation := implementingMember.GetFirstLocation();
                 diagnostics.Add(ErrorCode.ERR_ImplBadTupleNames, memberLocation, implementingMember, implementedMember);
             }
 

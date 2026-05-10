@@ -16,12 +16,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var rewrittenCondition = VisitExpression(node.Condition);
-            var rewrittenBody = VisitStatement(node.Body);
+            rewrittenCondition := VisitExpression(node.Condition);
+            rewrittenBody := VisitStatement(node.Body);
             Debug.Assert(rewrittenBody is { });
-            var startLabel = new GeneratedLabelSymbol("start");
+            startLabel := new GeneratedLabelSymbol("start");
 
-            var syntax = node.Syntax;
+            syntax := node.Syntax;
 
             // EnC: We need to insert a hidden sequence point to handle function remapping in case 
             // the containing method is edited while methods invoked in the condition are being executed.

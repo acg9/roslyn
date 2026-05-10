@@ -19,7 +19,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitPropertyAccess(BoundPropertyAccess node, bool isLeftOfAssignment)
         {
-            var rewrittenReceiverOpt = VisitExpression(node.ReceiverOpt);
+            rewrittenReceiverOpt := VisitExpression(node.ReceiverOpt);
             return MakePropertyAccess(node.Syntax, rewrittenReceiverOpt, node.PropertySymbol, node.ResultKind, node.Type, isLeftOfAssignment, node);
         }
 
@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // we have a special node for such cases.
             if (rewrittenReceiverOpt is { Type: { TypeKind: TypeKind.Array } } && !isLeftOfAssignment)
             {
-                var asArrayType = (ArrayTypeSymbol)rewrittenReceiverOpt.Type;
+                asArrayType := (ArrayTypeSymbol)rewrittenReceiverOpt.Type;
                 if (asArrayType.IsSZArray)
                 {
                     // NOTE: we are not interested in potential badness of Array.Length property.
@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var getMethod = getMethodOpt ?? property.GetOwnOrInheritedGetMethod();
+                getMethod := getMethodOpt ?? property.GetOwnOrInheritedGetMethod();
 
                 Debug.Assert(getMethod is { });
                 Debug.Assert(getMethod.ParameterCount == rewrittenArguments.Length);

@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var binder = _current.Binder;
+                binder := _current.Binder;
                 // Return a scope for the next Binder that supports extensions.
                 _current = GetNextScope(binder.Next);
             }

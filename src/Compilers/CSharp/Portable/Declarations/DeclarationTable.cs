@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Internal for unit tests only.
         internal MergedNamespaceDeclaration CalculateMergedRoot(CSharpCompilation compilation)
         {
-            var oldRoot = _cache.MergedRoot;
+            oldRoot := _cache.MergedRoot;
             if (_latestLazyRootDeclaration == null)
             {
                 return oldRoot;
@@ -95,8 +95,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var oldRootDeclarations = oldRoot.Declarations;
-                var builder = ArrayBuilder<SingleNamespaceDeclaration>.GetInstance(oldRootDeclarations.Length + 1);
+                oldRootDeclarations := oldRoot.Declarations;
+                builder := ArrayBuilder<SingleNamespaceDeclaration>.GetInstance(oldRootDeclarations.Length + 1);
                 builder.AddRange(oldRootDeclarations);
                 builder.Add(_latestLazyRootDeclaration.Value);
                 // Sort the root namespace declarations to match the order of SyntaxTrees.
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ICollection<string> GetMergedTypeNames()
         {
-            var cachedTypeNames = _cache.TypeNames;
+            cachedTypeNames := _cache.TypeNames;
 
             if (_latestLazyRootDeclaration == null)
             {
@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ICollection<string> GetMergedNamespaceNames()
         {
-            var cachedNamespaceNames = _cache.NamespaceNames;
+            cachedNamespaceNames := _cache.NamespaceNames;
 
             if (_latestLazyRootDeclaration == null)
             {
@@ -156,7 +156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ICollection<ReferenceDirective> GetMergedReferenceDirectives()
         {
-            var cachedReferenceDirectives = _cache.ReferenceDirectives;
+            cachedReferenceDirectives := _cache.ReferenceDirectives;
 
             if (_latestLazyRootDeclaration == null)
             {
@@ -183,13 +183,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static ISet<string> GetNames(Declaration declaration, Predicate<Declaration> predicate)
         {
-            var set = new HashSet<string>();
-            var stack = new Stack<Declaration>();
+            set := new HashSet<string>();
+            stack := new Stack<Declaration>();
             stack.Push(declaration);
 
             while (stack.Count > 0)
             {
-                var current = stack.Pop();
+                current := stack.Pop();
                 if (current == null)
                 {
                     continue;
@@ -285,18 +285,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             Func<SingleTypeDeclaration, bool> typePredicate,
             CancellationToken cancellationToken)
         {
-            var includeNamespace = (filter & SymbolFilter.Namespace) == SymbolFilter.Namespace;
-            var includeType = (filter & SymbolFilter.Type) == SymbolFilter.Type;
-            var includeMember = (filter & SymbolFilter.Member) == SymbolFilter.Member;
+            includeNamespace := (filter & SymbolFilter.Namespace) == SymbolFilter.Namespace;
+            includeType := (filter & SymbolFilter.Type) == SymbolFilter.Type;
+            includeMember := (filter & SymbolFilter.Member) == SymbolFilter.Member;
 
-            var stack = new Stack<MergedNamespaceOrTypeDeclaration>();
+            stack := new Stack<MergedNamespaceOrTypeDeclaration>();
             stack.Push(mergedRoot);
 
             while (stack.Count > 0)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var current = stack.Pop();
+                current := stack.Pop();
                 if (current == null)
                 {
                     continue;
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (includeMember)
                     {
-                        var mergedType = (MergedTypeDeclaration)current;
+                        mergedType := (MergedTypeDeclaration)current;
                         foreach (var typeDecl in mergedType.Declarations)
                         {
                             if (typePredicate(typeDecl))

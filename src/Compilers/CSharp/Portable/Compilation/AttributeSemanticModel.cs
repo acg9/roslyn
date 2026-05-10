@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case SyntaxKind.AttributeArgument:
                     // Try to walk up to the AttributeSyntax
-                    var parent = node.Parent;
+                    parent := node.Parent;
                     if (parent != null)
                     {
                         parent = parent.Parent;
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.Kind() == SyntaxKind.Attribute)
             {
-                var attribute = (AttributeSyntax)node;
+                attribute := (AttributeSyntax)node;
                 return binder.BindAttribute(attribute, AttributeType, attributedMember: ContextualAttributeBinder.GetAttributedMember(_attributeTarget), diagnostics);
             }
             else if (SyntaxFacts.IsAttributeName(node))

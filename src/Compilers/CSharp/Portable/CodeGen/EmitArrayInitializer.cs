@@ -44,8 +44,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         /// </summary>
         private void EmitArrayInitializers(ArrayTypeSymbol arrayType, BoundArrayInitialization inits)
         {
-            var initExprs = inits.Initializers;
-            var initializationStyle = ShouldEmitBlockInitializer(arrayType.ElementType, initExprs);
+            initExprs := inits.Initializers;
+            initializationStyle := ShouldEmitBlockInitializer(arrayType.ElementType, initExprs);
 
             if (initializationStyle == ArrayInitializerStyle.Element)
             {
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
         {
             for (int i = 0; i < inits.Length; i++)
             {
-                var init = inits[i];
+                init := inits[i];
                 if (ShouldEmitInitExpression(includeConstants, init))
                 {
                     _builder.EmitOpCode(ILOpCode.Dup);
@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             // Using a List for the stack instead of the framework Stack because IEnumerable from Stack is top to bottom.
             // This algorithm requires the IEnumerable to be from bottom to top. See extensions for List in CollectionExtensions.vb.
 
-            var indices = new ArrayBuilder<IndexDesc>();
+            indices := new ArrayBuilder<IndexDesc>();
 
             // emit initializers for all values of the leftmost index.
             for (int i = 0; i < inits.Length; i++)
@@ -169,8 +169,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                                                          ArrayBuilder<IndexDesc> indices,
                                                          bool includeConstants)
         {
-            var top = indices.Peek();
-            var inits = top.Initializers;
+            top := indices.Peek();
+            inits := top.Initializers;
 
             if (IsMultidimensionalInitializer(inits))
             {
@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 // leaf case
                 for (int i = 0; i < inits.Length; i++)
                 {
-                    var init = inits[i];
+                    init := inits[i];
                     if (ShouldEmitInitExpression(includeConstants, init))
                     {
                         // emit array ref
@@ -203,7 +203,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                         // emit the leaf index
                         _builder.EmitIntConstant(i);
 
-                        var initExpr = inits[i];
+                        initExpr := inits[i];
                         EmitExpression(initExpr, true);
                         EmitArrayElementStore(arrayType, init.Syntax);
                     }
@@ -302,7 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
             foreach (var init in inits)
             {
-                var asArrayInit = init as BoundArrayInitialization;
+                asArrayInit := init as BoundArrayInitialization;
 
                 if (asArrayInit != null)
                 {
@@ -333,7 +333,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             // the initial size is a guess.
             // there is no point to be precise here as MemoryStream always has N + 1 storage 
             // and will need to be trimmed regardless
-            var writer = new BlobBuilder(initializers.Length * 4);
+            writer := new BlobBuilder(initializers.Length * 4);
 
             SerializeArrayRecursive(writer, initializers);
 
@@ -459,7 +459,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             // all optimizations.  Technically, if this ctor isn't available but the ReadOnlySpan(T[]) constructor is, we could still
             // proceed to use the cached array mechanism.  But all known ReadOnlySpan implementations have always provided both
             // constructors, and it's not worth trying to optimize here for an arbitrary implementation that has a different shape.
-            var rosPointerCtor = (MethodSymbol?)Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_ReadOnlySpan_T__ctor_Pointer, _diagnostics, syntax: wrappedExpression.Syntax, isOptional: true);
+            rosPointerCtor := (MethodSymbol?)Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_ReadOnlySpan_T__ctor_Pointer, _diagnostics, syntax: wrappedExpression.Syntax, isOptional: true);
             if (rosPointerCtor is null)
             {
                 return false;
@@ -478,7 +478,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             elementType = arrayType.ElementType;
 
             ImmutableArray<BoundExpression> initializers = initializer.Initializers;
-            var elementCount = initializers.Length;
+            elementCount := initializers.Length;
             if (elementCount == 0)
             {
                 emitEmptyReadonlySpan(spanType, wrappedExpression, used, inPlaceTarget);
@@ -552,7 +552,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 }
 
                 // Map a field to the block (that makes it addressable).
-                var field = _builder.module.GetFieldForData(data, alignment: 1, wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
+                field := _builder.module.GetFieldForData(data, alignment: 1, wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
                 _builder.EmitOpCode(ILOpCode.Ldsflda);
                 _builder.EmitToken(field, wrappedExpression.Syntax);
 
@@ -613,7 +613,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
                 // ldtoken <PrivateImplementationDetails>...
                 // call ReadOnlySpan<elementType> RuntimeHelpers::CreateSpan<elementType>(fldHandle)
-                var field = _builder.module.GetFieldForData(data, alignment: (ushort)specialElementType.SizeInBytes(), wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
+                field := _builder.module.GetFieldForData(data, alignment: (ushort)specialElementType.SizeInBytes(), wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
                 _builder.EmitOpCode(ILOpCode.Ldtoken);
                 _builder.EmitToken(field, wrappedExpression.Syntax);
                 _builder.EmitOpCode(ILOpCode.Call, stackAdjustment: 0);
@@ -646,8 +646,8 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 // ensure deterministic behavior.
                 arrayType = arrayType.WithElementType(TypeWithAnnotations.Create(elementType.EnumUnderlyingTypeOrSelf()));
 
-                var cachingField = _builder.module.GetArrayCachingFieldForData(data, _module.Translate(arrayType), wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
-                var arrayNotNullLabel = new object();
+                cachingField := _builder.module.GetArrayCachingFieldForData(data, _module.Translate(arrayType), wrappedExpression.Syntax, _diagnostics.DiagnosticBag);
+                arrayNotNullLabel := new object();
 
                 // T[]? array = PrivateImplementationDetails.cachingField;
                 // if (array is not null) goto arrayNotNull;
@@ -686,10 +686,10 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                     return false;
                 }
 
-                var initializer = arrayCreation.InitializerOpt;
+                initializer := arrayCreation.InitializerOpt;
                 Debug.Assert(initializer != null);
 
-                var initializers = initializer.Initializers;
+                initializers := initializer.Initializers;
                 Debug.Assert(initializers.All(static init => init.ConstantValueOpt != null));
                 Debug.Assert(!elementType.IsEnumType());
 
@@ -707,7 +707,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 Cci.IFieldReference cachingField = _builder.module.GetArrayCachingFieldForConstants(constants, _module.Translate(arrayType),
                     arrayCreation.Syntax, _diagnostics.DiagnosticBag);
 
-                var arrayNotNullLabel = new object();
+                arrayNotNullLabel := new object();
 
                 // T[]? array = PrivateImplementationDetails.cachingField;
                 // if (array is not null) goto arrayNotNull;
@@ -813,7 +813,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             Debug.Assert(initializers.Length > 0);
             Debug.Assert(initializers.All(static init => init.ConstantValueOpt != null));
 
-            var writer = new BlobBuilder(initializers.Length * 4);
+            writer := new BlobBuilder(initializers.Length * 4);
 
             foreach (var init in initializers)
             {

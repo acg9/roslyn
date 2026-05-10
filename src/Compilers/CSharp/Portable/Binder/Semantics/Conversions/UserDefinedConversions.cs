@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (type.IsClassType() || type.IsStructType())
                 {
-                    var namedType = (NamedTypeSymbol)type;
+                    namedType := (NamedTypeSymbol)type;
                     if (!excludeExisting || !HasIdentityConversionToAny(namedType, result))
                     {
                         result.Add((namedType, null));

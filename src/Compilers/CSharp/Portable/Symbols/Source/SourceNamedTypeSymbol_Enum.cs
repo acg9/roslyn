@@ -48,18 +48,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var compilation = this.DeclaringCompilation;
-            var decl = this.declaration.Declarations[0];
-            var bases = GetBaseListOpt(decl);
+            compilation := this.DeclaringCompilation;
+            decl := this.declaration.Declarations[0];
+            bases := GetBaseListOpt(decl);
             if (bases != null)
             {
-                var types = bases.Types;
+                types := bases.Types;
                 if (types.Count > 0)
                 {
-                    var typeSyntax = types[0].Type;
+                    typeSyntax := types[0].Type;
 
-                    var baseBinder = compilation.GetBinder(bases);
-                    var type = baseBinder.BindType(typeSyntax, diagnostics).Type;
+                    baseBinder := compilation.GetBinder(bases);
+                    type := baseBinder.BindType(typeSyntax, diagnostics).Type;
 
                     // Error types are not exposed to the caller. In those
                     // cases, the underlying type is treated as int.

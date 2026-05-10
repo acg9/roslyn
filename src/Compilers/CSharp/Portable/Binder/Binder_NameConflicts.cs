@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 tpNames = PooledDictionary<string, TypeParameterSymbol>.GetInstance();
                 foreach (var tp in typeParameters)
                 {
-                    var name = tp.Name;
+                    name := tp.Name;
                     if (string.IsNullOrEmpty(name))
                     {
                         continue;
@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 pNames = PooledHashSet<string>.GetInstance();
                 foreach (var p in parameters)
                 {
-                    var name = p.Name;
+                    name := p.Name;
                     if (string.IsNullOrEmpty(name))
                     {
                         continue;
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 }
 
-                var scope = binder as LocalScopeBinder;
+                scope := binder as LocalScopeBinder;
                 if (scope?.EnsureSingleDefinition(symbol, name, location, diagnostics) == true)
                 {
                     return true;
@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool IsLastBinderWithinMember()
         {
-            var containingMemberOrLambda = this.ContainingMemberOrLambda;
+            containingMemberOrLambda := this.ContainingMemberOrLambda;
 
             switch (containingMemberOrLambda?.Kind)
             {

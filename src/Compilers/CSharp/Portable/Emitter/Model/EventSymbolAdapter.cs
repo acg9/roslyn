@@ -28,14 +28,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             CheckDefinitionInvariant();
 
-            var addMethod = AdaptedEventSymbol.AddMethod?.GetCciAdapter();
+            addMethod := AdaptedEventSymbol.AddMethod?.GetCciAdapter();
             RoslynDebug.Assert((object?)addMethod != null);
             if (addMethod.ShouldInclude(context))
             {
                 yield return addMethod;
             }
 
-            var removeMethod = AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
+            removeMethod := AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
             RoslynDebug.Assert((object?)removeMethod != null);
             if (removeMethod.ShouldInclude(context))
             {
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                var addMethod = AdaptedEventSymbol.AddMethod?.GetCciAdapter();
+                addMethod := AdaptedEventSymbol.AddMethod?.GetCciAdapter();
                 RoslynDebug.Assert((object?)addMethod != null);
                 return addMethod;
             }
@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                var removeMethod = AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
+                removeMethod := AdaptedEventSymbol.RemoveMethod?.GetCciAdapter();
                 RoslynDebug.Assert((object?)removeMethod != null);
                 return removeMethod;
             }

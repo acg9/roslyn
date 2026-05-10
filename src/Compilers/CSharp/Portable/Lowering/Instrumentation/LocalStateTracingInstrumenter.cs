@@ -172,13 +172,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var contextType = factory.Compilation.GetWellKnownType(WellKnownType.Microsoft_CodeAnalysis_Runtime_LocalStoreTracker);
+            contextType := factory.Compilation.GetWellKnownType(WellKnownType.Microsoft_CodeAnalysis_Runtime_LocalStoreTracker);
             if (IsSameOrNestedType(method.ContainingType, contextType))
             {
                 return false;
             }
 
-            var scope = new Scope(factory.SynthesizedLocal(contextType, methodBody.Syntax, kind: SynthesizedLocalKind.LocalStoreTracker));
+            scope := new Scope(factory.SynthesizedLocal(contextType, methodBody.Syntax, kind: SynthesizedLocalKind.LocalStoreTracker));
             instrumenter = new LocalStateTracingInstrumenter(scope, contextType, factory, diagnostics, previous);
             return true;
         }
@@ -258,9 +258,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             // since it is not possible to assign address of a local to a by-ref parameter.
             Debug.Assert(enumDelta == 0 || overloadOpt.Value != WellKnownMember.Microsoft_CodeAnalysis_Runtime_LocalStoreTracker__LogLocalStoreLocalAlias);
 
-            var overload = overloadOpt.Value + enumDelta;
+            overload := overloadOpt.Value + enumDelta;
 
-            var symbol = GetWellKnownMethodSymbol(overload, syntax);
+            symbol := GetWellKnownMethodSymbol(overload, syntax);
             Debug.Assert(symbol?.IsGenericMethod != true);
             return symbol;
         }
@@ -285,8 +285,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             base.InstrumentBlock(original, rewriter, ref additionalLocals, out var previousPrologue, out epilogue, out instrumentation);
 
-            var isMethodBody = rewriter.CurrentMethodBody == original;
-            var isLambdaBody = rewriter.CurrentLambdaBody == original;
+            isMethodBody := rewriter.CurrentMethodBody == original;
+            isLambdaBody := rewriter.CurrentLambdaBody == original;
 
             // Don't instrument blocks that are not a method or lambda body
             if (!isMethodBody && !isLambdaBody)
@@ -298,11 +298,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(_factory.TopLevelMethod is not null);
             Debug.Assert(_factory.CurrentFunction is not null);
 
-            var currentFunction = _factory.CurrentFunction;
+            currentFunction := _factory.CurrentFunction;
             var isStateMachine = (currentFunction.IsAsync && !_factory.Compilation.IsRuntimeAsyncEnabledIn(currentFunction))
                                  || currentFunction.IsIterator;
 
-            var prologueBuilder = ArrayBuilder<BoundStatement>.GetInstance(_factory.CurrentFunction.ParameterCount);
+            prologueBuilder := ArrayBuilder<BoundStatement>.GetInstance(_factory.CurrentFunction.ParameterCount);
 
             foreach (var parameter in _factory.CurrentFunction.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: true))
             {
@@ -311,7 +311,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var parameterLogger = GetLocalOrParameterStoreLogger(parameter.Type, parameter, refAssignmentSourceIsLocal: null, _factory.Syntax);
+                parameterLogger := GetLocalOrParameterStoreLogger(parameter.Type, parameter, refAssignmentSourceIsLocal: null, _factory.Syntax);
                 if (parameterLogger != null)
                 {
                     int ordinal = parameter.ContainingSymbol.IsExtensionBlockMember()
@@ -346,11 +346,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     new[] { _factory.MethodDefIndex(_factory.TopLevelMethod), _factory.MethodDefIndex(_factory.CurrentFunction), _factory.StateMachineInstanceId() }),
             };
 
-            var entryLogger = GetWellKnownMethodSymbol(entryOverload, _factory.Syntax);
+            entryLogger := GetWellKnownMethodSymbol(entryOverload, _factory.Syntax);
             var instrumentationPrologue = (entryLogger != null) ?
                 _factory.Assignment(_factory.Local(_scope.ContextVariable), _factory.Call(receiver: null, entryLogger, entryArgs)) : _factory.NoOp(NoOpStatementFlavor.Default);
 
-            var returnLogger = GetWellKnownMethodSymbol(WellKnownMember.Microsoft_CodeAnalysis_Runtime_LocalStoreTracker__LogReturn, _factory.Syntax);
+            returnLogger := GetWellKnownMethodSymbol(WellKnownMember.Microsoft_CodeAnalysis_Runtime_LocalStoreTracker__LogReturn, _factory.Syntax);
             var instrumentationEpilogue = (returnLogger != null) ?
                 _factory.ExpressionStatement(_factory.Call(receiver: _factory.Local(_scope.ContextVariable), returnLogger)) : _factory.NoOp(NoOpStatementFlavor.Default);
 
@@ -363,7 +363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(original.Left is BoundLocal { LocalSymbol.SynthesizedKind: SynthesizedLocalKind.UserDefined } or BoundParameter);
 
-            var assignment = base.InstrumentUserDefinedLocalAssignment(original);
+            assignment := base.InstrumentUserDefinedLocalAssignment(original);
 
             bool? refAssignmentSourceIsLocal;
             BoundExpression? refAssignmentSourceIndex;
@@ -397,7 +397,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 throw ExceptionUtilities.UnexpectedValue(original.Left);
             }
 
-            var logger = GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal, original.Syntax);
+            logger := GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal, original.Syntax);
             if (logger is null)
             {
                 return assignment;
@@ -468,7 +468,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (parameter.Type.SpecialType == SpecialType.System_String && targetType.SpecialType != SpecialType.System_String)
             {
-                var toStringMethod = GetSpecialMethodSymbol(SpecialMember.System_Object__ToString, value.Syntax);
+                toStringMethod := GetSpecialMethodSymbol(SpecialMember.System_Object__ToString, value.Syntax);
 
                 BoundExpression toString;
                 if (toStringMethod is null)
@@ -522,16 +522,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var targetSymbol = original.Locals.FirstOrDefault(l => l.SynthesizedKind == SynthesizedLocalKind.UserDefined);
+            targetSymbol := original.Locals.FirstOrDefault(l => l.SynthesizedKind == SynthesizedLocalKind.UserDefined);
             if (targetSymbol is null)
             {
                 return;
             }
 
-            var targetType = targetSymbol.Type;
-            var targetIndex = _factory.LocalId(targetSymbol);
+            targetType := targetSymbol.Type;
+            targetIndex := _factory.LocalId(targetSymbol);
 
-            var logger = GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal: null, original.Syntax);
+            logger := GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal: null, original.Syntax);
             if (logger is null)
             {
                 return;
@@ -581,7 +581,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return invocation;
             }
 
-            var builder = ArrayBuilder<BoundExpression>.GetInstance();
+            builder := ArrayBuilder<BoundExpression>.GetInstance();
 
             BoundLocal? temp = null;
             if (invocation.Type.SpecialType != SpecialType.System_Void)
@@ -609,7 +609,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var logger = GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal: null, invocation.Syntax);
+                logger := GetLocalOrParameterStoreLogger(targetType, targetSymbol, refAssignmentSourceIsLocal: null, invocation.Syntax);
                 if (logger is null)
                 {
                     continue;
@@ -627,7 +627,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // The call is void returning.
-            var lastExpression = builder.Last();
+            lastExpression := builder.Last();
             builder.RemoveLast();
             return _factory.Sequence(ImmutableArray<LocalSymbol>.Empty, builder.ToImmutableAndFree(), lastExpression);
         }

@@ -39,9 +39,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
             // We should only see a trailingExpression if we're in a Script initializer.
             Debug.Assert(!hasTrailingExpression || method.IsScriptInitializer);
-            var initialDiagnosticCount = diagnostics.ToReadOnly().Diagnostics.Length;
+            initialDiagnosticCount := diagnostics.ToReadOnly().Diagnostics.Length;
 #endif
-            var compilation = method.DeclaringCompilation;
+            compilation := method.DeclaringCompilation;
 
             if (method.ReturnsVoid || method.IsIterator || method.IsAsyncEffectivelyReturningTask(compilation))
             {
@@ -76,19 +76,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(method.MethodKind != MethodKind.AnonymousFunction);
 
                 // Add implicit "return default(T)" if this is a submission that does not have a trailing expression.
-                var submissionResultType = (method as SynthesizedInteractiveInitializerMethod)?.ResultType;
+                submissionResultType := (method as SynthesizedInteractiveInitializerMethod)?.ResultType;
                 if (!hasTrailingExpression && ((object)submissionResultType != null))
                 {
                     Debug.Assert(!submissionResultType.IsVoidType());
 
-                    var trailingExpression = new BoundDefaultExpression(method.GetNonNullSyntaxNode(), submissionResultType);
-                    var newStatements = block.Statements.Add(new BoundReturnStatement(trailingExpression.Syntax, RefKind.None, trailingExpression, @checked: false));
+                    trailingExpression := new BoundDefaultExpression(method.GetNonNullSyntaxNode(), submissionResultType);
+                    newStatements := block.Statements.Add(new BoundReturnStatement(trailingExpression.Syntax, RefKind.None, trailingExpression, @checked: false));
                     block = new BoundBlock(block.Syntax, ImmutableArray<LocalSymbol>.Empty, newStatements) { WasCompilerGenerated = true };
 #if DEBUG
                     // It should not be necessary to repeat analysis after adding this node, because adding a trailing
                     // return in cases where one was missing should never produce different Diagnostics.
                     IEnumerable<Diagnostic> getErrorsOnly(IEnumerable<Diagnostic> diags) => diags.Where(d => d.Severity == DiagnosticSeverity.Error);
-                    var flowAnalysisDiagnostics = DiagnosticBag.GetInstance();
+                    flowAnalysisDiagnostics := DiagnosticBag.GetInstance();
                     Debug.Assert(!Analyze(compilation, method, block, flowAnalysisDiagnostics, needsImplicitReturn: out _, out unusedImplicitlyInitializedFields));
                     Debug.Assert(unusedImplicitlyInitializedFields.IsDefault);
                     // Ignore warnings since flow analysis reports nullability mismatches.
@@ -117,9 +117,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             NamedTypeSymbol containingType = method.ContainingType;
             Debug.Assert(containingType.IsStructType());
 
-            var F = new SyntheticBoundNodeFactory(method, body.Syntax, compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(method, body.Syntax, compilationState, diagnostics);
 
-            var builder = ArrayBuilder<BoundStatement>.GetInstance(implicitlyInitializedFields.Length);
+            builder := ArrayBuilder<BoundStatement>.GetInstance(implicitlyInitializedFields.Length);
 
             // Inline arrays of length > 1 must be initialized completely, simply initializing the element field is not sufficient.
             // For arrays of length == 1, initializing the element field is sufficient.
@@ -160,7 +160,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var initializations = F.HiddenSequencePoint(F.Block(builder.ToImmutableAndFree()));
+            initializations := F.HiddenSequencePoint(F.Block(builder.ToImmutableAndFree()));
 
             return body.Update(body.Locals, body.LocalFunctions, body.HasUnsafeModifier, body.Instrumentation, body.Statements.Insert(index: 0, initializations));
         }
@@ -169,10 +169,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (originalBodyNested)
             {
-                var statements = body.Statements;
+                statements := body.Statements;
                 int n = statements.Length;
 
-                var builder = ArrayBuilder<BoundStatement>.GetInstance(n);
+                builder := ArrayBuilder<BoundStatement>.GetInstance(n);
                 builder.AddRange(statements, n - 1);
                 builder.Add(AppendImplicitReturn((BoundBlock)statements[n - 1], method));
 

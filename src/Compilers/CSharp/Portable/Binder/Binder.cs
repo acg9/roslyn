@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var result = CheckOverflow;
+                result := CheckOverflow;
                 return result == OverflowChecks.Enabled || result == OverflowChecks.Implicit && Compilation.Options.CheckOverflow;
             }
         }
@@ -205,7 +205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal Binder GetRequiredBinder(SyntaxNode node)
         {
-            var binder = GetBinder(node);
+            binder := GetBinder(node);
             RoslynDebug.Assert(binder is object);
             return binder;
         }
@@ -454,7 +454,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var member = this.ContainingMemberOrLambda;
+                member := this.ContainingMemberOrLambda;
                 RoslynDebug.Assert(member is null || member.Kind != SymbolKind.ErrorType);
                 return member switch
                 {
@@ -472,7 +472,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var containingMember = this.ContainingMemberOrLambda;
+                containingMember := this.ContainingMemberOrLambda;
                 switch (containingMember?.Kind)
                 {
                     case SymbolKind.Method:
@@ -591,14 +591,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static void Error(BindingDiagnosticBag diagnostics, ErrorCode code, SyntaxNodeOrToken syntax)
         {
-            var location = syntax.GetLocation();
+            location := syntax.GetLocation();
             RoslynDebug.Assert(location is object);
             Error(diagnostics, code, location);
         }
 
         internal static void Error(BindingDiagnosticBag diagnostics, ErrorCode code, SyntaxNodeOrToken syntax, params object[] args)
         {
-            var location = syntax.GetLocation();
+            location := syntax.GetLocation();
             RoslynDebug.Assert(location is object);
             Error(diagnostics, code, location, args);
         }
@@ -705,7 +705,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 leastOverriddenSymbol.GetAttributes();
             }
 
-            var diagnosticKind = ReportDiagnosticsIfObsoleteInternal(diagnostics, leastOverriddenSymbol, node, containingMember, location);
+            diagnosticKind := ReportDiagnosticsIfObsoleteInternal(diagnostics, leastOverriddenSymbol, node, containingMember, location);
 
             // CONSIDER: In place of hasBaseReceiver, dev11 also accepts cases where symbol.ContainingType is a "simple type" (e.g. int)
             // or a special by-ref type (e.g. ArgumentHandle).  These cases are probably more important for other checks performed by
@@ -747,7 +747,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             RoslynDebug.Assert(diagnostics != null);
 
-            var kind = ObsoleteAttributeHelpers.GetObsoleteDiagnosticKind(symbol, containingMember);
+            kind := ObsoleteAttributeHelpers.GetObsoleteDiagnosticKind(symbol, containingMember);
 
             DiagnosticInfo? info = null;
             switch (kind)
@@ -797,7 +797,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static void ReportDiagnosticsIfUnmanagedCallersOnly(BindingDiagnosticBag diagnostics, MethodSymbol symbol, SyntaxNodeOrToken syntax, bool isDelegateConversion)
         {
-            var unmanagedCallersOnlyAttributeData = symbol.GetUnmanagedCallersOnlyAttributeData(forceComplete: false);
+            unmanagedCallersOnlyAttributeData := symbol.GetUnmanagedCallersOnlyAttributeData(forceComplete: false);
             if (unmanagedCallersOnlyAttributeData != null)
             {
                 // Either we haven't yet bound the attributes of this method, or there is an UnmanagedCallersOnly present.
@@ -891,7 +891,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Helper to allow displaying the binder hierarchy in the debugger.
         internal Binder[] GetAllBinders()
         {
-            var binders = ArrayBuilder<Binder>.GetInstance();
+            binders := ArrayBuilder<Binder>.GetInstance();
             for (Binder? binder = this; binder != null; binder = binder.Next)
             {
                 binders.Add(binder);
@@ -902,7 +902,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal BoundExpression WrapWithVariablesIfAny(CSharpSyntaxNode scopeDesignator, BoundExpression expression)
         {
-            var locals = this.GetDeclaredLocalsForScope(scopeDesignator);
+            locals := this.GetDeclaredLocalsForScope(scopeDesignator);
             return (locals.IsEmpty)
                 ? expression
                 : new BoundSequence(scopeDesignator, locals, ImmutableArray<BoundExpression>.Empty, expression, getType()) { WasCompilerGenerated = true };
@@ -917,7 +917,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal BoundStatement WrapWithVariablesIfAny(CSharpSyntaxNode scopeDesignator, BoundStatement statement)
         {
             RoslynDebug.Assert(statement.Kind != BoundKind.StatementList);
-            var locals = this.GetDeclaredLocalsForScope(scopeDesignator);
+            locals := this.GetDeclaredLocalsForScope(scopeDesignator);
             if (locals.IsEmpty)
             {
                 return statement;
@@ -932,8 +932,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal BoundStatement WrapWithVariablesAndLocalFunctionsIfAny(CSharpSyntaxNode scopeDesignator, BoundStatement statement)
         {
-            var locals = this.GetDeclaredLocalsForScope(scopeDesignator);
-            var localFunctions = this.GetDeclaredLocalFunctionsForScope(scopeDesignator);
+            locals := this.GetDeclaredLocalsForScope(scopeDesignator);
+            localFunctions := this.GetDeclaredLocalFunctionsForScope(scopeDesignator);
             if (locals.IsEmpty && localFunctions.IsEmpty)
             {
                 return statement;
@@ -955,12 +955,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 for (Binder? scope = this; scope != null; scope = scope.Next)
                 {
                     var (description, snippet, locals) = print(scope);
-                    var sub = new List<TreeDumperNode>();
+                    sub := new List<TreeDumperNode>();
                     if (!locals.IsEmpty())
                     {
                         sub.Add(new TreeDumperNode("locals", locals, null));
                     }
-                    var currentContainer = scope.ContainingMemberOrLambda;
+                    currentContainer := scope.ContainingMemberOrLambda;
                     if (currentContainer != null && currentContainer != scope.Next?.ContainingMemberOrLambda)
                     {
                         sub.Add(new TreeDumperNode("containing symbol", currentContainer.ToDisplayString(), null));
@@ -982,26 +982,26 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static (string description, string? snippet, string locals) print(Binder scope)
             {
-                var locals = string.Join(", ", scope.Locals.SelectAsArray(s => s.Name));
+                locals := string.Join(", ", scope.Locals.SelectAsArray(s => s.Name));
                 string? snippet = null;
                 if (scope.ScopeDesignator != null)
                 {
-                    var lines = scope.ScopeDesignator.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    lines := scope.ScopeDesignator.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                     if (lines.Length == 1)
                     {
                         snippet = lines[0];
                     }
                     else
                     {
-                        var first = lines[0];
-                        var last = lines[lines.Length - 1].Trim();
-                        var lastSize = Math.Min(last.Length, 12);
+                        first := lines[0];
+                        last := lines[lines.Length - 1].Trim();
+                        lastSize := Math.Min(last.Length, 12);
                         snippet = first.Substring(0, Math.Min(first.Length, 12)) + " ... " + last.Substring(last.Length - lastSize, lastSize);
                     }
                     snippet = snippet.IsEmpty() ? null : snippet;
                 }
 
-                var description = scope.GetType().Name;
+                description := scope.GetType().Name;
                 return (description, snippet, locals);
             }
         }

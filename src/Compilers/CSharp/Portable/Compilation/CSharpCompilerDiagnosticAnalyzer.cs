@@ -20,8 +20,8 @@ namespace Microsoft.CodeAnalysis.Diagnostics.CSharp
 
         internal override ImmutableArray<int> GetSupportedErrorCodes()
         {
-            var errorCodes = Enum.GetValues(typeof(ErrorCode));
-            var builder = ArrayBuilder<int>.GetInstance(errorCodes.Length);
+            errorCodes := Enum.GetValues(typeof(ErrorCode));
+            builder := ArrayBuilder<int>.GetInstance(errorCodes.Length);
             foreach (ErrorCode errorCode in errorCodes)
             {
                 // Compiler diagnostic analyzer does not support build-only diagnostics.

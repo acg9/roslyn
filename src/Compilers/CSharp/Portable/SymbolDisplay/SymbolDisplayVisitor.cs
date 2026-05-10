@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SemanticModel? semanticModelOpt,
             int positionOpt)
         {
-            var instance = s_visitorPool.Allocate();
+            instance := s_visitorPool.Allocate();
             instance.Initialize(builder, format, isFirstSymbolVisited: true, semanticModelOpt, positionOpt, inNamespaceOrType: false);
             return instance;
         }
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool isFirstSymbolVisited,
             bool inNamespaceOrType = false)
         {
-            var instance = s_visitorPool.Allocate();
+            instance := s_visitorPool.Allocate();
             instance.Initialize(builder, format, isFirstSymbolVisited, semanticModelOpt, positionOpt, inNamespaceOrType);
             instance._escapeKeywordIdentifiers = escapeKeywordIdentifiers;
             instance._lazyAliasMap = aliasMap;
@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (Format.TypeQualificationStyle == SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces)
             {
-                var containingNamespace = symbol.ContainingNamespace;
+                containingNamespace := symbol.ContainingNamespace;
                 if (ShouldVisitNamespace(containingNamespace))
                 {
                     containingNamespace.Accept(this.NotFirstVisitor);
@@ -344,7 +344,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal override void VisitPreprocessing(IPreprocessingSymbol symbol)
         {
             // Currently using 'Text' part kind as there is no kind specific to preprocessing symbols.
-            var part = new SymbolDisplayPart(SymbolDisplayPartKind.Text, symbol, symbol.Name);
+            part := new SymbolDisplayPart(SymbolDisplayPartKind.Text, symbol, symbol.Name);
             Builder.Add(part);
         }
 
@@ -423,7 +423,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool ShouldVisitNamespace(ISymbol containingSymbol)
         {
-            var namespaceSymbol = containingSymbol as INamespaceSymbol;
+            namespaceSymbol := containingSymbol as INamespaceSymbol;
             if (namespaceSymbol == null)
             {
                 return false;

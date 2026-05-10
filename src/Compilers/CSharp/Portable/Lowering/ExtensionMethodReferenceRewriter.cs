@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static BoundStatement Rewrite(BoundStatement statement)
         {
-            var rewriter = new ExtensionMethodReferenceRewriter();
+            rewriter := new ExtensionMethodReferenceRewriter();
             return (BoundStatement)rewriter.Visit(statement);
         }
 
@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (LocalRewriter.TryGetReceiver(node, out BoundCall? receiver1))
             {
                 // Handle long call chain of both instance and extension method invocations.
-                var calls = ArrayBuilder<BoundCall>.GetInstance();
+                calls := ArrayBuilder<BoundCall>.GetInstance();
 
                 calls.Push(node);
                 node = receiver1;
@@ -102,13 +102,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(boundCall.Method.OriginalDefinition.TryGetCorrespondingExtensionImplementationMethod() == (object)method.OriginalDefinition);
                     Debug.Assert(!boundCall.Method.IsStatic);
 
-                    var receiverRefKind = method.Parameters[0].RefKind;
+                    receiverRefKind := method.Parameters[0].RefKind;
 
                     if (argumentRefKinds.IsDefault)
                     {
                         if (receiverRefKind != RefKind.None)
                         {
-                            var builder = ArrayBuilder<RefKind>.GetInstance(method.ParameterCount, RefKind.None);
+                            builder := ArrayBuilder<RefKind>.GetInstance(method.ParameterCount, RefKind.None);
                             builder[0] = ReceiverArgumentRefKindFromReceiverRefKind(receiverRefKind);
                             argumentRefKinds = builder.ToImmutableAndFree();
                         }
@@ -211,9 +211,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static BoundNode VisitDelegateCreationExpression(BoundTreeRewriter rewriter, BoundDelegateCreationExpression node)
         {
-            var methodOpt = VisitMethodSymbolWithExtensionRewrite(rewriter, node.MethodOpt);
-            var argument = (BoundExpression)rewriter.Visit(node.Argument);
-            var type = rewriter.VisitType(node.Type);
+            methodOpt := VisitMethodSymbolWithExtensionRewrite(rewriter, node.MethodOpt);
+            argument := (BoundExpression)rewriter.Visit(node.Argument);
+            type := rewriter.VisitType(node.Type);
             bool isExtensionMethod = node.IsExtensionMethod;
 
             if (!isExtensionMethod && argument is not BoundTypeExpression && methodOpt?.IsStatic == true)
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(node.InterpolatedStringHandlerData is null);
             Debug.Assert(!node.OperatorKind.IsDynamic());
 
-            var binaryOperatorMethod = node.BinaryOperatorMethod;
+            binaryOperatorMethod := node.BinaryOperatorMethod;
             MethodSymbol? method = VisitMethodSymbolWithExtensionRewrite(rewriter, binaryOperatorMethod);
             TypeSymbol? constrainedToType = rewriter.VisitType(node.ConstrainedToType);
 

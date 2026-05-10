@@ -145,7 +145,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(arguments.SymbolPart == AttributeLocation.Method);
             arguments.SymbolPart = AttributeLocation.None;
-            var result = base.EarlyDecodeWellKnownAttribute(ref arguments);
+            result := base.EarlyDecodeWellKnownAttribute(ref arguments);
             arguments.SymbolPart = AttributeLocation.Method;
             return result;
         }
@@ -211,7 +211,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal void SetParametersPassedToTheBase(IReadOnlySet<ParameterSymbol> value)
         {
 #if DEBUG
-            var oldSet = _parametersPassedToTheBase;
+            oldSet := _parametersPassedToTheBase;
 
             if (oldSet is not null)
             {

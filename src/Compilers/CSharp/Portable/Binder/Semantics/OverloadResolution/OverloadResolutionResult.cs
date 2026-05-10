@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal ImmutableArray<TMember> GetAllApplicableMembers()
         {
-            var result = ArrayBuilder<TMember>.GetInstance();
+            result := ArrayBuilder<TMember>.GetInstance();
             foreach (var res in this.ResultsBuilder)
             {
                 if (res.Result.IsApplicable)
@@ -230,7 +230,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // the candidate list.
             AssertNone(MemberResolutionKind.None);
 
-            var symbols = StaticCast<Symbol>.From(memberGroup);
+            symbols := StaticCast<Symbol>.From(memberGroup);
 
             //// PHASE 1: Valid candidates ////
 
@@ -394,7 +394,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             MemberResolutionResult<TMember> firstSupported = default(MemberResolutionResult<TMember>);
             MemberResolutionResult<TMember> firstUnsupported = default(MemberResolutionResult<TMember>);
 
-            var supportedInPriorityOrder = new MemberResolutionResult<TMember>[7]; // from highest to lowest priority
+            supportedInPriorityOrder := new MemberResolutionResult<TMember>[7]; // from highest to lowest priority
             const int duplicateNamedArgumentPriority = 0;
             const int requiredParameterMissingPriority = 1;
             const int nameUsedForPositionalPriority = 2;
@@ -626,7 +626,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool UseSiteError()
         {
-            var bad = GetFirstMemberKind(MemberResolutionKind.UseSiteError);
+            bad := GetFirstMemberKind(MemberResolutionKind.UseSiteError);
             if (bad.IsNull)
             {
                 return false;
@@ -645,7 +645,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<Symbol> symbols,
             Location location)
         {
-            var inaccessible = GetFirstMemberKind(MemberResolutionKind.InaccessibleTypeArgument);
+            inaccessible := GetFirstMemberKind(MemberResolutionKind.InaccessibleTypeArgument);
             if (inaccessible.IsNull)
             {
                 return false;
@@ -668,7 +668,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             SyntaxNode nodeOpt,
             TypeSymbol delegateOrFunctionPointerType)
         {
-            var staticInstanceMismatch = GetFirstMemberKind(MemberResolutionKind.StaticInstanceMismatch);
+            staticInstanceMismatch := GetFirstMemberKind(MemberResolutionKind.StaticInstanceMismatch);
             if (staticInstanceMismatch.IsNull)
             {
                 return false;
@@ -719,7 +719,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool HadReturnMismatch(Location location, BindingDiagnosticBag diagnostics, TypeSymbol delegateOrFunctionPointerType)
         {
-            var mismatch = GetFirstMemberKind(MemberResolutionKind.WrongRefKind);
+            mismatch := GetFirstMemberKind(MemberResolutionKind.WrongRefKind);
             if (!mismatch.IsNull)
             {
                 diagnostics.Add(delegateOrFunctionPointerType.IsFunctionPointer() ? ErrorCode.ERR_FuncPtrRefMismatch : ErrorCode.ERR_DelegateRefMismatch,
@@ -730,7 +730,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             mismatch = GetFirstMemberKind(MemberResolutionKind.WrongReturnType);
             if (!mismatch.IsNull)
             {
-                var method = (MethodSymbol)(Symbol)mismatch.Member;
+                method := (MethodSymbol)(Symbol)mismatch.Member;
                 diagnostics.Add(ErrorCode.ERR_BadRetType, location, method, method.ReturnType);
                 return true;
             }
@@ -740,7 +740,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool HadConstraintFailure(Location location, BindingDiagnosticBag diagnostics)
         {
-            var constraintFailure = GetFirstMemberKind(MemberResolutionKind.ConstraintFailure);
+            constraintFailure := GetFirstMemberKind(MemberResolutionKind.ConstraintFailure);
             if (constraintFailure.IsNull)
             {
                 return false;
@@ -766,7 +766,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Location location,
             CSharpSyntaxNode queryClause = null)
         {
-            var inferenceFailed = GetFirstMemberKind(MemberResolutionKind.TypeInferenceFailed);
+            inferenceFailed := GetFirstMemberKind(MemberResolutionKind.TypeInferenceFailed);
             if (inferenceFailed.IsNotNull)
             {
                 if (queryClause != null)
@@ -790,7 +790,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (inferenceFailed.IsNotNull)
             {
                 Debug.Assert(arguments.Arguments.Count > 0);
-                var instanceArgument = arguments.Arguments[0];
+                instanceArgument := arguments.Arguments[0];
                 if (queryClause != null)
                 {
                     binder.ReportQueryLookupFailed(queryClause, instanceArgument, inferenceFailed.Member.Name, symbols, diagnostics);
@@ -973,7 +973,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ? null
                 : symbols[0] as FunctionPointerMethodSymbol;
 
-            var isWithElementValidation = arguments.Arguments.Count > 0 && !symbols.IsDefaultOrEmpty && symbols[0] is SynthesizedCollectionBuilderProjectedMethodSymbol;
+            isWithElementValidation := arguments.Arguments.Count > 0 && !symbols.IsDefaultOrEmpty && symbols[0] is SynthesizedCollectionBuilderProjectedMethodSymbol;
 
             (ErrorCode code, object target) = (typeContainingConstructor, delegateTypeBeingInvoked, functionPointerMethodBeingInvoked, isWithElementValidation) switch
             {
@@ -1068,7 +1068,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // See test case CS0310ERR_NewConstraintNotSatisfied02 for an even more complex version
             // of this flavor of error recovery.
 
-            var result = GetFirstMemberKind(MemberResolutionKind.ConstructedParameterFailedConstraintCheck);
+            result := GetFirstMemberKind(MemberResolutionKind.ConstructedParameterFailedConstraintCheck);
             if (result.IsNull)
             {
                 return false;
@@ -1094,7 +1094,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             TypeSymbol formalParameterType = method.GetParameterType(result.Result.BadParameter);
 
-            var boxedArgs = ConstraintsHelper.CheckConstraintsArgsBoxed.Allocate(compilation, conversions, includeNullability: false, location, diagnostics);
+            boxedArgs := ConstraintsHelper.CheckConstraintsArgsBoxed.Allocate(compilation, conversions, includeNullability: false, location, diagnostics);
             formalParameterType.CheckAllConstraints(boxedArgs);
             boxedArgs.Free();
 
@@ -1126,7 +1126,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BinderFlags flags,
             bool isMethodGroupConversion)
         {
-            var badArg = GetFirstMemberKind(MemberResolutionKind.BadArgumentConversion);
+            badArg := GetFirstMemberKind(MemberResolutionKind.BadArgumentConversion);
             if (badArg.IsNull)
             {
                 return false;
@@ -1137,7 +1137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return true;
             }
 
-            var method = badArg.Member;
+            method := badArg.Member;
 
             // The best overloaded method match for '{0}' has some invalid arguments
             // Since we have bad arguments to report, there is no need to report an error on the invocation itself.
@@ -1154,7 +1154,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // as there is no explicit call to Add method.
 
                 int argumentOffset = arguments.IncludesReceiverAsArgument ? 1 : 0;
-                var parameters = method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
+                parameters := method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
 
                 for (int i = argumentOffset; i < parameters.Length; i++)
                 {
@@ -1209,7 +1209,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Early out: if the bad argument is an __arglist parameter then simply report that:
 
-            var parameters = method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
+            parameters := method.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: false);
             if (method.GetIsVararg() && parm == parameters.Length)
             {
                 // NOTE: No SymbolDistinguisher required, since one of the arguments is "__arglist".
@@ -1497,7 +1497,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             MemberResolutionResult<TMember> validResult1;
             MemberResolutionResult<TMember> validResult2;
-            var nValid = TryGetFirstTwoValidResults(out validResult1, out validResult2);
+            nValid := TryGetFirstTwoValidResults(out validResult1, out validResult2);
             if (nValid <= 1)
             {
                 Debug.Assert(nValid == 0, "Why are we doing error reporting on an overload resolution problem that had one valid result?");
@@ -1554,7 +1554,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // error: The extension resolution is ambiguous between the following members: 'first' and 'second'
             // OR
             // error: The call is ambiguous between the following methods or properties: 'first' and 'second'
-            var distinguisher = new SymbolDistinguisher(compilation, first, second);
+            distinguisher := new SymbolDistinguisher(compilation, first, second);
             return new DiagnosticInfoWithSymbols(isExtension ? ErrorCode.ERR_AmbigExtension : ErrorCode.ERR_AmbigCall, [distinguisher.First, distinguisher.Second], symbols);
         }
 
@@ -1591,7 +1591,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return "Overload resolution failed because the method group was empty.";
             }
 
-            var sb = new StringBuilder();
+            sb := new StringBuilder();
             if (this.Succeeded)
             {
                 sb.AppendLine("Overload resolution succeeded and chose " + this.ValidResult.Member.ToString());

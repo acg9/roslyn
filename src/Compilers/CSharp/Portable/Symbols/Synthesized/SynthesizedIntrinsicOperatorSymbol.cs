@@ -434,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            var other = obj as SynthesizedIntrinsicOperatorSymbol;
+            other := obj as SynthesizedIntrinsicOperatorSymbol;
 
             if ((object)other == null)
             {
@@ -491,7 +491,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = obj as SynthesizedOperatorParameterSymbol;
+                other := obj as SynthesizedOperatorParameterSymbol;
 
                 if ((object)other == null)
                 {

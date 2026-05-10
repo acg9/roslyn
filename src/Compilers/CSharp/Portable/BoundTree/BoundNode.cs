@@ -65,7 +65,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected new BoundNode MemberwiseClone()
         {
-            var result = (BoundNode)base.MemberwiseClone();
+            result := (BoundNode)base.MemberwiseClone();
             result._attributes &= BoundNodeAttributes.AttributesPreservedInClone;
             return result;
         }
@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     return true;
                 }
-                var expression = this as BoundExpression;
+                expression := this as BoundExpression;
                 return expression?.Type?.IsErrorType() == true;
             }
         }
@@ -287,7 +287,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     var mask => throw ExceptionUtilities.UnexpectedValue(mask)
                 };
 
-                var flowState = (_attributes & BoundNodeAttributes.TopLevelFlowStateMaybeNull) == 0 ? CodeAnalysis.NullableFlowState.NotNull : CodeAnalysis.NullableFlowState.MaybeNull;
+                flowState := (_attributes & BoundNodeAttributes.TopLevelFlowStateMaybeNull) == 0 ? CodeAnalysis.NullableFlowState.NotNull : CodeAnalysis.NullableFlowState.MaybeNull;
 
                 return new NullabilityInfo(annotation, flowState);
             }
@@ -424,7 +424,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal string GetDebuggerDisplay()
         {
-            var result = GetType().Name;
+            result := GetType().Name;
             if (Syntax != null)
             {
                 result += " " + Syntax.ToString();
@@ -466,7 +466,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (possiblyUserDefined is not null)
                         {
                             Debug.Assert(possiblyUserDefined.Conversion.IsUserDefined);
-                            var operand = possiblyUserDefined.Operand;
+                            operand := possiblyUserDefined.Operand;
 
                             while (operand is BoundConversion operandAsConversion && operandAsConversion.ConversionGroupOpt == conversionGroupOpt)
                             {
@@ -493,7 +493,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (possiblyUnion is not null)
                         {
                             Debug.Assert(possiblyUnion.Conversion.IsUnion);
-                            var operand = possiblyUnion.Operand;
+                            operand := possiblyUnion.Operand;
 
                             while (operand is BoundConversion operandAsConversion && operandAsConversion.ConversionGroupOpt == conversionGroupOpt)
                             {
@@ -548,7 +548,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static void CheckLocalsDefined(BoundNode root)
             {
-                var localsScanner = new LocalsScanner();
+                localsScanner := new LocalsScanner();
                 localsScanner.Visit(root);
                 localsScanner.Free();
             }
@@ -609,12 +609,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override BoundNode? VisitBlock(BoundBlock node)
             {
-                var instrumentation = node.Instrumentation;
+                instrumentation := node.Instrumentation;
                 if (instrumentation != null)
                 {
                     foreach (var local in instrumentation.Locals)
                     {
-                        var added = DeclaredLocals.Add(local);
+                        added := DeclaredLocals.Add(local);
                         Debug.Assert(added);
                     }
 
@@ -631,7 +631,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     foreach (var local in instrumentation.Locals)
                     {
-                        var removed = DeclaredLocals.Remove(local);
+                        removed := DeclaredLocals.Remove(local);
                         Debug.Assert(removed);
                     }
                 }

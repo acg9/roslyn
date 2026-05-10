@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ArrayBuilder<CSharpAttributeData> builder = null;
 
                 // Inherit some attributes from the container of the kickoff method
-                var kickoffType = KickoffMethod.ContainingType;
+                kickoffType := KickoffMethod.ContainingType;
                 foreach (var attribute in kickoffType.GetAttributes())
                 {
                     if (attribute.IsTargetAttribute(AttributeDescription.DebuggerNonUserCodeAttribute) ||

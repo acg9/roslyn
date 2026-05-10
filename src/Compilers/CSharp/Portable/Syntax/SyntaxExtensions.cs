@@ -137,13 +137,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             string parentName;
             if (parentKind == SyntaxKind.XmlEmptyElement)
             {
-                var parent = (XmlEmptyElementSyntax)parentSyntax;
+                parent := (XmlEmptyElementSyntax)parentSyntax;
                 parentName = parent.Name.LocalName.ValueText;
                 Debug.Assert(parent.Name.Prefix is null);
             }
             else if (parentKind == SyntaxKind.XmlElementStartTag)
             {
-                var parent = (XmlElementStartTagSyntax)parentSyntax;
+                parent := (XmlElementStartTagSyntax)parentSyntax;
                 parentName = parent.Name.LocalName.ValueText;
                 Debug.Assert(parent.Name.Prefix is null);
             }
@@ -342,7 +342,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal static CSharpSyntaxNode? GetContainingDeconstruction(this ExpressionSyntax expr)
         {
-            var kind = expr.Kind();
+            kind := expr.Kind();
             if (kind != SyntaxKind.TupleExpression && kind != SyntaxKind.DeclarationExpression && kind != SyntaxKind.IdentifierName)
             {
                 return null;
@@ -351,7 +351,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             while (true)
             {
                 Debug.Assert(expr.Kind() == SyntaxKind.TupleExpression || expr.Kind() == SyntaxKind.DeclarationExpression || expr.Kind() == SyntaxKind.IdentifierName);
-                var parent = expr.Parent;
+                parent := expr.Parent;
                 if (parent == null) { return null; }
 
                 switch (parent.Kind())
@@ -401,12 +401,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static void VisitRankSpecifiers<TArg>(this TypeSyntax type, Action<ArrayRankSpecifierSyntax, TArg> action, in TArg argument)
         {
             // Use a manual stack here to avoid deeply nested recursion which can blow the real stack
-            var stack = ArrayBuilder<SyntaxNode>.GetInstance();
+            stack := ArrayBuilder<SyntaxNode>.GetInstance();
             stack.Push(type);
 
             while (stack.Count > 0)
             {
-                var current = stack.Pop();
+                current := stack.Pop();
                 if (current is ArrayRankSpecifierSyntax rankSpecifier)
                 {
                     action(rankSpecifier, argument);
@@ -420,7 +420,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 switch (type.Kind())
                 {
                     case SyntaxKind.ArrayType:
-                        var arrayTypeSyntax = (ArrayTypeSyntax)type;
+                        arrayTypeSyntax := (ArrayTypeSyntax)type;
                         for (int i = arrayTypeSyntax.RankSpecifiers.Count - 1; i >= 0; i--)
                         {
                             stack.Push(arrayTypeSyntax.RankSpecifiers[i]);
@@ -428,15 +428,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                         stack.Push(arrayTypeSyntax.ElementType);
                         break;
                     case SyntaxKind.NullableType:
-                        var nullableTypeSyntax = (NullableTypeSyntax)type;
+                        nullableTypeSyntax := (NullableTypeSyntax)type;
                         stack.Push(nullableTypeSyntax.ElementType);
                         break;
                     case SyntaxKind.PointerType:
-                        var pointerTypeSyntax = (PointerTypeSyntax)type;
+                        pointerTypeSyntax := (PointerTypeSyntax)type;
                         stack.Push(pointerTypeSyntax.ElementType);
                         break;
                     case SyntaxKind.FunctionPointerType:
-                        var functionPointerTypeSyntax = (FunctionPointerTypeSyntax)type;
+                        functionPointerTypeSyntax := (FunctionPointerTypeSyntax)type;
                         for (int i = functionPointerTypeSyntax.ParameterList.Parameters.Count - 1; i >= 0; i--)
                         {
                             TypeSyntax? paramType = functionPointerTypeSyntax.ParameterList.Parameters[i].Type;
@@ -445,34 +445,34 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                         break;
                     case SyntaxKind.TupleType:
-                        var tupleTypeSyntax = (TupleTypeSyntax)type;
+                        tupleTypeSyntax := (TupleTypeSyntax)type;
                         for (int i = tupleTypeSyntax.Elements.Count - 1; i >= 0; i--)
                         {
                             stack.Push(tupleTypeSyntax.Elements[i].Type);
                         }
                         break;
                     case SyntaxKind.RefType:
-                        var refTypeSyntax = (RefTypeSyntax)type;
+                        refTypeSyntax := (RefTypeSyntax)type;
                         stack.Push(refTypeSyntax.Type);
                         break;
                     case SyntaxKind.ScopedType:
-                        var scopedTypeSyntax = (ScopedTypeSyntax)type;
+                        scopedTypeSyntax := (ScopedTypeSyntax)type;
                         stack.Push(scopedTypeSyntax.Type);
                         break;
                     case SyntaxKind.GenericName:
-                        var genericNameSyntax = (GenericNameSyntax)type;
+                        genericNameSyntax := (GenericNameSyntax)type;
                         for (int i = genericNameSyntax.TypeArgumentList.Arguments.Count - 1; i >= 0; i--)
                         {
                             stack.Push(genericNameSyntax.TypeArgumentList.Arguments[i]);
                         }
                         break;
                     case SyntaxKind.QualifiedName:
-                        var qualifiedNameSyntax = (QualifiedNameSyntax)type;
+                        qualifiedNameSyntax := (QualifiedNameSyntax)type;
                         stack.Push(qualifiedNameSyntax.Right);
                         stack.Push(qualifiedNameSyntax.Left);
                         break;
                     case SyntaxKind.AliasQualifiedName:
-                        var aliasQualifiedNameSyntax = (AliasQualifiedNameSyntax)type;
+                        aliasQualifiedNameSyntax := (AliasQualifiedNameSyntax)type;
                         stack.Push(aliasQualifiedNameSyntax.Name);
                         break;
                     case SyntaxKind.IdentifierName:

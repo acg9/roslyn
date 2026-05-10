@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // In C# 12 and below, we keep the (spec violating) behavior that iterator bodies inherit the safe/unsafe context
             // from their containing scope. Since there are errors for unsafe constructs directly in iterators,
             // this inherited unsafe context can be observed only in nested non-iterator local functions.
-            var withoutUnsafe = isIteratorBody && this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync);
+            withoutUnsafe := isIteratorBody && this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync);
 
             if (this.Flags.Includes(BinderFlags.UnsafeRegion))
             {

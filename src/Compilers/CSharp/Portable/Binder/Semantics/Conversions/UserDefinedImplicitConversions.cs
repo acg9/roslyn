@@ -77,11 +77,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             //   A user-defined implicit conversion from an expression E to type T is processed as follows:
 
             // SPEC: Find the set of types D from which user-defined conversion operators...
-            var d = ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
+            d := ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
             ComputeUserDefinedImplicitConversionTypeSet(source, target, d, ref useSiteInfo);
 
             // SPEC: Find the set of applicable user-defined and lifted conversion operators, U...
-            var ubuild = ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
+            ubuild := ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
             ComputeApplicableUserDefinedImplicitConversionSet(sourceExpression, source, target, d, ubuild, ref useSiteInfo);
             d.Free();
             ImmutableArray<UserDefinedConversionAnalysis> u = ubuild.ToImmutableAndFree();
@@ -286,7 +286,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo,
                 bool allowAnyTarget)
             {
-                var operators = ArrayBuilder<MethodSymbol>.GetInstance();
+                operators := ArrayBuilder<MethodSymbol>.GetInstance();
                 declaringType.AddOperators(WellKnownMemberNames.ImplicitConversionName, operators);
 
                 foreach (MethodSymbol op in operators)
@@ -602,7 +602,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // the types is an interface type, but due to a desire to be compatible with a 
             // dev10 bug, we allow it. See the comment regarding bug 17021 above for more details.
 
-            var result = ClassifyStandardImplicitConversion(aExpr, a, b, ref useSiteInfo);
+            result := ClassifyStandardImplicitConversion(aExpr, a, b, ref useSiteInfo);
             return IsEncompassingImplicitConversionKind(result.Kind) ? result : Conversion.NoConversion;
         }
 
@@ -886,7 +886,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private NamedTypeSymbol MakeNullableType(TypeSymbol type)
         {
-            var nullable = this.corLibrary.GetDeclaredSpecialType(SpecialType.System_Nullable_T);
+            nullable := this.corLibrary.GetDeclaredSpecialType(SpecialType.System_Nullable_T);
             return nullable.Construct(type);
         }
 
@@ -960,13 +960,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // SPEC VIOLATION: We do the same to maintain compatibility with the native compiler.
 
             // (a) Compute the set of types D from which user-defined conversion operators should be considered by considering only the source type.
-            var d = ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
+            d := ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
             ComputeUserDefinedImplicitConversionTypeSet(source, t: null, d: d, useSiteInfo: ref useSiteInfo);
 
             // (b) Instead of computing applicable user defined implicit conversions U from the source type to a specific target type,
             //     we compute these from the source type to ANY target type. We will filter out those that are valid switch governing
             //     types later.
-            var ubuild = ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
+            ubuild := ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
             ComputeApplicableUserDefinedImplicitConversionSet(sourceExpression: null, source, target: null, d: d, u: ubuild, useSiteInfo: ref useSiteInfo, allowAnyTarget: true);
             d.Free();
             ImmutableArray<UserDefinedConversionAnalysis> u = ubuild.ToImmutableAndFree();
@@ -997,7 +997,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // SPEC: Find the set of applicable constructors
-            var ubuild = ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
+            ubuild := ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
             computeApplicableConstructorSet(sourceExpression, source, target, namedTarget, ubuild, ref useSiteInfo);
 
             if (ubuild.Count == 0)

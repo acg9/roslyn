@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (this.VariableSymbol.Kind)
             {
                 case SymbolKind.Local:
-                    var localSymbol = (SourceLocalSymbol)this.VariableSymbol;
+                    localSymbol := (SourceLocalSymbol)this.VariableSymbol;
 
                     if (diagnosticsOpt?.DiagnosticBag != null)
                     {
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return new BoundLocal(this.Syntax, localSymbol, BoundLocalDeclarationKind.WithInferredType, constantValueOpt: null, isNullableUnknown: false, type: type.Type, hasErrors: this.HasErrors || inferenceFailed).WithWasConverted();
 
                 case SymbolKind.Field:
-                    var fieldSymbol = (GlobalExpressionVariable)this.VariableSymbol;
+                    fieldSymbol := (GlobalExpressionVariable)this.VariableSymbol;
                     var inferenceDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies:
 #if DEBUG
                                                                                                                          true

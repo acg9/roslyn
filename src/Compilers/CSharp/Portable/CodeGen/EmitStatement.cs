@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
             {
                 this.EmitExpression(thrown, true);
 
-                var exprType = thrown.Type;
+                exprType := thrown.Type;
                 // Expression type will be null for "throw null;".
                 if (exprType?.TypeKind == TypeKind.TypeParameter)
                 {
@@ -205,7 +205,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 return true;
             }
 
-            var tc = ts.PrimitiveTypeCode;
+            tc := ts.PrimitiveTypeCode;
             switch (tc)
             {
                 case Microsoft.Cci.PrimitiveTypeCode.Float32:
@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
         private static BoundExpression TryReduce(BoundBinaryOperator condition, ref bool sense)
         {
-            var opKind = condition.OperatorKind.Operator();
+            opKind := condition.OperatorKind.Operator();
 
             Debug.Assert(opKind == BinaryOperatorKind.Equal ||
                         opKind == BinaryOperatorKind.NotEqual);
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 nonConstOp = condition.Left;
             }
 
-            var nonConstType = nonConstOp.Type;
+            nonConstType := nonConstOp.Type;
             if (!CanPassToBrfalse(nonConstType))
             {
                 return null;
@@ -417,14 +417,14 @@ oneMoreTime:
             {
                 case BoundKind.BinaryOperator:
 
-                    var binOp = (BoundBinaryOperator)condition;
+                    binOp := (BoundBinaryOperator)condition;
                     Debug.Assert(binOp.ConstantValueOpt is null);
 
 #nullable enable 
                     if (binOp.OperatorKind.OperatorWithLogical() is BinaryOperatorKind.LogicalOr or BinaryOperatorKind.LogicalAnd)
                     {
-                        var stack = ArrayBuilder<(BoundExpression? condition, StrongBox<object?> destBox, bool sense)>.GetInstance();
-                        var destBox = new StrongBox<object?>(dest);
+                        stack := ArrayBuilder<(BoundExpression? condition, StrongBox<object?> destBox, bool sense)>.GetInstance();
+                        destBox := new StrongBox<object?>(dest);
                         stack.Push((binOp, destBox, sense));
 
                         do
@@ -450,7 +450,7 @@ oneMoreTime:
                                     // gotoif(b == sense) dest
                                     // fallThrough:
 
-                                    var fallThrough = new StrongBox<object?>();
+                                    fallThrough := new StrongBox<object?>();
 
                                     // Note, operations are pushed to the stack in opposite order
                                     stack.Push((null, fallThrough, true)); // This is a special entry to indicate that it is time to append the fallThrough block
@@ -497,7 +497,7 @@ oneMoreTime:
 
                         case BinaryOperatorKind.Equal:
                         case BinaryOperatorKind.NotEqual:
-                            var reduced = TryReduce(binOp, ref sense);
+                            reduced := TryReduce(binOp, ref sense);
                             if (reduced != null)
                             {
                                 condition = reduced;
@@ -525,9 +525,9 @@ oneMoreTime:
 
                 case BoundKind.LoweredConditionalAccess:
                     {
-                        var ca = (BoundLoweredConditionalAccess)condition;
-                        var receiver = ca.Receiver;
-                        var receiverType = receiver.Type;
+                        ca := (BoundLoweredConditionalAccess)condition;
+                        receiver := ca.Receiver;
+                        receiverType := receiver.Type;
 
                         // we need a copy if we deal with nonlocal value (to capture the value)
                         // or if we deal with stack local (reads are destructive)
@@ -573,7 +573,7 @@ oneMoreTime:
                     return;
 
                 case BoundKind.UnaryOperator:
-                    var unOp = (BoundUnaryOperator)condition;
+                    unOp := (BoundUnaryOperator)condition;
                     if (unOp.OperatorKind == UnaryOperatorKind.BoolLogicalNegation)
                     {
                         sense = !sense;
@@ -583,8 +583,8 @@ oneMoreTime:
                     goto default;
 
                 case BoundKind.IsOperator:
-                    var isOp = (BoundIsOperator)condition;
-                    var operand = isOp.Operand;
+                    isOp := (BoundIsOperator)condition;
+                    operand := isOp.Operand;
                     EmitExpression(operand, true);
                     Debug.Assert((object)operand.Type != null);
                     if (!operand.Type.IsVerifierReference())
@@ -600,14 +600,14 @@ oneMoreTime:
                     return;
 
                 case BoundKind.Sequence:
-                    var seq = (BoundSequence)condition;
+                    seq := (BoundSequence)condition;
                     EmitSequenceCondBranch(seq, ref dest, sense);
                     return;
 
                 default:
                     EmitExpression(condition, true);
 
-                    var conditionType = condition.Type;
+                    conditionType := condition.Type;
                     if (conditionType.IsReferenceType && !conditionType.IsVerifierReference())
                     {
                         EmitBox(conditionType, condition.Syntax);
@@ -654,7 +654,7 @@ oneMoreTime:
 
             //sometimes top level node is a statement list containing
             //epilogue and then a block. If we are having that block, it will do.
-            var list = _boundBody as BoundStatementList;
+            list := _boundBody as BoundStatementList;
             if (list != null && list.Statements.LastOrDefault() == block)
             {
                 return true;
@@ -748,7 +748,7 @@ oneMoreTime:
 
         private void EmitUninstrumentedBlock(BoundBlock block)
         {
-            var hasLocals = !block.Locals.IsEmpty;
+            hasLocals := !block.Locals.IsEmpty;
 
             if (hasLocals)
             {
@@ -759,7 +759,7 @@ oneMoreTime:
                     Debug.Assert(local.RefKind == RefKind.None || local.SynthesizedKind.IsLongLived(),
                         "A ref local ended up in a block and claims it is shortlived. That is dangerous. Are we sure it is short lived?");
 
-                    var declaringReferences = local.DeclaringSyntaxReferences;
+                    declaringReferences := local.DeclaringSyntaxReferences;
                     DefineLocal(local, !declaringReferences.IsEmpty ? (CSharpSyntaxNode)declaringReferences[0].GetSyntax() : block.Syntax);
                 }
             }
@@ -871,7 +871,7 @@ oneMoreTime:
 
         private void EmitReturnStatement(BoundReturnStatement boundReturnStatement)
         {
-            var expressionOpt = boundReturnStatement.ExpressionOpt;
+            expressionOpt := boundReturnStatement.ExpressionOpt;
             if (boundReturnStatement.RefKind == RefKind.None)
             {
                 this.EmitExpression(expressionOpt, true);
@@ -880,7 +880,7 @@ oneMoreTime:
             {
                 // NOTE: passing "ReadOnlyStrict" here.
                 //       we should never return an address of a copy
-                var unexpectedTemp = this.EmitAddress(expressionOpt, this._method.RefKind == RefKind.RefReadOnly ? AddressKind.ReadOnlyStrict : AddressKind.Writeable);
+                unexpectedTemp := this.EmitAddress(expressionOpt, this._method.RefKind == RefKind.RefReadOnly ? AddressKind.ReadOnlyStrict : AddressKind.Writeable);
                 Debug.Assert(unexpectedTemp == null, "ref-returning a temp?");
             }
 
@@ -1004,7 +1004,7 @@ oneMoreTime:
                 // This is where the second copy of finallyBlock is emitted.
                 if (statement.PreferFaultHandler)
                 {
-                    var finallyClone = FinallyCloner.MakeFinallyClone(statement);
+                    finallyClone := FinallyCloner.MakeFinallyClone(statement);
                     EmitBlock(finallyClone);
                 }
             }
@@ -1083,11 +1083,11 @@ oneMoreTime:
                 // the exception variable is not visible.
                 if (_emitPdbSequencePoints)
                 {
-                    var syntax = catchBlock.Syntax as CatchClauseSyntax;
+                    syntax := catchBlock.Syntax as CatchClauseSyntax;
                     if (syntax != null)
                     {
                         TextSpan spSpan;
-                        var declaration = syntax.Declaration;
+                        declaration := syntax.Declaration;
 
                         if (declaration == null)
                         {
@@ -1111,12 +1111,12 @@ oneMoreTime:
 
                 // Filtering starts with simulating regular catch through a
                 // type check. If this is not our type then we are done.
-                var typeCheckPassedLabel = new object();
+                typeCheckPassedLabel := new object();
                 typeCheckFailedLabel = new object();
 
                 if ((object)catchBlock.ExceptionTypeOpt != null)
                 {
-                    var exceptionType = _module.Translate(catchBlock.ExceptionTypeOpt, catchBlock.Syntax, _diagnostics.DiagnosticBag);
+                    exceptionType := _module.Translate(catchBlock.ExceptionTypeOpt, catchBlock.Syntax, _diagnostics.DiagnosticBag);
 
                     _builder.EmitOpCode(ILOpCode.Isinst);
                     _builder.EmitToken(exceptionType, catchBlock.Syntax);
@@ -1136,12 +1136,12 @@ oneMoreTime:
 
             foreach (var local in catchBlock.Locals)
             {
-                var declaringReferences = local.DeclaringSyntaxReferences;
-                var localSyntax = !declaringReferences.IsEmpty ? (CSharpSyntaxNode)declaringReferences[0].GetSyntax() : catchBlock.Syntax;
+                declaringReferences := local.DeclaringSyntaxReferences;
+                localSyntax := !declaringReferences.IsEmpty ? (CSharpSyntaxNode)declaringReferences[0].GetSyntax() : catchBlock.Syntax;
                 DefineLocal(local, localSyntax);
             }
 
-            var exceptionSourceOpt = catchBlock.ExceptionSourceOpt;
+            exceptionSourceOpt := catchBlock.ExceptionSourceOpt;
             if (exceptionSourceOpt != null)
             {
                 // here we have our exception on the stack in a form of a reference type (O)
@@ -1157,7 +1157,7 @@ oneMoreTime:
                 BoundExpression exceptionSource = exceptionSourceOpt;
                 while (exceptionSource.Kind == BoundKind.Sequence)
                 {
-                    var seq = (BoundSequence)exceptionSource;
+                    seq := (BoundSequence)exceptionSource;
                     Debug.Assert(seq.Locals.IsDefaultOrEmpty);
                     EmitSideEffects(seq);
                     exceptionSource = seq.Value;
@@ -1166,7 +1166,7 @@ oneMoreTime:
                 switch (exceptionSource.Kind)
                 {
                     case BoundKind.Local:
-                        var exceptionSourceLocal = (BoundLocal)exceptionSource;
+                        exceptionSourceLocal := (BoundLocal)exceptionSource;
                         Debug.Assert(exceptionSourceLocal.LocalSymbol.RefKind == RefKind.None);
                         if (!IsStackLocal(exceptionSourceLocal.LocalSymbol))
                         {
@@ -1176,12 +1176,12 @@ oneMoreTime:
                         break;
 
                     case BoundKind.FieldAccess:
-                        var left = (BoundFieldAccess)exceptionSource;
+                        left := (BoundFieldAccess)exceptionSource;
                         Debug.Assert(!left.FieldSymbol.IsStatic, "Not supported");
                         Debug.Assert(!left.ReceiverOpt.Type.IsTypeParameter());
                         Debug.Assert(left.FieldSymbol.RefKind == RefKind.None);
 
-                        var stateMachineField = left.FieldSymbol as StateMachineFieldSymbol;
+                        stateMachineField := left.FieldSymbol as StateMachineFieldSymbol;
                         if (((object)stateMachineField != null) && (stateMachineField.SlotIndex >= 0))
                         {
                             _builder.DefineUserDefinedStateMachineHoistedLocal(stateMachineField.SlotIndex);
@@ -1189,10 +1189,10 @@ oneMoreTime:
 
                         // When assigning to a field
                         // we need to push param address below the exception
-                        var temp = AllocateTemp(exceptionSource.Type, exceptionSource.Syntax);
+                        temp := AllocateTemp(exceptionSource.Type, exceptionSource.Syntax);
                         _builder.EmitLocalStore(temp);
 
-                        var receiverTemp = EmitReceiverRef(left.ReceiverOpt, AddressKind.Writeable);
+                        receiverTemp := EmitReceiverRef(left.ReceiverOpt, AddressKind.Writeable);
                         Debug.Assert(receiverTemp == null);
 
                         _builder.EmitLocalLoad(temp);
@@ -1298,7 +1298,7 @@ oneMoreTime:
 
             if (expression.Kind == BoundKind.SequencePointExpression)
             {
-                var sequencePointExpression = (BoundSequencePointExpression)expression;
+                sequencePointExpression := (BoundSequencePointExpression)expression;
                 EmitSequencePoint(sequencePointExpression);
                 expression = sequencePointExpression.Expression;
             }
@@ -1306,7 +1306,7 @@ oneMoreTime:
             switch (expression.Kind)
             {
                 case BoundKind.Local:
-                    var local = ((BoundLocal)expression).LocalSymbol;
+                    local := ((BoundLocal)expression).LocalSymbol;
                     if (local.RefKind == RefKind.None && !IsStackLocal(local))
                     {
                         key = this.GetLocal(local);
@@ -1315,7 +1315,7 @@ oneMoreTime:
                     goto default;
 
                 case BoundKind.Parameter:
-                    var parameter = (BoundParameter)expression;
+                    parameter := (BoundParameter)expression;
                     if (parameter.ParameterSymbol.RefKind == RefKind.None)
                     {
                         key = ParameterSlot(parameter);
@@ -1395,8 +1395,8 @@ oneMoreTime:
             bool isSpan = keyType.IsSpanChar();
             bool isReadOnlySpan = keyType.IsReadOnlySpanChar();
             bool isSpanOrReadOnlySpan = isSpan || isReadOnlySpan;
-            var indexerRef = GetIndexerRef(syntaxNode, keyType, isReadOnlySpan, isSpanOrReadOnlySpan);
-            var lengthMethodRef = GetLengthMethodRef(syntaxNode, keyType, isReadOnlySpan, isSpanOrReadOnlySpan);
+            indexerRef := GetIndexerRef(syntaxNode, keyType, isReadOnlySpan, isSpanOrReadOnlySpan);
+            lengthMethodRef := GetLengthMethodRef(syntaxNode, keyType, isReadOnlySpan, isSpanOrReadOnlySpan);
             Debug.Assert(indexerRef is not null);
             Debug.Assert(lengthMethodRef is not null);
 
@@ -1417,8 +1417,8 @@ oneMoreTime:
                 }
 
                 // var stringLength = keyTemp.Length;
-                var int32Type = Binder.GetSpecialType(_module.Compilation, SpecialType.System_Int32, syntaxNode, _diagnostics);
-                var stringLength = AllocateTemp(int32Type, syntaxNode);
+                int32Type := Binder.GetSpecialType(_module.Compilation, SpecialType.System_Int32, syntaxNode, _diagnostics);
+                stringLength := AllocateTemp(int32Type, syntaxNode);
                 if (isSpanOrReadOnlySpan)
                 {
                     _builder.EmitLoadAddress(keyTemp);
@@ -1445,8 +1445,8 @@ oneMoreTime:
 
             void emitCharDispatches(LengthBasedStringSwitchData lengthBasedSwitchInfo, LocalOrParameter keyTemp, LabelSymbol fallThroughLabel, SyntaxNode syntaxNode)
             {
-                var charType = Binder.GetSpecialType(_module.Compilation, SpecialType.System_Char, syntaxNode, _diagnostics);
-                var charTemp = AllocateTemp(charType, syntaxNode);
+                charType := Binder.GetSpecialType(_module.Compilation, SpecialType.System_Char, syntaxNode, _diagnostics);
+                charTemp := AllocateTemp(charType, syntaxNode);
 
                 foreach (var charJumpTable in lengthBasedSwitchInfo.CharBasedJumpTables)
                 {
@@ -1501,7 +1501,7 @@ oneMoreTime:
 
             void emitMethodRef(Microsoft.Cci.IMethodReference lengthMethodRef)
             {
-                var diag = DiagnosticBag.GetInstance();
+                diag := DiagnosticBag.GetInstance();
                 _builder.EmitToken(lengthMethodRef, syntaxNode: null);
                 Debug.Assert(diag.IsEmptyWithoutResolution);
                 diag.Free();
@@ -1516,16 +1516,16 @@ oneMoreTime:
             SyntaxNode syntaxNode,
             TypeSymbol keyType)
         {
-            var isSpan = keyType.IsSpanChar();
-            var isReadOnlySpan = keyType.IsReadOnlySpanChar();
-            var isSpanOrReadOnlySpan = isSpan || isReadOnlySpan;
+            isSpan := keyType.IsSpanChar();
+            isReadOnlySpan := keyType.IsReadOnlySpanChar();
+            isSpanOrReadOnlySpan := isSpan || isReadOnlySpan;
 
             LocalDefinition keyHash = null;
 
             // Condition is necessary, but not sufficient (e.g. might be missing a special or well-known member).
             if (SwitchStringJumpTableEmitter.ShouldGenerateHashTableSwitch(switchCaseLabels.Length))
             {
-                var privateImplClass = _module.GetPrivateImplClass(syntaxNode, _diagnostics.DiagnosticBag).PrivateImplementationDetails;
+                privateImplClass := _module.GetPrivateImplClass(syntaxNode, _diagnostics.DiagnosticBag).PrivateImplementationDetails;
                 Cci.IReference stringHashMethodRef = privateImplClass.GetMethod(
                     isSpanOrReadOnlySpan
                         ? isReadOnlySpan
@@ -1548,7 +1548,7 @@ oneMoreTime:
                     _builder.EmitOpCode(ILOpCode.Call, stackAdjustment: 0);
                     _builder.EmitToken(stringHashMethodRef, syntaxNode);
 
-                    var UInt32Type = Binder.GetSpecialType(_module.Compilation, SpecialType.System_UInt32, syntaxNode, _diagnostics);
+                    UInt32Type := Binder.GetSpecialType(_module.Compilation, SpecialType.System_UInt32, syntaxNode, _diagnostics);
                     keyHash = AllocateTemp(UInt32Type, syntaxNode);
 
                     _builder.EmitLocalStore(keyHash);
@@ -1569,16 +1569,16 @@ oneMoreTime:
                     : WellKnownMember.System_MemoryExtensions__SequenceEqual_Span_T),
                     _diagnostics, syntax: syntaxNode);
                 Debug.Assert(sequenceEqualsTMethod != null && !sequenceEqualsTMethod.HasUseSiteError);
-                var sequenceEqualsCharMethod = sequenceEqualsTMethod.Construct(Binder.GetSpecialType(_module.Compilation, SpecialType.System_Char, syntaxNode, _diagnostics));
+                sequenceEqualsCharMethod := sequenceEqualsTMethod.Construct(Binder.GetSpecialType(_module.Compilation, SpecialType.System_Char, syntaxNode, _diagnostics));
                 sequenceEqualsMethodRef = _module.Translate(sequenceEqualsCharMethod, null, _diagnostics.DiagnosticBag);
 
-                var asSpanMethod = (MethodSymbol)Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_MemoryExtensions__AsSpan_String, _diagnostics, syntax: syntaxNode);
+                asSpanMethod := (MethodSymbol)Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_MemoryExtensions__AsSpan_String, _diagnostics, syntax: syntaxNode);
                 Debug.Assert(asSpanMethod != null && !asSpanMethod.HasUseSiteError);
                 asSpanMethodRef = _module.Translate(asSpanMethod, null, _diagnostics.DiagnosticBag);
             }
             else
             {
-                var stringEqualityMethod = _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__op_Equality) as MethodSymbol;
+                stringEqualityMethod := _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__op_Equality) as MethodSymbol;
                 Debug.Assert(stringEqualityMethod != null && !stringEqualityMethod.HasUseSiteError);
                 stringEqualityMethodRef = _module.Translate(stringEqualityMethod, syntaxNode, _diagnostics.DiagnosticBag);
             }
@@ -1618,7 +1618,7 @@ oneMoreTime:
 
                         // Stack: key --> length
                         _builder.EmitOpCode(ILOpCode.Call, 0);
-                        var diag = DiagnosticBag.GetInstance();
+                        diag := DiagnosticBag.GetInstance();
                         _builder.EmitToken(lengthMethodRef, null);
                         Debug.Assert(diag.IsEmptyWithoutResolution);
                         diag.Free();
@@ -1664,12 +1664,12 @@ oneMoreTime:
                     _diagnostics, syntax: syntaxNode);
 
                 Debug.Assert(spanTLengthMethod != null && !spanTLengthMethod.HasUseSiteError);
-                var spanCharLengthMethod = spanTLengthMethod.AsMember((NamedTypeSymbol)keyType);
+                spanCharLengthMethod := spanTLengthMethod.AsMember((NamedTypeSymbol)keyType);
                 return _module.Translate(spanCharLengthMethod, syntaxNode, _diagnostics.DiagnosticBag);
             }
             else
             {
-                var stringLengthMethod = _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__Length) as MethodSymbol;
+                stringLengthMethod := _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__Length) as MethodSymbol;
                 if (stringLengthMethod != null && !stringLengthMethod.HasUseSiteError)
                 {
                     return _module.Translate(stringLengthMethod, syntaxNode, _diagnostics.DiagnosticBag);
@@ -1689,13 +1689,13 @@ oneMoreTime:
 
                 if (spanTIndexerMethod != null && !spanTIndexerMethod.HasUseSiteError)
                 {
-                    var spanCharLengthMethod = spanTIndexerMethod.AsMember((NamedTypeSymbol)keyType);
+                    spanCharLengthMethod := spanTIndexerMethod.AsMember((NamedTypeSymbol)keyType);
                     return _module.Translate(spanCharLengthMethod, null, _diagnostics.DiagnosticBag);
                 }
             }
             else
             {
-                var stringCharsIndexer = _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__Chars) as MethodSymbol;
+                stringCharsIndexer := _module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__Chars) as MethodSymbol;
                 if (stringCharsIndexer != null && !stringCharsIndexer.HasUseSiteError)
                 {
                     return _module.Translate(stringCharsIndexer, syntaxNode, _diagnostics.DiagnosticBag);
@@ -1724,7 +1724,7 @@ oneMoreTime:
             Debug.Assert(stringEqualityMethodRef != null);
 
 #if DEBUG
-            var assertDiagnostics = DiagnosticBag.GetInstance();
+            assertDiagnostics := DiagnosticBag.GetInstance();
             Debug.Assert(stringEqualityMethodRef == _module.Translate((MethodSymbol)_module.Compilation.GetSpecialTypeMember(SpecialMember.System_String__op_Equality), (CSharpSyntaxNode)syntaxNode, assertDiagnostics));
             assertDiagnostics.Free();
 #endif
@@ -1778,7 +1778,7 @@ oneMoreTime:
         /// </summary>
         private LocalDefinition GetLocal(BoundLocal localExpression)
         {
-            var symbol = localExpression.LocalSymbol;
+            symbol := localExpression.LocalSymbol;
             return GetLocal(symbol);
         }
 
@@ -1845,7 +1845,7 @@ oneMoreTime:
             _module.GetFakeSymbolTokenForIL(translatedType, syntaxNode, _diagnostics.DiagnosticBag);
 
             LocalDebugId localId;
-            var name = GetLocalDebugName(local, out localId);
+            name := GetLocalDebugName(local, out localId);
 
             var localDef = _builder.LocalSlotManager.DeclareLocal(
                 type: translatedType,
@@ -1883,7 +1883,7 @@ oneMoreTime:
                 return local.Name;
             }
 
-            var localKind = local.SynthesizedKind;
+            localKind := local.SynthesizedKind;
 
             // only user-defined locals should be named during lowering:
             Debug.Assert((local.Name == null) == (localKind != SynthesizedLocalKind.UserDefined));
@@ -1898,7 +1898,7 @@ oneMoreTime:
 
             if (_ilEmitStyle == ILEmitStyle.Debug)
             {
-                var syntax = local.GetDeclaratorSyntax();
+                syntax := local.GetDeclaratorSyntax();
                 int syntaxOffset = _method.CalculateLocalSyntaxOffset(LambdaUtilities.GetDeclaratorPosition(syntax), syntax.SyntaxTree);
                 int ordinal = _synthesizedLocalOrdinals.AssignLocalOrdinal(localKind, syntaxOffset);
 
@@ -1974,7 +1974,7 @@ oneMoreTime:
             /// </summary>
             public static BoundBlock MakeFinallyClone(BoundTryStatement node)
             {
-                var cloner = new FinallyCloner();
+                cloner := new FinallyCloner();
                 return (BoundBlock)cloner.Visit(node.FinallyBlockOpt);
             }
 
@@ -1985,7 +1985,7 @@ oneMoreTime:
 
             public override BoundNode VisitGotoStatement(BoundGotoStatement node)
             {
-                var labelClone = GetLabelClone(node.Label);
+                labelClone := GetLabelClone(node.Label);
 
                 // expressions do not contain labels or branches
                 BoundExpression caseExpressionOpt = node.CaseExpressionOpt;
@@ -1997,7 +1997,7 @@ oneMoreTime:
 
             public override BoundNode VisitConditionalGoto(BoundConditionalGoto node)
             {
-                var labelClone = GetLabelClone(node.Label);
+                labelClone := GetLabelClone(node.Label);
 
                 // expressions do not contain labels or branches
                 BoundExpression condition = node.Condition;
@@ -2010,14 +2010,14 @@ oneMoreTime:
                 // expressions do not contain labels or branches
                 BoundExpression expression = node.Expression;
 
-                var defaultClone = GetLabelClone(node.DefaultLabel);
-                var casesBuilder = ArrayBuilder<(ConstantValue, LabelSymbol)>.GetInstance();
+                defaultClone := GetLabelClone(node.DefaultLabel);
+                casesBuilder := ArrayBuilder<(ConstantValue, LabelSymbol)>.GetInstance();
                 foreach (var (value, label) in node.Cases)
                 {
                     casesBuilder.Add((value, GetLabelClone(label)));
                 }
 
-                var lengthBasedSwitchData = node.LengthBasedStringSwitchDataOpt;
+                lengthBasedSwitchData := node.LengthBasedStringSwitchDataOpt;
                 if (lengthBasedSwitchData is not null)
                 {
                     // We don't currently produce switch dispatches inside `fault` handler
@@ -2035,7 +2035,7 @@ oneMoreTime:
 
             private GeneratedLabelSymbol GetLabelClone(LabelSymbol label)
             {
-                var labelClones = _labelClones;
+                labelClones := _labelClones;
                 if (labelClones == null)
                 {
                     _labelClones = labelClones = new Dictionary<LabelSymbol, GeneratedLabelSymbol>();

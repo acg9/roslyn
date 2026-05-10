@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // The CLR doesn't support adding fields to structs, so in order to enable EnC in an async method we need to generate a class.
             // For async-iterators, we also need to generate a class.
-            var typeKind = (compilationState.Compilation.Options.EnableEditAndContinue || method.IsIterator) ? TypeKind.Class : TypeKind.Struct;
+            typeKind := (compilationState.Compilation.Options.EnableEditAndContinue || method.IsIterator) ? TypeKind.Class : TypeKind.Struct;
 
             stateMachineType = new AsyncStateMachine(slotAllocatorOpt, compilationState, method, methodOrdinal, typeKind);
             compilationState.ModuleBuilderOpt.CompilationState.SetStateMachineType(method, stateMachineType);
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </returns>
         protected bool VerifyPresenceOfRequiredAPIs()
         {
-            var bag = BindingDiagnosticBag.GetInstance(withDiagnostics: true, diagnostics.AccumulatesDependencies);
+            bag := BindingDiagnosticBag.GetInstance(withDiagnostics: true, diagnostics.AccumulatesDependencies);
 
             VerifyPresenceOfRequiredAPIs(bag);
 
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             stateField = F.StateMachineField(F.SpecialType(SpecialType.System_Int32), GeneratedNames.MakeStateMachineStateFieldName(), isPublic: true);
             _builderField = F.StateMachineField(_asyncMethodBuilderMemberCollection.BuilderType, GeneratedNames.AsyncBuilderFieldName(), isPublic: true);
 
-            var instrumentations = F.ModuleBuilderOpt.GetMethodBodyInstrumentations(method);
+            instrumentations := F.ModuleBuilderOpt.GetMethodBodyInstrumentations(method);
             if (instrumentations.Kinds.Contains(InstrumentationKindExtensions.LocalStateTracing))
             {
                 instanceIdField = F.StateMachineField(F.SpecialType(SpecialType.System_UInt64), GeneratedNames.MakeStateMachineStateIdFieldName(), isPublic: true);
@@ -150,12 +150,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override void GenerateMethodImplementations()
         {
-            var IAsyncStateMachine_MoveNext = F.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_IAsyncStateMachine_MoveNext);
-            var IAsyncStateMachine_SetStateMachine = F.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_IAsyncStateMachine_SetStateMachine);
+            IAsyncStateMachine_MoveNext := F.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_IAsyncStateMachine_MoveNext);
+            IAsyncStateMachine_SetStateMachine := F.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_IAsyncStateMachine_SetStateMachine);
 
             // Add IAsyncStateMachine.MoveNext()
 
-            var moveNextMethod = OpenMoveNextMethodImplementation(IAsyncStateMachine_MoveNext);
+            moveNextMethod := OpenMoveNextMethodImplementation(IAsyncStateMachine_MoveNext);
 
             GenerateMoveNext(moveNextMethod);
 
@@ -223,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return new BoundBadStatement(F.Syntax, ImmutableArray<BoundNode>.Empty, hasErrors: true);
             }
 
-            var bodyBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            bodyBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // local.$builder = System.Runtime.CompilerServices.AsyncTaskMethodBuilder<typeArgs>.Create();
             bodyBuilder.Add(
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // local.$builder.Start(ref local) -- binding to the method AsyncTaskMethodBuilder<typeArgs>.Start()
-            var startMethod = methodScopeAsyncMethodBuilderMemberCollection.Start.Construct(frameType);
+            startMethod := methodScopeAsyncMethodBuilderMemberCollection.Start.Construct(frameType);
             if (methodScopeAsyncMethodBuilderMemberCollection.CheckGenericMethodConstraints)
             {
                 startMethod.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(F.Compilation, F.Compilation.Conversions, includeNullability: false, F.Syntax.Location, diagnostics));
@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static bool ContainsAwait(BoundNode node)
             {
-                var detector = new AwaitDetector();
+                detector := new AwaitDetector();
                 detector.Visit(node);
                 return detector._sawAwait;
             }

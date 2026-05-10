@@ -35,12 +35,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var containingType = (SynthesizedHotReloadExceptionSymbol)ContainingType;
+            containingType := (SynthesizedHotReloadExceptionSymbol)ContainingType;
 
-            var factory = new SyntheticBoundNodeFactory(this, this.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            factory := new SyntheticBoundNodeFactory(this, this.GetNonNullSyntaxNode(), compilationState, diagnostics);
             factory.CurrentFunction = this;
 
-            var exceptionConstructor = (MethodSymbol?)factory.WellKnownMember(WellKnownMember.System_Exception__ctorString, isOptional: true);
+            exceptionConstructor := (MethodSymbol?)factory.WellKnownMember(WellKnownMember.System_Exception__ctorString, isOptional: true);
             if (exceptionConstructor is null)
             {
                 diagnostics.Add(ErrorCode.ERR_EncUpdateFailedMissingSymbol,
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var delegateInvoke = (containingType.CreatedActionField.Type as NamedTypeSymbol)?.DelegateInvokeMethod;
+            delegateInvoke := (containingType.CreatedActionField.Type as NamedTypeSymbol)?.DelegateInvokeMethod;
             if (delegateInvoke is null ||
                 delegateInvoke.ReturnType.SpecialType != SpecialType.System_Void ||
                 delegateInvoke.GetParameters() is not [{ RefKind: RefKind.None } parameter] ||

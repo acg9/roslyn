@@ -29,7 +29,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static IReadOnlyDictionary<ParameterSymbol, FieldSymbol> GetCapturedParameters(SynthesizedPrimaryConstructor primaryConstructor)
             {
-                var namesToCheck = PooledHashSet<string>.GetInstance();
+                namesToCheck := PooledHashSet<string>.GetInstance();
                 addParameterNames(namesToCheck);
 
                 if (namesToCheck.Count == 0)
@@ -38,11 +38,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SpecializedCollections.EmptyReadOnlyDictionary<ParameterSymbol, FieldSymbol>();
                 }
 
-                var captured = ArrayBuilder<ParameterSymbol>.GetInstance(primaryConstructor.Parameters.Length);
+                captured := ArrayBuilder<ParameterSymbol>.GetInstance(primaryConstructor.Parameters.Length);
 
-                var finder = new CapturedParametersFinder(primaryConstructor, namesToCheck, captured);
+                finder := new CapturedParametersFinder(primaryConstructor, namesToCheck, captured);
 
-                var containingType = primaryConstructor.ContainingType;
+                containingType := primaryConstructor.ContainingType;
 
                 foreach (SourceMemberMethodSymbol sourceMethod in containingType.GetMethodsPossiblyCapturingPrimaryConstructorParameters())
                 {
@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return SpecializedCollections.EmptyReadOnlyDictionary<ParameterSymbol, FieldSymbol>();
                 }
 
-                var result = new Dictionary<ParameterSymbol, FieldSymbol>(ReferenceEqualityComparer.Instance);
+                result := new Dictionary<ParameterSymbol, FieldSymbol>(ReferenceEqualityComparer.Instance);
 
                 foreach (var parameter in captured)
                 {

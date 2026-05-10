@@ -147,14 +147,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // First, build an approximately balanced left and right bottom-up.
                         if (left.Height > (right.Height + 1))
                         {
-                            var l = (RelationalDispatch)left;
-                            var newRight = CreateBalancedCore(syntax, value, op, left: l.Right, right: right);
+                            l := (RelationalDispatch)left;
+                            newRight := CreateBalancedCore(syntax, value, op, left: l.Right, right: right);
                             (syntax, value, op, left, right) = (l.Syntax, l.Value, l.Operator, l.Left, newRight);
                         }
                         else if (right.Height > (left.Height + 1))
                         {
-                            var r = (RelationalDispatch)right;
-                            var newLeft = CreateBalancedCore(syntax, value, op, left: left, right: r.Left);
+                            r := (RelationalDispatch)right;
+                            newLeft := CreateBalancedCore(syntax, value, op, left: left, right: r.Left);
                             (syntax, value, op, left, right) = (r.Syntax, r.Value, r.Operator, newLeft, r.Right);
                         }
 
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         #region Rebalance the top of the tree if necessary
                         if (left.Height == right.Height + 2)
                         {
-                            var leftDispatch = (RelationalDispatch)left;
+                            leftDispatch := (RelationalDispatch)left;
                             if (leftDispatch.Left.Height == right.Height)
                             {
                                 //
@@ -177,12 +177,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 //      / \             A B   C D
                                 //     B   C
                                 //
-                                var x = leftDispatch;
-                                var A = x.Left;
-                                var y = (RelationalDispatch)x.Right;
-                                var B = y.Left;
-                                var C = y.Right;
-                                var D = right;
+                                x := leftDispatch;
+                                A := x.Left;
+                                y := (RelationalDispatch)x.Right;
+                                B := y.Left;
+                                C := y.Right;
+                                D := right;
                                 return y.WithLeftAndRight(x.WithLeftAndRight(A, B), new RelationalDispatch(syntax, value, op, C, D));
                             }
                             else
@@ -197,16 +197,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 //  / \                 A B   C D
                                 // A   B
                                 //
-                                var y = leftDispatch;
-                                var x = y.Left;
-                                var C = y.Right;
-                                var D = right;
+                                y := leftDispatch;
+                                x := y.Left;
+                                C := y.Right;
+                                D := right;
                                 return y.WithLeftAndRight(x, new RelationalDispatch(syntax, value, op, C, D));
                             }
                         }
                         else if (right.Height == left.Height + 2)
                         {
-                            var rightDispatch = (RelationalDispatch)right;
+                            rightDispatch := (RelationalDispatch)right;
                             if (rightDispatch.Right.Height == left.Height)
                             {
                                 //
@@ -218,12 +218,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 //    / \               A B   C D
                                 //   B   C
                                 //
-                                var A = left;
-                                var z = rightDispatch;
-                                var y = (RelationalDispatch)z.Left;
-                                var B = y.Left;
-                                var C = y.Right;
-                                var D = z.Right;
+                                A := left;
+                                z := rightDispatch;
+                                y := (RelationalDispatch)z.Left;
+                                B := y.Left;
+                                C := y.Right;
+                                D := z.Right;
                                 return y.WithLeftAndRight(new RelationalDispatch(syntax, value, op, A, B), z.WithLeftAndRight(C, D));
                             }
                             else
@@ -238,10 +238,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 //        / \           A B   C D
                                 //       C   D
                                 //
-                                var A = left;
-                                var y = rightDispatch;
-                                var B = y.Left;
-                                var z = y.Right;
+                                A := left;
+                                y := rightDispatch;
+                                B := y.Left;
+                                z := y.Right;
                                 return y.WithLeftAndRight(new RelationalDispatch(syntax, value, op, A, B), z);
                             }
                         }

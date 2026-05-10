@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(method.ParameterCount > 0);
             Debug.Assert((object)receiverType != null);
 
-            var useSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
+            useSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
 
             method = InferExtensionMethodTypeArguments(method, receiverType, compilation, ref useSiteInfo, out wasFullyInferred);
             if ((object)method == null)
@@ -49,8 +49,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var conversions = compilation?.Conversions ?? (ConversionsBase)method.ContainingAssembly.CorLibrary.TypeConversions;
-            var conversion = conversions.ConvertExtensionMethodThisArg(method.Parameters[0].Type, receiverType, ref useSiteInfo, isMethodGroupConversion: false);
+            conversions := compilation?.Conversions ?? (ConversionsBase)method.ContainingAssembly.CorLibrary.TypeConversions;
+            conversion := conversions.ConvertExtensionMethodThisArg(method.Parameters[0].Type, receiverType, ref useSiteInfo, isMethodGroupConversion: false);
             if (!conversion.Exists)
             {
                 return null;
@@ -75,8 +75,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(method.IsExtensionMethod && method.MethodKind != MethodKind.ReducedExtension);
 
             // The reduced form is always created from the unconstructed method symbol.
-            var constructedFrom = method.ConstructedFrom;
-            var reducedMethod = new ReducedExtensionMethodSymbol(constructedFrom);
+            constructedFrom := method.ConstructedFrom;
+            reducedMethod := new ReducedExtensionMethodSymbol(constructedFrom);
 
             if (constructedFrom == method)
             {
@@ -131,27 +131,27 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var containingAssembly = method.ContainingAssembly;
-            var errorNamespace = containingAssembly.GlobalNamespace;
-            var conversions = containingAssembly.CorLibrary.TypeConversions;
+            containingAssembly := method.ContainingAssembly;
+            errorNamespace := containingAssembly.GlobalNamespace;
+            conversions := containingAssembly.CorLibrary.TypeConversions;
 
             // There is absolutely no plausible syntax/tree that we could use for these
             // synthesized literals.  We could be speculatively binding a call to a PE method.
-            var syntaxTree = CSharpSyntaxTree.Dummy;
-            var syntax = (CSharpSyntaxNode)syntaxTree.GetRoot();
+            syntaxTree := CSharpSyntaxTree.Dummy;
+            syntax := (CSharpSyntaxNode)syntaxTree.GetRoot();
 
             // Create an argument value for the "this" argument of specific type,
             // and pass the same bad argument value for all other arguments.
-            var thisArgumentValue = new BoundLiteral(syntax, ConstantValue.Bad, thisType) { WasCompilerGenerated = true };
-            var otherArgumentType = new ExtendedErrorTypeSymbol(errorNamespace, name: string.Empty, arity: 0, errorInfo: null, unreported: false);
-            var otherArgumentValue = new BoundLiteral(syntax, ConstantValue.Bad, otherArgumentType) { WasCompilerGenerated = true };
+            thisArgumentValue := new BoundLiteral(syntax, ConstantValue.Bad, thisType) { WasCompilerGenerated = true };
+            otherArgumentType := new ExtendedErrorTypeSymbol(errorNamespace, name: string.Empty, arity: 0, errorInfo: null, unreported: false);
+            otherArgumentValue := new BoundLiteral(syntax, ConstantValue.Bad, otherArgumentType) { WasCompilerGenerated = true };
 
-            var paramCount = method.ParameterCount;
-            var arguments = new BoundExpression[paramCount];
+            paramCount := method.ParameterCount;
+            arguments := new BoundExpression[paramCount];
 
             for (int i = 0; i < paramCount; i++)
             {
-                var argument = (i == 0) ? thisArgumentValue : otherArgumentValue;
+                argument := (i == 0) ? thisArgumentValue : otherArgumentValue;
                 arguments[i] = argument;
             }
 
@@ -171,20 +171,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // For the purpose of constraint checks we use error type symbol in place of type arguments that we couldn't infer from the first argument.
             // This prevents constraint checking from failing for corresponding type parameters.
             int firstNullInTypeArgs = -1;
-            var notInferredTypeParameters = PooledHashSet<TypeParameterSymbol>.GetInstance();
-            var typeParams = method.TypeParameters;
-            var typeArgsForConstraintsCheck = typeArgs;
+            notInferredTypeParameters := PooledHashSet<TypeParameterSymbol>.GetInstance();
+            typeParams := method.TypeParameters;
+            typeArgsForConstraintsCheck := typeArgs;
             for (int i = 0; i < typeArgsForConstraintsCheck.Length; i++)
             {
                 if (!typeArgsForConstraintsCheck[i].HasType)
                 {
                     firstNullInTypeArgs = i;
-                    var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                    builder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                     builder.AddRange(typeArgsForConstraintsCheck, firstNullInTypeArgs);
 
                     for (; i < typeArgsForConstraintsCheck.Length; i++)
                     {
-                        var typeArg = typeArgsForConstraintsCheck[i];
+                        typeArg := typeArgsForConstraintsCheck[i];
                         if (!typeArg.HasType)
                         {
                             notInferredTypeParameters.Add(typeParams[i]);
@@ -202,8 +202,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // Check constraints.
-            var diagnosticsBuilder = ArrayBuilder<TypeParameterDiagnosticInfo>.GetInstance();
-            var substitution = new TypeMap(typeParams, typeArgsForConstraintsCheck);
+            diagnosticsBuilder := ArrayBuilder<TypeParameterDiagnosticInfo>.GetInstance();
+            substitution := new TypeMap(typeParams, typeArgsForConstraintsCheck);
             ArrayBuilder<TypeParameterDiagnosticInfo> useSiteDiagnosticsBuilder = null;
             var success = method.CheckConstraints(new ConstraintsHelper.CheckConstraintsArgs(compilation, conversions, includeNullability: false, NoLocation.Singleton, diagnostics: null, template: new CompoundUseSiteInfo<AssemblySymbol>(useSiteInfo)),
                                                   substitution, typeParams, typeArgsForConstraintsCheck, diagnosticsBuilder, nullabilityDiagnosticsBuilderOpt: null,
@@ -560,7 +560,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ImmutableArray<ParameterSymbol> MakeParameters()
         {
-            var reducedFromParameters = _reducedFrom.Parameters;
+            reducedFromParameters := _reducedFrom.Parameters;
             int count = reducedFromParameters.Length;
 
             if (count <= 1)
@@ -570,7 +570,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var parameters = ArrayBuilder<ParameterSymbol>.GetInstance(count - 1);
+                parameters := ArrayBuilder<ParameterSymbol>.GetInstance(count - 1);
                 for (int i = 0; i < count - 1; i++)
                 {
                     parameters.Add(new ReducedExtensionMethodParameterSymbol(this, reducedFromParameters[i + 1]));
@@ -697,7 +697,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // define it on the base type because most can simply use
                 // ReferenceEquals.
 
-                var other = obj as ReducedExtensionMethodParameterSymbol;
+                other := obj as ReducedExtensionMethodParameterSymbol;
                 return other is not null &&
                     this.Ordinal == other.Ordinal &&
                     this.ContainingSymbol.Equals(other.ContainingSymbol, compareKind);

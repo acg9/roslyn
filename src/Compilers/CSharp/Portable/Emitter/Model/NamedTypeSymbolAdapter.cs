@@ -327,13 +327,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (member.Kind == SymbolKind.Method)
                 {
-                    var method = (MethodSymbol)member;
+                    method := (MethodSymbol)member;
                     Debug.Assert((object)method.PartialDefinitionPart == null); // must be definition
 
-                    var explicitImplementations = method.ExplicitInterfaceImplementations;
+                    explicitImplementations := method.ExplicitInterfaceImplementations;
                     if (explicitImplementations.Length != 0)
                     {
-                        var adapter = method.GetCciAdapter();
+                        adapter := method.GetCciAdapter();
 
                         foreach (var implemented in method.ExplicitInterfaceImplementations)
                         {
@@ -385,7 +385,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (AdaptedNamedTypeSymbol is SourceMemberContainerTypeSymbol container)
             {
-                var interfaces = container.GetInterfacesToEmit();
+                interfaces := container.GetInterfacesToEmit();
 
                 foreach ((MethodSymbol body, MethodSymbol implemented) in container.GetSynthesizedExplicitImplementations(cancellationToken: default).MethodImpls)
                 {
@@ -401,12 +401,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
             }
 
-            var syntheticMethods = moduleBeingBuilt.GetSynthesizedMethods(AdaptedNamedTypeSymbol);
+            syntheticMethods := moduleBeingBuilt.GetSynthesizedMethods(AdaptedNamedTypeSymbol);
             if (syntheticMethods != null)
             {
                 foreach (var m in syntheticMethods)
                 {
-                    var method = m.GetInternalSymbol() as MethodSymbol;
+                    method := m.GetInternalSymbol() as MethodSymbol;
                     if ((object)method != null)
                     {
                         Debug.Assert((object)method.PartialDefinitionPart == null); // must be definition
@@ -495,7 +495,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     diagnostics: context.Diagnostics,
                     fromImplements: true);
 
-                var type = TypeWithAnnotations.Create(@interface);
+                type := TypeWithAnnotations.Create(@interface);
                 yield return type.GetTypeRefWithAttributes(
                     moduleBeingBuilt,
                     declaringSymbol: AdaptedNamedTypeSymbol,
@@ -736,7 +736,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 CheckDefinitionInvariant();
-                var layout = AdaptedNamedTypeSymbol.Layout;
+                layout := AdaptedNamedTypeSymbol.Layout;
                 return (ushort)layout.Alignment;
             }
         }
@@ -886,15 +886,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         ImmutableArray<Cci.ITypeReference> Cci.IGenericTypeInstanceReference.GetGenericArguments(EmitContext context)
         {
             PEModuleBuilder moduleBeingBuilt = (PEModuleBuilder)context.Module;
-            var builder = ArrayBuilder<Microsoft.Cci.ITypeReference>.GetInstance();
+            builder := ArrayBuilder<Microsoft.Cci.ITypeReference>.GetInstance();
             Debug.Assert(((Cci.ITypeReference)this).AsGenericTypeInstanceReference != null);
 
-            var arguments = AdaptedNamedTypeSymbol.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            arguments := AdaptedNamedTypeSymbol.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
             for (int i = 0; i < arguments.Length; i++)
             {
-                var arg = moduleBeingBuilt.Translate(arguments[i].Type, syntaxNodeOpt: (CSharpSyntaxNode)context.SyntaxNode, diagnostics: context.Diagnostics);
-                var modifiers = arguments[i].CustomModifiers;
+                arg := moduleBeingBuilt.Translate(arguments[i].Type, syntaxNodeOpt: (CSharpSyntaxNode)context.SyntaxNode, diagnostics: context.Diagnostics);
+                modifiers := arguments[i].CustomModifiers;
                 if (!modifiers.IsDefaultOrEmpty)
                 {
                     arg = new Cci.ModifiedTypeReference(arg, ImmutableArray<Cci.ICustomModifier>.CastUp(modifiers));
@@ -922,7 +922,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         Cci.INestedTypeReference Cci.ISpecializedNestedTypeReference.GetUnspecializedVersion(EmitContext context)
         {
             Debug.Assert(((Cci.ITypeReference)this).AsSpecializedNestedTypeReference != null);
-            var result = GenericTypeImpl(context).AsNestedTypeReference;
+            result := GenericTypeImpl(context).AsNestedTypeReference;
 
             Debug.Assert(result != null);
             return result;
@@ -1043,7 +1043,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (m.Kind == SymbolKind.Method)
                 {
-                    var method = (MethodSymbol)m;
+                    method := (MethodSymbol)m;
                     if (method.ShouldEmit())
                     {
                         yield return method;

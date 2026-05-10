@@ -73,8 +73,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.ForEachVariableStatement:
                     {
-                        var syntax = (ForEachVariableStatementSyntax)_syntax;
-                        var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+                        syntax := (ForEachVariableStatementSyntax)_syntax;
+                        locals := ArrayBuilder<LocalSymbol>.GetInstance();
                         CollectLocalsFromDeconstruction(
                             syntax.Variable,
                             LocalDeclarationKind.ForEachIterationVariable,
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.ForEachStatement:
                     {
-                        var syntax = (ForEachStatementSyntax)_syntax;
+                        syntax := (ForEachStatementSyntax)_syntax;
                         var iterationVariable = SourceLocalSymbol.MakeForeachLocal(
                             (MethodSymbol)this.ContainingMemberOrLambda,
                             this,
@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.TupleExpression:
                     {
-                        var tuple = (TupleExpressionSyntax)declaration;
+                        tuple := (TupleExpressionSyntax)declaration;
                         foreach (var arg in tuple.Arguments)
                         {
                             CollectLocalsFromDeconstruction(arg.Expression, kind, locals, deconstructionStatement, enclosingBinderOpt);
@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.DeclarationExpression:
                     {
-                        var declarationExpression = (DeclarationExpressionSyntax)declaration;
+                        declarationExpression := (DeclarationExpressionSyntax)declaration;
                         CollectLocalsFromDeconstruction(
                             declarationExpression.Designation, declarationExpression.Type,
                             kind, locals, deconstructionStatement, enclosingBinderOpt);
@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.SingleVariableDesignation:
                     {
-                        var single = (SingleVariableDesignationSyntax)designation;
+                        single := (SingleVariableDesignationSyntax)designation;
                         SourceLocalSymbol localSymbol = SourceLocalSymbol.MakeDeconstructionLocal(
                                                                     this.ContainingMemberOrLambda,
                                                                     this,
@@ -160,7 +160,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.ParenthesizedVariableDesignation:
                     {
-                        var tuple = (ParenthesizedVariableDesignationSyntax)designation;
+                        tuple := (ParenthesizedVariableDesignationSyntax)designation;
                         foreach (var d in tuple.Variables)
                         {
                             CollectLocalsFromDeconstruction(d, closestTypeSyntax, kind, locals, deconstructionStatement, enclosingBinderOpt);
@@ -197,7 +197,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ExpressionSyntax variables = ((ForEachVariableStatementSyntax)_syntax).Variable;
 
             // Tracking narrowest safe-to-escape scope by default, the proper val escape will be set when doing full binding of the foreach statement
-            var valuePlaceholder = new BoundDeconstructValuePlaceholder(_syntax.Expression, variableSymbol: null, isDiscardExpression: false, inferredType.Type ?? CreateErrorType("var"));
+            valuePlaceholder := new BoundDeconstructValuePlaceholder(_syntax.Expression, variableSymbol: null, isDiscardExpression: false, inferredType.Type ?? CreateErrorType("var"));
 
             DeclarationExpressionSyntax declaration = null;
             ExpressionSyntax expression = null;
@@ -240,7 +240,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (getEnumeratorMethod.IsExtensionMethod)
                     {
-                        var messageId = IsAsync ? MessageID.IDS_FeatureExtensionGetAsyncEnumerator : MessageID.IDS_FeatureExtensionGetEnumerator;
+                        messageId := IsAsync ? MessageID.IDS_FeatureExtensionGetAsyncEnumerator : MessageID.IDS_FeatureExtensionGetEnumerator;
                         messageId.CheckFeatureAvailability(diagnostics, Compilation, collectionExpr.Syntax.Location);
 
                         if (getEnumeratorMethod.ParameterRefKinds is { IsDefault: false } refKinds && refKinds[0] == RefKind.Ref)
@@ -258,9 +258,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             if (IsAsync)
             {
-                var expr = _syntax.Expression;
+                expr := _syntax.Expression;
                 ReportBadAwaitDiagnostics(_syntax.AwaitKeyword, diagnostics, ref hasErrors);
-                var placeholder = new BoundAwaitableValuePlaceholder(expr, builder.MoveNextInfo?.Method.ReturnType ?? CreateErrorType());
+                placeholder := new BoundAwaitableValuePlaceholder(expr, builder.MoveNextInfo?.Method.ReturnType ?? CreateErrorType());
                 moveNextAwaitableInfo = BindAwaitInfo(placeholder, expr, diagnostics, ref hasErrors);
 
                 if (!hasErrors && (moveNextAwaitableInfo.GetResult ?? moveNextAwaitableInfo.RuntimeAsyncAwaitCall?.Method)?.ReturnType.SpecialType != SpecialType.System_Boolean)
@@ -279,7 +279,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.ForEachStatement:
                     {
-                        var node = (ForEachStatementSyntax)_syntax;
+                        node := (ForEachStatementSyntax)_syntax;
                         // Check for local variable conflicts in the *enclosing* binder; obviously the *current*
                         // binder has a local that matches!
                         hasNameConflicts = originalBinder.ValidateDeclarationNameConflictsInScope(IterationVariable, diagnostics);
@@ -376,13 +376,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.ForEachVariableStatement:
                     {
-                        var node = (ForEachVariableStatementSyntax)_syntax;
+                        node := (ForEachVariableStatementSyntax)_syntax;
                         iterationVariableType = inferredType.HasType ? inferredType : TypeWithAnnotations.Create(CreateErrorType("var"));
 
-                        var variables = node.Variable;
+                        variables := node.Variable;
                         if (variables.IsDeconstructionLeft())
                         {
-                            var valuePlaceholder = new BoundDeconstructValuePlaceholder(_syntax.Expression, variableSymbol: null, isDiscardExpression: false, iterationVariableType.Type).MakeCompilerGenerated();
+                            valuePlaceholder := new BoundDeconstructValuePlaceholder(_syntax.Expression, variableSymbol: null, isDiscardExpression: false, iterationVariableType.Type).MakeCompilerGenerated();
                             DeclarationExpressionSyntax declaration = null;
                             ExpressionSyntax expression = null;
                             BoundDeconstructionAssignmentOperator deconstruction = BindDeconstruction(
@@ -461,7 +461,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             hasErrors |= hasNameConflicts;
 
-            var foreachKeyword = _syntax.ForEachKeyword;
+            foreachKeyword := _syntax.ForEachKeyword;
             ReportDiagnosticsIfObsolete(diagnostics, getEnumeratorMethod, foreachKeyword, hasBaseReceiver: false);
             ReportDiagnosticsIfUnmanagedCallersOnly(diagnostics, getEnumeratorMethod, foreachKeyword, isDelegateConversion: false);
             Debug.Assert(!IsDisallowedExtensionInOlderLangVer(getEnumeratorMethod));
@@ -489,7 +489,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 hasErrors = true;
             }
 
-            var elementPlaceholder = new BoundValuePlaceholder(_syntax, inferredType.Type).MakeCompilerGenerated();
+            elementPlaceholder := new BoundValuePlaceholder(_syntax, inferredType.Type).MakeCompilerGenerated();
             BindingDiagnosticBag createConversionDiagnostics;
 
             if (!elementConversionClassification.IsValid)
@@ -519,7 +519,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 diagnostics.AddDependencies(createConversionDiagnostics);
 
-                var location = _syntax.ForEachKeyword.GetLocation();
+                location := _syntax.ForEachKeyword.GetLocation();
                 foreach (var d in createConversionDiagnostics.DiagnosticBag.AsEnumerableWithoutResolution())
                 {
                     diagnostics.Add(d.WithLocation(location));
@@ -617,10 +617,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 : builder.PatternDisposeInfo.Method.ReturnType;
 
             bool hasErrors = false;
-            var expr = _syntax.Expression;
+            expr := _syntax.Expression;
             ReportBadAwaitDiagnostics(_syntax.AwaitKeyword, diagnostics, ref hasErrors);
 
-            var placeholder = new BoundAwaitableValuePlaceholder(expr, awaitableType);
+            placeholder := new BoundAwaitableValuePlaceholder(expr, awaitableType);
             builder.DisposeAwaitableInfo = BindAwaitInfo(placeholder, expr, diagnostics, ref hasErrors);
             return hasErrors;
         }
@@ -872,10 +872,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return EnumeratorResult.FailedAndReported;
                 }
 
-                var enumeratorInfoDiagnostics = BindingDiagnosticBag.GetInstance(diagnostics);
+                enumeratorInfoDiagnostics := BindingDiagnosticBag.GetInstance(diagnostics);
                 BoundExpression span = new BoundValuePlaceholder(collectionExpr.Syntax, spanType).MakeCompilerGenerated();
 #if DEBUG
-                var originalSpan = span;
+                originalSpan := span;
 #endif
 
                 result = getEnumeratorInfo(syntax, collectionSyntax, ref span, isAsync: false, enumeratorInfoDiagnostics, out builder);
@@ -921,7 +921,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
 #if DEBUG
-            var originalCollectionExpr = collectionExpr;
+            originalCollectionExpr := collectionExpr;
 #endif
 
             result = getEnumeratorInfo(syntax, collectionSyntax, ref collectionExpr, isAsync, diagnostics, out builder);
@@ -978,8 +978,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return EnumeratorResult.Succeeded;
                 }
 
-                var unwrappedCollectionExpr = UnwrapCollectionExpressionIfNullable(collectionExpr, diagnostics);
-                var unwrappedCollectionExprType = unwrappedCollectionExpr.Type;
+                unwrappedCollectionExpr := UnwrapCollectionExpressionIfNullable(collectionExpr, diagnostics);
+                unwrappedCollectionExprType := unwrappedCollectionExpr.Type;
 
                 if (SatisfiesGetEnumeratorPattern(syntax, collectionSyntax, ref builder, unwrappedCollectionExpr, isAsync, viaExtensionMethod: false, diagnostics))
                 {
@@ -1205,7 +1205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (enumeratorType.IsRefLikeType || isAsync)
             {
-                var receiver = new BoundDisposableValuePlaceholder(syntax, enumeratorType);
+                receiver := new BoundDisposableValuePlaceholder(syntax, enumeratorType);
                 BindingDiagnosticBag patternDiagnostics = BindingDiagnosticBag.GetInstance(diagnostics);
                 MethodSymbol patternDisposeMethod = TryFindDisposePatternMethod(receiver, syntax, isAsync, patternDiagnostics, out bool expanded);
                 if (patternDisposeMethod is object)
@@ -1216,8 +1216,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         patternDisposeMethod.ParameterRefKinds.All(static refKind => refKind is RefKind.None or RefKind.In or RefKind.RefReadOnlyParameter));
 
                     diagnostics.AddRangeAndFree(patternDiagnostics);
-                    var argsBuilder = ArrayBuilder<BoundExpression>.GetInstance(patternDisposeMethod.ParameterCount);
-                    var argsToParams = default(ImmutableArray<int>);
+                    argsBuilder := ArrayBuilder<BoundExpression>.GetInstance(patternDisposeMethod.ParameterCount);
+                    argsToParams := default(ImmutableArray<int>);
 
                     BindDefaultArguments(
                         syntax,
@@ -1345,7 +1345,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var lookupResult = LookupResult.GetInstance();
+                lookupResult := LookupResult.GetInstance();
                 getEnumeratorInfo = FindForEachPatternMethod(syntax, collectionSyntax, collectionExpr.Type, methodName, lookupResult, warningsOnly: true, diagnostics, isAsync);
                 lookupResult.Free();
             }
@@ -1433,13 +1433,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private MethodArgumentInfo PerformForEachPatternOverloadResolution(SyntaxNode syntax, SyntaxNode collectionSyntax, TypeSymbol patternType, ArrayBuilder<MethodSymbol> candidateMethods, bool warningsOnly, BindingDiagnosticBag diagnostics, bool isAsync)
         {
-            var analyzedArguments = AnalyzedArguments.GetInstance();
-            var typeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
-            var overloadResolutionResult = OverloadResolutionResult<MethodSymbol>.GetInstance();
+            analyzedArguments := AnalyzedArguments.GetInstance();
+            typeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            overloadResolutionResult := OverloadResolutionResult<MethodSymbol>.GetInstance();
 
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
             // We create a dummy receiver of the invocation so MethodInvocationOverloadResolution knows it was invoked from an instance, not a type
-            var dummyReceiver = new BoundImplicitReceiver(collectionSyntax, patternType);
+            dummyReceiver := new BoundImplicitReceiver(collectionSyntax, patternType);
             this.OverloadResolution.MethodInvocationOverloadResolution(
                 methods: candidateMethods,
                 typeArguments: typeArguments,
@@ -1476,8 +1476,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else
                 {
                     Debug.Assert(analyzedArguments.Arguments.Count == 0);
-                    var argsToParams = overloadResolutionResult.ValidResult.Result.ArgsToParamsOpt;
-                    var expanded = overloadResolutionResult.ValidResult.Result.Kind == MemberResolutionKind.ApplicableInExpandedForm;
+                    argsToParams := overloadResolutionResult.ValidResult.Result.ArgsToParamsOpt;
+                    expanded := overloadResolutionResult.ValidResult.Result.Kind == MemberResolutionKind.ApplicableInExpandedForm;
                     BindDefaultArguments(
                         syntax,
                         result.Parameters,
@@ -1513,7 +1513,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private MethodArgumentInfo FindForEachPatternMethodViaExtension(SyntaxNode syntax, SyntaxNode collectionSyntax, BoundExpression collectionExpr, string methodName, BindingDiagnosticBag diagnostics)
         {
-            var analyzedArguments = AnalyzedArguments.GetInstance();
+            analyzedArguments := AnalyzedArguments.GetInstance();
 
             CompoundUseSiteInfo<AssemblySymbol> extensionUseSiteInfo = this.GetNewCompoundUseSiteInfo(diagnostics);
 
@@ -1532,10 +1532,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             diagnostics.Add(syntax, extensionUseSiteInfo);
             diagnostics.AddRange(methodGroupResolutionResult.Diagnostics);
 
-            var overloadResolutionResult = methodGroupResolutionResult.OverloadResolutionResult;
+            overloadResolutionResult := methodGroupResolutionResult.OverloadResolutionResult;
             if (overloadResolutionResult?.Succeeded ?? false)
             {
-                var result = overloadResolutionResult.ValidResult.Member;
+                result := overloadResolutionResult.ValidResult.Member;
 
                 Debug.Assert(result.IsExtensionMethod || result.IsExtensionBlockMember());
 
@@ -1554,7 +1554,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (result.IsExtensionMethod)
                 {
                     CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-                    var collectionConversion = this.Conversions.ClassifyConversionFromExpression(collectionExpr, result.Parameters[0].Type, isChecked: CheckOverflowAtRuntime, ref useSiteInfo);
+                    collectionConversion := this.Conversions.ClassifyConversionFromExpression(collectionExpr, result.Parameters[0].Type, isChecked: CheckOverflowAtRuntime, ref useSiteInfo);
                     diagnostics.Add(syntax, useSiteInfo);
 
                     // Unconditionally convert here, to match what we set the ConvertedExpression to in the main BoundForEachStatement node.
@@ -1808,7 +1808,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (!isAsync)
                 {
-                    var implementedNonGeneric = this.Compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
+                    implementedNonGeneric := this.Compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
                     if ((object)implementedNonGeneric != null &&
                         this.Conversions.HasImplicitConversionToOrImplementsVarianceCompatibleInterface(type, implementedNonGeneric, ref useSiteInfo, out needSupportForRefStructInterfaces))
                     {
@@ -1838,7 +1838,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (type.TypeKind == TypeKind.TypeParameter)
             {
-                var typeParameter = (TypeParameterSymbol)type;
+                typeParameter := (TypeParameterSymbol)type;
                 needSupportForRefStructInterfaces = typeParameter.AllowsRefLikeType;
                 var allInterfaces = typeParameter.EffectiveBaseClass(ref useSiteInfo).AllInterfacesWithDefinitionUseSiteDiagnostics(ref useSiteInfo)
                     .Concat(typeParameter.AllEffectiveInterfacesWithDefinitionUseSiteDiagnostics(ref useSiteInfo));
@@ -1940,7 +1940,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private MethodArgumentInfo GetParameterlessSpecialTypeMemberInfo(SpecialMember member, SyntaxNode syntax, BindingDiagnosticBag diagnostics)
         {
-            var resolvedMember = (MethodSymbol)GetSpecialTypeMember(member, diagnostics, syntax);
+            resolvedMember := (MethodSymbol)GetSpecialTypeMember(member, diagnostics, syntax);
             Debug.Assert(resolvedMember is null or { ParameterCount: 0 });
             return resolvedMember is not null
                     ? MethodArgumentInfo.CreateParameterlessMethod(resolvedMember)
@@ -1958,7 +1958,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return MethodArgumentInfo.CreateParameterlessMethod(method);
             }
 
-            var argsBuilder = ArrayBuilder<BoundExpression>.GetInstance(method.ParameterCount);
+            argsBuilder := ArrayBuilder<BoundExpression>.GetInstance(method.ParameterCount);
 
             if (method.IsExtensionMethod)
             {

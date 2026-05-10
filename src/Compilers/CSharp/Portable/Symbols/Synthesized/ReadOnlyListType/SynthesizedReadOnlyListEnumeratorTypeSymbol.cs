@@ -26,22 +26,22 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             _containingType = containingType;
 
-            var compilation = containingType.DeclaringCompilation;
-            var typeArgs = containingType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            compilation := containingType.DeclaringCompilation;
+            typeArgs := containingType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
             _itemField = new SynthesizedFieldSymbol(this, typeParameter, "_item", isReadOnly: true);
             _moveNextCalledField = new SynthesizedFieldSymbol(this, compilation.GetSpecialType(SpecialType.System_Boolean), "_moveNextCalled", isReadOnly: false);
 
-            var iDisposable = compilation.GetSpecialType(SpecialType.System_IDisposable);
-            var iEnumerator = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
-            var iEnumeratorT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerator_T).Construct(typeArgs);
+            iDisposable := compilation.GetSpecialType(SpecialType.System_IDisposable);
+            iEnumerator := compilation.GetSpecialType(SpecialType.System_Collections_IEnumerator);
+            iEnumeratorT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerator_T).Construct(typeArgs);
 
             _interfaces = ImmutableArray.Create(
                 iDisposable,
                 iEnumerator,
                 iEnumeratorT);
 
-            var membersBuilder = ArrayBuilder<Symbol>.GetInstance();
+            membersBuilder := ArrayBuilder<Symbol>.GetInstance();
             membersBuilder.Add(_itemField);
             membersBuilder.Add(_moveNextCalledField);
             membersBuilder.Add(
@@ -52,9 +52,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     (PropertySymbol)compilation.GetSpecialTypeMember(SpecialMember.System_Collections_IEnumerator__Current),
                     static (f, method, interfaceMethod) =>
                     {
-                        var containingType = (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
-                        var itemField = containingType._itemField;
-                        var itemFieldReference = f.Field(f.This(), itemField);
+                        containingType := (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
+                        itemField := containingType._itemField;
+                        itemFieldReference := f.Field(f.This(), itemField);
 
                         Debug.Assert(method.ReturnType.IsObjectType());
                         Debug.Assert(itemFieldReference.Type.IsTypeParameter());
@@ -72,9 +72,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ((PropertySymbol)compilation.GetSpecialTypeMember(SpecialMember.System_Collections_Generic_IEnumerator_T__Current)).AsMember(iEnumeratorT),
                     static (f, method, interfaceMethod) =>
                     {
-                        var containingType = (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
-                        var itemField = containingType._itemField;
-                        var itemFieldReference = f.Field(f.This(), itemField);
+                        containingType := (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
+                        itemField := containingType._itemField;
+                        itemFieldReference := f.Field(f.This(), itemField);
                         // return _item;
                         return f.Return(itemFieldReference);
                     }));
@@ -84,9 +84,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ((MethodSymbol)compilation.GetSpecialTypeMember(SpecialMember.System_Collections_IEnumerator__MoveNext)),
                     static (f, method, interfaceMethod) =>
                     {
-                        var containingType = (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
-                        var moveNextCalledField = containingType._moveNextCalledField;
-                        var moveNextCalledFieldReference = f.Field(f.This(), moveNextCalledField);
+                        containingType := (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
+                        moveNextCalledField := containingType._moveNextCalledField;
+                        moveNextCalledFieldReference := f.Field(f.This(), moveNextCalledField);
                         // return _moveNextCalled ? false : (_moveNextCalled = true);
                         return f.Return(
                             f.Conditional(
@@ -103,9 +103,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ((MethodSymbol)compilation.GetSpecialTypeMember(SpecialMember.System_Collections_IEnumerator__Reset)),
                     static (f, method, interfaceMethod) =>
                     {
-                        var containingType = (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
-                        var moveNextCalledField = containingType._moveNextCalledField;
-                        var moveNextCalledFieldReference = f.Field(f.This(), moveNextCalledField);
+                        containingType := (SynthesizedReadOnlyListEnumeratorTypeSymbol)method.ContainingType;
+                        moveNextCalledField := containingType._moveNextCalledField;
+                        moveNextCalledFieldReference := f.Field(f.This(), moveNextCalledField);
                         // _moveNextCalled = false;
                         // return;
                         return f.Block(f.Assignment(moveNextCalledFieldReference, f.Literal(false)), f.Return());

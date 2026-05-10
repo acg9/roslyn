@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {
-            var definition = _parameter.OriginalDefinition;
+            definition := _parameter.OriginalDefinition;
 
             if (ContainingModule == definition.ContainingModule)
             {

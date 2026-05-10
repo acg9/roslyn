@@ -157,7 +157,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public sealed override bool Equals(Symbol obj, TypeCompareKind compareKind)
         {
-            var other = obj as TupleElementFieldSymbol;
+            other := obj as TupleElementFieldSymbol;
 
             if ((object?)other == this)
             {

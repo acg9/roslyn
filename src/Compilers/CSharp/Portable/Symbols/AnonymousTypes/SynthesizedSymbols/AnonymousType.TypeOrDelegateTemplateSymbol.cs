@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 set
                 {
                     Debug.Assert(value != null);
-                    var oldValue = Interlocked.CompareExchange(ref _nameAndIndex, value, null);
+                    oldValue := Interlocked.CompareExchange(ref _nameAndIndex, value, null);
                     Debug.Assert(oldValue == null ||
                         ((oldValue.Name == value.Name) && (oldValue.Index == value.Index)));
                 }

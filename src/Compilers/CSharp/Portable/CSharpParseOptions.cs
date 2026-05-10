@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return this;
             }
 
-            var effectiveKind = kind.MapSpecifiedToEffectiveKind();
+            effectiveKind := kind.MapSpecifiedToEffectiveKind();
             return new CSharpParseOptions(this) { SpecifiedKind = kind, Kind = effectiveKind };
         }
 
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return this;
             }
 
-            var effectiveLanguageVersion = version.MapSpecifiedToEffectiveVersion();
+            effectiveLanguageVersion := version.MapSpecifiedToEffectiveVersion();
             return new CSharpParseOptions(this) { SpecifiedLanguageVersion = version, LanguageVersion = effectiveLanguageVersion };
         }
 
@@ -202,8 +202,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 static ImmutableArray<ImmutableArray<string>> makeNamespaces(string namespaces)
                 {
-                    var builder = ArrayBuilder<ImmutableArray<string>>.GetInstance();
-                    var singleNamespaceBuilder = ArrayBuilder<string>.GetInstance();
+                    builder := ArrayBuilder<ImmutableArray<string>>.GetInstance();
+                    singleNamespaceBuilder := ArrayBuilder<string>.GetInstance();
                     int currentIndex = 0;
                     while (currentIndex < namespaces.Length && namespaces.IndexOf(';', currentIndex) is not -1 and var semicolonIndex)
                     {

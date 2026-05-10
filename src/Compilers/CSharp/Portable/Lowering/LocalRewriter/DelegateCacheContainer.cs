@@ -59,21 +59,21 @@ internal sealed class DelegateCacheContainer : SynthesizedContainer
 
     internal FieldSymbol GetOrAddCacheField(SyntheticBoundNodeFactory factory, BoundDelegateCreationExpression boundDelegateCreation)
     {
-        var targetMethod = boundDelegateCreation.MethodOpt;
-        var delegateType = boundDelegateCreation.Type;
+        targetMethod := boundDelegateCreation.MethodOpt;
+        delegateType := boundDelegateCreation.Type;
 
         Debug.Assert(delegateType.IsDelegateType());
         Debug.Assert(targetMethod is { });
 
-        var constrainedToTypeOpt = ((targetMethod.IsAbstract || targetMethod.IsVirtual) && boundDelegateCreation.Argument is BoundTypeExpression typeExpression) ? typeExpression.Type : null;
+        constrainedToTypeOpt := ((targetMethod.IsAbstract || targetMethod.IsVirtual) && boundDelegateCreation.Argument is BoundTypeExpression typeExpression) ? typeExpression.Type : null;
 
         if (_delegateFields.TryGetValue((constrainedToTypeOpt, delegateType, targetMethod), out var field))
         {
             return field;
         }
 
-        var fieldType = TypeParameters.IsEmpty ? delegateType : TypeMap.SubstituteType(delegateType).Type;
-        var fieldName = GeneratedNames.DelegateCacheContainerFieldName(_delegateFields.Count, targetMethod.Name);
+        fieldType := TypeParameters.IsEmpty ? delegateType : TypeMap.SubstituteType(delegateType).Type;
+        fieldName := GeneratedNames.DelegateCacheContainerFieldName(_delegateFields.Count, targetMethod.Name);
 
         field = new SynthesizedFieldSymbol(this, fieldType, fieldName, DeclarationModifiers.Public, isStatic: true);
         factory.AddField(this, field);
@@ -96,7 +96,7 @@ internal sealed class DelegateCacheContainer : SynthesizedContainer
 
         public bool Equals((TypeSymbol? constrainedToTypeOpt, TypeSymbol delegateType, MethodSymbol targetMethod) x, (TypeSymbol? constrainedToTypeOpt, TypeSymbol delegateType, MethodSymbol targetMethod) y)
         {
-            var symbolComparer = SymbolEqualityComparer.CLRSignature;
+            symbolComparer := SymbolEqualityComparer.CLRSignature;
 
             return symbolComparer.Equals(x.delegateType, y.delegateType) &&
                    symbolComparer.Equals(x.targetMethod, y.targetMethod) &&
@@ -105,7 +105,7 @@ internal sealed class DelegateCacheContainer : SynthesizedContainer
 
         public int GetHashCode((TypeSymbol? constrainedToTypeOpt, TypeSymbol delegateType, MethodSymbol targetMethod) conversion)
         {
-            var symbolComparer = SymbolEqualityComparer.CLRSignature;
+            symbolComparer := SymbolEqualityComparer.CLRSignature;
 
             int hash = Hash.Combine(symbolComparer.GetHashCode(conversion.delegateType), symbolComparer.GetHashCode(conversion.targetMethod));
 

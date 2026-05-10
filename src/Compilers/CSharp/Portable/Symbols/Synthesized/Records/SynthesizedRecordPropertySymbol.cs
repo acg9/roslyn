@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             CSharpSyntaxNode syntax,
             BindingDiagnosticBag diagnostics)
         {
-            var usesInit = !isGet && ShouldUseInit(ContainingType);
+            usesInit := !isGet && ShouldUseInit(ContainingType);
             return SourcePropertyAccessorSymbol.CreateAccessorSymbol(
                 isGet,
                 usesInit,

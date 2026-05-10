@@ -25,9 +25,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case CompilationUnitSyntax compilationUnit:
                     if (!compilationUnit.Externs.Any() && !compilationUnit.Usings.Any())
                     {
-                        var result = GetGlobalUsingImports(basesBeingResolved);
+                        result := GetGlobalUsingImports(basesBeingResolved);
 #if DEBUG
-                        var calculated = GetAliasesAndUsingsForAsserts(declarationSyntax).GetImports(this, declarationSyntax, basesBeingResolved);
+                        calculated := GetAliasesAndUsingsForAsserts(declarationSyntax).GetImports(this, declarationSyntax, basesBeingResolved);
                         if (result == Imports.Empty || calculated == Imports.Empty)
                         {
                             Debug.Assert((object)result == calculated);
@@ -70,7 +70,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             foreach (var declaration in _mergedDeclaration.Declarations)
             {
-                var declarationSyntaxRef = declaration.SyntaxReference;
+                declarationSyntaxRef := declaration.SyntaxReference;
                 if (declarationSyntaxRef.SyntaxTree != declarationSyntax.SyntaxTree)
                 {
                     continue;
@@ -101,7 +101,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
         private AliasesAndUsings GetAliasesAndUsingsForAsserts(CSharpSyntaxNode declarationSyntax)
         {
-            var singleDeclaration = GetMatchingNamespaceDeclaration(declarationSyntax);
+            singleDeclaration := GetMatchingNamespaceDeclaration(declarationSyntax);
 
             return singleDeclaration.HasExternAliases || singleDeclaration.HasGlobalUsings || singleDeclaration.HasUsings
                 ? GetAliasesAndUsings(singleDeclaration)
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case CompilationUnitSyntax compilationUnit:
                     if (!compilationUnit.Usings.Any())
                     {
-                        var result = GetGlobalUsingAliasesMap(basesBeingResolved);
+                        result := GetGlobalUsingAliasesMap(basesBeingResolved);
 #if DEBUG
                         Debug.Assert(result.SetEquals(GetAliasesAndUsingsForAsserts(declarationSyntax).GetUsingAliasesMap(this, declarationSyntax, basesBeingResolved)));
 #endif
@@ -210,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case CompilationUnitSyntax compilationUnit:
                     if (!compilationUnit.Usings.Any())
                     {
-                        var result = GetGlobalUsingNamespacesOrTypes(basesBeingResolved);
+                        result := GetGlobalUsingNamespacesOrTypes(basesBeingResolved);
 #if DEBUG
                         Debug.Assert(result.SequenceEqual(GetAliasesAndUsingsForAsserts(declarationSyntax).GetUsingNamespacesOrTypes(this, declarationSyntax, basesBeingResolved)));
 #endif
@@ -261,9 +261,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     ImmutableDictionary<string, AliasAndUsingDirective>? mergedAliases = null;
-                    var mergedNamespacesOrTypes = ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance();
-                    var uniqueUsings = SpecializedSymbolCollections.GetPooledSymbolHashSetInstance<NamespaceOrTypeSymbol>();
-                    var diagnostics = DiagnosticBag.GetInstance();
+                    mergedNamespacesOrTypes := ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance();
+                    uniqueUsings := SpecializedSymbolCollections.GetPooledSymbolHashSetInstance<NamespaceOrTypeSymbol>();
+                    diagnostics := DiagnosticBag.GetInstance();
 
                     try
                     {
@@ -278,7 +278,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                             if (singleDeclaration.HasGlobalUsings)
                             {
-                                var aliases = GetAliasesAndUsings(singleDeclaration).GetGlobalUsingAliasesMap(this, singleDeclaration.SyntaxReference, basesBeingResolved);
+                                aliases := GetAliasesAndUsings(singleDeclaration).GetGlobalUsingAliasesMap(this, singleDeclaration.SyntaxReference, basesBeingResolved);
 
                                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -290,7 +290,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     }
                                     else
                                     {
-                                        var builder = mergedAliases.ToBuilder();
+                                        builder := mergedAliases.ToBuilder();
                                         bool added = false;
 
                                         foreach (var pair in aliases)
@@ -316,7 +316,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     }
                                 }
 
-                                var namespacesOrTypes = GetAliasesAndUsings(singleDeclaration).GetGlobalUsingNamespacesOrTypes(this, singleDeclaration.SyntaxReference, basesBeingResolved);
+                                namespacesOrTypes := GetAliasesAndUsings(singleDeclaration).GetGlobalUsingNamespacesOrTypes(this, singleDeclaration.SyntaxReference, basesBeingResolved);
 
                                 if (!namespacesOrTypes.IsEmpty)
                                 {
@@ -352,8 +352,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             {
                                 if (singleDeclaration.HasExternAliases)
                                 {
-                                    var externAliases = GetAliasesAndUsings(singleDeclaration).GetExternAliases(this, singleDeclaration.SyntaxReference);
-                                    var globalAliasesMap = ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
+                                    externAliases := GetAliasesAndUsings(singleDeclaration).GetExternAliases(this, singleDeclaration.SyntaxReference);
+                                    globalAliasesMap := ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
 
                                     if (singleDeclaration.HasGlobalUsings)
                                     {
@@ -442,8 +442,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     if (!externAliasDirectives.Any())
                     {
 #if DEBUG
-                        var diagnostics = DiagnosticBag.GetInstance();
-                        var result = buildExternAliases(externAliasDirectives, declaringSymbol, diagnostics);
+                        diagnostics := DiagnosticBag.GetInstance();
+                        result := buildExternAliases(externAliasDirectives, declaringSymbol, diagnostics);
                         Debug.Assert(result.IsEmpty);
                         Debug.Assert(diagnostics.IsEmptyWithoutResolution);
                         diagnostics.Free();
@@ -452,7 +452,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
                     else
                     {
-                        var diagnostics = DiagnosticBag.GetInstance();
+                        diagnostics := DiagnosticBag.GetInstance();
                         Interlocked.CompareExchange(
                             ref _lazyExternAliases,
                             new ExternAliasesAndDiagnostics() { ExternAliases = buildExternAliases(externAliasDirectives, declaringSymbol, diagnostics), Diagnostics = diagnostics.ToReadOnlyAndFree() },
@@ -469,7 +469,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     CSharpCompilation compilation = declaringSymbol.DeclaringCompilation;
 
-                    var builder = ArrayBuilder<AliasAndExternAliasDirective>.GetInstance();
+                    builder := ArrayBuilder<AliasAndExternAliasDirective>.GetInstance();
 
                     foreach (ExternAliasDirectiveSyntax aliasSyntax in syntaxList)
                     {
@@ -576,7 +576,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         if (applyIsGlobalFilter != false)
                         {
 #if DEBUG
-                            var calculated = buildUsings(usingDirectives, declaringSymbol, declarationSyntax, applyIsGlobalFilter, basesBeingResolved);
+                            calculated := buildUsings(usingDirectives, declaringSymbol, declarationSyntax, applyIsGlobalFilter, basesBeingResolved);
                             Debug.Assert(calculated.UsingAliases.IsEmpty);
                             Debug.Assert(calculated.UsingAliasesMap?.IsEmpty ?? true);
                             Debug.Assert(calculated.UsingNamespacesOrTypes.IsEmpty);
@@ -594,7 +594,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 Diagnostics = null
                             };
 #if DEBUG
-                            var calculated = buildUsings(usingDirectives, declaringSymbol, declarationSyntax, applyIsGlobalFilter, basesBeingResolved);
+                            calculated := buildUsings(usingDirectives, declaringSymbol, declarationSyntax, applyIsGlobalFilter, basesBeingResolved);
                             Debug.Assert(calculated.UsingAliases.SequenceEqual(result.UsingAliases));
                             Debug.Assert((calculated.UsingAliasesMap ?? ImmutableDictionary<string, AliasAndUsingDirective>.Empty).SetEquals(result.UsingAliasesMap ?? ImmutableDictionary<string, AliasAndUsingDirective>.Empty));
                             Debug.Assert(calculated.UsingNamespacesOrTypes.SequenceEqual(result.UsingNamespacesOrTypes));
@@ -620,10 +620,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ConsList<TypeSymbol>? basesBeingResolved)
                 {
                     // define all of the extern aliases first. They may be used by the target of a using
-                    var externAliases = GetExternAliases(declaringSymbol, declarationSyntax);
-                    var globalUsingAliasesMap = ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
-                    var globalUsingNamespacesOrTypes = ImmutableArray<NamespaceOrTypeAndUsingDirective>.Empty;
-                    var globalUsingAliases = ImmutableArray<AliasAndUsingDirective>.Empty;
+                    externAliases := GetExternAliases(declaringSymbol, declarationSyntax);
+                    globalUsingAliasesMap := ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
+                    globalUsingNamespacesOrTypes := ImmutableArray<NamespaceOrTypeAndUsingDirective>.Empty;
+                    globalUsingAliases := ImmutableArray<AliasAndUsingDirective>.Empty;
 
                     if (applyIsGlobalFilter == false)
                     {
@@ -633,9 +633,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         globalUsingAliases = GetGlobalUsingAliases(declaringSymbol, declarationSyntax, basesBeingResolved);
                     }
 
-                    var diagnostics = new DiagnosticBag();
+                    diagnostics := new DiagnosticBag();
 
-                    var compilation = declaringSymbol.DeclaringCompilation;
+                    compilation := declaringSymbol.DeclaringCompilation;
 
                     ArrayBuilder<NamespaceOrTypeAndUsingDirective>? usings = null;
                     ImmutableDictionary<string, AliasAndUsingDirective>.Builder? usingAliasesMap = null;
@@ -705,7 +705,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                             // construct the alias sym with the binder for which we are building imports. That
                             // way the alias target can make use of extern alias definitions.
-                            var aliasAndDirective = new AliasAndUsingDirective(new AliasSymbolFromSyntax(declaringSymbol, usingDirective), usingDirective);
+                            aliasAndDirective := new AliasAndUsingDirective(new AliasSymbolFromSyntax(declaringSymbol, usingDirective), usingDirective);
 
                             if (usingAliases is null)
                             {
@@ -736,7 +736,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             bool needsUnsafeBinder = false;
                             if (usingDirective.UnsafeKeyword != default)
                             {
-                                var unsafeKeywordLocation = usingDirective.UnsafeKeyword.GetLocation();
+                                unsafeKeywordLocation := usingDirective.UnsafeKeyword.GetLocation();
                                 if (usingDirective.StaticKeyword == default)
                                 {
                                     diagnostics.Add(ErrorCode.ERR_BadUnsafeInUsingDirective, unsafeKeywordLocation);
@@ -759,7 +759,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                     needsUnsafeBinder = true;
                             }
 
-                            var directiveDiagnostics = BindingDiagnosticBag.GetInstance();
+                            directiveDiagnostics := BindingDiagnosticBag.GetInstance();
                             Debug.Assert(directiveDiagnostics.DiagnosticBag is object);
                             Debug.Assert(directiveDiagnostics.DependenciesBag is object);
 
@@ -776,7 +776,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 declarationBinder = declarationBinderSafe;
                             }
 
-                            var imported = declarationBinder.BindNamespaceOrTypeSymbol(usingDirective.NamespaceOrType, directiveDiagnostics, basesBeingResolved).NamespaceOrTypeSymbol;
+                            imported := declarationBinder.BindNamespaceOrTypeSymbol(usingDirective.NamespaceOrType, directiveDiagnostics, basesBeingResolved).NamespaceOrTypeSymbol;
                             bool addDirectiveDiagnostics = true;
 
                             if (imported.Kind == SymbolKind.Namespace)
@@ -807,7 +807,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 }
                                 else
                                 {
-                                    var importedType = (NamedTypeSymbol)imported;
+                                    importedType := (NamedTypeSymbol)imported;
                                     if (usingDirective.GlobalKeyword != default(SyntaxToken) && importedType.HasFileLocalTypes())
                                     {
                                         diagnostics.Add(ErrorCode.ERR_GlobalUsingStaticFileType, usingDirective.NamespaceOrType.Location, imported);
@@ -925,7 +925,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal void Complete(SourceNamespaceSymbol declaringSymbol, SyntaxReference declarationSyntax, CancellationToken cancellationToken)
             {
-                var externAliasesAndDiagnostics = _lazyExternAliases ?? GetExternAliasesAndDiagnostics(declaringSymbol, (CSharpSyntaxNode)declarationSyntax.GetSyntax(cancellationToken));
+                externAliasesAndDiagnostics := _lazyExternAliases ?? GetExternAliasesAndDiagnostics(declaringSymbol, (CSharpSyntaxNode)declarationSyntax.GetSyntax(cancellationToken));
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var globalUsingsAndDiagnostics = _lazyGlobalUsings ??
@@ -934,13 +934,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                      UsingsAndDiagnostics.Empty);
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var usingsAndDiagnostics = _lazyUsings ?? GetUsingsAndDiagnostics(declaringSymbol, (CSharpSyntaxNode)declarationSyntax.GetSyntax(cancellationToken), basesBeingResolved: null);
+                usingsAndDiagnostics := _lazyUsings ?? GetUsingsAndDiagnostics(declaringSymbol, (CSharpSyntaxNode)declarationSyntax.GetSyntax(cancellationToken), basesBeingResolved: null);
                 cancellationToken.ThrowIfCancellationRequested();
 
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var incompletePart = _state.NextIncompletePart;
+                    incompletePart := _state.NextIncompletePart;
                     switch (incompletePart)
                     {
                         case CompletionPart.StartValidatingImports:
@@ -975,11 +975,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             private static void Validate(SourceNamespaceSymbol declaringSymbol, SyntaxReference declarationSyntax, ExternAliasesAndDiagnostics externAliasesAndDiagnostics, UsingsAndDiagnostics usingsAndDiagnostics, DiagnosticBag? globalUsingDiagnostics)
             {
-                var compilation = declaringSymbol.DeclaringCompilation;
+                compilation := declaringSymbol.DeclaringCompilation;
                 DiagnosticBag semanticDiagnostics = compilation.DeclarationDiagnostics;
 
                 // Check constraints within named aliases.
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                diagnostics := BindingDiagnosticBag.GetInstance();
                 Debug.Assert(diagnostics.DiagnosticBag is object);
                 Debug.Assert(diagnostics.DependenciesBag is object);
 
@@ -1017,8 +1017,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     }
                 }
 
-                var corLibrary = compilation.SourceAssembly.CorLibrary;
-                var conversions = corLibrary.TypeConversions;
+                corLibrary := compilation.SourceAssembly.CorLibrary;
+                conversions := corLibrary.TypeConversions;
                 foreach (var @using in usingsAndDiagnostics.UsingNamespacesOrTypes)
                 {
                     if (@using.UsingDirectiveReference!.SyntaxTree != declarationSyntax.SyntaxTree)
@@ -1037,8 +1037,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     UsingDirectiveSyntax usingDirective = @using.UsingDirective!;
                     if (target.IsType)
                     {
-                        var typeSymbol = (TypeSymbol)target;
-                        var location = usingDirective.NamespaceOrType.Location;
+                        typeSymbol := (TypeSymbol)target;
+                        location := usingDirective.NamespaceOrType.Location;
                         typeSymbol.CheckAllConstraints(compilation, conversions, location, diagnostics);
 
                         if (usingDirective.UnsafeKeyword == default)
@@ -1059,7 +1059,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         continue;
                     }
 
-                    var target = (NamespaceSymbol)alias.Alias.GetAliasTarget(null);
+                    target := (NamespaceSymbol)alias.Alias.GetAliasTarget(null);
                     Debug.Assert(target.IsGlobalNamespace);
 
                     if (alias.Alias is AliasSymbolFromSyntax aliasFromSyntax)
@@ -1177,7 +1177,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var incompletePart = _state.NextIncompletePart;
+                    incompletePart := _state.NextIncompletePart;
                     switch (incompletePart)
                     {
                         case CompletionPart.StartValidatingImports:
@@ -1186,7 +1186,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 {
                                     if (!Diagnostics.IsDefaultOrEmpty)
                                     {
-                                        var compilation = declaringSymbol.DeclaringCompilation;
+                                        compilation := declaringSymbol.DeclaringCompilation;
                                         DiagnosticBag semanticDiagnostics = compilation.DeclarationDiagnostics;
                                         semanticDiagnostics.AddRange(Diagnostics);
                                     }

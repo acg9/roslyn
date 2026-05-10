@@ -55,11 +55,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static void GrowPool(int count)
         {
-            var initialPool = s_parameterPool;
+            initialPool := s_parameterPool;
             while (count > initialPool.Length)
             {
-                var newPoolSize = ((count + 0x0F) & ~0xF); // grow in increments of 16
-                var newPool = new TypeParameterSymbol[newPoolSize];
+                newPoolSize := ((count + 0x0F) & ~0xF); // grow in increments of 16
+                newPool := new TypeParameterSymbol[newPoolSize];
 
                 Array.Copy(initialPool, newPool, initialPool.Length);
 
@@ -106,7 +106,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 GrowPool(count);
             }
 
-            var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            builder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
 
             for (int i = 0; i < count; i++)
             {

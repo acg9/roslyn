@@ -20,9 +20,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             // just a fact, not a requirement (VisitExpression would have rewritten otherwise)
             Debug.Assert(node.ConstantValueOpt == null);
 
-            var rewrittenCondition = VisitExpression(node.Condition);
-            var rewrittenConsequence = VisitExpression(node.Consequence);
-            var rewrittenAlternative = VisitExpression(node.Alternative);
+            rewrittenCondition := VisitExpression(node.Condition);
+            rewrittenConsequence := VisitExpression(node.Consequence);
+            rewrittenAlternative := VisitExpression(node.Alternative);
 
             if (rewrittenCondition.ConstantValueOpt == null)
             {

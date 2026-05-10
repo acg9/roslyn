@@ -75,12 +75,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             ImmutableArray<Symbol> calculateMembers()
             {
-                var memberTypes = GetMemberTypesPrivate();
+                memberTypes := GetMemberTypesPrivate();
 
                 if (lazyNamespaces.Count == 0)
                     return StaticCast<Symbol>.From(memberTypes);
 
-                var builder = ArrayBuilder<Symbol>.GetInstance(memberTypes.Length + lazyNamespaces.Count);
+                builder := ArrayBuilder<Symbol>.GetInstance(memberTypes.Length + lazyNamespaces.Count);
 
                 builder.AddRange(memberTypes);
                 foreach (var pair in lazyNamespaces)
@@ -98,7 +98,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             if (_lazyFlattenedTypes.IsDefault)
             {
                 Debug.Assert(lazyTypes != null);
-                var flattened = lazyTypes.Flatten();
+                flattened := lazyTypes.Flatten();
                 ImmutableInterlocked.InterlockedExchange(ref _lazyFlattenedTypes, flattened);
             }
 
@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             int length = this.Name.Length;
 
-            var parent = ContainingNamespace;
+            parent := ContainingNamespace;
             while (parent?.IsGlobalNamespace == false)
             {
                 // add name of the parent + "."
@@ -259,11 +259,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (this.lazyNamespaces == null)
             {
-                var namespaces = new Dictionary<ReadOnlyMemory<char>, PENestedNamespaceSymbol>(ReadOnlyMemoryOfCharComparer.Instance);
+                namespaces := new Dictionary<ReadOnlyMemory<char>, PENestedNamespaceSymbol>(ReadOnlyMemoryOfCharComparer.Instance);
 
                 foreach (var child in childNamespaces)
                 {
-                    var c = new PENestedNamespaceSymbol(child.Key, this, child.Value);
+                    c := new PENestedNamespaceSymbol(child.Key, this, child.Value);
                     namespaces.Add(c.Name.AsMemory(), c);
                 }
 
@@ -279,10 +279,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (this.lazyTypes == null)
             {
-                var moduleSymbol = ContainingPEModule;
+                moduleSymbol := ContainingPEModule;
 
-                var children = ArrayBuilder<PENamedTypeSymbol>.GetInstance();
-                var skipCheckForPiaType = !moduleSymbol.Module.ContainsNoPiaLocalTypes();
+                children := ArrayBuilder<PENamedTypeSymbol>.GetInstance();
+                skipCheckForPiaType := !moduleSymbol.Module.ContainsNoPiaLocalTypes();
                 Dictionary<string, TypeDefinitionHandle>? noPiaLocalTypes = null;
 
                 foreach (var g in typeGroups)
@@ -312,7 +312,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     }
                 }
 
-                var typesDict = children.ToDictionary(c => c.Name.AsMemory(), ReadOnlyMemoryOfCharComparer.Instance);
+                typesDict := children.ToDictionary(c => c.Name.AsMemory(), ReadOnlyMemoryOfCharComparer.Instance);
                 children.Free();
 
                 if (noPiaLocalTypes != null)
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     Interlocked.CompareExchange(ref _lazyNoPiaLocalTypes, noPiaLocalTypes, null);
                 }
 
-                var original = Interlocked.CompareExchange(ref this.lazyTypes, typesDict, null);
+                original := Interlocked.CompareExchange(ref this.lazyTypes, typesDict, null);
 
                 // Build cache of TypeDef Tokens
                 // Potentially this can be done in the background.
@@ -340,7 +340,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             // Note, VB should use FullName.
             if (_lazyNoPiaLocalTypes != null && _lazyNoPiaLocalTypes.TryGetValue(emittedTypeName.TypeName, out typeDef))
             {
-                var result = (NamedTypeSymbol)new MetadataDecoder(ContainingPEModule).GetTypeOfToken(typeDef, out bool isNoPiaLocalType);
+                result := (NamedTypeSymbol)new MetadataDecoder(ContainingPEModule).GetTypeOfToken(typeDef, out bool isNoPiaLocalType);
                 Debug.Assert(isNoPiaLocalType);
                 Debug.Assert(result is not null);
                 return result;

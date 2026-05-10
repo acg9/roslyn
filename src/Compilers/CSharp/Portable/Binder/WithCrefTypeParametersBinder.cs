@@ -43,7 +43,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private MultiDictionary<string, TypeParameterSymbol> CreateTypeParameterMap()
         {
-            var map = new MultiDictionary<string, TypeParameterSymbol>();
+            map := new MultiDictionary<string, TypeParameterSymbol>();
 
             switch (_crefSyntax.Kind())
             {

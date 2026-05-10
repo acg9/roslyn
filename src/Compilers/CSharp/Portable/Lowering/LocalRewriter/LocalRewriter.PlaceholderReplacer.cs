@@ -20,14 +20,14 @@ internal sealed partial class LocalRewriter
 
         public static BoundExpression Replace(Dictionary<BoundEarlyValuePlaceholderBase, BoundExpression> placeholders, BoundExpression expr)
         {
-            var result = new PlaceholderReplacer(placeholders).Visit(expr);
+            result := new PlaceholderReplacer(placeholders).Visit(expr);
             Debug.Assert(result is not null);
             return (BoundExpression)result;
         }
 
         private BoundNode ReplacePlaceholder(BoundEarlyValuePlaceholderBase placeholder)
         {
-            var value = _placeholders[placeholder];
+            value := _placeholders[placeholder];
             Debug.Assert(value is not null);
             return value;
         }

@@ -29,10 +29,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundAwaitExpression BindAwait(BoundExpression expression, SyntaxNode node, BindingDiagnosticBag diagnostics)
         {
             bool hasErrors = false;
-            var placeholder = new BoundAwaitableValuePlaceholder(expression.Syntax, expression.Type);
+            placeholder := new BoundAwaitableValuePlaceholder(expression.Syntax, expression.Type);
 
             ReportBadAwaitDiagnostics(node, diagnostics, ref hasErrors);
-            var info = BindAwaitInfo(placeholder, node, diagnostics, ref hasErrors, expressionOpt: expression);
+            info := BindAwaitInfo(placeholder, node, diagnostics, ref hasErrors, expressionOpt: expression);
 
             // Spec 7.7.7.2:
             // The expression await t is classified the same way as the expression (t).GetAwaiter().GetResult(). Thus,
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var type = expression.Type;
+            type := expression.Type;
             if (type is null ||
                 type.IsDynamic() ||
                 type.IsVoidType())
@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var call = (BoundCall)expression;
+            call := (BoundCall)expression;
             Debug.Assert(!call.IsErroneousNode);
 
             // First check if the target method is async.
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Finally, if we're in an async method, and the expression could be awaited, report that it is instead discarded.
-            var containingMethod = this.ContainingMemberOrLambda as MethodSymbol;
+            containingMethod := this.ContainingMemberOrLambda as MethodSymbol;
             if (containingMethod is null
                 || !(containingMethod.IsAsync || containingMethod is SynthesizedSimpleProgramEntryPointSymbol))
             {
@@ -121,7 +121,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Could we bind await on this expression (ignoring whether we are in async context)?
-            var syntax = expression.Syntax;
+            syntax := expression.Syntax;
             if (ReportBadAwaitContext(syntax, BindingDiagnosticBag.Discarded))
             {
                 return false;
@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private bool ReportBadAwaitWithoutAsync(SyntaxNodeOrToken nodeOrToken, BindingDiagnosticBag diagnostics)
         {
             DiagnosticInfo? info = null;
-            var containingMemberOrLambda = this.ContainingMemberOrLambda;
+            containingMemberOrLambda := this.ContainingMemberOrLambda;
             if (containingMemberOrLambda is object)
             {
                 switch (containingMemberOrLambda.Kind)
@@ -171,7 +171,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                         break;
                     case SymbolKind.Method:
-                        var method = (MethodSymbol)containingMemberOrLambda;
+                        method := (MethodSymbol)containingMemberOrLambda;
                         if (method.IsAsync)
                         {
                             return false;
@@ -300,7 +300,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return true;
             }
 
-            var isRuntimeAsyncEnabled = Compilation.IsRuntimeAsyncEnabledIn(this.ContainingMemberOrLambda);
+            isRuntimeAsyncEnabled := Compilation.IsRuntimeAsyncEnabledIn(this.ContainingMemberOrLambda);
 
             // When RuntimeAsync is enabled, we first check for whether there is an AsyncHelpers.Await method that can handle the expression.
 
@@ -347,13 +347,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 }
 
-                var asyncHelpersType = GetSpecialType(InternalSpecialType.System_Runtime_CompilerServices_AsyncHelpers, diagnostics, expression.Syntax);
+                asyncHelpersType := GetSpecialType(InternalSpecialType.System_Runtime_CompilerServices_AsyncHelpers, diagnostics, expression.Syntax);
                 if (asyncHelpersType.IsErrorType())
                 {
                     return false;
                 }
 
-                var awaitMembers = asyncHelpersType.GetMembers("Await");
+                awaitMembers := asyncHelpersType.GetMembers("Await");
 
                 foreach (var member in awaitMembers)
                 {
@@ -438,14 +438,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var unsubstitutedReturnType = method.ReturnType;
+                        unsubstitutedReturnType := method.ReturnType;
                         if ((object)unsubstitutedReturnType != method.TypeArgumentsWithAnnotations[0].Type)
                         {
                             return false;
                         }
 
-                        var substitutedMethod = method.Construct(exprType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics);
-                        var tempDiagnostics = BindingDiagnosticBag.GetInstance(diagnostics);
+                        substitutedMethod := method.Construct(exprType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics);
+                        tempDiagnostics := BindingDiagnosticBag.GetInstance(diagnostics);
                         if (!ConstraintsHelper.CheckConstraints(
                             substitutedMethod,
                             new ConstraintsHelper.CheckConstraintsArgs(@this.Compilation, @this.Conversions, includeNullability: false, node.Location, tempDiagnostics)))
@@ -474,7 +474,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         method.Parameters[0].Type,
                         ref useSiteInfo);
 
-                    var result = conversion is { IsImplicit: true, Kind: ConversionKind.Identity or ConversionKind.ImplicitReference };
+                    result := conversion is { IsImplicit: true, Kind: ConversionKind.Identity or ConversionKind.ImplicitReference };
                     if (result)
                     {
                         diagnostics.Add(node, useSiteInfo);
@@ -488,7 +488,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // Use site info is discarded because we don't actually do this conversion, we just need to know which generic
                 // method to call. The helpers are generic, so the final call will actually just be an identity conversion.
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 var useUnsafeAwait = Compilation.Conversions.ClassifyImplicitConversionFromType(
                     awaiterType,
                     Compilation.GetSpecialType(InternalSpecialType.System_Runtime_CompilerServices_ICriticalNotifyCompletion),
@@ -510,7 +510,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 Debug.Assert(awaitMethod is { Arity: 1 });
 
-                var runtimeAwaitAwaiterMethod = awaitMethod.Construct(awaiterType);
+                runtimeAwaitAwaiterMethod := awaitMethod.Construct(awaiterType);
                 ConstraintsHelper.CheckConstraints(
                     runtimeAwaitAwaiterMethod,
                     new ConstraintsHelper.CheckConstraintsArgs(this.Compilation, this.Conversions, includeNullability: false, syntax.Location, diagnostics));
@@ -604,10 +604,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var call = (BoundCall)getAwaiterCall;
+            call := (BoundCall)getAwaiterCall;
             Debug.Assert(!call.IsErroneousNode);
 
-            var getAwaiterMethod = call.Method;
+            getAwaiterMethod := call.Method;
             if (getAwaiterMethod is ErrorMethodSymbol ||
                 call.Expanded || HasOptionalParameters(getAwaiterMethod) || // We might have been able to resolve a GetAwaiter overload with optional parameters, so check for that here
                 getAwaiterMethod.ReturnsVoid) // If GetAwaiter returns void, don't bother checking that it returns an Awaiter.
@@ -629,9 +629,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private bool GetIsCompletedProperty(TypeSymbol awaiterType, SyntaxNode node, TypeSymbol awaitedExpressionType, BindingDiagnosticBag diagnostics, [NotNullWhen(true)] out PropertySymbol? isCompletedProperty)
         {
-            var receiver = new BoundLiteral(node, ConstantValue.Null, awaiterType);
-            var name = WellKnownMemberNames.IsCompleted;
-            var qualified = BindInstanceMemberAccess(node, node, receiver, name, 0, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), invoked: false, indexed: false, diagnostics);
+            receiver := new BoundLiteral(node, ConstantValue.Null, awaiterType);
+            name := WellKnownMemberNames.IsCompleted;
+            qualified := BindInstanceMemberAccess(node, node, receiver, name, 0, default(SeparatedSyntaxList<TypeSyntax>), default(ImmutableArray<TypeWithAnnotations>), invoked: false, indexed: false, diagnostics);
             if (qualified.HasAnyErrors)
             {
                 isCompletedProperty = null;
@@ -679,10 +679,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private bool AwaiterImplementsINotifyCompletion(TypeSymbol awaiterType, SyntaxNode node, BindingDiagnosticBag diagnostics)
         {
-            var INotifyCompletion = GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_INotifyCompletion, diagnostics, node);
+            INotifyCompletion := GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_INotifyCompletion, diagnostics, node);
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
 
-            var conversion = this.Conversions.ClassifyImplicitConversionFromType(awaiterType, INotifyCompletion, ref useSiteInfo);
+            conversion := this.Conversions.ClassifyImplicitConversionFromType(awaiterType, INotifyCompletion, ref useSiteInfo);
             if (!conversion.IsImplicit)
             {
                 diagnostics.Add(node, useSiteInfo);
@@ -703,7 +703,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         private bool GetGetResultMethod(BoundExpression awaiterExpression, SyntaxNode node, TypeSymbol awaitedExpressionType, BindingDiagnosticBag diagnostics, out MethodSymbol? getResultMethod, [NotNullWhen(true)] out BoundExpression? getAwaiterGetResultCall)
         {
-            var awaiterType = awaiterExpression.Type;
+            awaiterType := awaiterExpression.Type;
             getAwaiterGetResultCall = MakeInvocationExpression(node, awaiterExpression, WellKnownMemberNames.GetResult, ImmutableArray<BoundExpression>.Empty, diagnostics);
             if (getAwaiterGetResultCall.HasAnyErrors)
             {
@@ -721,7 +721,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var call = (BoundCall)getAwaiterGetResultCall;
+            call := (BoundCall)getAwaiterGetResultCall;
             Debug.Assert(!call.IsErroneousNode);
 
             getResultMethod = call.Method;
@@ -751,7 +751,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (method.ParameterCount != 0)
             {
-                var parameter = method.Parameters[method.ParameterCount - 1];
+                parameter := method.Parameters[method.ParameterCount - 1];
                 return parameter.IsOptional;
             }
 

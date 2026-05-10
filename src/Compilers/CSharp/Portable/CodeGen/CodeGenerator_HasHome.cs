@@ -65,7 +65,7 @@ internal partial class CodeGenerator
                 return true;
 
             case BoundKind.ThisReference:
-                var type = expression.Type;
+                type := expression.Type;
                 if (type.IsReferenceType)
                 {
                     Debug.Assert(IsAnyReadOnly(addressKind), "`this` is readonly in classes");
@@ -90,18 +90,18 @@ internal partial class CodeGenerator
             case BoundKind.Local:
                 // locals have home unless they are byval stack locals or ref-readonly
                 // locals in a mutating call
-                var local = ((BoundLocal)expression).LocalSymbol;
+                local := ((BoundLocal)expression).LocalSymbol;
                 return !((CodeGenerator.IsStackLocal(local, stackLocalsOpt) && local.RefKind == RefKind.None) ||
                     (!IsAnyReadOnly(addressKind) && local.RefKind == RefKind.RefReadOnly));
 
             case BoundKind.Call:
-                var methodRefKind = ((BoundCall)expression).Method.RefKind;
+                methodRefKind := ((BoundCall)expression).Method.RefKind;
                 return methodRefKind == RefKind.Ref ||
                        (IsAnyReadOnly(addressKind) && methodRefKind == RefKind.RefReadOnly);
 
             case BoundKind.Dup:
                 //NB: Dup represents locals that do not need IL slot
-                var dupRefKind = ((BoundDup)expression).RefKind;
+                dupRefKind := ((BoundDup)expression).RefKind;
                 return dupRefKind == RefKind.Ref ||
                     (IsAnyReadOnly(addressKind) && dupRefKind == RefKind.RefReadOnly);
 
@@ -112,12 +112,12 @@ internal partial class CodeGenerator
                 return HasHome(((BoundSequence)expression).Value, addressKind, containingSymbol, peVerifyCompatEnabled, stackLocalsOpt);
 
             case BoundKind.AssignmentOperator:
-                var assignment = (BoundAssignmentOperator)expression;
+                assignment := (BoundAssignmentOperator)expression;
                 if (!assignment.IsRef)
                 {
                     return false;
                 }
-                var lhsRefKind = assignment.Left.GetRefKind();
+                lhsRefKind := assignment.Left.GetRefKind();
                 return lhsRefKind == RefKind.Ref ||
                     (IsAnyReadOnly(addressKind) && lhsRefKind is RefKind.RefReadOnly or RefKind.RefReadOnlyParameter);
 
@@ -142,7 +142,7 @@ internal partial class CodeGenerator
                 return true;
 
             case BoundKind.ConditionalOperator:
-                var conditional = (BoundConditionalOperator)expression;
+                conditional := (BoundConditionalOperator)expression;
 
                 // only ref conditional may be referenced as a variable
                 if (!conditional.IsRef)
@@ -225,7 +225,7 @@ internal partial class CodeGenerator
             {
                 Debug.Assert(!IsAnyReadOnly(addressKind));
 
-                var receiver = fieldAccess.ReceiverOpt;
+                receiver := fieldAccess.ReceiverOpt;
                 if (receiver?.Type.IsValueType == true)
                 {
                     // Check receiver:

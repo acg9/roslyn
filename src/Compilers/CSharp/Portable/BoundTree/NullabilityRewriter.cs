@@ -29,17 +29,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitIfStatement(BoundIfStatement node)
         {
-            var stack = ArrayBuilder<(BoundIfStatement, BoundExpression, BoundStatement)>.GetInstance();
+            stack := ArrayBuilder<(BoundIfStatement, BoundExpression, BoundStatement)>.GetInstance();
 
             BoundStatement? rewrittenAlternative;
             while (true)
             {
-                var rewrittenCondition = (BoundExpression)Visit(node.Condition);
-                var rewrittenConsequence = (BoundStatement)Visit(node.Consequence);
+                rewrittenCondition := (BoundExpression)Visit(node.Condition);
+                rewrittenConsequence := (BoundStatement)Visit(node.Consequence);
                 Debug.Assert(rewrittenConsequence is { });
                 stack.Push((node, rewrittenCondition, rewrittenConsequence));
 
-                var alternative = node.AlternativeOpt;
+                alternative := node.AlternativeOpt;
                 if (alternative is null)
                 {
                     rewrittenAlternative = null;
@@ -74,7 +74,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             // Use an explicit stack to avoid blowing the managed stack when visiting deeply-recursive
             // binary nodes
-            var stack = ArrayBuilder<BoundBinaryOperatorBase>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryOperatorBase>.GetInstance();
             BoundBinaryOperatorBase? currentBinary = binaryOperator;
 
             do
@@ -85,15 +85,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             while (currentBinary is not null);
 
             Debug.Assert(stack.Count > 0);
-            var leftChild = (BoundExpression)Visit(stack.Peek().Left);
+            leftChild := (BoundExpression)Visit(stack.Peek().Left);
 
             do
             {
                 currentBinary = stack.Pop();
 
                 bool foundInfo = _updatedNullabilities.TryGetValue(currentBinary, out (NullabilityInfo Info, TypeSymbol? Type) infoAndType);
-                var right = (BoundExpression)Visit(currentBinary.Right);
-                var type = foundInfo ? infoAndType.Type : currentBinary.Type;
+                right := (BoundExpression)Visit(currentBinary.Right);
+                type := foundInfo ? infoAndType.Type : currentBinary.Type;
 
                 currentBinary = currentBinary switch
                 {
@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             // Use an explicit stack to avoid blowing the managed stack when visiting deeply-recursive
             // binary nodes
-            var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
             BoundBinaryPattern? currentBinary = node;
 
             do
@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             while (currentBinary is not null);
 
             Debug.Assert(stack.Count > 0);
-            var leftChild = (BoundPattern)Visit(stack.Peek().Left);
+            leftChild := (BoundPattern)Visit(stack.Peek().Left);
 
             do
             {
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 TypeSymbol inputType = GetUpdatedSymbol(currentBinary, currentBinary.InputType);
                 TypeSymbol narrowedType = GetUpdatedSymbol(currentBinary, currentBinary.NarrowedType);
 
-                var right = (BoundPattern)Visit(currentBinary.Right);
+                right := (BoundPattern)Visit(currentBinary.Right);
 
                 currentBinary = currentBinary.Update(currentBinary.Disjunction, leftChild, right, inputType, narrowedType);
 
@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression? finalConversion = node.FinalConversion;
             BoundCompoundAssignmentOperator updatedNode;
 
-            var op = node.Operator;
+            op := node.Operator;
 
             if (op.Method is not null)
             {
@@ -230,7 +230,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Symbol remapLambda(BoundLambda boundLambda, LambdaSymbol lambda)
             {
-                var updatedDelegateType = _snapshotManager?.GetUpdatedDelegateTypeForLambda(lambda);
+                updatedDelegateType := _snapshotManager?.GetUpdatedDelegateTypeForLambda(lambda);
 
                 if (!_remappedSymbols.TryGetValue(lambda.ContainingSymbol, out Symbol? updatedContaining) && updatedDelegateType is null)
                 {
@@ -267,7 +267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return updatedLocal;
                 }
 
-                var updatedType = _snapshotManager?.GetUpdatedTypeForLocalSymbol(local);
+                updatedType := _snapshotManager?.GetUpdatedTypeForLocalSymbol(local);
 
                 if (!_remappedSymbols.TryGetValue(local.ContainingSymbol, out Symbol? updatedContaining) && !updatedType.HasValue)
                 {
@@ -309,7 +309,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return symbols;
             }
 
-            var builder = ArrayBuilder<T>.GetInstance(symbols.Length);
+            builder := ArrayBuilder<T>.GetInstance(symbols.Length);
             bool foundUpdate = false;
             foreach (var originalSymbol in symbols)
             {

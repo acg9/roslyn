@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // Don't return until we've seen all of the requested CompletionParts. This ensures all
             // diagnostics have been reported (not necessarily on this thread).
-            var spinWait = new SpinWait();
+            spinWait := new SpinWait();
             while (!HasComplete(part))
             {
                 cancellationToken.ThrowIfCancellationRequested();

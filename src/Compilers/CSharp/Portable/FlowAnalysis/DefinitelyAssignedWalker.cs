@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static (HashSet<Symbol> entry, HashSet<Symbol> exit) Analyze(
             CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion)
         {
-            var walker = new DefinitelyAssignedWalker(compilation, member, node, firstInRegion, lastInRegion);
+            walker := new DefinitelyAssignedWalker(compilation, member, node, firstInRegion, lastInRegion);
             try
             {
                 bool badRegion = false;

@@ -28,9 +28,9 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 ? ((PointerTypeSymbol)type).PointedAtTypeWithAnnotations
                 : ((NamedTypeSymbol)type).TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[0]).Type;
 
-            var initExprs = inits.Initializers;
+            initExprs := inits.Initializers;
 
-            var initializationStyle = ShouldEmitBlockInitializerForStackAlloc(elementType, initExprs);
+            initializationStyle := ShouldEmitBlockInitializerForStackAlloc(elementType, initExprs);
             if (initializationStyle == ArrayInitializerStyle.Element)
             {
                 emitLocalloc();
@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
 
                 emitLocalloc();
 
-                var sizeInBytes = elementType.EnumUnderlyingTypeOrSelf().SpecialType.SizeInBytes();
+                sizeInBytes := elementType.EnumUnderlyingTypeOrSelf().SpecialType.SizeInBytes();
 
                 ImmutableArray<byte> data = GetRawData(initExprs);
                 if (data.All(static (d, first) => d == first, data[0]))
@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 else if (sizeInBytes == 1)
                 {
                     // Initialize the stackalloc by copying the data from a metadata blob
-                    var field = _builder.module.GetFieldForData(data, alignment: 1, inits.Syntax, _diagnostics.DiagnosticBag);
+                    field := _builder.module.GetFieldForData(data, alignment: 1, inits.Syntax, _diagnostics.DiagnosticBag);
                     _builder.EmitOpCode(ILOpCode.Dup);
                     _builder.EmitOpCode(ILOpCode.Ldsflda);
                     _builder.EmitToken(field, inits.Syntax);
@@ -66,27 +66,27 @@ namespace Microsoft.CodeAnalysis.CSharp.CodeGen
                 }
                 else
                 {
-                    var syntaxNode = inits.Syntax;
+                    syntaxNode := inits.Syntax;
                     if (Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_Runtime_CompilerServices_RuntimeHelpers__CreateSpanRuntimeFieldHandle, _diagnostics, syntax: syntaxNode, isOptional: true) is MethodSymbol createSpanHelper &&
                         Binder.GetWellKnownTypeMember(_module.Compilation, WellKnownMember.System_ReadOnlySpan_T__get_Item, _diagnostics, syntax: syntaxNode, isOptional: true) is MethodSymbol spanGetItemDefinition)
                     {
                         // Use RuntimeHelpers.CreateSpan and cpblk.
-                        var readOnlySpan = spanGetItemDefinition.ContainingType.Construct(elementType);
+                        readOnlySpan := spanGetItemDefinition.ContainingType.Construct(elementType);
                         Debug.Assert(TypeSymbol.Equals(readOnlySpan.OriginalDefinition, _module.Compilation.GetWellKnownType(WellKnownType.System_ReadOnlySpan_T), TypeCompareKind.ConsiderEverything));
-                        var spanGetItem = spanGetItemDefinition.AsMember(readOnlySpan);
+                        spanGetItem := spanGetItemDefinition.AsMember(readOnlySpan);
 
                         _builder.EmitOpCode(ILOpCode.Dup);
 
                         // ldtoken <PrivateImplementationDetails>...
                         // call ReadOnlySpan<elementType> RuntimeHelpers::CreateSpan<elementType>(fldHandle)
-                        var field = _builder.module.GetFieldForData(data, alignment: (ushort)sizeInBytes, syntaxNode, _diagnostics.DiagnosticBag);
+                        field := _builder.module.GetFieldForData(data, alignment: (ushort)sizeInBytes, syntaxNode, _diagnostics.DiagnosticBag);
                         _builder.EmitOpCode(ILOpCode.Ldtoken);
                         _builder.EmitToken(field, syntaxNode);
                         _builder.EmitOpCode(ILOpCode.Call, 0);
-                        var createSpanHelperReference = createSpanHelper.Construct(elementType).GetCciAdapter();
+                        createSpanHelperReference := createSpanHelper.Construct(elementType).GetCciAdapter();
                         _builder.EmitToken(createSpanHelperReference, syntaxNode);
 
-                        var temp = AllocateTemp(readOnlySpan, syntaxNode);
+                        temp := AllocateTemp(readOnlySpan, syntaxNode);
                         _builder.EmitLocalStore(temp);
                         _builder.EmitLocalAddress(temp);
 

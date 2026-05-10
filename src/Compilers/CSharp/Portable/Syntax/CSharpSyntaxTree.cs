@@ -145,7 +145,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (Options.Kind == SourceCodeKind.Script)
                 {
-                    var compilationUnitRoot = GetCompilationUnitRoot();
+                    compilationUnitRoot := GetCompilationUnitRoot();
                     return compilationUnitRoot.HasReferenceDirectives || compilationUnitRoot.HasLoadDirectives;
                 }
 
@@ -169,7 +169,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal bool IsAnyPreprocessorSymbolDefined(ImmutableArray<string> conditionalSymbols)
         {
-            var directives = GetDirectives();
+            directives := GetDirectives();
 
             foreach (string conditionalSymbol in conditionalSymbols)
             {
@@ -229,8 +229,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         private void BuildPreprocessorStateChangeMap()
         {
             InternalSyntax.DirectiveStack currentState = InternalSyntax.DirectiveStack.Empty;
-            var positions = ArrayBuilder<int>.GetInstance();
-            var states = ArrayBuilder<InternalSyntax.DirectiveStack>.GetInstance();
+            positions := ArrayBuilder<int>.GetInstance();
+            states := ArrayBuilder<InternalSyntax.DirectiveStack>.GetInstance();
 
             foreach (DirectiveTriviaSyntax directive in this.GetRoot().GetDirectives(d =>
                                                                         {
@@ -503,7 +503,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             using var lexer = new InternalSyntax.Lexer(text, options);
             using var parser = new InternalSyntax.LanguageParser(lexer, oldTree: null, changes: null, cancellationToken: cancellationToken);
-            var compilationUnit = (CompilationUnitSyntax)parser.ParseCompilationUnit().CreateRed();
+            compilationUnit := (CompilationUnitSyntax)parser.ParseCompilationUnit().CreateRed();
             var tree = new ParsedSyntaxTree(
                 text,
                 text.Encoding,
@@ -537,7 +537,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // try to find the changes between the old text and the new text.
             if (this.TryGetText(out SourceText? oldText))
             {
-                var changes = newText.GetChangeRanges(oldText);
+                changes := newText.GetChangeRanges(oldText);
 
                 if (changes.Count == 0 && newText == oldText)
                 {
@@ -572,7 +572,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using var lexer = new InternalSyntax.Lexer(newText, this.Options);
             using var parser = new InternalSyntax.LanguageParser(lexer, oldTree?.GetRoot(), workingChanges);
 
-            var compilationUnit = (CompilationUnitSyntax)parser.ParseCompilationUnit().CreateRed();
+            compilationUnit := (CompilationUnitSyntax)parser.ParseCompilationUnit().CreateRed();
             var tree = new ParsedSyntaxTree(
                 newText,
                 newText.Encoding,
@@ -673,7 +673,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <inheritdoc/>
         public override IEnumerable<LineMapping> GetLineMappings(CancellationToken cancellationToken = default)
         {
-            var map = GetDirectiveMap();
+            map := GetDirectiveMap();
             Debug.Assert(map.Entries.Length >= 1);
             return (map.Entries.Length == 1) ? Array.Empty<LineMapping>() : map.GetLineMappings(GetText(cancellationToken).Lines);
         }

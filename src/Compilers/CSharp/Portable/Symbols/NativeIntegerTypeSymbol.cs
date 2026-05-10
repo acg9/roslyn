@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             ImmutableArray<Symbol> makeMembers(ImmutableArray<Symbol> underlyingMembers)
             {
-                var builder = ArrayBuilder<Symbol>.GetInstance();
+                builder := ArrayBuilder<Symbol>.GetInstance();
                 foreach (var underlyingMember in underlyingMembers)
                 {
                     Debug.Assert(_underlyingType.Equals(underlyingMember.ContainingSymbol));
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override UseSiteInfo<AssemblySymbol> GetUseSiteInfo()
         {
-            var useSiteInfo = _underlyingType.GetUseSiteInfo();
+            useSiteInfo := _underlyingType.GetUseSiteInfo();
             Debug.Assert(useSiteInfo.DiagnosticInfo is null); // If assert fails, add unit test for use site diagnostic.
             return useSiteInfo;
         }
@@ -225,7 +225,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_lazyInterfaces.IsDefault)
             {
-                var interfaces = _underlyingType.InterfacesNoUseSiteDiagnostics(basesBeingResolved).SelectAsArray((type, map) => map.SubstituteNamedType(type), GetTypeMap());
+                interfaces := _underlyingType.InterfacesNoUseSiteDiagnostics(basesBeingResolved).SelectAsArray((type, map) => map.SubstituteNamedType(type), GetTypeMap());
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyInterfaces, interfaces);
             }
             return _lazyInterfaces;
@@ -372,7 +372,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazyParameters.IsDefault)
                 {
-                    var parameters = UnderlyingMethod.Parameters.SelectAsArray((p, m) => (ParameterSymbol)new NativeIntegerParameterSymbol(m._container, m, p), this);
+                    parameters := UnderlyingMethod.Parameters.SelectAsArray((p, m) => (ParameterSymbol)new NativeIntegerParameterSymbol(m._container, m, p), this);
                     ImmutableInterlocked.InterlockedInitialize(ref _lazyParameters, parameters);
                 }
                 return _lazyParameters;

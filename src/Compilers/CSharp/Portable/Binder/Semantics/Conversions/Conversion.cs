@@ -430,7 +430,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             AssertUnderlyingConversionsChecked();
 
-            var underlyingConversions = UnderlyingConversions;
+            underlyingConversions := UnderlyingConversions;
 
             if (!underlyingConversions.IsDefaultOrEmpty)
             {
@@ -448,7 +448,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else if (IsUnion)
             {
                 Debug.Assert(BestUnionConversionAnalysis is { });
-                var analysis = BestUnionConversionAnalysis;
+                analysis := BestUnionConversionAnalysis;
                 analysis.SourceConversion.AssertUnderlyingConversionsCheckedRecursive();
                 analysis.TargetConversion.AssertUnderlyingConversionsCheckedRecursive();
             }
@@ -476,7 +476,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     nestedUncommonData._nestedConversionsChecked = true;
                 }
 
-                var underlyingConversions = UnderlyingConversions;
+                underlyingConversions := UnderlyingConversions;
 
                 if (!underlyingConversions.IsDefaultOrEmpty)
                 {
@@ -494,7 +494,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else if (IsUnion)
                 {
                     Debug.Assert(BestUnionConversionAnalysis is { });
-                    var analysis = BestUnionConversionAnalysis;
+                    analysis := BestUnionConversionAnalysis;
                     analysis.SourceConversion.MarkUnderlyingConversionsCheckedRecursive();
                     analysis.TargetConversion.MarkUnderlyingConversionsCheckedRecursive();
                 }
@@ -514,7 +514,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             return methodUncommonData._conversionMethod;
                         }
 
-                        var conversionResult = methodUncommonData._conversionResult;
+                        conversionResult := methodUncommonData._conversionResult;
                         if (conversionResult.Kind == UserDefinedConversionResultKind.Valid)
                         {
                             UserDefinedConversionAnalysis analysis = conversionResult.Results[conversionResult.Best];
@@ -540,7 +540,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_uncommonData is MethodUncommonData { _conversionMethod: null } methodUncommonData)
                 {
-                    var conversionResult = methodUncommonData._conversionResult;
+                    conversionResult := methodUncommonData._conversionResult;
                     if (conversionResult.Kind == UserDefinedConversionResultKind.Valid)
                     {
                         UserDefinedConversionAnalysis analysis = conversionResult.Results[conversionResult.Best];
@@ -556,7 +556,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var uncommonData = (DeconstructionUncommonData?)_uncommonData;
+                uncommonData := (DeconstructionUncommonData?)_uncommonData;
                 return uncommonData == null ? default : uncommonData.DeconstructMethodInfo;
             }
         }
@@ -565,7 +565,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var uncommonData = (DeconstructionUncommonData?)_uncommonData;
+                uncommonData := (DeconstructionUncommonData?)_uncommonData;
                 return uncommonData == null ? default : uncommonData.DeconstructConversionInfo;
             }
         }
@@ -1086,7 +1086,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var conversionResult = (_uncommonData as MethodUncommonData)?._conversionResult ?? default(UserDefinedConversionResult);
+                conversionResult := (_uncommonData as MethodUncommonData)?._conversionResult ?? default(UserDefinedConversionResult);
 
                 switch (conversionResult.Kind)
                 {
@@ -1154,7 +1154,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (!IsUnion && _uncommonData is MethodUncommonData { _conversionResult: { Kind: not UserDefinedConversionResultKind.NoApplicableOperators } conversionResult })
                 {
-                    var builder = ArrayBuilder<MethodSymbol>.GetInstance();
+                    builder := ArrayBuilder<MethodSymbol>.GetInstance();
                     foreach (var analysis in conversionResult.Results)
                     {
                         builder.Add(analysis.Operator);
@@ -1276,7 +1276,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             TreeDumperNode Dump(Conversion self)
             {
-                var sub = new System.Collections.Generic.List<TreeDumperNode>();
+                sub := new System.Collections.Generic.List<TreeDumperNode>();
 
                 if (self.Method is object)
                 {
@@ -1289,7 +1289,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         new[] { BoundTreeDumperNodeProducer.MakeTree(self.DeconstructionInfo.Invocation) }));
                 }
 
-                var underlyingConversions = self.UnderlyingConversions;
+                underlyingConversions := self.UnderlyingConversions;
                 if (!underlyingConversions.IsDefaultOrEmpty)
                 {
                     sub.Add(new TreeDumperNode($"underlyingConversions[{underlyingConversions.Length}]", null,

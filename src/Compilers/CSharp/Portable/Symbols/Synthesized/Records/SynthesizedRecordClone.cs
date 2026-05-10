@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (!baseType.IsObjectType())
             {
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded; // This is reported when we bind bases
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded; // This is reported when we bind bases
                 return FindValidCloneMethod(baseType, ref discardedUseSiteInfo);
             }
 
@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(!IsAbstract);
 
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
 
             try
             {
@@ -117,10 +117,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return;
                 }
 
-                var members = ContainingType.InstanceConstructors;
+                members := ContainingType.InstanceConstructors;
                 foreach (var member in members)
                 {
-                    var ctor = (MethodSymbol)member;
+                    ctor := (MethodSymbol)member;
                     if (ctor.ParameterCount == 1 && ctor.Parameters[0].RefKind == RefKind.None &&
                         ctor.Parameters[0].Type.Equals(ContainingType, TypeCompareKind.AllIgnoreOptions))
                     {

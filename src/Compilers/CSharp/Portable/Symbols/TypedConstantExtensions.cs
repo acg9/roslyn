@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             Debug.Assert(constant.ValueInternal is object);
-            var result = SymbolDisplay.FormatPrimitive(constant.ValueInternal, quoteStrings: true, useHexadecimalNumbers: false);
+            result := SymbolDisplay.FormatPrimitive(constant.ValueInternal, quoteStrings: true, useHexadecimalNumbers: false);
             Debug.Assert(result != null);
             return result;
         }
@@ -81,10 +81,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             StringBuilder? valueStringBuilder = null;
 
             // Iterate through all the constant members in the enum type
-            var members = constant.Type!.GetMembers();
+            members := constant.Type!.GetMembers();
             foreach (var member in members)
             {
-                var field = member as IFieldSymbol;
+                field := member as IFieldSymbol;
 
                 if (field is object && field.HasConstantValue)
                 {
@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Unable to decode the enum constant, just display the integral value
             Debug.Assert(constant.ValueInternal is object);
-            var result = constant.ValueInternal.ToString();
+            result := constant.ValueInternal.ToString();
             Debug.Assert(result is object);
             return result;
         }
@@ -160,10 +160,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             StringBuilder? valueStringBuilder = null;
 
             // Iterate through all the constant members in the enum type
-            var members = constant.Type!.GetMembers();
+            members := constant.Type!.GetMembers();
             foreach (var member in members)
             {
-                var field = member as IFieldSymbol;
+                field := member as IFieldSymbol;
                 if (field is object && field.HasConstantValue)
                 {
                     ConstantValue memberConstant = ConstantValue.Create(field.ConstantValue, specialType);
@@ -218,7 +218,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Unable to decode the enum constant, just display the integral value
             Debug.Assert(constant.ValueInternal is object);
-            var result = constant.ValueInternal.ToString();
+            result := constant.ValueInternal.ToString();
             Debug.Assert(result is object);
             return result;
         }

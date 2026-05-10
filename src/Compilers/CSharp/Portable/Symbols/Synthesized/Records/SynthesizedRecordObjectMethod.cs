@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var overridden = overriding.OverriddenMethod?.OriginalDefinition;
+                overridden := overriding.OverriddenMethod?.OriginalDefinition;
 
                 if (overridden is object && !(overridden.ContainingType is SourceMemberContainerTypeSymbol { IsRecord: true } && overridden.ContainingModule == overriding.ContainingModule))
                 {

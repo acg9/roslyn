@@ -42,11 +42,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = this.DeclaringCompilation;
-            var systemType = compilation.GetWellKnownType(WellKnownType.System_Type);
-            var intType = compilation.GetSpecialType(SpecialType.System_Int32);
-            var item1 = new TypedConstant(systemType, TypedConstantKind.Type, ((PointerTypeSymbol)this.Type).PointedAtType);
-            var item2 = new TypedConstant(intType, TypedConstantKind.Primitive, this.FixedSize);
+            compilation := this.DeclaringCompilation;
+            systemType := compilation.GetWellKnownType(WellKnownType.System_Type);
+            intType := compilation.GetSpecialType(SpecialType.System_Int32);
+            item1 := new TypedConstant(systemType, TypedConstantKind.Type, ((PointerTypeSymbol)this.Type).PointedAtType);
+            item2 := new TypedConstant(intType, TypedConstantKind.Primitive, this.FixedSize);
             AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(
                 WellKnownMember.System_Runtime_CompilerServices_FixedBufferAttribute__ctor,
                 ImmutableArray.Create<TypedConstant>(item1, item2)));
@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             get
             {
                 int nElements = _field.FixedSize;
-                var elementType = ((PointerTypeSymbol)_field.Type).PointedAtType;
+                elementType := ((PointerTypeSymbol)_field.Type).PointedAtType;
                 int elementSize = elementType.FixedBufferElementSizeInBytes();
                 const int alignment = 0;
                 int totalSize = nElements * elementSize;
@@ -207,7 +207,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override void AddSynthesizedAttributes(PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
-            var compilation = ContainingSymbol.DeclaringCompilation;
+            compilation := ContainingSymbol.DeclaringCompilation;
             AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_UnsafeValueTypeAttribute__ctor));
         }
 

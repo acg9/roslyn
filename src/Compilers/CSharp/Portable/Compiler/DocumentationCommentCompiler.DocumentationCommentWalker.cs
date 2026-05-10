@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     // '///<param': '<' owns the '///' trivia
                     // '/// <param': ' ' token preceding '<' owns '///' trivia
-                    var startLessThanToken = paramElement.StartTag.LessThanToken;
+                    startLessThanToken := paramElement.StartTag.LessThanToken;
                     if (!startLessThanToken.LeadingTrivia.Any(SyntaxKind.DocumentationCommentExteriorTrivia))
                     {
                         walker.VisitToken(startLessThanToken.GetPreviousToken());
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     walker.VisitToken(paramElement.EndTag.LessThanSlashToken);
                     writer.Write("summary");
 
-                    var endGreaterThanToken = paramElement.EndTag.GreaterThanToken;
+                    endGreaterThanToken := paramElement.EndTag.GreaterThanToken;
                     walker.VisitToken(endGreaterThanToken);
 
                     // The '>' token doesn't own the following new line. Instead, it is directly followed by an 'XmlTextLiteralNewLineToken'.

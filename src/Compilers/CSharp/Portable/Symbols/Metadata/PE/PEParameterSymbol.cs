@@ -144,7 +144,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 int theBits = _bits; // Read this.bits once to ensure the consistency of the value and completion flags.
                 value = (FlowAnalysisAnnotations)((theBits >> FlowAnalysisAnnotationsOffset) & FlowAnalysisAnnotationsMask);
-                var result = (theBits & FlowAnalysisAnnotationsCompletionBit) != 0;
+                result := (theBits & FlowAnalysisAnnotationsCompletionBit) != 0;
                 Debug.Assert(value == 0 || result);
                 return result;
             }
@@ -306,7 +306,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     }
                 }
 
-                var typeSymbol = DynamicTypeDecoder.TransformType(typeWithAnnotations.Type, countOfCustomModifiers, handle, moduleSymbol, refKind);
+                typeSymbol := DynamicTypeDecoder.TransformType(typeWithAnnotations.Type, countOfCustomModifiers, handle, moduleSymbol, refKind);
                 typeSymbol = NativeIntegerTypeDecoder.TransformType(typeSymbol, handle, moduleSymbol, containingSymbol.ContainingType);
                 typeWithAnnotations = typeWithAnnotations.WithTypeAndModifiers(typeSymbol, typeWithAnnotations.CustomModifiers);
                 // Decode nullable before tuple types to avoid converting between
@@ -314,7 +314,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 // The containing type is passed to NullableTypeDecoder.TransformType to determine access
                 // for property parameters because the property does not have explicit accessibility in metadata.
-                var accessSymbol = containingSymbol.Kind == SymbolKind.Property ? containingSymbol.ContainingSymbol : containingSymbol;
+                accessSymbol := containingSymbol.Kind == SymbolKind.Property ? containingSymbol.ContainingSymbol : containingSymbol;
                 typeWithAnnotations = NullableTypeDecoder.TransformType(typeWithAnnotations, handle, moduleSymbol, accessSymbol: accessSymbol, nullableContext: nullableContext);
                 typeWithAnnotations = TupleTypeDecoder.DecodeTupleTypesIfApplicable(typeWithAnnotations, handle, moduleSymbol);
 
@@ -378,7 +378,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return false;
                 }
 
-                var markerMethod = ((PENamedTypeSymbol)containingSymbol.ContainingType).GetMarkerMethodSymbol();
+                markerMethod := ((PENamedTypeSymbol)containingSymbol.ContainingType).GetMarkerMethodSymbol();
                 return object.ReferenceEquals(markerMethod, containingSymbol) && ordinal == 0;
             }
         }
@@ -406,7 +406,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             out bool isBad)
         {
             // We start without annotation (they will be decoded below)
-            var typeWithModifiers = TypeWithAnnotations.Create(type, customModifiers: CSharpCustomModifier.Convert(customModifiers));
+            typeWithModifiers := TypeWithAnnotations.Create(type, customModifiers: CSharpCustomModifier.Convert(customModifiers));
 
             PEParameterSymbol parameter = customModifiers.IsDefaultOrEmpty && refCustomModifiers.IsDefaultOrEmpty
                 ? new PEParameterSymbol(moduleSymbol, containingSymbol, ordinal, isByRef, typeWithModifiers, handle, nullableContext, 0, isReturn: isReturn, out isBad)
@@ -709,7 +709,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 bool value;
                 if (!_packedFlags.TryGetWellKnownAttribute(flag, out value))
                 {
-                    var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     bool isCallerLineNumber = HasCallerLineNumberAttribute
                         && ContainingAssembly.TypeConversions.HasCallerLineNumberConversion(this.Type, ref discardedUseSiteInfo);
 
@@ -728,7 +728,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 bool value;
                 if (!_packedFlags.TryGetWellKnownAttribute(flag, out value))
                 {
-                    var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     bool isCallerFilePath = !HasCallerLineNumberAttribute
                         && HasCallerFilePathAttribute
                         && ContainingAssembly.TypeConversions.HasCallerInfoStringConversion(this.Type, ref discardedUseSiteInfo);
@@ -748,7 +748,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 bool value;
                 if (!_packedFlags.TryGetWellKnownAttribute(flag, out value))
                 {
-                    var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     bool isCallerMemberName = !HasCallerLineNumberAttribute
                         && !HasCallerFilePathAttribute
                         && HasCallerMemberNameAttribute
@@ -769,8 +769,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return _lazyCallerArgumentExpressionParameterIndex;
                 }
 
-                var info = _moduleSymbol.Module.FindTargetAttribute(_handle, AttributeDescription.CallerArgumentExpressionAttribute);
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                info := _moduleSymbol.Module.FindTargetAttribute(_handle, AttributeDescription.CallerArgumentExpressionAttribute);
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 bool isCallerArgumentExpression = info.HasValue
                     && !HasCallerLineNumberAttribute
                     && !HasCallerFilePathAttribute
@@ -866,7 +866,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 indexes = DecodeInterpolatedStringHandlerArgumentAttribute();
                 Debug.Assert(indexes != s_defaultStringHandlerAttributeIndexes);
-                var initialized = ImmutableInterlocked.InterlockedCompareExchange(ref _lazyInterpolatedStringHandlerAttributeIndexes, value: indexes, comparand: s_defaultStringHandlerAttributeIndexes);
+                initialized := ImmutableInterlocked.InterlockedCompareExchange(ref _lazyInterpolatedStringHandlerAttributeIndexes, value: indexes, comparand: s_defaultStringHandlerAttributeIndexes);
                 Debug.Assert(initialized == s_defaultStringHandlerAttributeIndexes || indexes == initialized || indexes.SequenceEqual(initialized));
             }
         }
@@ -896,8 +896,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return ImmutableArray<int>.Empty;
             }
 
-            var builder = ArrayBuilder<int>.GetInstance(paramNames.Length);
-            var parameters = ContainingSymbol.GetParameters();
+            builder := ArrayBuilder<int>.GetInstance(paramNames.Length);
+            parameters := ContainingSymbol.GetParameters();
 
             foreach (var name in paramNames)
             {
@@ -924,7 +924,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                             break;
                         }
 
-                        var param = parameters.FirstOrDefault(static (p, name) => string.Equals(p.Name, name, StringComparison.Ordinal), name);
+                        param := parameters.FirstOrDefault(static (p, name) => string.Equals(p.Name, name, StringComparison.Ordinal), name);
                         if (param is not null && (object)param != this)
                         {
                             builder.Add(param.Ordinal);
@@ -1092,7 +1092,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (RoslynImmutableInterlocked.VolatileRead(in _lazyCustomAttributes).IsDefault)
             {
-                var attributes = loadAndFilterAttributes(out var hiddenAttributes, out var isParamArray, out var isParamCollection);
+                attributes := loadAndFilterAttributes(out var hiddenAttributes, out var isParamArray, out var isParamCollection);
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyHiddenAttributes, hiddenAttributes);
 
                 if ((_lazyIsParams & IsParamsValues.Initialized) == 0)
@@ -1128,7 +1128,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 isParamCollection = false;
 
                 Debug.Assert(!_handle.IsNil);
-                var containingModule = (PEModuleSymbol)ContainingModule;
+                containingModule := (PEModuleSymbol)ContainingModule;
                 if (!containingModule.TryGetNonEmptyCustomAttributes(_handle, out var customAttributeHandles))
                 {
                     return [];
@@ -1202,7 +1202,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 if (hiddenCount != 0)
                 {
-                    var hiddenBuilder = ArrayBuilder<CSharpAttributeData>.GetInstance(hiddenCount);
+                    hiddenBuilder := ArrayBuilder<CSharpAttributeData>.GetInstance(hiddenCount);
 
                     if (isParamArray)
                     {
@@ -1260,7 +1260,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var containingModule = (PEModuleSymbol)ContainingModule;
+                containingModule := (PEModuleSymbol)ContainingModule;
                 var decoder = ContainingSymbol switch
                 {
                     PEMethodSymbol method => new MetadataDecoder(containingModule, method),

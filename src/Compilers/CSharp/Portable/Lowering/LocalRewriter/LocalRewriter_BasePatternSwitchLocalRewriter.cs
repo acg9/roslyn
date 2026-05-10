@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 foreach (var arm in arms)
                 {
-                    var armBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+                    armBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
                     // We start each switch block of a switch statement with a hidden sequence point so that
                     // we do not appear to be in the previous switch block when we begin.
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             protected (ImmutableArray<BoundStatement> loweredDag, ImmutableDictionary<SyntaxNode, ImmutableArray<BoundStatement>> switchSections) LowerDecisionDag(BoundDecisionDag decisionDag)
             {
-                var loweredDag = LowerDecisionDagCore(decisionDag);
+                loweredDag := LowerDecisionDagCore(decisionDag);
                 var switchSections = _switchArms.ToImmutableDictionary(kv => kv.Key, kv => kv.Value.ToImmutableAndFree());
                 _switchArms.Clear();
                 return (loweredDag, switchSections);

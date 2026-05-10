@@ -20,12 +20,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var incompletePart = _state.NextIncompletePart;
+                incompletePart := _state.NextIncompletePart;
                 switch (incompletePart)
                 {
                     case CompletionPart.NameToMembersMap:
                         {
-                            var tmp = GetNameToMembersMap();
+                            tmp := GetNameToMembersMap();
                         }
                         break;
 
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 GetMergedGlobalAliasesAndUsings(basesBeingResolved: null, cancellationToken).Complete(this, cancellationToken);
                             }
 
-                            var members = this.GetMembers();
+                            members := this.GetMembers();
 
                             bool allCompleted = true;
 

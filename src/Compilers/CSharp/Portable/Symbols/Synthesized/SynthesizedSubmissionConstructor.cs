@@ -19,10 +19,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(containingType.TypeKind == TypeKind.Submission);
             Debug.Assert(diagnostics != null);
 
-            var compilation = containingType.DeclaringCompilation;
+            compilation := containingType.DeclaringCompilation;
 
-            var submissionArrayType = compilation.CreateArrayTypeSymbol(compilation.GetSpecialType(SpecialType.System_Object));
-            var useSiteInfo = submissionArrayType.GetUseSiteInfo();
+            submissionArrayType := compilation.CreateArrayTypeSymbol(compilation.GetSpecialType(SpecialType.System_Object));
+            useSiteInfo := submissionArrayType.GetUseSiteInfo();
             diagnostics.Add(useSiteInfo, NoLocation.Singleton);
 
             _parameters = ImmutableArray.Create<ParameterSymbol>(

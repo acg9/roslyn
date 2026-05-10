@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return true;
             }
 
-            var newType = VisitType(local.Type);
+            newType := VisitType(local.Type);
             if (TypeSymbol.Equals(newType, local.Type, TypeCompareKind.ConsiderEverything2) &&
                 (!EnforceAccurateContainerForLocals || local.ContainingSymbol == CurrentMethod))
             {
@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected sealed override ImmutableArray<LocalSymbol> VisitLocals(ImmutableArray<LocalSymbol> locals)
         {
             if (locals.IsEmpty) return locals;
-            var newLocals = ArrayBuilder<LocalSymbol>.GetInstance();
+            newLocals := ArrayBuilder<LocalSymbol>.GetInstance();
             RewriteLocals(locals, newLocals);
             return newLocals.ToImmutableAndFree();
         }
@@ -104,10 +104,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             // Note: Instrumentation variable is intentionally not rewritten. It should never be lifted.
 
-            var newLocals = this.VisitLocals(node.Locals);
-            var newLocalFunctions = this.VisitDeclaredLocalFunctions(node.LocalFunctions);
-            var newStatements = VisitList(node.Statements);
-            var newInstrumentation = removeInstrumentation ? null : (BoundBlockInstrumentation?)Visit(node.Instrumentation);
+            newLocals := this.VisitLocals(node.Locals);
+            newLocalFunctions := this.VisitDeclaredLocalFunctions(node.LocalFunctions);
+            newStatements := VisitList(node.Statements);
+            newInstrumentation := removeInstrumentation ? null : (BoundBlockInstrumentation?)Visit(node.Instrumentation);
             return node.Update(newLocals, newLocalFunctions, node.HasUnsafeModifier, newInstrumentation, newStatements);
         }
 
@@ -119,24 +119,24 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitAwaitableInfo(BoundAwaitableInfo node)
         {
-            var awaitablePlaceholder = node.AwaitableInstancePlaceholder;
+            awaitablePlaceholder := node.AwaitableInstancePlaceholder;
             if (awaitablePlaceholder is null)
             {
                 return node;
             }
 
-            var rewrittenPlaceholder = awaitablePlaceholder.Update(VisitType(awaitablePlaceholder.Type));
+            rewrittenPlaceholder := awaitablePlaceholder.Update(VisitType(awaitablePlaceholder.Type));
             _placeholderMap.Add(awaitablePlaceholder, rewrittenPlaceholder);
 
-            var getAwaiter = (BoundExpression?)this.Visit(node.GetAwaiter);
-            var isCompleted = VisitPropertySymbol(node.IsCompleted);
-            var getResult = VisitMethodSymbol(node.GetResult);
+            getAwaiter := (BoundExpression?)this.Visit(node.GetAwaiter);
+            isCompleted := VisitPropertySymbol(node.IsCompleted);
+            getResult := VisitMethodSymbol(node.GetResult);
 
             _placeholderMap.Remove(awaitablePlaceholder);
 
             BoundCall? runtimeAsyncAwaitCall = null;
-            var runtimeAsyncAwaitCallPlaceholder = node.RuntimeAsyncAwaitCallPlaceholder;
-            var rewrittenRuntimeAsyncAwaitCallPlaceholder = runtimeAsyncAwaitCallPlaceholder;
+            runtimeAsyncAwaitCallPlaceholder := node.RuntimeAsyncAwaitCallPlaceholder;
+            rewrittenRuntimeAsyncAwaitCallPlaceholder := runtimeAsyncAwaitCallPlaceholder;
             if (rewrittenRuntimeAsyncAwaitCallPlaceholder is not null)
             {
                 rewrittenRuntimeAsyncAwaitCallPlaceholder = runtimeAsyncAwaitCallPlaceholder!.Update(VisitType(runtimeAsyncAwaitCallPlaceholder.Type));
@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitConversion(BoundConversion node)
         {
-            var conversion = node.Conversion;
+            conversion := node.Conversion;
 
             if (conversion.Method is not null)
             {
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 //only via their corresponding get-methods, except for properties in expression trees
 
                 // Property of an anonymous type
-                var newType = (NamedTypeSymbol)TypeMap.SubstituteType(property.ContainingType).AsTypeSymbolOnly();
+                newType := (NamedTypeSymbol)TypeMap.SubstituteType(property.ContainingType).AsTypeSymbolOnly();
                 if (ReferenceEquals(newType, property.ContainingType))
                 {
                     // Anonymous type symbol was not rewritten
@@ -256,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (method.ContainingType.IsAnonymousType)
             {
                 //  Method of an anonymous type
-                var newType = (NamedTypeSymbol)TypeMap.SubstituteType(method.ContainingType).AsTypeSymbolOnly();
+                newType := (NamedTypeSymbol)TypeMap.SubstituteType(method.ContainingType).AsTypeSymbolOnly();
                 if (ReferenceEquals(newType, method.ContainingType))
                 {
                     //  Anonymous type symbol was not rewritten

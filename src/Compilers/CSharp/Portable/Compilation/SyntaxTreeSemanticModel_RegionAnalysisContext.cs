@@ -27,35 +27,35 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private RegionAnalysisContext RegionAnalysisContext(CSharpSyntaxNode expression)
         {
-            var memberModel = GetMemberModel(expression);
+            memberModel := GetMemberModel(expression);
             if (memberModel == null)
             {
                 // Recover from error cases
-                var node = new BoundBadStatement(expression, ImmutableArray<BoundNode>.Empty, hasErrors: true);
+                node := new BoundBadStatement(expression, ImmutableArray<BoundNode>.Empty, hasErrors: true);
                 return new RegionAnalysisContext(Compilation, null, node, node, node);
             }
 
             Symbol member;
             BoundNode boundNode = GetBoundRoot(memberModel, out member);
-            var first = memberModel.GetUpperBoundNode(expression, promoteToBindable: true);
-            var last = first;
+            first := memberModel.GetUpperBoundNode(expression, promoteToBindable: true);
+            last := first;
             return new RegionAnalysisContext(this.Compilation, member, boundNode, first, last);
         }
 
         private RegionAnalysisContext RegionAnalysisContext(StatementSyntax firstStatement, StatementSyntax lastStatement)
         {
-            var memberModel = GetMemberModel(firstStatement);
+            memberModel := GetMemberModel(firstStatement);
             if (memberModel == null)
             {
                 // Recover from error cases
-                var node = new BoundBadStatement(firstStatement, ImmutableArray<BoundNode>.Empty, hasErrors: true);
+                node := new BoundBadStatement(firstStatement, ImmutableArray<BoundNode>.Empty, hasErrors: true);
                 return new RegionAnalysisContext(Compilation, null, node, node, node);
             }
 
             Symbol member;
             BoundNode boundNode = GetBoundRoot(memberModel, out member);
-            var first = memberModel.GetUpperBoundNode(firstStatement, promoteToBindable: true);
-            var last = memberModel.GetUpperBoundNode(lastStatement, promoteToBindable: true);
+            first := memberModel.GetUpperBoundNode(firstStatement, promoteToBindable: true);
+            last := memberModel.GetUpperBoundNode(lastStatement, promoteToBindable: true);
             return new RegionAnalysisContext(Compilation, member, boundNode, first, last);
         }
     }

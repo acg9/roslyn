@@ -19,11 +19,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<BoundLocalDeclaration> localDecls = node.Declarations.LocalDeclarations;
             int numFixedLocals = localDecls.Length;
 
-            var localBuilder = ArrayBuilder<LocalSymbol>.GetInstance(node.Locals.Length);
+            localBuilder := ArrayBuilder<LocalSymbol>.GetInstance(node.Locals.Length);
             localBuilder.AddRange(node.Locals);
 
-            var statementBuilder = ArrayBuilder<BoundStatement>.GetInstance(numFixedLocals + 1 + 1); //+1 for body, +1 for hidden seq point
-            var cleanup = new BoundStatement[numFixedLocals];
+            statementBuilder := ArrayBuilder<BoundStatement>.GetInstance(numFixedLocals + 1 + 1); //+1 for body, +1 for hidden seq point
+            cleanup := new BoundStatement[numFixedLocals];
 
             for (int i = 0; i < numFixedLocals; i++)
             {
@@ -200,7 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!ReferenceEquals(initializer, null));
 
             LocalSymbol localSymbol = localDecl.LocalSymbol;
-            var fixedCollectionInitializer = (BoundFixedLocalCollectionInitializer)initializer;
+            fixedCollectionInitializer := (BoundFixedLocalCollectionInitializer)initializer;
 
             if (fixedCollectionInitializer.GetPinnableOpt is { })
             {
@@ -278,7 +278,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                  type: fixedInitializer.ElementPointerType);
 
             // (int*)&pinnedTemp
-            var pointerValue = ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
+            pointerValue := ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
 
             // ptr = (int*)&pinnedTemp;
             BoundStatement localInit = InstrumentLocalDeclarationIfNecessary(localDecl, localSymbol,
@@ -307,9 +307,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression initializerExpr = VisitExpression(fixedInitializer.Expression);
             Debug.Assert(initializerExpr.Type is { });
 
-            var initializerType = initializerExpr.Type;
-            var initializerSyntax = initializerExpr.Syntax;
-            var getPinnableMethod = fixedInitializer.GetPinnableOpt;
+            initializerType := initializerExpr.Type;
+            initializerSyntax := initializerExpr.Syntax;
+            getPinnableMethod := fixedInitializer.GetPinnableOpt;
             Debug.Assert(getPinnableMethod is { });
 
             // intervening parens may have been skipped by the binder; find the declarator
@@ -373,7 +373,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 type: fixedInitializer.ElementPointerType);
 
             // (int*)&pinnedTemp
-            var pointerValue = ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
+            pointerValue := ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
 
             // {pinnedTemp =ref .GetPinnable(), (int*)&pinnedTemp}
             BoundExpression pinAndGetPtr = factory.Sequence(
@@ -466,7 +466,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                  factory.Local(pinnedTemp),
                  Conversion.PinnedObjectToPointer);
 
-            var convertedStringTemp = ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
+            convertedStringTemp := ApplyConversionIfNotIdentity(fixedInitializer.ElementPointerConversion, fixedInitializer.ElementPointerPlaceholder, addr);
 
             BoundStatement localInit = InstrumentLocalDeclarationIfNecessary(localDecl, localSymbol,
                 factory.Assignment(factory.Local(localSymbol), convertedStringTemp));

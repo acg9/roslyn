@@ -41,10 +41,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Create a map from type parameter name to ordinal.
             // No need to report duplicate names since duplicates
             // are reported when the type parameters are bound.
-            var names = new Dictionary<string, int>(n, StringOrdinalComparer.Instance);
+            names := new Dictionary<string, int>(n, StringOrdinalComparer.Instance);
             foreach (var typeParameter in typeParameters)
             {
-                var name = typeParameter.Name;
+                name := typeParameter.Name;
                 if (!names.ContainsKey(name))
                 {
                     names.Add(name, names.Count);
@@ -52,13 +52,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // An array of constraint clauses, one for each type parameter, indexed by ordinal.
-            var results = ArrayBuilder<TypeParameterConstraintClause?>.GetInstance(n, fillWithValue: null);
-            var syntaxNodes = ArrayBuilder<ArrayBuilder<TypeConstraintSyntax>?>.GetInstance(n, fillWithValue: null);
+            results := ArrayBuilder<TypeParameterConstraintClause?>.GetInstance(n, fillWithValue: null);
+            syntaxNodes := ArrayBuilder<ArrayBuilder<TypeConstraintSyntax>?>.GetInstance(n, fillWithValue: null);
 
             // Bind each clause and add to the results.
             foreach (var clause in clauses)
             {
-                var name = clause.Name.Identifier.ValueText;
+                name := clause.Name.Identifier.ValueText;
                 RoslynDebug.Assert(name is object);
                 int ordinal;
                 if (names.TryGetValue(name, out ordinal))
@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private (TypeParameterConstraintClause, ArrayBuilder<TypeConstraintSyntax>?) BindTypeParameterConstraints(
             TypeParameterSyntax typeParameterSyntax, TypeParameterConstraintClauseSyntax constraintClauseSyntax, bool isForOverride, BindingDiagnosticBag diagnostics)
         {
-            var constraints = TypeParameterConstraintKind.None;
+            constraints := TypeParameterConstraintKind.None;
             ArrayBuilder<TypeWithAnnotations>? constraintTypes = null;
             ArrayBuilder<TypeConstraintSyntax>? syntaxBuilder = null;
             SeparatedSyntaxList<TypeParameterConstraintSyntax> constraintsSyntax = constraintClauseSyntax.Constraints;
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int i = 0, n = constraintsSyntax.Count; i < n; i++)
             {
-                var syntax = constraintsSyntax[i];
+                syntax := constraintsSyntax[i];
                 switch (syntax.Kind())
                 {
                     case SyntaxKind.ClassConstraint:
@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                         }
 
-                        var constraintSyntax = (ClassOrStructConstraintSyntax)syntax;
+                        constraintSyntax := (ClassOrStructConstraintSyntax)syntax;
                         SyntaxToken questionToken = constraintSyntax.QuestionToken;
                         if (questionToken.IsKind(SyntaxKind.QuestionToken))
                         {
@@ -251,10 +251,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 syntaxBuilder = ArrayBuilder<TypeConstraintSyntax>.GetInstance();
                             }
 
-                            var typeConstraintSyntax = (TypeConstraintSyntax)syntax;
-                            var typeSyntax = typeConstraintSyntax.Type;
+                            typeConstraintSyntax := (TypeConstraintSyntax)syntax;
+                            typeSyntax := typeConstraintSyntax.Type;
 
-                            var type = BindTypeOrConstraintKeyword(typeSyntax, diagnostics, out ConstraintContextualKeyword keyword);
+                            type := BindTypeOrConstraintKeyword(typeSyntax, diagnostics, out ConstraintContextualKeyword keyword);
 
                             switch (keyword)
                             {
@@ -364,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal ImmutableArray<TypeParameterConstraintClause> GetDefaultTypeParameterConstraintClauses(TypeParameterListSyntax typeParameterList)
         {
-            var builder = ArrayBuilder<TypeParameterConstraintClause>.GetInstance(typeParameterList.Parameters.Count);
+            builder := ArrayBuilder<TypeParameterConstraintClause>.GetInstance(typeParameterList.Parameters.Count);
 
             foreach (TypeParameterSyntax typeParameterSyntax in typeParameterList.Parameters)
             {
@@ -407,16 +407,16 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (syntaxNodesOpt != null)
             {
-                var constraintTypes = constraintClause.ConstraintTypes;
+                constraintTypes := constraintClause.ConstraintTypes;
                 Symbol containingSymbol = typeParameter.ContainingSymbol;
 
-                var constraintTypeBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                constraintTypeBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                 int n = constraintTypes.Length;
 
                 for (int i = 0; i < n; i++)
                 {
-                    var constraintType = constraintTypes[i];
-                    var syntax = syntaxNodesOpt[i];
+                    constraintType := constraintTypes[i];
+                    syntax := syntaxNodesOpt[i];
                     // Only valid constraint types are included in ConstraintTypes
                     // since, in general, it may be difficult to support all invalid types.
                     // In the future, we may want to include some invalid types
@@ -449,7 +449,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithAnnotations constraintType,
             BindingDiagnosticBag diagnostics)
         {
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, containingSymbol.ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, containingSymbol.ContainingAssembly);
             if (!containingSymbol.IsNoMoreVisibleThan(constraintType, ref useSiteInfo))
             {
                 // "Inconsistent accessibility: constraint type '{1}' is less accessible than '{0}'"

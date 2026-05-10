@@ -114,8 +114,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             try
             {
-                var r = new ExpressionLambdaRewriter(compilationState, typeMap, node.Syntax, recursionDepth, diagnostics);
-                var result = r.VisitLambdaInternal(node);
+                r := new ExpressionLambdaRewriter(compilationState, typeMap, node.Syntax, recursionDepth, diagnostics);
+                result := r.VisitLambdaInternal(node);
                 if (!node.Type.Equals(result.Type, TypeCompareKind.IgnoreNullableModifiersForReferenceTypes))
                 {
                     diagnostics.Add(ErrorCode.ERR_MissingPredefinedMember, node.Syntax.Location, r.ExpressionType, "Lambda");
@@ -139,7 +139,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     switch (stmt.Kind)
                     {
                         case BoundKind.ReturnStatement:
-                            var result = Visit(((BoundReturnStatement)stmt).ExpressionOpt);
+                            result := Visit(((BoundReturnStatement)stmt).ExpressionOpt);
                             if (result != null)
                             {
                                 return result;
@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             SyntaxNode old = _bound.Syntax;
             _bound.Syntax = node.Syntax;
-            var result = VisitInternal(node);
+            result := VisitInternal(node);
             _bound.Syntax = old;
             Conversion c = _bound.ClassifyEmitConversion(result, ExpressionType);
             Debug.Assert(c.IsImplicit);
@@ -195,11 +195,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.BaseReference:
                     return VisitBaseReference((BoundBaseReference)node);
                 case BoundKind.BinaryOperator:
-                    var binOp = (BoundBinaryOperator)node;
+                    binOp := (BoundBinaryOperator)node;
                     Debug.Assert(!binOp.OperatorKind.IsDynamic());
                     return VisitBinaryOperator(binOp.OperatorKind, binOp.BinaryOperatorMethod, binOp.Type, binOp.Left, binOp.Right);
                 case BoundKind.UserDefinedConditionalLogicalOperator:
-                    var userDefCondLogOp = (BoundUserDefinedConditionalLogicalOperator)node;
+                    userDefCondLogOp := (BoundUserDefinedConditionalLogicalOperator)node;
                     return VisitBinaryOperator(userDefCondLogOp.OperatorKind, userDefCondLogOp.LogicalOperator, userDefCondLogOp.Type, userDefCondLogOp.Left, userDefCondLogOp.Right);
                 case BoundKind.Call:
                     return VisitCall((BoundCall)node);
@@ -212,7 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundKind.DelegateCreationExpression:
                     return VisitDelegateCreationExpression((BoundDelegateCreationExpression)node);
                 case BoundKind.FieldAccess:
-                    var fieldAccess = (BoundFieldAccess)node;
+                    fieldAccess := (BoundFieldAccess)node;
                     if (fieldAccess.FieldSymbol.IsCapturedFrame)
                     {
                         return Constant(fieldAccess);
@@ -297,11 +297,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitArrayAccess(BoundArrayAccess node)
         {
-            var array = Visit(node.Expression);
+            array := Visit(node.Expression);
             if (node.Indices.Length == 1)
             {
-                var arg = node.Indices[0];
-                var index = Visit(arg);
+                arg := node.Indices[0];
+                index := Visit(arg);
                 if (!TypeSymbol.Equals(index.Type, _int32Type, TypeCompareKind.ConsiderEverything2))
                 {
                     index = ConvertIndex(index, arg.Type, _int32Type);
@@ -316,10 +316,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression Indices(ImmutableArray<BoundExpression> expressions)
         {
-            var builder = ArrayBuilder<BoundExpression>.GetInstance();
+            builder := ArrayBuilder<BoundExpression>.GetInstance();
             foreach (var arg in expressions)
             {
-                var index = Visit(arg);
+                index := Visit(arg);
                 if (!TypeSymbol.Equals(index.Type, _int32Type, TypeCompareKind.ConsiderEverything2))
                 {
                     index = ConvertIndex(index, arg.Type, _int32Type);
@@ -332,7 +332,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression Expressions(ImmutableArray<BoundExpression> expressions)
         {
-            var builder = ArrayBuilder<BoundExpression>.GetInstance();
+            builder := ArrayBuilder<BoundExpression>.GetInstance();
             foreach (var arg in expressions)
             {
                 builder.Add(Visit(arg));
@@ -343,8 +343,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitArrayCreation(BoundArrayCreation node)
         {
-            var arrayType = (ArrayTypeSymbol)node.Type;
-            var boundType = _bound.Typeof(arrayType.ElementType, _bound.WellKnownType(WellKnownType.System_Type));
+            arrayType := (ArrayTypeSymbol)node.Type;
+            boundType := _bound.Typeof(arrayType.ElementType, _bound.WellKnownType(WellKnownType.System_Type));
             if (node.InitializerOpt != null)
             {
                 if (arrayType.IsSZArray)
@@ -373,7 +373,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.Operand.IsLiteralNull() && (object)node.Operand.Type == null)
             {
-                var operand = _bound.Null(_bound.SpecialType(SpecialType.System_Object));
+                operand := _bound.Null(_bound.SpecialType(SpecialType.System_Object));
                 Debug.Assert(node.OperandPlaceholder is null);
                 Debug.Assert(node.OperandConversion is null);
                 node = node.Update(operand, node.TargetType, node.OperandPlaceholder, node.OperandConversion, node.Type);
@@ -513,23 +513,23 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BinaryOperatorKind.UnderlyingAndEnum:
                 case BinaryOperatorKind.Enum:
                     {
-                        var enumOperand = (opKind.OperandTypes() == BinaryOperatorKind.UnderlyingAndEnum) ? right : left;
-                        var promotedType = PromotedType(enumOperand.Type.StrippedType().GetEnumUnderlyingType());
+                        enumOperand := (opKind.OperandTypes() == BinaryOperatorKind.UnderlyingAndEnum) ? right : left;
+                        promotedType := PromotedType(enumOperand.Type.StrippedType().GetEnumUnderlyingType());
                         if (opKind.IsLifted())
                         {
                             promotedType = _nullableType.Construct(promotedType);
                         }
 
-                        var loweredLeft = VisitAndPromoteEnumOperand(left, promotedType, isChecked);
-                        var loweredRight = VisitAndPromoteEnumOperand(right, promotedType, isChecked);
+                        loweredLeft := VisitAndPromoteEnumOperand(left, promotedType, isChecked);
+                        loweredRight := VisitAndPromoteEnumOperand(right, promotedType, isChecked);
 
-                        var result = MakeBinary(methodOpt, type, isLifted, requiresLifted, opFactory, loweredLeft, loweredRight);
+                        result := MakeBinary(methodOpt, type, isLifted, requiresLifted, opFactory, loweredLeft, loweredRight);
                         return Demote(result, type, isChecked);
                     }
                 default:
                     {
-                        var loweredLeft = Visit(left);
-                        var loweredRight = Visit(right);
+                        loweredLeft := Visit(left);
+                        loweredRight := Visit(right);
                         return MakeBinary(methodOpt, type, isLifted, requiresLifted, opFactory, loweredLeft, loweredRight);
                     }
             }
@@ -539,7 +539,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand.Kind == BoundKind.Conversion)
             {
-                var conversion = (BoundConversion)operand;
+                conversion := (BoundConversion)operand;
                 if (!conversion.ConversionKind.IsUserDefinedConversion() &&
                     conversion.ConversionKind.IsImplicitConversion() &&
                     conversion.ConversionKind != ConversionKind.NullLiteral &&
@@ -554,7 +554,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitAndPromoteEnumOperand(BoundExpression operand, TypeSymbol promotedType, bool isChecked)
         {
-            var literal = operand as BoundLiteral;
+            literal := operand as BoundLiteral;
             if (literal != null)
             {
                 // for compat reasons enum literals are directly promoted into underlying values
@@ -565,8 +565,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // COMPAT: if we have an operand converted to enum, we should unconvert it first
                 //         Otherwise we will have an extra conversion in the tree: op -> enum -> underlying
                 //         where native compiler would just directly convert to underlying
-                var demotedOperand = DemoteEnumOperand(operand);
-                var loweredOperand = Visit(demotedOperand);
+                demotedOperand := DemoteEnumOperand(operand);
+                loweredOperand := Visit(demotedOperand);
                 return Convert(loweredOperand, operand.Type, promotedType, isChecked, false);
             }
         }
@@ -590,7 +590,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return underlying;
             }
 
-            var possiblePromote = Binder.GetEnumPromotedType(underlying.SpecialType);
+            possiblePromote := Binder.GetEnumPromotedType(underlying.SpecialType);
 
             if (possiblePromote == underlying.SpecialType)
             {
@@ -604,7 +604,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression Demote(BoundExpression node, TypeSymbol type, bool isChecked)
         {
-            var e = type as NamedTypeSymbol;
+            e := type as NamedTypeSymbol;
             if ((object)e != null)
             {
                 if (e.StrippedType().TypeKind == TypeKind.Enum)
@@ -612,7 +612,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return Convert(node, type, isChecked);
                 }
 
-                var promotedType = e.IsNullableType() ? _nullableType.Construct(PromotedType(e.GetNullableUnderlyingType())) : PromotedType(e);
+                promotedType := e.IsNullableType() ? _nullableType.Construct(PromotedType(e.GetNullableUnderlyingType())) : PromotedType(e);
                 if (!TypeSymbol.Equals(promotedType, type, TypeCompareKind.ConsiderEverything2))
                 {
                     return Convert(node, type, isChecked);
@@ -624,8 +624,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression ConvertIndex(BoundExpression expr, TypeSymbol oldType, TypeSymbol newType)
         {
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(Diagnostics, _bound.Compilation.Assembly);
-            var kind = _bound.Compilation.Conversions.ClassifyConversionFromType(oldType, newType, isChecked: false, ref useSiteInfo).Kind;
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(Diagnostics, _bound.Compilation.Assembly);
+            kind := _bound.Compilation.Conversions.ClassifyConversionFromType(oldType, newType, isChecked: false, ref useSiteInfo).Kind;
             Debug.Assert(useSiteInfo.Diagnostics.IsNullOrEmpty());
             Diagnostics.AddDependencies(useSiteInfo);
 
@@ -650,7 +650,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 // Generate Expression.Call(Receiver, Method, [typeArguments,] arguments)
-                var method = node.Method;
+                method := node.Method;
                 return _bound.StaticCall(
                     WellKnownMember.System_Linq_Expressions_Expression__Call,
                     method.RequiresInstanceReceiver ? Visit(node.ReceiverOpt) : _bound.Null(ExpressionType),
@@ -661,9 +661,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitConditionalOperator(BoundConditionalOperator node)
         {
-            var condition = Visit(node.Condition);
-            var consequence = VisitExactType(node.Consequence);
-            var alternative = VisitExactType(node.Alternative);
+            condition := Visit(node.Condition);
+            consequence := VisitExactType(node.Consequence);
+            alternative := VisitExactType(node.Alternative);
             return _bound.StaticCall(WellKnownMember.System_Linq_Expressions_Expression__Condition, condition, consequence, alternative);
         }
 
@@ -673,7 +673,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private BoundExpression VisitExactType(BoundExpression e)
         {
-            var conversion = e as BoundConversion;
+            conversion := e as BoundConversion;
             if (conversion != null && !conversion.ExplicitCastInCode)
             {
                 e = conversion.Update(
@@ -697,7 +697,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case ConversionKind.MethodGroup:
                     {
-                        var mg = (BoundMethodGroup)node.Operand;
+                        mg := (BoundMethodGroup)node.Operand;
                         return DelegateCreation(mg.ReceiverOpt, node.SymbolOpt, node.Type, !node.SymbolOpt.RequiresInstanceReceiver && !node.IsExtensionMethod);
                     }
                 case ConversionKind.Union:
@@ -706,11 +706,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case ConversionKind.ImplicitUserDefined:
                 case ConversionKind.IntPtr:
                     {
-                        var method = node.SymbolOpt;
-                        var operandType = node.Operand.Type;
-                        var strippedOperandType = operandType.StrippedType();
-                        var conversionInputType = method.Parameters[0].Type;
-                        var isLifted = !TypeSymbol.Equals(operandType, conversionInputType, TypeCompareKind.ConsiderEverything2) && TypeSymbol.Equals(strippedOperandType, conversionInputType, TypeCompareKind.ConsiderEverything2);
+                        method := node.SymbolOpt;
+                        operandType := node.Operand.Type;
+                        strippedOperandType := operandType.StrippedType();
+                        conversionInputType := method.Parameters[0].Type;
+                        isLifted := !TypeSymbol.Equals(operandType, conversionInputType, TypeCompareKind.ConsiderEverything2) && TypeSymbol.Equals(strippedOperandType, conversionInputType, TypeCompareKind.ConsiderEverything2);
                         bool requireAdditionalCast =
                             !TypeSymbol.Equals(strippedOperandType, ((node.ConversionKind == ConversionKind.ExplicitUserDefined) ? conversionInputType : conversionInputType.StrippedType()), TypeCompareKind.ConsiderEverything2);
                         var resultType = (isLifted && method.ReturnType.IsNonNullableValueType() && node.Type.IsNullableType()) ?
@@ -728,7 +728,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case ConversionKind.ImplicitReference:
                 case ConversionKind.Identity:
                     {
-                        var operand = Visit(node.Operand);
+                        operand := Visit(node.Operand);
                         return node.ExplicitCastInCode ? Convert(operand, node.Type, false) : operand;
                     }
                 case ConversionKind.ImplicitNullable:
@@ -739,9 +739,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     else
                     {
                         // the native compiler performs this conversion in two steps, so we follow suit
-                        var nullable = (NamedTypeSymbol)node.Type;
-                        var intermediate = nullable.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[0].Type;
-                        var e1 = Convert(Visit(node.Operand), node.Operand.Type, intermediate, node.Checked, false);
+                        nullable := (NamedTypeSymbol)node.Type;
+                        intermediate := nullable.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[0].Type;
+                        e1 := Convert(Visit(node.Operand), node.Operand.Type, intermediate, node.Checked, false);
                         return Convert(e1, intermediate, node.Type, node.Checked, false);
                     }
                 case ConversionKind.NullLiteral:
@@ -766,7 +766,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression DelegateCreation(BoundExpression receiver, MethodSymbol method, TypeSymbol delegateType, bool requiresInstanceReceiver)
         {
-            var nullObject = _bound.Null(_objectType);
+            nullObject := _bound.Null(_objectType);
             if (requiresInstanceReceiver)
             {
                 receiver = nullObject;
@@ -779,7 +779,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 receiver = _bound.Convert(_objectType, receiver, c);
             }
 
-            var createDelegate = _bound.WellKnownMethod(WellKnownMember.System_Reflection_MethodInfo__CreateDelegate, isOptional: true);
+            createDelegate := _bound.WellKnownMethod(WellKnownMember.System_Reflection_MethodInfo__CreateDelegate, isOptional: true);
             BoundExpression unquoted;
             if ((object)createDelegate != null)
             {
@@ -815,7 +815,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return DelegateCreation(node.Argument, node.MethodOpt, node.Type, staticMember);
             }
 
-            var d = node.Argument.Type as NamedTypeSymbol;
+            d := node.Argument.Type as NamedTypeSymbol;
             if ((object)d != null && d.TypeKind == TypeKind.Delegate)
             {
                 return DelegateCreation(node.Argument, d.DelegateInvokeMethod, node.Type, false);
@@ -827,7 +827,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitFieldAccess(BoundFieldAccess node)
         {
-            var receiver = node.FieldSymbol.IsStatic ? _bound.Null(ExpressionType) : Visit(node.ReceiverOpt);
+            receiver := node.FieldSymbol.IsStatic ? _bound.Null(ExpressionType) : Visit(node.ReceiverOpt);
             return _bound.StaticCall(
                 WellKnownMember.System_Linq_Expressions_Expression__Field,
                 receiver, _bound.FieldInfo(node.FieldSymbol));
@@ -835,7 +835,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitIsOperator(BoundIsOperator node)
         {
-            var operand = node.Operand;
+            operand := node.Operand;
             if ((object)operand.Type == null && operand.ConstantValueOpt != null && operand.ConstantValueOpt.IsNull)
             {
                 operand = _bound.Null(_objectType);
@@ -846,21 +846,21 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitLambda(BoundLambda node)
         {
-            var result = VisitLambdaInternal(node);
+            result := VisitLambdaInternal(node);
             return node.Type.IsExpressionTree() ? _bound.StaticCall(WellKnownMember.System_Linq_Expressions_Expression__Quote, result) : result;
         }
 
         private BoundExpression VisitLambdaInternal(BoundLambda node)
         {
             // prepare parameters so that they can be seen later
-            var locals = ArrayBuilder<LocalSymbol>.GetInstance();
-            var initializers = ArrayBuilder<BoundExpression>.GetInstance();
-            var parameters = ArrayBuilder<BoundExpression>.GetInstance();
+            locals := ArrayBuilder<LocalSymbol>.GetInstance();
+            initializers := ArrayBuilder<BoundExpression>.GetInstance();
+            parameters := ArrayBuilder<BoundExpression>.GetInstance();
             foreach (var p in node.Symbol.Parameters)
             {
-                var param = _bound.SynthesizedLocal(ParameterExpressionType);
+                param := _bound.SynthesizedLocal(ParameterExpressionType);
                 locals.Add(param);
-                var parameterReference = _bound.Local(param);
+                parameterReference := _bound.Local(param);
                 parameters.Add(parameterReference);
                 var parameter = _bound.StaticCall(
                     WellKnownMember.System_Linq_Expressions_Expression__Parameter,
@@ -869,7 +869,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _parameterMap[p] = parameterReference;
             }
 
-            var underlyingDelegateType = node.Type.GetDelegateType();
+            underlyingDelegateType := node.Type.GetDelegateType();
             var result = _bound.Sequence(locals.ToImmutableAndFree(), initializers.ToImmutableAndFree(),
                 _bound.StaticCall(
                     WellKnownMember.System_Linq_Expressions_Expression__Lambda_OfTDelegate,
@@ -892,8 +892,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitNullCoalescingOperator(BoundNullCoalescingOperator node)
         {
-            var left = Visit(node.LeftOperand);
-            var right = Visit(node.RightOperand);
+            left := Visit(node.LeftOperand);
+            right := Visit(node.RightOperand);
             if (BoundNode.GetConversion(node.LeftConversion, node.LeftPlaceholder) is { IsUserDefined: true })
             {
                 Debug.Assert(node.LeftPlaceholder is not null);
@@ -907,15 +907,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression makeConversionLambda(BoundExpression leftConversion, BoundValuePlaceholder leftPlaceholder)
             {
                 string parameterName = "p";
-                var fromType = leftPlaceholder.Type;
+                fromType := leftPlaceholder.Type;
                 ParameterSymbol lambdaParameter = _bound.SynthesizedParameter(fromType, parameterName);
-                var param = _bound.SynthesizedLocal(ParameterExpressionType);
-                var parameterReference = _bound.Local(param);
-                var parameter = _bound.StaticCall(WellKnownMember.System_Linq_Expressions_Expression__Parameter, _bound.Typeof(fromType, _bound.WellKnownType(WellKnownType.System_Type)), _bound.Literal(parameterName));
+                param := _bound.SynthesizedLocal(ParameterExpressionType);
+                parameterReference := _bound.Local(param);
+                parameter := _bound.StaticCall(WellKnownMember.System_Linq_Expressions_Expression__Parameter, _bound.Typeof(fromType, _bound.WellKnownType(WellKnownType.System_Type)), _bound.Literal(parameterName));
 
                 _placeholderReplacementMap ??= new Dictionary<BoundValuePlaceholder, BoundExpression>();
                 _placeholderReplacementMap.Add(leftPlaceholder, parameterReference);
-                var convertedValue = Visit(leftConversion);
+                convertedValue := Visit(leftConversion);
                 _placeholderReplacementMap.Remove(leftPlaceholder);
                 var result = _bound.Sequence(
                     ImmutableArray.Create(param),
@@ -990,22 +990,22 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case BoundKind.ObjectInitializerExpression:
                     {
-                        var oi = (BoundObjectInitializerExpression)node;
-                        var builder = ArrayBuilder<BoundExpression>.GetInstance();
+                        oi := (BoundObjectInitializerExpression)node;
+                        builder := ArrayBuilder<BoundExpression>.GetInstance();
                         foreach (BoundAssignmentOperator a in oi.Initializers)
                         {
-                            var sym = ((BoundObjectInitializerMember)a.Left).MemberSymbol;
+                            sym := ((BoundObjectInitializerMember)a.Left).MemberSymbol;
 
                             // An error is reported in diagnostics pass when a dynamic object initializer is encountered in an ET:
                             Debug.Assert((object)sym != null);
 
                             InitializerKind elementKind;
-                            var value = VisitInitializer(a.Right, out elementKind);
+                            value := VisitInitializer(a.Right, out elementKind);
                             switch (elementKind)
                             {
                                 case InitializerKind.CollectionInitializer:
                                     {
-                                        var left = InitializerMemberGetter(sym);
+                                        left := InitializerMemberGetter(sym);
                                         builder.Add(_bound.StaticCall(sym.Kind is SymbolKind.Property ?
                                                                           WellKnownMember.System_Linq_Expressions_Expression__ListBind_MethodInfo :
                                                                           WellKnownMember.System_Linq_Expressions_Expression__ListBind_MemberInfo,
@@ -1014,7 +1014,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     }
                                 case InitializerKind.Expression:
                                     {
-                                        var left = InitializerMemberSetter(sym);
+                                        left := InitializerMemberSetter(sym);
                                         builder.Add(_bound.StaticCall(sym.Kind is SymbolKind.Property ?
                                                                           WellKnownMember.System_Linq_Expressions_Expression__Bind_MethodInfo :
                                                                           WellKnownMember.System_Linq_Expressions_Expression__Bind_MemberInfo,
@@ -1023,7 +1023,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                     }
                                 case InitializerKind.MemberInitializer:
                                     {
-                                        var left = InitializerMemberGetter(sym);
+                                        left := InitializerMemberGetter(sym);
                                         builder.Add(_bound.StaticCall(sym.Kind is SymbolKind.Property ?
                                                                           WellKnownMember.System_Linq_Expressions_Expression__MemberBind_MethodInfo :
                                                                           WellKnownMember.System_Linq_Expressions_Expression__MemberBind_MemberInfo,
@@ -1041,11 +1041,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.CollectionInitializerExpression:
                     {
-                        var ci = (BoundCollectionInitializerExpression)node;
+                        ci := (BoundCollectionInitializerExpression)node;
                         Debug.Assert(ci.Initializers.Length != 0);
                         kind = InitializerKind.CollectionInitializer;
 
-                        var builder = ArrayBuilder<BoundExpression>.GetInstance();
+                        builder := ArrayBuilder<BoundExpression>.GetInstance();
 
                         // The method invocation must be a static call. 
                         // Dynamic calls are not allowed in ETs, an error is reported in diagnostics pass.
@@ -1075,10 +1075,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitObjectCreationContinued(BoundExpression creation, BoundExpression initializerExpressionOpt)
         {
-            var result = creation;
+            result := creation;
             if (initializerExpressionOpt == null) return result;
             InitializerKind initializerKind;
-            var init = VisitInitializer(initializerExpressionOpt, out initializerKind);
+            init := VisitInitializer(initializerExpressionOpt, out initializerKind);
             switch (initializerKind)
             {
                 case InitializerKind.CollectionInitializer:
@@ -1105,7 +1105,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return _bound.StaticCall(WellKnownMember.System_Linq_Expressions_Expression__New_Type, _bound.Typeof(node.Type, _bound.WellKnownType(WellKnownType.System_Type)));
             }
 
-            var ctor = _bound.ConstructorInfo(node.Constructor);
+            ctor := _bound.ConstructorInfo(node.Constructor);
             NamedTypeSymbol iEnumerableType = _IEnumerableType.Construct(ExpressionType);
             BoundExpression args = Expressions(node.Arguments);
             Debug.Assert(args.Type.IsSZArray());
@@ -1115,8 +1115,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             args = _bound.Convert(iEnumerableType, args, c);
             if (node.Type.IsAnonymousType && node.Arguments.Length != 0)
             {
-                var anonType = (NamedTypeSymbol)node.Type;
-                var membersBuilder = ArrayBuilder<BoundExpression>.GetInstance();
+                anonType := (NamedTypeSymbol)node.Type;
+                membersBuilder := ArrayBuilder<BoundExpression>.GetInstance();
                 for (int i = 0; i < node.Arguments.Length; i++)
                 {
                     membersBuilder.Add(_bound.MethodInfo(AnonymousTypeManager.GetAnonymousTypeProperty(anonType, i).GetMethod, _bound.WellKnownType(WellKnownType.System_Reflection_MethodInfo)));
@@ -1152,8 +1152,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitPropertyAccess(BoundPropertyAccess node)
         {
-            var receiver = node.PropertySymbol.IsStatic ? _bound.Null(ExpressionType) : Visit(node.ReceiverOpt);
-            var getMethod = node.PropertySymbol.GetOwnOrInheritedGetMethod();
+            receiver := node.PropertySymbol.IsStatic ? _bound.Null(ExpressionType) : Visit(node.ReceiverOpt);
+            getMethod := node.PropertySymbol.GetOwnOrInheritedGetMethod();
 
             // COMPAT: see https://github.com/dotnet/roslyn/issues/4471
             //         old compiler used to insert casts like this and 
@@ -1184,11 +1184,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression VisitUnaryOperator(BoundUnaryOperator node)
         {
-            var arg = node.Operand;
-            var loweredArg = Visit(arg);
-            var opKind = node.OperatorKind;
-            var op = opKind & UnaryOperatorKind.OpMask;
-            var isChecked = (opKind & UnaryOperatorKind.Checked) != 0;
+            arg := node.Operand;
+            loweredArg := Visit(arg);
+            opKind := node.OperatorKind;
+            op := opKind & UnaryOperatorKind.OpMask;
+            isChecked := (opKind & UnaryOperatorKind.Checked) != 0;
 
             WellKnownMember opFactory;
             switch (op)
@@ -1237,10 +1237,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (node.OperatorKind.OperandTypes() == UnaryOperatorKind.Enum && (opKind & UnaryOperatorKind.Lifted) != 0)
             {
                 Debug.Assert((object)node.MethodOpt == null);
-                var promotedType = PromotedType(arg.Type.StrippedType().GetEnumUnderlyingType());
+                promotedType := PromotedType(arg.Type.StrippedType().GetEnumUnderlyingType());
                 promotedType = _nullableType.Construct(promotedType);
                 loweredArg = Convert(loweredArg, arg.Type, promotedType, isChecked, false);
-                var result = _bound.StaticCall(opFactory, loweredArg);
+                result := _bound.StaticCall(opFactory, loweredArg);
                 return Demote(result, node.Type, isChecked);
             }
 

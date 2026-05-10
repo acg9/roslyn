@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static Symbol? getAttributeTargetFromPosition(int position, SyntaxTreeSemanticModel model)
             {
-                var attributedNode = model.SyntaxTree.GetRoot().FindToken(position).Parent;
+                attributedNode := model.SyntaxTree.GetRoot().FindToken(position).Parent;
                 attributedNode = attributedNode?.FirstAncestorOrSelf<AttributeListSyntax>()?.Parent;
 
                 if (attributedNode is not null)
@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return _memberModel;
             }
 
-            var attributeOrParameter = node.FirstAncestorOrSelf<SyntaxNode>(static n => n.Kind() is SyntaxKind.Attribute or SyntaxKind.Parameter);
+            attributeOrParameter := node.FirstAncestorOrSelf<SyntaxNode>(static n => n.Kind() is SyntaxKind.Attribute or SyntaxKind.Parameter);
 
             if (attributeOrParameter is null ||
                 attributeOrParameter == Root ||
@@ -188,7 +188,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (defaultValueSyntax != null && defaultValueSyntax.FullSpan.Contains(node.Span))
             {
-                var parameterSymbol = containing.GetDeclaredSymbol(paramDecl).GetSymbol<ParameterSymbol>();
+                parameterSymbol := containing.GetDeclaredSymbol(paramDecl).GetSymbol<ParameterSymbol>();
                 if ((object)parameterSymbol != null)
                 {
                     return ImmutableInterlocked.GetOrAdd(ref _childMemberModels, defaultValueSyntax,

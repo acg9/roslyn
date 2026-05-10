@@ -298,7 +298,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static BitVector CreateBadArgumentsWithPosition(int argumentPosition)
         {
-            var badArguments = BitVector.Create(argumentPosition + 1);
+            badArguments := BitVector.Create(argumentPosition + 1);
             badArguments[argumentPosition] = true;
             return badArguments;
         }
@@ -417,9 +417,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal MemberAnalysisResult WithoutReceiverArgument()
         {
-            var badArguments = shift(BadArgumentsOpt);
-            var argsToParams = adjustArgsToParams(ArgsToParamsOpt);
-            var conversions = adjustConversions(ConversionsOpt);
+            badArguments := shift(BadArgumentsOpt);
+            argsToParams := adjustArgsToParams(ArgsToParamsOpt);
+            conversions := adjustConversions(ConversionsOpt);
 
             // We only need HasAnyRefOmittedArgument as part of overload resolution, so we don't need to adjust it post-overload resolution.
             return new MemberAnalysisResult(Kind, badArguments, argsToParams, conversions, BadParameter - 1, HasAnyRefOmittedArgument,
@@ -432,7 +432,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return badArguments;
                 }
 
-                var result = BitVector.Create(badArguments.Capacity);
+                result := BitVector.Create(badArguments.Capacity);
                 foreach (int setIndex in badArguments.TrueBits())
                 {
                     result[setIndex] = true;
@@ -448,7 +448,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return argsToParams;
                 }
 
-                var builder = ArrayBuilder<int>.GetInstance();
+                builder := ArrayBuilder<int>.GetInstance();
                 builder.AddRange(argsToParams, 1, argsToParams.Length - 1);
                 for (int i = 0; i < builder.Count; i++)
                 {

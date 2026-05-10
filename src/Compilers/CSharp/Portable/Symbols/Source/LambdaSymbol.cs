@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)_returnType.Type == ReturnTypeIsBeingInferred);
             Debug.Assert(refKind != RefKind.RefReadOnly);
 
-            var runtimeAsyncEnabledDuringInference = IsAsync && _binder.Compilation.IsRuntimeAsyncEnabledIn(this);
+            runtimeAsyncEnabledDuringInference := IsAsync && _binder.Compilation.IsRuntimeAsyncEnabledIn(this);
             _refKind = refKind;
             _refCustomModifiers = [];
             _returnType = inferredReturnType;
@@ -303,7 +303,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             GetAttributes();
             GetReturnTypeAttributes();
 
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             Debug.Assert(diagnostics.DiagnosticBag is { });
             Debug.Assert(diagnostics.DependenciesBag is { });
 
@@ -355,15 +355,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                                      (owner: this, refKinds: parameterRefKinds));
             }
 
-            var builder = ArrayBuilder<ParameterSymbol>.GetInstance(unboundLambda.ParameterCount);
-            var hasExplicitlyTypedParameterList = unboundLambda.HasExplicitlyTypedParameterList;
-            var numDelegateParameters = parameterTypes.Length;
+            builder := ArrayBuilder<ParameterSymbol>.GetInstance(unboundLambda.ParameterCount);
+            hasExplicitlyTypedParameterList := unboundLambda.HasExplicitlyTypedParameterList;
+            numDelegateParameters := parameterTypes.Length;
 
             for (int p = 0; p < unboundLambda.ParameterCount; ++p)
             {
-                var refKind = unboundLambda.RefKind(p);
-                var scope = unboundLambda.DeclaredScope(p);
-                var paramSyntax = unboundLambda.ParameterSyntax(p);
+                refKind := unboundLambda.RefKind(p);
+                scope := unboundLambda.DeclaredScope(p);
+                paramSyntax := unboundLambda.ParameterSyntax(p);
 
                 // If there are no types given in the lambda then use the delegate type.
                 // If the lambda is typed then the types probably match the delegate types;
@@ -376,16 +376,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         ? parameterTypes[p]
                         : TypeWithAnnotations.Create(new ExtendedErrorTypeSymbol(compilation, name: string.Empty, arity: 0, errorInfo: null));
 
-                var attributeLists = unboundLambda.ParameterAttributes(p);
-                var name = unboundLambda.ParameterName(p);
-                var location = unboundLambda.ParameterLocation(p);
-                var isParams = paramSyntax?.Modifiers.Any(static m => m.IsKind(SyntaxKind.ParamsKeyword)) ?? false;
+                attributeLists := unboundLambda.ParameterAttributes(p);
+                name := unboundLambda.ParameterName(p);
+                location := unboundLambda.ParameterLocation(p);
+                isParams := paramSyntax?.Modifiers.Any(static m => m.IsKind(SyntaxKind.ParamsKeyword)) ?? false;
 
-                var parameter = new LambdaParameterSymbol(owner: this, paramSyntax?.GetReference(), attributeLists, type, ordinal: p, refKind, scope, name, unboundLambda.ParameterIsDiscard(p), isParams, location);
+                parameter := new LambdaParameterSymbol(owner: this, paramSyntax?.GetReference(), attributeLists, type, ordinal: p, refKind, scope, name, unboundLambda.ParameterIsDiscard(p), isParams, location);
                 builder.Add(parameter);
             }
 
-            var result = builder.ToImmutableAndFree();
+            result := builder.ToImmutableAndFree();
 
             return result;
         }

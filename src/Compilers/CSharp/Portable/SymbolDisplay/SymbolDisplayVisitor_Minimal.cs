@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             INamespaceOrTypeSymbol symbol,
             ArrayBuilder<SymbolDisplayPart> builder)
         {
-            var alias = GetAliasSymbol(symbol);
+            alias := GetAliasSymbol(symbol);
             if (alias != null)
             {
                 Debug.Assert(IsMinimizing);
@@ -28,13 +28,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // We must verify that the alias actually binds back to the thing it's aliasing.
                 // It's possible there's another symbol with the same name as the alias that binds
                 // first
-                var aliasName = alias.Name;
+                aliasName := alias.Name;
 
-                var boundSymbols = SemanticModelOpt.LookupNamespacesAndTypes(PositionOpt, name: aliasName);
+                boundSymbols := SemanticModelOpt.LookupNamespacesAndTypes(PositionOpt, name: aliasName);
 
                 if (boundSymbols.Length == 1)
                 {
-                    var boundAlias = boundSymbols[0] as IAliasSymbol;
+                    boundAlias := boundSymbols[0] as IAliasSymbol;
                     if ((object?)boundAlias != null && alias.Target.Equals(symbol))
                     {
                         builder.Add(CreatePart(SymbolDisplayPartKind.AliasName, alias, aliasName));
@@ -50,8 +50,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(IsMinimizing);
 
-            var token = SemanticModelOpt.SyntaxTree.GetRoot().FindToken(PositionOpt);
-            var startNode = token.Parent;
+            token := SemanticModelOpt.SyntaxTree.GetRoot().FindToken(PositionOpt);
+            startNode := token.Parent;
 
             return SyntaxFacts.IsInNamespaceOrTypeContext(startNode as ExpressionSyntax) || token.IsKind(SyntaxKind.NewKeyword) || this.InNamespaceOrType;
         }
@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             var symbols = ShouldRestrictMinimallyQualifyLookupToNamespacesAndTypes()
                 ? SemanticModelOpt.LookupNamespacesAndTypes(PositionOpt, name: symbol.Name)
                 : SemanticModelOpt.LookupSymbols(PositionOpt, name: symbol.Name);
-            var firstSymbol = symbols.OfType<ISymbol>().FirstOrDefault();
+            firstSymbol := symbols.OfType<ISymbol>().FirstOrDefault();
             if (symbols.Length != 1 ||
                 firstSymbol == null ||
                 !firstSymbol.Equals(symbol))
@@ -191,8 +191,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 position = PositionOpt;
             }
 
-            var token = semanticModel.SyntaxTree.GetRoot().FindToken(position);
-            var startNode = token.Parent!;
+            token := semanticModel.SyntaxTree.GetRoot().FindToken(position);
+            startNode := token.Parent!;
 
             // NOTE(cyrusn): If we're currently in a block of usings, then we want to collect the
             // aliases that are higher up than this block.  Using aliases declared in a block of
@@ -211,10 +211,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             startNode ??= token.Parent;
 
-            var builder = ImmutableDictionary.CreateBuilder<INamespaceOrTypeSymbol, IAliasSymbol>();
+            builder := ImmutableDictionary.CreateBuilder<INamespaceOrTypeSymbol, IAliasSymbol>();
             while (startNode != null)
             {
-                var usings = (startNode as BaseNamespaceDeclarationSyntax)?.Usings;
+                usings := (startNode as BaseNamespaceDeclarationSyntax)?.Usings;
                 usings ??= (startNode as CompilationUnitSyntax)?.Usings;
 
                 if (usings != null)
@@ -242,22 +242,22 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (this.IsMinimizing && !symbol.Locations.IsEmpty)
             {
-                var location = symbol.Locations.First();
+                location := symbol.Locations.First();
                 if (location.IsInSource && location.SourceTree == SemanticModelOpt.SyntaxTree)
                 {
-                    var token = location.SourceTree.GetRoot().FindToken(PositionOpt);
-                    var queryBody = GetQueryBody(token);
+                    token := location.SourceTree.GetRoot().FindToken(PositionOpt);
+                    queryBody := GetQueryBody(token);
                     if (queryBody != null)
                     {
                         // To heuristically determine the type of the range variable in a query
                         // clause, we speculatively bind the name of the variable in the select
                         // or group clause of the query body.
-                        var identifierName = SyntaxFactory.IdentifierName(symbol.Name);
+                        identifierName := SyntaxFactory.IdentifierName(symbol.Name);
                         type = SemanticModelOpt.GetSpeculativeTypeInfo(
                             queryBody.SelectOrGroup.Span.End - 1, identifierName, SpeculativeBindingOption.BindAsExpression).Type;
                     }
 
-                    var identifier = token.Parent as IdentifierNameSyntax;
+                    identifier := token.Parent as IdentifierNameSyntax;
                     if (identifier != null)
                     {
                         type = SemanticModelOpt.GetTypeInfo(identifier).Type;
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 string? nameWithoutAttributeSuffix;
                 if (symbolName.TryGetWithoutAttributeSuffix(out nameWithoutAttributeSuffix))
                 {
-                    var token = SyntaxFactory.ParseToken(nameWithoutAttributeSuffix);
+                    token := SyntaxFactory.ParseToken(nameWithoutAttributeSuffix);
                     if (token.IsKind(SyntaxKind.IdentifierToken))
                     {
                         symbolName = nameWithoutAttributeSuffix;
@@ -306,7 +306,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var map = _lazyAliasMap;
+                map := _lazyAliasMap;
                 if (map != null)
                 {
                     return map;

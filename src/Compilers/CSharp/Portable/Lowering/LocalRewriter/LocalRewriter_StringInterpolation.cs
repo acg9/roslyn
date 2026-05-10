@@ -16,7 +16,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundExpression RewriteInterpolatedStringConversion(BoundConversion conversion)
         {
             Debug.Assert(conversion.ConversionKind == ConversionKind.InterpolatedString);
-            var interpolatedString = (BoundInterpolatedString)conversion.Operand;
+            interpolatedString := (BoundInterpolatedString)conversion.Operand;
             Debug.Assert(interpolatedString.InterpolationData is { Construction: not null });
             return VisitExpression(interpolatedString.InterpolationData.GetValueOrDefault().Construction);
         }
@@ -31,11 +31,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(data.BuilderType is not null);
             Debug.Assert(data.ReceiverPlaceholder is not null);
             Debug.Assert(parts.All(static p => p is BoundCall or BoundDynamicInvocation));
-            var builderTempSymbol = _factory.InterpolatedStringHandlerLocal(data.BuilderType, syntax);
+            builderTempSymbol := _factory.InterpolatedStringHandlerLocal(data.BuilderType, syntax);
             BoundLocal builderTemp = _factory.Local(builderTempSymbol);
 
             // var handler = new HandlerType(baseStringLength, numFormatHoles, ...InterpolatedStringHandlerArgumentAttribute parameters, <optional> out bool appendShouldProceed);
-            var construction = (BoundObjectCreationExpression)data.Construction;
+            construction := (BoundObjectCreationExpression)data.Construction;
 
             BoundLocal? appendShouldProceedLocal = null;
             if (data.HasTrailingHandlerValidityParameter)
@@ -56,17 +56,17 @@ namespace Microsoft.CodeAnalysis.CSharp
                 BoundInterpolatedStringArgumentPlaceholder trailingParameter = data.ArgumentPlaceholders[^1];
                 TypeSymbol localType = trailingParameter.Type;
                 Debug.Assert(localType.SpecialType == SpecialType.System_Boolean);
-                var outLocal = _factory.SynthesizedLocal(localType);
+                outLocal := _factory.SynthesizedLocal(localType);
                 appendShouldProceedLocal = _factory.Local(outLocal);
 
                 AddPlaceholderReplacement(trailingParameter, appendShouldProceedLocal);
             }
 
-            var handlerConstructionAssignment = _factory.AssignmentExpression(builderTemp, (BoundExpression)VisitObjectCreationExpression(construction));
+            handlerConstructionAssignment := _factory.AssignmentExpression(builderTemp, (BoundExpression)VisitObjectCreationExpression(construction));
 
             AddPlaceholderReplacement(data.ReceiverPlaceholder, builderTemp);
             bool usesBoolReturns = data.UsesBoolReturns;
-            var resultExpressions = ArrayBuilder<BoundExpression>.GetInstance(parts.Length + 1);
+            resultExpressions := ArrayBuilder<BoundExpression>.GetInstance(parts.Length + 1);
 
             foreach (var part in parts)
             {
@@ -99,11 +99,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Start the sequence with appendProceedLocal, if appropriate
                 BoundExpression? currentExpression = appendShouldProceedLocal;
 
-                var boolType = _compilation.GetSpecialType(SpecialType.System_Boolean);
+                boolType := _compilation.GetSpecialType(SpecialType.System_Boolean);
 
                 foreach (var appendCall in resultExpressions)
                 {
-                    var actualCall = appendCall;
+                    actualCall := appendCall;
                     if (actualCall.Type!.IsDynamic())
                     {
                         actualCall = _dynamicFactory.MakeDynamicConversion(actualCall, isExplicit: false, isArrayIndex: false, isChecked: false, boolType).ToExpression();
@@ -124,11 +124,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             else if (appendShouldProceedLocal is not null && resultExpressions.Count > 0)
             {
                 // appendCalls as expressionStatements
-                var appendCallsStatements = resultExpressions.SelectAsArray(static (appendCall, @this) => (BoundStatement)@this._factory.ExpressionStatement(appendCall), this);
+                appendCallsStatements := resultExpressions.SelectAsArray(static (appendCall, @this) => (BoundStatement)@this._factory.ExpressionStatement(appendCall), this);
                 resultExpressions.Free();
 
                 // if (appendShouldProceedLocal) { appendCallsStatements }
-                var resultIf = _factory.If(appendShouldProceedLocal, _factory.StatementList(appendCallsStatements));
+                resultIf := _factory.If(appendShouldProceedLocal, _factory.StatementList(appendCallsStatements));
 
                 return new InterpolationHandlerResult(ImmutableArray.Create(_factory.ExpressionStatement(handlerConstructionAssignment), resultIf), builderTemp, appendShouldProceedLocal.LocalSymbol, this);
             }
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 BoundExpression? result = null;
                 for (int i = 0; i < length; i++)
                 {
-                    var part = node.Parts[i];
+                    part := node.Parts[i];
                     if (part is BoundStringInsert fillin)
                     {
                         // this is one of the filled-in expressions
@@ -193,7 +193,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(result is not null);
                     Debug.Assert(result.Type is not null);
                     Debug.Assert(result.Type.SpecialType == SpecialType.System_String || result.Type.IsErrorType());
-                    var placeholder = new BoundValuePlaceholder(result.Syntax, result.Type);
+                    placeholder := new BoundValuePlaceholder(result.Syntax, result.Type);
                     result = new BoundNullCoalescingOperator(result.Syntax, result, _factory.StringLiteral(""), leftPlaceholder: placeholder, leftConversion: placeholder, BoundNullCoalescingOperatorResultKind.LeftType, @checked: false, result.Type) { WasCompilerGenerated = true };
                 }
 
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             InterpolationHandlerResult result = RewriteToInterpolatedStringHandlerPattern(data, parts, syntax);
 
             // resultTemp = builderTemp.ToStringAndClear();
-            var toStringAndClear = (MethodSymbol)Binder.GetWellKnownTypeMember(_compilation, WellKnownMember.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler__ToStringAndClear, _diagnostics, syntax: syntax);
+            toStringAndClear := (MethodSymbol)Binder.GetWellKnownTypeMember(_compilation, WellKnownMember.System_Runtime_CompilerServices_DefaultInterpolatedStringHandler__ToStringAndClear, _diagnostics, syntax: syntax);
             BoundExpression toStringAndClearCall = toStringAndClear is not null
                 ? BoundCall.Synthesized(syntax, result.HandlerTemp, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, toStringAndClear)
                 : new BoundBadExpression(syntax, LookupResultKind.Empty, symbols: ImmutableArray<Symbol?>.Empty, childBoundNodes: ImmutableArray<BoundExpression>.Empty, type);
@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (arg is BoundConversion { Conversion: { Kind: ConversionKind.InterpolatedStringHandler }, ExplicitCastInCode: false, Operand: var operand })
                     {
-                        var data = operand.GetInterpolatedStringHandlerData();
+                        data := operand.GetInterpolatedStringHandlerData();
                         Debug.Assert(((BoundObjectCreationExpression)data.Construction).Arguments.All(
                             a => a is BoundInterpolatedStringArgumentPlaceholder { ArgumentIndex: BoundInterpolatedStringArgumentPlaceholder.TrailingConstructorValidityParameter }
                                       or not BoundInterpolatedStringArgumentPlaceholder));

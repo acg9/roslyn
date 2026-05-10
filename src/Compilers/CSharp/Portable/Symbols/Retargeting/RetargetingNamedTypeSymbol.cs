@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             {
                 if (_lazyExtensionParameter is null)
                 {
-                    var extensionParameter = _underlyingType.ExtensionParameter is { } receiverParameter ? new RetargetingExtensionReceiverParameterSymbol(this, receiverParameter) : null;
+                    extensionParameter := _underlyingType.ExtensionParameter is { } receiverParameter ? new RetargetingExtensionReceiverParameterSymbol(this, receiverParameter) : null;
                     Interlocked.CompareExchange(ref _lazyExtensionParameter, new StrongBox<ParameterSymbol>(extensionParameter), null);
                 }
 
@@ -119,7 +119,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             Debug.Assert(method.IsDefinition);
             Debug.Assert(method.ContainingType == (object)this);
 
-            var underlyingImplementation = _underlyingType.TryGetCorrespondingExtensionImplementationMethod(((RetargetingMethodSymbol)method).UnderlyingMethod);
+            underlyingImplementation := _underlyingType.TryGetCorrespondingExtensionImplementationMethod(((RetargetingMethodSymbol)method).UnderlyingMethod);
 
             if (underlyingImplementation is null)
             {
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             get
             {
-                var underlying = _underlyingType.EnumUnderlyingType;
+                underlying := _underlyingType.EnumUnderlyingType;
                 return (object)underlying == null ? null : this.RetargetingTranslator.Retarget(underlying, RetargetOptions.RetargetPrimitiveTypesByTypeCode); // comes from field's signature.
             }
         }
@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private static ExtendedErrorTypeSymbol CyclicInheritanceError(TypeSymbol declaredBase)
         {
-            var info = new CSDiagnosticInfo(ErrorCode.ERR_ImportedCircularBase, declaredBase);
+            info := new CSDiagnosticInfo(ErrorCode.ERR_ImportedCircularBase, declaredBase);
             return new ExtendedErrorTypeSymbol(declaredBase, LookupResultKind.NotReferencable, info, true);
         }
 
@@ -320,7 +320,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
                     if ((object)acyclicBase == null)
                     {
                         // if base was not declared, get it from BaseType that should set it to some default
-                        var underlyingBase = _underlyingType.BaseTypeNoUseSiteDiagnostics;
+                        underlyingBase := _underlyingType.BaseTypeNoUseSiteDiagnostics;
                         if ((object)underlyingBase != null)
                         {
                             acyclicBase = this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName);
@@ -343,7 +343,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (_lazyInterfaces.IsDefault)
             {
-                var declaredInterfaces = GetDeclaredInterfaces(basesBeingResolved);
+                declaredInterfaces := GetDeclaredInterfaces(basesBeingResolved);
                 if (!IsInterface)
                 {
                     // only interfaces needs to check for inheritance cycles via interfaces.
@@ -368,8 +368,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (ReferenceEquals(_lazyDeclaredBaseType, ErrorTypeSymbol.UnknownResultType))
             {
-                var underlyingBase = _underlyingType.GetDeclaredBaseType(basesBeingResolved);
-                var declaredBase = (object)underlyingBase != null ? this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName) : null;
+                underlyingBase := _underlyingType.GetDeclaredBaseType(basesBeingResolved);
+                declaredBase := (object)underlyingBase != null ? this.RetargetingTranslator.Retarget(underlyingBase, RetargetOptions.RetargetPrimitiveTypesByName) : null;
                 Interlocked.CompareExchange(ref _lazyDeclaredBaseType, declaredBase, ErrorTypeSymbol.UnknownResultType);
             }
 
@@ -380,8 +380,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (_lazyDeclaredInterfaces.IsDefault)
             {
-                var underlyingBaseInterfaces = _underlyingType.GetDeclaredInterfaces(basesBeingResolved);
-                var result = this.RetargetingTranslator.Retarget(underlyingBaseInterfaces);
+                underlyingBaseInterfaces := _underlyingType.GetDeclaredInterfaces(basesBeingResolved);
+                result := this.RetargetingTranslator.Retarget(underlyingBaseInterfaces);
                 ImmutableInterlocked.InterlockedCompareExchange(ref _lazyDeclaredInterfaces, result, default(ImmutableArray<NamedTypeSymbol>));
             }
 
@@ -438,8 +438,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             foreach ((MethodSymbol body, MethodSymbol implemented) in _underlyingType.SynthesizedInterfaceMethodImpls())
             {
-                var newBody = this.RetargetingTranslator.Retarget(body, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
-                var newImplemented = this.RetargetingTranslator.Retarget(implemented, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
+                newBody := this.RetargetingTranslator.Retarget(body, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
+                newImplemented := this.RetargetingTranslator.Retarget(implemented, MemberSignatureComparer.RetargetedExplicitImplementationComparer);
 
                 if (newBody is object && newImplemented is object)
                 {
@@ -490,14 +490,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (_lazyExtensionGroupingAndMarkerTypesForTypeForwarding.IsDefault)
             {
-                var builder = ArrayBuilder<(Cci.INestedTypeReference GroupingType, ImmutableArray<Cci.INestedTypeReference> MarkerTypes)>.GetInstance();
-                var markerTypes = ArrayBuilder<Cci.INestedTypeReference>.GetInstance();
+                builder := ArrayBuilder<(Cci.INestedTypeReference GroupingType, ImmutableArray<Cci.INestedTypeReference> MarkerTypes)>.GetInstance();
+                markerTypes := ArrayBuilder<Cci.INestedTypeReference>.GetInstance();
 
                 ImmutableArray<INestedTypeDefinition> groupingTypes = ((SourceMemberContainerTypeSymbol)_underlyingType).GetExtensionGroupingInfo().GetGroupingTypes();
 
                 foreach (var groupingType in groupingTypes)
                 {
-                    var retargetedGroupingType = new ForwardedExtensionGroupingOrMarkerType(this.GetCciAdapter(), groupingType);
+                    retargetedGroupingType := new ForwardedExtensionGroupingOrMarkerType(this.GetCciAdapter(), groupingType);
                     markerTypes.Clear();
 
                     foreach (var markerType in groupingType.GetNestedTypes(context))

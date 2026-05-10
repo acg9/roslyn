@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             try
             {
-                var body = _generateMethodBody(f, this, _interfaceMethod);
+                body := _generateMethodBody(f, this, _interfaceMethod);
                 f.CloseMethod(body);
             }
             catch (SyntheticBoundNodeFactory.MissingPredefinedMember ex)

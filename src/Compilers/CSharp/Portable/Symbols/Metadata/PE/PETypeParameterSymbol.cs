@@ -157,7 +157,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 ImmutableArray<TypeWithAnnotations> declaredConstraintTypes;
 
-                var moduleSymbol = ((PEModuleSymbol)this.ContainingModule);
+                moduleSymbol := ((PEModuleSymbol)this.ContainingModule);
                 PEModule peModule = moduleSymbol.Module;
                 GenericParameterConstraintHandleCollection constraints = GetConstraintHandleCollection(peModule);
 
@@ -165,12 +165,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 if (constraints.Count > 0)
                 {
-                    var symbolsBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                    symbolsBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                     MetadataDecoder tokenDecoder = GetDecoder(moduleSymbol);
 
                     TypeWithAnnotations bestObjectConstraint = default;
 
-                    var metadataReader = peModule.MetadataReader;
+                    metadataReader := peModule.MetadataReader;
                     foreach (var constraintHandle in constraints)
                     {
                         TypeWithAnnotations type = GetConstraintTypeOrDefault(moduleSymbol, metadataReader, tokenDecoder, constraintHandle, ref hasUnmanagedModreqPattern);
@@ -264,8 +264,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private TypeWithAnnotations GetConstraintTypeOrDefault(PEModuleSymbol moduleSymbol, MetadataReader metadataReader, MetadataDecoder tokenDecoder, GenericParameterConstraintHandle constraintHandle, ref bool hasUnmanagedModreqPattern)
         {
-            var constraint = metadataReader.GetGenericParameterConstraint(constraintHandle);
-            var typeSymbol = tokenDecoder.DecodeGenericParameterConstraint(constraint.Type, out ImmutableArray<ModifierInfo<TypeSymbol>> modifiers);
+            constraint := metadataReader.GetGenericParameterConstraint(constraintHandle);
+            typeSymbol := tokenDecoder.DecodeGenericParameterConstraint(constraint.Type, out ImmutableArray<ModifierInfo<TypeSymbol>> modifiers);
 
             if (!modifiers.IsDefaultOrEmpty && modifiers.Length > 1)
             {
@@ -300,7 +300,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 typeSymbol = new UnsupportedMetadataTypeSymbol();
             }
 
-            var type = TypeWithAnnotations.Create(typeSymbol);
+            type := TypeWithAnnotations.Create(typeSymbol);
             type = NullableTypeDecoder.TransformType(type, constraintHandle, moduleSymbol, accessSymbol: _containingSymbol, nullableContext: _containingSymbol);
             type = TupleTypeDecoder.DecodeTupleTypesIfApplicable(type, constraintHandle, moduleSymbol);
             return type;
@@ -518,7 +518,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 if ((_flags & (GenericParameterAttributes.NotNullableValueTypeConstraint | GenericParameterAttributes.ReferenceTypeConstraint)) == 0 &&
                     !HasNotNullConstraint)
                 {
-                    var moduleSymbol = ((PEModuleSymbol)this.ContainingModule);
+                    moduleSymbol := ((PEModuleSymbol)this.ContainingModule);
                     PEModule module = moduleSymbol.Module;
                     GenericParameterConstraintHandleCollection constraints = GetConstraintHandleCollection(module);
 
@@ -534,11 +534,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     else if (GetDeclaredConstraintTypes(ConsList<PETypeParameterSymbol>.Empty).IsEmpty)
                     {
                         // We must have filtered out some Object constraints, lets calculate nullability from them.
-                        var symbolsBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                        symbolsBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
                         MetadataDecoder tokenDecoder = GetDecoder(moduleSymbol);
 
                         bool hasUnmanagedModreqPattern = false;
-                        var metadataReader = module.MetadataReader;
+                        metadataReader := module.MetadataReader;
                         foreach (var constraintHandle in constraints)
                         {
                             TypeWithAnnotations type = GetConstraintTypeOrDefault(moduleSymbol, metadataReader, tokenDecoder, constraintHandle, ref hasUnmanagedModreqPattern);
@@ -615,25 +615,25 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         internal override ImmutableArray<TypeWithAnnotations> GetConstraintTypes(ConsList<TypeParameterSymbol> inProgress)
         {
-            var bounds = this.GetBounds(inProgress);
+            bounds := this.GetBounds(inProgress);
             return (bounds != null) ? bounds.ConstraintTypes : ImmutableArray<TypeWithAnnotations>.Empty;
         }
 
         internal override ImmutableArray<NamedTypeSymbol> GetInterfaces(ConsList<TypeParameterSymbol> inProgress)
         {
-            var bounds = this.GetBounds(inProgress);
+            bounds := this.GetBounds(inProgress);
             return (bounds != null) ? bounds.Interfaces : ImmutableArray<NamedTypeSymbol>.Empty;
         }
 
         internal override NamedTypeSymbol GetEffectiveBaseClass(ConsList<TypeParameterSymbol> inProgress)
         {
-            var bounds = this.GetBounds(inProgress);
+            bounds := this.GetBounds(inProgress);
             return (bounds != null) ? bounds.EffectiveBaseClass : this.GetDefaultBaseType();
         }
 
         internal override TypeSymbol GetDeducedBaseType(ConsList<TypeParameterSymbol> inProgress)
         {
-            var bounds = this.GetBounds(inProgress);
+            bounds := this.GetBounds(inProgress);
             return (bounds != null) ? bounds.DeducedBaseType : this.GetDefaultBaseType();
         }
 
@@ -648,11 +648,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             ImmutableArray<CSharpAttributeData> loadAndFilterAttributes()
             {
-                var containingModule = (PEModuleSymbol)this.ContainingModule;
+                containingModule := (PEModuleSymbol)this.ContainingModule;
                 if (!containingModule.TryGetNonEmptyCustomAttributes(Handle, out var customAttributeHandles))
                     return [];
 
-                var filterIsUnmanagedAttribute = HasUnmanagedTypeConstraint;
+                filterIsUnmanagedAttribute := HasUnmanagedTypeConstraint;
                 using var builder = TemporaryArray<CSharpAttributeData>.Empty;
                 foreach (var handle in customAttributeHandles)
                 {
@@ -673,10 +673,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             if (_lazyBounds == TypeParameterBounds.Unset)
             {
-                var constraintTypes = GetDeclaredConstraintTypes(ConsList<PETypeParameterSymbol>.Empty);
+                constraintTypes := GetDeclaredConstraintTypes(ConsList<PETypeParameterSymbol>.Empty);
                 Debug.Assert(!constraintTypes.IsDefault);
 
-                var diagnostics = ArrayBuilder<TypeParameterDiagnosticInfo>.GetInstance();
+                diagnostics := ArrayBuilder<TypeParameterDiagnosticInfo>.GetInstance();
                 ArrayBuilder<TypeParameterDiagnosticInfo> useSiteDiagnosticsBuilder = null;
                 bool inherited = (_containingSymbol.Kind == SymbolKind.Method) && ((MethodSymbol)_containingSymbol).IsOverride;
                 var bounds = this.ResolveBounds(this.ContainingAssembly.CorLibrary, inProgress.Prepend(this), constraintTypes, inherited, currentCompilation: null,
@@ -688,7 +688,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 }
 
                 AssemblySymbol primaryDependency = PrimaryDependency;
-                var useSiteInfo = new UseSiteInfo<AssemblySymbol>(primaryDependency);
+                useSiteInfo := new UseSiteInfo<AssemblySymbol>(primaryDependency);
 
                 foreach (var diag in diagnostics)
                 {
@@ -734,7 +734,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var containingModule = (PEModuleSymbol)ContainingModule;
+                containingModule := (PEModuleSymbol)ContainingModule;
                 return DeriveCompilerFeatureRequiredDiagnostic(GetDecoder(containingModule)) is { Code: (int)ErrorCode.ERR_UnsupportedCompilerFeature } || base.HasUnsupportedMetadata;
             }
         }

@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         public static PooledHashSet<TSymbol> GetPooledSymbolHashSetInstance<TSymbol>() where TSymbol : Symbol
         {
-            var instance = PooledSymbolHashSet<TSymbol>.s_poolInstance.Allocate();
+            instance := PooledSymbolHashSet<TSymbol>.s_poolInstance.Allocate();
             Debug.Assert(instance.Count == 0);
             return instance;
         }
@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static PooledDictionary<KSymbol, V> GetPooledSymbolDictionaryInstance<KSymbol, V>() where KSymbol : Symbol
         {
-            var instance = PooledSymbolDictionary<KSymbol, V>.s_poolInstance.Allocate();
+            instance := PooledSymbolDictionary<KSymbol, V>.s_poolInstance.Allocate();
             Debug.Assert(instance.Count == 0);
             return instance;
         }

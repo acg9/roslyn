@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (IsTupleType)
             {
-                var result = MakeSynthesizedTupleMembers(ImmutableArray<Symbol>.Empty);
+                result := MakeSynthesizedTupleMembers(ImmutableArray<Symbol>.Empty);
                 RoslynDebug.Assert(result is object);
                 return result.ToImmutableAndFree();
             }

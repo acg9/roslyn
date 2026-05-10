@@ -65,7 +65,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var builder = ArrayBuilder<Location>.GetInstance();
+                    builder := ArrayBuilder<Location>.GetInstance();
                     foreach (var decl in _declarations)
                     {
                         SourceLocation loc = decl.NameLocation;
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 foreach (var child in decl.Children)
                 {
                     // it is either a type (more likely)
-                    var asType = child as SingleTypeDeclaration;
+                    asType := child as SingleTypeDeclaration;
                     if (asType != null)
                     {
                         // handle types
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                     // or it is a namespace
-                    var asNamespace = child as SingleNamespaceDeclaration;
+                    asNamespace := child as SingleNamespaceDeclaration;
                     if (asNamespace != null)
                     {
                         // handle namespace
@@ -139,7 +139,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var children = ArrayBuilder<MergedNamespaceOrTypeDeclaration>.GetInstance();
+            children := ArrayBuilder<MergedNamespaceOrTypeDeclaration>.GetInstance();
 
             addNamespacesToChildren(namespaces, allNamespacesHaveSameName, children);
             addTypesToChildren(types, allTypesHaveSameIdentity, children);
@@ -159,8 +159,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // PERF: Not using ArrayBuilder as the value in this dictionary as these arrays commonly
                         // exceed the builder threshold. Instead, calculate the number of SingleNamespaceDeclaration
                         // for each name and create an exactly sized array.
-                        var namespaceGroups = PooledDictionary<string, (SingleNamespaceDeclaration[] Declarations, int Index)>.GetInstance();
-                        var namespaceCounts = PooledDictionary<string, int>.GetInstance();
+                        namespaceGroups := PooledDictionary<string, (SingleNamespaceDeclaration[] Declarations, int Index)>.GetInstance();
+                        namespaceCounts := PooledDictionary<string, int>.GetInstance();
 
                         // First pass - collect the number of times each namespace name is present
                         populateNamespaceCounts(namespaces, namespaceCounts);
@@ -181,8 +181,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Debug.Assert(namespaces.Count > 0);
 
-                    var name = namespaces[0].Name;
-                    var count = 0;
+                    name := namespaces[0].Name;
+                    count := 0;
 
                     foreach (var n in namespaces)
                     {
@@ -208,9 +208,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     Debug.Assert(namespaces.Count > 0);
 
-                    var name = namespaces[0].Name;
-                    var declarations = new SingleNamespaceDeclaration[namespaceCounts[name]];
-                    var index = 0;
+                    name := namespaces[0].Name;
+                    declarations := new SingleNamespaceDeclaration[namespaceCounts[name]];
+                    index := 0;
 
                     foreach (var n in namespaces)
                     {
@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     foreach (var (_, namespaceGroup) in namespaceGroups)
                     {
-                        var declarations = ImmutableCollectionsMarshal.AsImmutableArray(namespaceGroup.Declarations);
+                        declarations := ImmutableCollectionsMarshal.AsImmutableArray(namespaceGroup.Declarations);
                         children.Add(MergedNamespaceDeclaration.Create(declarations));
                     }
                 }
@@ -260,11 +260,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // otherwise, the value will be an ArrayBuilder<SingleTypeDeclaration>. This code differs from
                         // addNamespacesToChildren intentionally as the vast majority of identities are represented by only a
                         // single item in the types collection.
-                        var typeGroups = PooledDictionary<SingleTypeDeclaration.TypeDeclarationIdentity, object>.GetInstance();
+                        typeGroups := PooledDictionary<SingleTypeDeclaration.TypeDeclarationIdentity, object>.GetInstance();
 
                         foreach (var t in types)
                         {
-                            var id = t.Identity;
+                            id := t.Identity;
 
                             if (typeGroups.TryGetValue(id, out var existingValue))
                             {
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                             else
                             {
-                                var builder = (ArrayBuilder<SingleTypeDeclaration>)typeGroup;
+                                builder := (ArrayBuilder<SingleTypeDeclaration>)typeGroup;
                                 children.Add(new MergedTypeDeclaration(builder.ToImmutableAndFree()));
                             }
                         }

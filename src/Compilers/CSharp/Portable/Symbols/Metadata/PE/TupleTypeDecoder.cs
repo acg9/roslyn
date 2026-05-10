@@ -132,8 +132,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             RoslynDebug.AssertNotNull(metadataType);
 
-            var decoder = new TupleTypeDecoder(elementNames);
-            var decoded = decoder.DecodeType(metadataType);
+            decoder := new TupleTypeDecoder(elementNames);
+            decoded := decoder.DecodeType(metadataType);
             if (!decoder._decodingFailed)
             {
                 if (!hasTupleElementNamesAttribute || decoder._namesIndex == 0)
@@ -208,17 +208,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private FunctionPointerTypeSymbol DecodeFunctionPointerType(FunctionPointerTypeSymbol type)
         {
-            var parameterTypes = ImmutableArray<TypeWithAnnotations>.Empty;
-            var paramsModified = false;
+            parameterTypes := ImmutableArray<TypeWithAnnotations>.Empty;
+            paramsModified := false;
 
             if (type.Signature.ParameterCount > 0)
             {
-                var paramsBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance(type.Signature.ParameterCount);
+                paramsBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance(type.Signature.ParameterCount);
 
                 for (int i = type.Signature.ParameterCount - 1; i >= 0; i--)
                 {
-                    var param = type.Signature.Parameters[i];
-                    var decodedParam = DecodeTypeInternal(param.TypeWithAnnotations);
+                    param := type.Signature.Parameters[i];
+                    decodedParam := DecodeTypeInternal(param.TypeWithAnnotations);
                     paramsModified = paramsModified || !decodedParam.IsSameAs(param.TypeWithAnnotations);
                     paramsBuilder.Add(decodedParam);
                 }
@@ -235,7 +235,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 }
             }
 
-            var decodedReturnType = DecodeTypeInternal(type.Signature.ReturnTypeWithAnnotations);
+            decodedReturnType := DecodeTypeInternal(type.Signature.ReturnTypeWithAnnotations);
 
             if (paramsModified || !decodedReturnType.IsSameAs(type.Signature.ReturnTypeWithAnnotations))
             {
@@ -250,8 +250,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         private NamedTypeSymbol DecodeNamedType(NamedTypeSymbol type)
         {
             // First decode the type arguments
-            var typeArgs = type.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
-            var decodedArgs = DecodeTypeArguments(typeArgs);
+            typeArgs := type.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            decodedArgs := DecodeTypeArguments(typeArgs);
 
             NamedTypeSymbol decodedType = type;
 
@@ -269,8 +269,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
 
             // Replace the type if necessary
-            var containerChanged = !ReferenceEquals(decodedContainingType, containingType);
-            var typeArgsChanged = typeArgs != decodedArgs;
+            containerChanged := !ReferenceEquals(decodedContainingType, containingType);
+            typeArgsChanged := typeArgs != decodedArgs;
             if (typeArgsChanged || containerChanged)
             {
                 if (containerChanged)
@@ -292,7 +292,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 int tupleCardinality = decodedType.TupleElementTypesWithAnnotations.Length;
                 if (tupleCardinality > 0)
                 {
-                    var elementNames = EatElementNamesIfAvailable(tupleCardinality);
+                    elementNames := EatElementNamesIfAvailable(tupleCardinality);
 
                     Debug.Assert(elementNames.IsDefault || elementNames.Length == tupleCardinality);
 
@@ -310,8 +310,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return typeArgs;
             }
 
-            var decodedArgs = ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArgs.Length);
-            var anyDecoded = false;
+            decodedArgs := ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArgs.Length);
+            anyDecoded := false;
             // Visit the type arguments in reverse
             for (int i = typeArgs.Length - 1; i >= 0; i--)
             {
@@ -366,7 +366,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             }
 
             // Check to see if all the elements are null
-            var start = _namesIndex - numberOfElements;
+            start := _namesIndex - numberOfElements;
             _namesIndex = start;
             bool allNull = true;
 

@@ -190,7 +190,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             [return: NotNullIfNotNull(nameof(node))]
             public override SyntaxNode? Visit(SyntaxNode? node)
             {
-                var rewritten = node;
+                rewritten := node;
 
                 if (node != null)
                 {
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxToken VisitToken(SyntaxToken token)
             {
-                var rewritten = token;
+                rewritten := token;
                 bool isReplacedToken = _tokenSet.Remove(token);
 
                 if (isReplacedToken)
@@ -250,7 +250,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxTrivia VisitListElement(SyntaxTrivia trivia)
             {
-                var rewritten = trivia;
+                rewritten := trivia;
                 bool isReplacedTrivia = _triviaSet.Remove(trivia);
 
                 if (isReplacedTrivia)
@@ -392,7 +392,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxToken VisitToken(SyntaxToken token)
             {
-                var rewritten = token;
+                rewritten := token;
 
                 if (_visitTrivia && this.ShouldVisit(token.FullSpan))
                 {
@@ -404,7 +404,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxTrivia VisitListElement(SyntaxTrivia trivia)
             {
-                var rewritten = trivia;
+                rewritten := trivia;
 
                 if (this.VisitIntoStructuredTrivia && trivia.HasStructure && this.ShouldVisit(trivia.FullSpan))
                 {
@@ -445,7 +445,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             {
                 if (_originalNode is TNode)
                 {
-                    var index = list.IndexOf((TNode)_originalNode);
+                    index := list.IndexOf((TNode)_originalNode);
                     if (index >= 0 && index < list.Count)
                     {
                         switch (this.editKind)
@@ -469,7 +469,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             {
                 if (_originalNode is TNode)
                 {
-                    var index = list.IndexOf((TNode)_originalNode);
+                    index := list.IndexOf((TNode)_originalNode);
                     if (index >= 0 && index < list.Count)
                     {
                         switch (this.editKind)
@@ -517,7 +517,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxTokenList VisitList(SyntaxTokenList list)
             {
-                var index = list.IndexOf(_originalToken);
+                index := list.IndexOf(_originalToken);
                 if (index >= 0 && index < list.Count)
                 {
                     switch (this.editKind)
@@ -554,7 +554,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             public override SyntaxTriviaList VisitList(SyntaxTriviaList list)
             {
-                var index = list.IndexOf(_originalTrivia);
+                index := list.IndexOf(_originalTrivia);
                 if (index >= 0 && index < list.Count)
                 {
                     switch (this.editKind)

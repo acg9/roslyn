@@ -69,7 +69,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
                 return true;
             }
 
-            var compareKind = equalityComparer.CompareKind;
+            compareKind := equalityComparer.CompareKind;
 
             if (NullableAnnotation != otherType.NullableAnnotation && (compareKind & TypeCompareKind.IgnoreNullableModifiersForReferenceTypes) == 0 &&
                 ((compareKind & TypeCompareKind.ObliviousNullableModifierMatchesAny) == 0 ||

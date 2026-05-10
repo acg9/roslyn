@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // all other crefs only have type parameters.
             if (result.Kind == SymbolKind.ErrorType)
             {
-                var noTrivia = syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
+                noTrivia := syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
                 diagnostics.Add(ErrorCode.WRN_BadXMLRef, syntax.Location, noTrivia.ToFullString());
             }
 
@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // As in normal lookup (see CreateErrorIfLookupOnTypeParameter), you can't dot into a type parameter
                 // (though you can dot into an expression of type parameter type).
                 CrefSyntax crefSyntax = GetRootCrefSyntax(syntax);
-                var noTrivia = syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
+                noTrivia := syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
                 diagnostics.Add(ErrorCode.WRN_BadXMLRef, crefSyntax.Location, noTrivia.ToFullString());
 
                 ambiguityWinner = null;
@@ -137,7 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!result.Any())
             {
                 CrefSyntax crefSyntax = GetRootCrefSyntax(syntax);
-                var noTrivia = syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
+                noTrivia := syntax.WithLeadingTrivia(null).WithTrailingTrivia(null);
                 diagnostics.Add(ErrorCode.WRN_BadXMLRef, crefSyntax.Location, noTrivia.ToFullString());
             }
 
@@ -300,7 +300,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
-                    var constructedNested = (NamedTypeSymbol)ConstructWithCrefTypeParameters(extensionArity, extensionTypeArguments, nested);
+                    constructedNested := (NamedTypeSymbol)ConstructWithCrefTypeParameters(extensionArity, extensionTypeArguments, nested);
 
                     var candidateExtensionSignature = new SignatureOnlyMethodSymbol(
                          methodKind: MethodKind.Ordinary,
@@ -322,7 +322,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
-                    var candidates = constructedNested.GetMembers(name);
+                    candidates := constructedNested.GetMembers(name);
 
                     foreach (var candidate in candidates)
                     {
@@ -528,7 +528,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private ImmutableArray<Symbol> ComputeSortedCrefMembers(CSharpSyntaxNode syntax, NamespaceOrTypeSymbol? containerOpt, string memberName, string memberNameText, int arity, bool hasParameterList, BindingDiagnosticBag diagnostics)
         {
             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = GetNewCompoundUseSiteInfo(diagnostics);
-            var result = ComputeSortedCrefMembers(containerOpt, memberName, memberNameText, arity, hasParameterList, syntax, diagnostics, ref useSiteInfo);
+            result := ComputeSortedCrefMembers(containerOpt, memberName, memberNameText, arity, hasParameterList, syntax, diagnostics, ref useSiteInfo);
             diagnostics.Add(syntax, useSiteInfo);
             return result;
         }
@@ -1085,7 +1085,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(typeArgumentListSyntax is object);
                 SeparatedSyntaxList<TypeSyntax> typeArgumentSyntaxes = typeArgumentListSyntax.Arguments;
-                var typeArgumentsWithAnnotations = ArrayBuilder<TypeWithAnnotations>.GetInstance(arity);
+                typeArgumentsWithAnnotations := ArrayBuilder<TypeWithAnnotations>.GetInstance(arity);
 
                 var unusedDiagnostics =
 #if DEBUG
@@ -1098,7 +1098,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     TypeSyntax typeArgumentSyntax = typeArgumentSyntaxes[i];
 
-                    var typeArgument = BindType(typeArgumentSyntax, unusedDiagnostics);
+                    typeArgument := BindType(typeArgumentSyntax, unusedDiagnostics);
                     typeArgumentsWithAnnotations.Add(typeArgument);
 
                     // Should be in a WithCrefTypeParametersBinder.

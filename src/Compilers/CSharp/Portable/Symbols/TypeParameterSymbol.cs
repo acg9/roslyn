@@ -91,7 +91,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ImmutableArray<TypeWithAnnotations> ConstraintTypesWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = ConstraintTypesNoUseSiteDiagnostics;
+            result := ConstraintTypesNoUseSiteDiagnostics;
 
             AppendConstraintsUseSiteErrorInfo(ref useSiteInfo);
 
@@ -269,7 +269,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal NamedTypeSymbol EffectiveBaseClass(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
             AppendConstraintsUseSiteErrorInfo(ref useSiteInfo);
-            var result = EffectiveBaseClassNoUseSiteDiagnostics;
+            result := EffectiveBaseClassNoUseSiteDiagnostics;
 
             if ((object)result != null)
             {
@@ -293,7 +293,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ImmutableArray<NamedTypeSymbol> EffectiveInterfacesWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = EffectiveInterfacesNoUseSiteDiagnostics;
+            result := EffectiveInterfacesNoUseSiteDiagnostics;
 
             foreach (var iface in result)
             {
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal TypeSymbol DeducedBaseType(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
             AppendConstraintsUseSiteErrorInfo(ref useSiteInfo);
-            var result = DeducedBaseTypeNoUseSiteDiagnostics;
+            result := DeducedBaseTypeNoUseSiteDiagnostics;
 
             if ((object)result != null)
             {
@@ -343,10 +343,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ImmutableArray<NamedTypeSymbol> AllEffectiveInterfacesWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = AllEffectiveInterfacesNoUseSiteDiagnostics;
+            result := AllEffectiveInterfacesNoUseSiteDiagnostics;
 
             // Since bases affect content of AllInterfaces set, we need to make sure they all are good.
-            var current = DeducedBaseType(ref useSiteInfo);
+            current := DeducedBaseType(ref useSiteInfo);
 
             while ((object)current != null)
             {
@@ -377,7 +377,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             foreach (var typeParameter in typeParameters)
             {
                 // Invoke any method that forces constraints to be resolved.
-                var unused = typeParameter.GetConstraintTypes(ConsList<TypeParameterSymbol>.Empty);
+                unused := typeParameter.GetConstraintTypes(ConsList<TypeParameterSymbol>.Empty);
             }
         }
 

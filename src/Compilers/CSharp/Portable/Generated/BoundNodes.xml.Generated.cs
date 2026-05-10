@@ -312,7 +312,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(field, this.Field) || locals != this.Locals || value != this.Value)
             {
-                var result = new BoundFieldEqualsValue(this.Syntax, field, locals, value, this.HasErrors);
+                result := new BoundFieldEqualsValue(this.Syntax, field, locals, value, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -342,7 +342,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(property, this.Property) || locals != this.Locals || value != this.Value)
             {
-                var result = new BoundPropertyEqualsValue(this.Syntax, property, locals, value, this.HasErrors);
+                result := new BoundPropertyEqualsValue(this.Syntax, property, locals, value, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -372,7 +372,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(parameter, this.Parameter) || locals != this.Locals || value != this.Value)
             {
-                var result = new BoundParameterEqualsValue(this.Syntax, parameter, locals, value, this.HasErrors);
+                result := new BoundParameterEqualsValue(this.Syntax, parameter, locals, value, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -400,7 +400,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statement != this.Statement)
             {
-                var result = new BoundGlobalStatementInitializer(this.Syntax, statement, this.HasErrors);
+                result := new BoundGlobalStatementInitializer(this.Syntax, statement, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -473,7 +473,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundValuePlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundValuePlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCapturedReceiverPlaceholder(this.Syntax, receiver, type, this.HasErrors);
+                result := new BoundCapturedReceiverPlaceholder(this.Syntax, receiver, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -542,7 +542,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variableSymbol, this.VariableSymbol) || isDiscardExpression != this.IsDiscardExpression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDeconstructValuePlaceholder(this.Syntax, variableSymbol, isDiscardExpression, type, this.HasErrors);
+                result := new BoundDeconstructValuePlaceholder(this.Syntax, variableSymbol, isDiscardExpression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -577,7 +577,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTupleOperandPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundTupleOperandPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -606,7 +606,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAwaitableValuePlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundAwaitableValuePlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -641,7 +641,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDisposableValuePlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundDisposableValuePlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -679,7 +679,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (isNewInstance != this.IsNewInstance || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundObjectOrCollectionValuePlaceholder(this.Syntax, isNewInstance, type, this.HasErrors);
+                result := new BoundObjectOrCollectionValuePlaceholder(this.Syntax, isNewInstance, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -714,7 +714,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundImplicitIndexerValuePlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundImplicitIndexerValuePlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -752,7 +752,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (isEquivalentToThisReference != this.IsEquivalentToThisReference || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundImplicitIndexerReceiverPlaceholder(this.Syntax, isEquivalentToThisReference, type, this.HasErrors);
+                result := new BoundImplicitIndexerReceiverPlaceholder(this.Syntax, isEquivalentToThisReference, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -787,7 +787,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundListPatternReceiverPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundListPatternReceiverPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -822,7 +822,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundListPatternIndexPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundListPatternIndexPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -857,7 +857,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSlicePatternReceiverPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundSlicePatternReceiverPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -892,7 +892,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSlicePatternRangePlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundSlicePatternRangePlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -920,7 +920,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCollectionBuilderElementsPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundCollectionBuilderElementsPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -951,7 +951,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (refKind != this.RefKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDup(this.Syntax, refKind, type, this.HasErrors);
+                result := new BoundDup(this.Syntax, refKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -979,7 +979,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPassByCopy(this.Syntax, expression, type, this.HasErrors);
+                result := new BoundPassByCopy(this.Syntax, expression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1016,7 +1016,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (resultKind != this.ResultKind || symbols != this.Symbols || childBoundNodes != this.ChildBoundNodes || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundBadExpression(this.Syntax, resultKind, symbols, childBoundNodes, type, this.HasErrors);
+                result := new BoundBadExpression(this.Syntax, resultKind, symbols, childBoundNodes, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1044,7 +1044,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (childBoundNodes != this.ChildBoundNodes)
             {
-                var result = new BoundBadStatement(this.Syntax, childBoundNodes, this.HasErrors);
+                result := new BoundBadStatement(this.Syntax, childBoundNodes, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1072,7 +1072,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (finallyBlock != this.FinallyBlock)
             {
-                var result = new BoundExtractedFinallyBlock(this.Syntax, finallyBlock, this.HasErrors);
+                result := new BoundExtractedFinallyBlock(this.Syntax, finallyBlock, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1107,7 +1107,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(aliasOpt, this.AliasOpt) || boundContainingTypeOpt != this.BoundContainingTypeOpt || boundDimensionsOpt != this.BoundDimensionsOpt || typeWithAnnotations != this.TypeWithAnnotations || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTypeExpression(this.Syntax, aliasOpt, boundContainingTypeOpt, boundDimensionsOpt, typeWithAnnotations, type, this.HasErrors);
+                result := new BoundTypeExpression(this.Syntax, aliasOpt, boundContainingTypeOpt, boundDimensionsOpt, typeWithAnnotations, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1156,7 +1156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (binder != this.Binder || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(valueSymbol, this.ValueSymbol) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTypeOrValueExpression(this.Syntax, binder, valueSymbol, type, this.HasErrors);
+                result := new BoundTypeOrValueExpression(this.Syntax, binder, valueSymbol, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1197,7 +1197,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(namespaceSymbol, this.NamespaceSymbol) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(aliasOpt, this.AliasOpt))
             {
-                var result = new BoundNamespaceExpression(this.Syntax, namespaceSymbol, aliasOpt, this.HasErrors);
+                result := new BoundNamespaceExpression(this.Syntax, namespaceSymbol, aliasOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1239,7 +1239,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operatorKind != this.OperatorKind || operand != this.Operand || constantValueOpt != this.ConstantValueOpt || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(methodOpt, this.MethodOpt) || !TypeSymbol.Equals(constrainedToTypeOpt, this.ConstrainedToTypeOpt, TypeCompareKind.ConsiderEverything) || resultKind != this.ResultKind || originalUserDefinedOperatorsOpt != this.OriginalUserDefinedOperatorsOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundUnaryOperator(this.Syntax, operatorKind, operand, constantValueOpt, methodOpt, constrainedToTypeOpt, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
+                result := new BoundUnaryOperator(this.Syntax, operatorKind, operand, constantValueOpt, methodOpt, constrainedToTypeOpt, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1287,7 +1287,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operatorKind != this.OperatorKind || operand != this.Operand || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(methodOpt, this.MethodOpt) || !TypeSymbol.Equals(constrainedToTypeOpt, this.ConstrainedToTypeOpt, TypeCompareKind.ConsiderEverything) || operandPlaceholder != this.OperandPlaceholder || operandConversion != this.OperandConversion || resultPlaceholder != this.ResultPlaceholder || resultConversion != this.ResultConversion || resultKind != this.ResultKind || originalUserDefinedOperatorsOpt != this.OriginalUserDefinedOperatorsOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundIncrementOperator(this.Syntax, operatorKind, operand, methodOpt, constrainedToTypeOpt, operandPlaceholder, operandConversion, resultPlaceholder, resultConversion, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
+                result := new BoundIncrementOperator(this.Syntax, operatorKind, operand, methodOpt, constrainedToTypeOpt, operandPlaceholder, operandConversion, resultPlaceholder, resultConversion, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1319,7 +1319,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || isManaged != this.IsManaged || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAddressOfOperator(this.Syntax, operand, isManaged, type, this.HasErrors);
+                result := new BoundAddressOfOperator(this.Syntax, operand, isManaged, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1348,7 +1348,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand)
             {
-                var result = new BoundUnconvertedAddressOfOperator(this.Syntax, operand, this.HasErrors);
+                result := new BoundUnconvertedAddressOfOperator(this.Syntax, operand, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1391,7 +1391,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(targetMethod, this.TargetMethod) || !TypeSymbol.Equals(constrainedToTypeOpt, this.ConstrainedToTypeOpt, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFunctionPointerLoad(this.Syntax, targetMethod, constrainedToTypeOpt, type, this.HasErrors);
+                result := new BoundFunctionPointerLoad(this.Syntax, targetMethod, constrainedToTypeOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1423,7 +1423,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || refersToLocation != this.RefersToLocation || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPointerIndirectionOperator(this.Syntax, operand, refersToLocation, type, this.HasErrors);
+                result := new BoundPointerIndirectionOperator(this.Syntax, operand, refersToLocation, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1460,7 +1460,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || index != this.Index || @checked != this.Checked || refersToLocation != this.RefersToLocation || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPointerElementAccess(this.Syntax, expression, index, @checked, refersToLocation, type, this.HasErrors);
+                result := new BoundPointerElementAccess(this.Syntax, expression, index, @checked, refersToLocation, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1497,7 +1497,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (invokedExpression != this.InvokedExpression || arguments != this.Arguments || argumentRefKindsOpt != this.ArgumentRefKindsOpt || resultKind != this.ResultKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFunctionPointerInvocation(this.Syntax, invokedExpression, arguments, argumentRefKindsOpt, resultKind, type, this.HasErrors);
+                result := new BoundFunctionPointerInvocation(this.Syntax, invokedExpression, arguments, argumentRefKindsOpt, resultKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1529,7 +1529,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getTypeFromHandle, this.GetTypeFromHandle) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRefTypeOperator(this.Syntax, operand, getTypeFromHandle, type, this.HasErrors);
+                result := new BoundRefTypeOperator(this.Syntax, operand, getTypeFromHandle, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1559,7 +1559,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundMakeRefOperator(this.Syntax, operand, type, this.HasErrors);
+                result := new BoundMakeRefOperator(this.Syntax, operand, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1591,7 +1591,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (nullableAnnotation != this.NullableAnnotation || operand != this.Operand || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRefValueOperator(this.Syntax, nullableAnnotation, operand, type, this.HasErrors);
+                result := new BoundRefValueOperator(this.Syntax, nullableAnnotation, operand, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1623,7 +1623,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(methodOpt, this.MethodOpt) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFromEndIndexExpression(this.Syntax, operand, methodOpt, type, this.HasErrors);
+                result := new BoundFromEndIndexExpression(this.Syntax, operand, methodOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1656,7 +1656,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (leftOperandOpt != this.LeftOperandOpt || rightOperandOpt != this.RightOperandOpt || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(methodOpt, this.MethodOpt) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRangeExpression(this.Syntax, leftOperandOpt, rightOperandOpt, methodOpt, type, this.HasErrors);
+                result := new BoundRangeExpression(this.Syntax, leftOperandOpt, rightOperandOpt, methodOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1713,7 +1713,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operatorKind != this.OperatorKind || data != this.Data || resultKind != this.ResultKind || left != this.Left || right != this.Right || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundBinaryOperator(this.Syntax, operatorKind, data, resultKind, left, right, type, this.HasErrors);
+                result := new BoundBinaryOperator(this.Syntax, operatorKind, data, resultKind, left, right, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1751,7 +1751,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (left != this.Left || right != this.Right || operatorKind != this.OperatorKind || operators != this.Operators || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTupleBinaryOperator(this.Syntax, left, right, operatorKind, operators, type, this.HasErrors);
+                result := new BoundTupleBinaryOperator(this.Syntax, left, right, operatorKind, operators, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1804,7 +1804,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operatorKind != this.OperatorKind || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(logicalOperator, this.LogicalOperator) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(trueOperator, this.TrueOperator) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(falseOperator, this.FalseOperator) || trueFalseOperandPlaceholder != this.TrueFalseOperandPlaceholder || trueFalseOperandConversion != this.TrueFalseOperandConversion || !TypeSymbol.Equals(constrainedToTypeOpt, this.ConstrainedToTypeOpt, TypeCompareKind.ConsiderEverything) || resultKind != this.ResultKind || originalUserDefinedOperatorsOpt != this.OriginalUserDefinedOperatorsOpt || left != this.Left || right != this.Right || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundUserDefinedConditionalLogicalOperator(this.Syntax, operatorKind, logicalOperator, trueOperator, falseOperator, trueFalseOperandPlaceholder, trueFalseOperandConversion, constrainedToTypeOpt, resultKind, originalUserDefinedOperatorsOpt, left, right, type, this.HasErrors);
+                result := new BoundUserDefinedConditionalLogicalOperator(this.Syntax, operatorKind, logicalOperator, trueOperator, falseOperator, trueFalseOperandPlaceholder, trueFalseOperandConversion, constrainedToTypeOpt, resultKind, originalUserDefinedOperatorsOpt, left, right, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1851,7 +1851,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (@operator != this.Operator || left != this.Left || right != this.Right || leftPlaceholder != this.LeftPlaceholder || leftConversion != this.LeftConversion || finalPlaceholder != this.FinalPlaceholder || finalConversion != this.FinalConversion || resultKind != this.ResultKind || originalUserDefinedOperatorsOpt != this.OriginalUserDefinedOperatorsOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCompoundAssignmentOperator(this.Syntax, @operator, left, right, leftPlaceholder, leftConversion, finalPlaceholder, finalConversion, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
+                result := new BoundCompoundAssignmentOperator(this.Syntax, @operator, left, right, leftPlaceholder, leftConversion, finalPlaceholder, finalConversion, resultKind, originalUserDefinedOperatorsOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1885,7 +1885,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (left != this.Left || right != this.Right || isRef != this.IsRef || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAssignmentOperator(this.Syntax, left, right, isRef, type, this.HasErrors);
+                result := new BoundAssignmentOperator(this.Syntax, left, right, isRef, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1920,7 +1920,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (left != this.Left || right != this.Right || isUsed != this.IsUsed || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDeconstructionAssignmentOperator(this.Syntax, left, right, isUsed, type, this.HasErrors);
+                result := new BoundDeconstructionAssignmentOperator(this.Syntax, left, right, isUsed, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1961,7 +1961,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (leftOperand != this.LeftOperand || rightOperand != this.RightOperand || leftPlaceholder != this.LeftPlaceholder || leftConversion != this.LeftConversion || operatorResultKind != this.OperatorResultKind || @checked != this.Checked || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNullCoalescingOperator(this.Syntax, leftOperand, rightOperand, leftPlaceholder, leftConversion, operatorResultKind, @checked, type, this.HasErrors);
+                result := new BoundNullCoalescingOperator(this.Syntax, leftOperand, rightOperand, leftPlaceholder, leftConversion, operatorResultKind, @checked, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -1992,7 +1992,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (leftOperand != this.LeftOperand || rightOperand != this.RightOperand || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNullCoalescingAssignmentOperator(this.Syntax, leftOperand, rightOperand, type, this.HasErrors);
+                result := new BoundNullCoalescingAssignmentOperator(this.Syntax, leftOperand, rightOperand, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2031,7 +2031,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (condition != this.Condition || consequence != this.Consequence || alternative != this.Alternative || constantValueOpt != this.ConstantValueOpt || noCommonTypeError != this.NoCommonTypeError)
             {
-                var result = new BoundUnconvertedConditionalOperator(this.Syntax, condition, consequence, alternative, constantValueOpt, noCommonTypeError, this.HasErrors);
+                result := new BoundUnconvertedConditionalOperator(this.Syntax, condition, consequence, alternative, constantValueOpt, noCommonTypeError, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2075,7 +2075,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (isRef != this.IsRef || condition != this.Condition || consequence != this.Consequence || alternative != this.Alternative || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(naturalTypeOpt, this.NaturalTypeOpt, TypeCompareKind.ConsiderEverything) || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConditionalOperator(this.Syntax, isRef, condition, consequence, alternative, constantValueOpt, naturalTypeOpt, wasTargetTyped, type, this.HasErrors);
+                result := new BoundConditionalOperator(this.Syntax, isRef, condition, consequence, alternative, constantValueOpt, naturalTypeOpt, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2108,7 +2108,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || indices != this.Indices || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundArrayAccess(this.Syntax, expression, indices, type, this.HasErrors);
+                result := new BoundArrayAccess(this.Syntax, expression, indices, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2137,7 +2137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arrayAccess != this.ArrayAccess)
             {
-                var result = new BoundRefArrayAccess(this.Syntax, arrayAccess, this.HasErrors);
+                result := new BoundRefArrayAccess(this.Syntax, arrayAccess, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2167,7 +2167,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundArrayLength(this.Syntax, expression, type, this.HasErrors);
+                result := new BoundArrayLength(this.Syntax, expression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2208,7 +2208,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (awaitableInstancePlaceholder != this.AwaitableInstancePlaceholder || isDynamic != this.IsDynamic || getAwaiter != this.GetAwaiter || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(isCompleted, this.IsCompleted) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getResult, this.GetResult) || runtimeAsyncAwaitCall != this.RuntimeAsyncAwaitCall || runtimeAsyncAwaitCallPlaceholder != this.RuntimeAsyncAwaitCallPlaceholder)
             {
-                var result = new BoundAwaitableInfo(this.Syntax, awaitableInstancePlaceholder, isDynamic, getAwaiter, isCompleted, getResult, runtimeAsyncAwaitCall, runtimeAsyncAwaitCallPlaceholder, this.HasErrors);
+                result := new BoundAwaitableInfo(this.Syntax, awaitableInstancePlaceholder, isDynamic, getAwaiter, isCompleted, getResult, runtimeAsyncAwaitCall, runtimeAsyncAwaitCallPlaceholder, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2243,7 +2243,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || awaitableInfo != this.AwaitableInfo || debugInfo != this.DebugInfo || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAwaitExpression(this.Syntax, expression, awaitableInfo, debugInfo, type, this.HasErrors);
+                result := new BoundAwaitExpression(this.Syntax, expression, awaitableInfo, debugInfo, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2296,7 +2296,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (sourceType != this.SourceType || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getTypeFromHandle, this.GetTypeFromHandle) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTypeOfOperator(this.Syntax, sourceType, getTypeFromHandle, type, this.HasErrors);
+                result := new BoundTypeOfOperator(this.Syntax, sourceType, getTypeFromHandle, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2328,7 +2328,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || prologue != this.Prologue || epilogue != this.Epilogue)
             {
-                var result = new BoundBlockInstrumentation(this.Syntax, locals, prologue, epilogue, this.HasErrors);
+                result := new BoundBlockInstrumentation(this.Syntax, locals, prologue, epilogue, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2372,7 +2372,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(method, this.Method) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundMethodDefIndex(this.Syntax, method, type, this.HasErrors);
+                result := new BoundMethodDefIndex(this.Syntax, method, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2415,7 +2415,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(local, this.Local) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(hoistedField, this.HoistedField) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLocalId(this.Syntax, local, hoistedField, type, this.HasErrors);
+                result := new BoundLocalId(this.Syntax, local, hoistedField, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2458,7 +2458,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(parameter, this.Parameter) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(hoistedField, this.HoistedField) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundParameterId(this.Syntax, parameter, hoistedField, type, this.HasErrors);
+                result := new BoundParameterId(this.Syntax, parameter, hoistedField, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2493,7 +2493,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundStateMachineInstanceId(this.Syntax, type, this.HasErrors);
+                result := new BoundStateMachineInstanceId(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2528,7 +2528,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundMaximumMethodDefIndex(this.Syntax, type, this.HasErrors);
+                result := new BoundMaximumMethodDefIndex(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2566,7 +2566,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (analysisKind != this.AnalysisKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundInstrumentationPayloadRoot(this.Syntax, analysisKind, type, this.HasErrors);
+                result := new BoundInstrumentationPayloadRoot(this.Syntax, analysisKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2601,7 +2601,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundThrowIfModuleCancellationRequested(this.Syntax, type, this.HasErrors);
+                result := new BoundThrowIfModuleCancellationRequested(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2636,7 +2636,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new ModuleCancellationTokenExpression(this.Syntax, type, this.HasErrors);
+                result := new ModuleCancellationTokenExpression(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2671,7 +2671,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundModuleVersionId(this.Syntax, type, this.HasErrors);
+                result := new BoundModuleVersionId(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2706,7 +2706,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundModuleVersionIdString(this.Syntax, type, this.HasErrors);
+                result := new BoundModuleVersionIdString(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2746,7 +2746,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (document != this.Document || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSourceDocumentIndex(this.Syntax, document, type, this.HasErrors);
+                result := new BoundSourceDocumentIndex(this.Syntax, document, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2789,7 +2789,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(method, this.Method) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getMethodFromHandle, this.GetMethodFromHandle) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundMethodInfo(this.Syntax, method, getMethodFromHandle, type, this.HasErrors);
+                result := new BoundMethodInfo(this.Syntax, method, getMethodFromHandle, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2832,7 +2832,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(field, this.Field) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getFieldFromHandle, this.GetFieldFromHandle) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFieldInfo(this.Syntax, field, getFieldFromHandle, type, this.HasErrors);
+                result := new BoundFieldInfo(this.Syntax, field, getFieldFromHandle, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2886,7 +2886,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (targetType != this.TargetType || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDefaultExpression(this.Syntax, targetType, constantValueOpt, type, this.HasErrors);
+                result := new BoundDefaultExpression(this.Syntax, targetType, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2921,7 +2921,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || targetType != this.TargetType || conversionKind != this.ConversionKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundIsOperator(this.Syntax, operand, targetType, conversionKind, type, this.HasErrors);
+                result := new BoundIsOperator(this.Syntax, operand, targetType, conversionKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2958,7 +2958,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || targetType != this.TargetType || operandPlaceholder != this.OperandPlaceholder || operandConversion != this.OperandConversion || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAsOperator(this.Syntax, operand, targetType, operandPlaceholder, operandConversion, type, this.HasErrors);
+                result := new BoundAsOperator(this.Syntax, operand, targetType, operandPlaceholder, operandConversion, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -2990,7 +2990,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (sourceType != this.SourceType || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSizeOfOperator(this.Syntax, sourceType, constantValueOpt, type, this.HasErrors);
+                result := new BoundSizeOfOperator(this.Syntax, sourceType, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3038,7 +3038,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || conversion != this.Conversion || isBaseConversion != this.IsBaseConversion || @checked != this.Checked || explicitCastInCode != this.ExplicitCastInCode || constantValueOpt != this.ConstantValueOpt || conversionGroupOpt != this.ConversionGroupOpt || inConversionGroupFlags != this.InConversionGroupFlags || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConversion(this.Syntax, operand, conversion, isBaseConversion, @checked, explicitCastInCode, constantValueOpt, conversionGroupOpt, inConversionGroupFlags, type, this.HasErrors);
+                result := new BoundConversion(this.Syntax, operand, conversion, isBaseConversion, @checked, explicitCastInCode, constantValueOpt, conversionGroupOpt, inConversionGroupFlags, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3071,7 +3071,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operand != this.Operand || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(conversionMethod, this.ConversionMethod) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundReadOnlySpanFromArray(this.Syntax, operand, conversionMethod, type, this.HasErrors);
+                result := new BoundReadOnlySpanFromArray(this.Syntax, operand, conversionMethod, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3106,7 +3106,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundArgList(this.Syntax, type, this.HasErrors);
+                result := new BoundArgList(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3137,7 +3137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arguments != this.Arguments || argumentRefKindsOpt != this.ArgumentRefKindsOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundArgListOperator(this.Syntax, arguments, argumentRefKindsOpt, type, this.HasErrors);
+                result := new BoundArgListOperator(this.Syntax, arguments, argumentRefKindsOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3176,7 +3176,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(elementPointerType, this.ElementPointerType, TypeCompareKind.ConsiderEverything) || elementPointerPlaceholder != this.ElementPointerPlaceholder || elementPointerConversion != this.ElementPointerConversion || expression != this.Expression || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getPinnableOpt, this.GetPinnableOpt) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFixedLocalCollectionInitializer(this.Syntax, elementPointerType, elementPointerPlaceholder, elementPointerConversion, expression, getPinnableOpt, type, this.HasErrors);
+                result := new BoundFixedLocalCollectionInitializer(this.Syntax, elementPointerType, elementPointerPlaceholder, elementPointerConversion, expression, getPinnableOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3215,7 +3215,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statementOpt != this.StatementOpt)
             {
-                var result = new BoundSequencePoint(this.Syntax, statementOpt, this.HasErrors);
+                result := new BoundSequencePoint(this.Syntax, statementOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3242,7 +3242,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statementOpt != this.StatementOpt || span != this.Span)
             {
-                var result = new BoundSequencePointWithSpan(this.Syntax, statementOpt, span, this.HasErrors);
+                result := new BoundSequencePointWithSpan(this.Syntax, statementOpt, span, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3279,7 +3279,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (identifier != this.Identifier)
             {
-                var result = new BoundSavePreviousSequencePoint(this.Syntax, identifier, this.HasErrors);
+                result := new BoundSavePreviousSequencePoint(this.Syntax, identifier, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3316,7 +3316,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (identifier != this.Identifier)
             {
-                var result = new BoundRestorePreviousSequencePoint(this.Syntax, identifier, this.HasErrors);
+                result := new BoundRestorePreviousSequencePoint(this.Syntax, identifier, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3347,7 +3347,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (span != this.Span)
             {
-                var result = new BoundStepThroughSequencePoint(this.Syntax, span, this.HasErrors);
+                result := new BoundStepThroughSequencePoint(this.Syntax, span, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3383,7 +3383,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || localFunctions != this.LocalFunctions || hasUnsafeModifier != this.HasUnsafeModifier || instrumentation != this.Instrumentation || statements != this.Statements)
             {
-                var result = new BoundBlock(this.Syntax, locals, localFunctions, hasUnsafeModifier, instrumentation, statements, this.HasErrors);
+                result := new BoundBlock(this.Syntax, locals, localFunctions, hasUnsafeModifier, instrumentation, statements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3412,7 +3412,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || statements != this.Statements)
             {
-                var result = new BoundScope(this.Syntax, locals, statements, this.HasErrors);
+                result := new BoundScope(this.Syntax, locals, statements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3443,7 +3443,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (fields != this.Fields || statement != this.Statement)
             {
-                var result = new BoundStateMachineScope(this.Syntax, fields, statement, this.HasErrors);
+                result := new BoundStateMachineScope(this.Syntax, fields, statement, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3479,7 +3479,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(localSymbol, this.LocalSymbol) || declaredTypeOpt != this.DeclaredTypeOpt || initializerOpt != this.InitializerOpt || argumentsOpt != this.ArgumentsOpt || inferredType != this.InferredType)
             {
-                var result = new BoundLocalDeclaration(this.Syntax, localSymbol, declaredTypeOpt, initializerOpt, argumentsOpt, inferredType, this.HasErrors);
+                result := new BoundLocalDeclaration(this.Syntax, localSymbol, declaredTypeOpt, initializerOpt, argumentsOpt, inferredType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3519,7 +3519,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (localDeclarations != this.LocalDeclarations)
             {
-                var result = new BoundMultipleLocalDeclarations(this.Syntax, localDeclarations, this.HasErrors);
+                result := new BoundMultipleLocalDeclarations(this.Syntax, localDeclarations, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3549,7 +3549,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (patternDisposeInfoOpt != this.PatternDisposeInfoOpt || awaitOpt != this.AwaitOpt || localDeclarations != this.LocalDeclarations)
             {
-                var result = new BoundUsingLocalDeclarations(this.Syntax, patternDisposeInfoOpt, awaitOpt, localDeclarations, this.HasErrors);
+                result := new BoundUsingLocalDeclarations(this.Syntax, patternDisposeInfoOpt, awaitOpt, localDeclarations, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3581,7 +3581,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(symbol, this.Symbol) || blockBody != this.BlockBody || expressionBody != this.ExpressionBody)
             {
-                var result = new BoundLocalFunctionStatement(this.Syntax, symbol, blockBody, expressionBody, this.HasErrors);
+                result := new BoundLocalFunctionStatement(this.Syntax, symbol, blockBody, expressionBody, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3612,7 +3612,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (flavor != this.Flavor)
             {
-                var result = new BoundNoOpStatement(this.Syntax, flavor, this.HasErrors);
+                result := new BoundNoOpStatement(this.Syntax, flavor, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3645,7 +3645,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (refKind != this.RefKind || expressionOpt != this.ExpressionOpt || @checked != this.Checked)
             {
-                var result = new BoundReturnStatement(this.Syntax, refKind, expressionOpt, @checked, this.HasErrors);
+                result := new BoundReturnStatement(this.Syntax, refKind, expressionOpt, @checked, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3673,7 +3673,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression)
             {
-                var result = new BoundYieldReturnStatement(this.Syntax, expression, this.HasErrors);
+                result := new BoundYieldReturnStatement(this.Syntax, expression, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3715,7 +3715,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expressionOpt != this.ExpressionOpt)
             {
-                var result = new BoundThrowStatement(this.Syntax, expressionOpt, this.HasErrors);
+                result := new BoundThrowStatement(this.Syntax, expressionOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3743,7 +3743,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression)
             {
-                var result = new BoundExpressionStatement(this.Syntax, expression, this.HasErrors);
+                result := new BoundExpressionStatement(this.Syntax, expression, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3780,7 +3780,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundBreakStatement(this.Syntax, label, this.HasErrors);
+                result := new BoundBreakStatement(this.Syntax, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3817,7 +3817,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundContinueStatement(this.Syntax, label, this.HasErrors);
+                result := new BoundContinueStatement(this.Syntax, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3862,7 +3862,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || innerLocals != this.InnerLocals || innerLocalFunctions != this.InnerLocalFunctions || switchSections != this.SwitchSections || reachabilityDecisionDag != this.ReachabilityDecisionDag || defaultLabel != this.DefaultLabel || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(breakLabel, this.BreakLabel))
             {
-                var result = new BoundSwitchStatement(this.Syntax, expression, innerLocals, innerLocalFunctions, switchSections, reachabilityDecisionDag, defaultLabel, breakLabel, this.HasErrors);
+                result := new BoundSwitchStatement(this.Syntax, expression, innerLocals, innerLocalFunctions, switchSections, reachabilityDecisionDag, defaultLabel, breakLabel, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3898,7 +3898,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || cases != this.Cases || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(defaultLabel, this.DefaultLabel) || lengthBasedStringSwitchDataOpt != this.LengthBasedStringSwitchDataOpt)
             {
-                var result = new BoundSwitchDispatch(this.Syntax, expression, cases, defaultLabel, lengthBasedStringSwitchDataOpt, this.HasErrors);
+                result := new BoundSwitchDispatch(this.Syntax, expression, cases, defaultLabel, lengthBasedStringSwitchDataOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -3931,7 +3931,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (condition != this.Condition || consequence != this.Consequence || alternativeOpt != this.AlternativeOpt)
             {
-                var result = new BoundIfStatement(this.Syntax, condition, consequence, alternativeOpt, this.HasErrors);
+                result := new BoundIfStatement(this.Syntax, condition, consequence, alternativeOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4011,7 +4011,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || condition != this.Condition || body != this.Body || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(breakLabel, this.BreakLabel) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(continueLabel, this.ContinueLabel))
             {
-                var result = new BoundDoStatement(this.Syntax, locals, condition, body, breakLabel, continueLabel, this.HasErrors);
+                result := new BoundDoStatement(this.Syntax, locals, condition, body, breakLabel, continueLabel, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4041,7 +4041,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || condition != this.Condition || body != this.Body || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(breakLabel, this.BreakLabel) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(continueLabel, this.ContinueLabel))
             {
-                var result = new BoundWhileStatement(this.Syntax, locals, condition, body, breakLabel, continueLabel, this.HasErrors);
+                result := new BoundWhileStatement(this.Syntax, locals, condition, body, breakLabel, continueLabel, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4083,7 +4083,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (outerLocals != this.OuterLocals || initializer != this.Initializer || innerLocals != this.InnerLocals || condition != this.Condition || increment != this.Increment || body != this.Body || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(breakLabel, this.BreakLabel) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(continueLabel, this.ContinueLabel))
             {
-                var result = new BoundForStatement(this.Syntax, outerLocals, initializer, innerLocals, condition, increment, body, breakLabel, continueLabel, this.HasErrors);
+                result := new BoundForStatement(this.Syntax, outerLocals, initializer, innerLocals, condition, increment, body, breakLabel, continueLabel, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4132,7 +4132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (enumeratorInfoOpt != this.EnumeratorInfoOpt || elementPlaceholder != this.ElementPlaceholder || elementConversion != this.ElementConversion || iterationVariableType != this.IterationVariableType || iterationVariables != this.IterationVariables || iterationErrorExpressionOpt != this.IterationErrorExpressionOpt || expression != this.Expression || deconstructionOpt != this.DeconstructionOpt || body != this.Body || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(breakLabel, this.BreakLabel) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(continueLabel, this.ContinueLabel))
             {
-                var result = new BoundForEachStatement(this.Syntax, enumeratorInfoOpt, elementPlaceholder, elementConversion, iterationVariableType, iterationVariables, iterationErrorExpressionOpt, expression, deconstructionOpt, body, breakLabel, continueLabel, this.HasErrors);
+                result := new BoundForEachStatement(this.Syntax, enumeratorInfoOpt, elementPlaceholder, elementConversion, iterationVariableType, iterationVariables, iterationErrorExpressionOpt, expression, deconstructionOpt, body, breakLabel, continueLabel, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4163,7 +4163,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (deconstructionAssignment != this.DeconstructionAssignment || targetPlaceholder != this.TargetPlaceholder)
             {
-                var result = new BoundForEachDeconstructStep(this.Syntax, deconstructionAssignment, targetPlaceholder, this.HasErrors);
+                result := new BoundForEachDeconstructStep(this.Syntax, deconstructionAssignment, targetPlaceholder, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4202,7 +4202,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || declarationsOpt != this.DeclarationsOpt || expressionOpt != this.ExpressionOpt || body != this.Body || awaitOpt != this.AwaitOpt || patternDisposeInfoOpt != this.PatternDisposeInfoOpt)
             {
-                var result = new BoundUsingStatement(this.Syntax, locals, declarationsOpt, expressionOpt, body, awaitOpt, patternDisposeInfoOpt, this.HasErrors);
+                result := new BoundUsingStatement(this.Syntax, locals, declarationsOpt, expressionOpt, body, awaitOpt, patternDisposeInfoOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4236,7 +4236,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || declarations != this.Declarations || body != this.Body)
             {
-                var result = new BoundFixedStatement(this.Syntax, locals, declarations, body, this.HasErrors);
+                result := new BoundFixedStatement(this.Syntax, locals, declarations, body, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4267,7 +4267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (argument != this.Argument || body != this.Body)
             {
-                var result = new BoundLockStatement(this.Syntax, argument, body, this.HasErrors);
+                result := new BoundLockStatement(this.Syntax, argument, body, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4304,7 +4304,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (tryBlock != this.TryBlock || catchBlocks != this.CatchBlocks || finallyBlockOpt != this.FinallyBlockOpt || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(finallyLabelOpt, this.FinallyLabelOpt) || preferFaultHandler != this.PreferFaultHandler)
             {
-                var result = new BoundTryStatement(this.Syntax, tryBlock, catchBlocks, finallyBlockOpt, finallyLabelOpt, preferFaultHandler, this.HasErrors);
+                result := new BoundTryStatement(this.Syntax, tryBlock, catchBlocks, finallyBlockOpt, finallyLabelOpt, preferFaultHandler, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4345,7 +4345,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || exceptionSourceOpt != this.ExceptionSourceOpt || !TypeSymbol.Equals(exceptionTypeOpt, this.ExceptionTypeOpt, TypeCompareKind.ConsiderEverything) || exceptionFilterPrologueOpt != this.ExceptionFilterPrologueOpt || exceptionFilterOpt != this.ExceptionFilterOpt || body != this.Body || isSynthesizedAsyncCatchAll != this.IsSynthesizedAsyncCatchAll)
             {
-                var result = new BoundCatchBlock(this.Syntax, locals, exceptionSourceOpt, exceptionTypeOpt, exceptionFilterPrologueOpt, exceptionFilterOpt, body, isSynthesizedAsyncCatchAll, this.HasErrors);
+                result := new BoundCatchBlock(this.Syntax, locals, exceptionSourceOpt, exceptionTypeOpt, exceptionFilterPrologueOpt, exceptionFilterOpt, body, isSynthesizedAsyncCatchAll, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4376,7 +4376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLiteral(this.Syntax, constantValueOpt, type, this.HasErrors);
+                result := new BoundLiteral(this.Syntax, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4416,7 +4416,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value != this.Value || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundUtf8String(this.Syntax, value, type, this.HasErrors);
+                result := new BoundUtf8String(this.Syntax, value, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4451,7 +4451,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundThisReference(this.Syntax, type, this.HasErrors);
+                result := new BoundThisReference(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4486,7 +4486,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPreviousSubmissionReference(this.Syntax, type, this.HasErrors);
+                result := new BoundPreviousSubmissionReference(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4521,7 +4521,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundHostObjectMemberReference(this.Syntax, type, this.HasErrors);
+                result := new BoundHostObjectMemberReference(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4550,7 +4550,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundBaseReference(this.Syntax, type, this.HasErrors);
+                result := new BoundBaseReference(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4599,7 +4599,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(localSymbol, this.LocalSymbol) || declarationKind != this.DeclarationKind || constantValueOpt != this.ConstantValueOpt || isNullableUnknown != this.IsNullableUnknown || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLocal(this.Syntax, localSymbol, declarationKind, constantValueOpt, isNullableUnknown, type, this.HasErrors);
+                result := new BoundLocal(this.Syntax, localSymbol, declarationKind, constantValueOpt, isNullableUnknown, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4644,7 +4644,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(localSymbol, this.LocalSymbol) || emitExpressions != this.EmitExpressions || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPseudoVariable(this.Syntax, localSymbol, emitExpressions, type, this.HasErrors);
+                result := new BoundPseudoVariable(this.Syntax, localSymbol, emitExpressions, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4677,7 +4677,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(rangeVariableSymbol, this.RangeVariableSymbol) || value != this.Value || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRangeVariable(this.Syntax, rangeVariableSymbol, value, type, this.HasErrors);
+                result := new BoundRangeVariable(this.Syntax, rangeVariableSymbol, value, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4717,7 +4717,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(parameterSymbol, this.ParameterSymbol) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundParameter(this.Syntax, parameterSymbol, type, this.HasErrors);
+                result := new BoundParameter(this.Syntax, parameterSymbol, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4754,7 +4754,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundLabelStatement(this.Syntax, label, this.HasErrors);
+                result := new BoundLabelStatement(this.Syntax, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4786,7 +4786,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label) || caseExpressionOpt != this.CaseExpressionOpt || labelExpressionOpt != this.LabelExpressionOpt)
             {
-                var result = new BoundGotoStatement(this.Syntax, label, caseExpressionOpt, labelExpressionOpt, this.HasErrors);
+                result := new BoundGotoStatement(this.Syntax, label, caseExpressionOpt, labelExpressionOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4817,7 +4817,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label) || body != this.Body)
             {
-                var result = new BoundLabeledStatement(this.Syntax, label, body, this.HasErrors);
+                result := new BoundLabeledStatement(this.Syntax, label, body, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4854,7 +4854,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLabel(this.Syntax, label, type, this.HasErrors);
+                result := new BoundLabel(this.Syntax, label, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4891,7 +4891,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statements != this.Statements)
             {
-                var result = new BoundStatementList(this.Syntax, statements, this.HasErrors);
+                result := new BoundStatementList(this.Syntax, statements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4924,7 +4924,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (condition != this.Condition || jumpIfTrue != this.JumpIfTrue || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundConditionalGoto(this.Syntax, condition, jumpIfTrue, label, this.HasErrors);
+                result := new BoundConditionalGoto(this.Syntax, condition, jumpIfTrue, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -4989,7 +4989,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || pattern != this.Pattern || hasUnionMatching != this.HasUnionMatching || whenClause != this.WhenClause || value != this.Value || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundSwitchExpressionArm(this.Syntax, locals, pattern, hasUnionMatching, whenClause, value, label, this.HasErrors);
+                result := new BoundSwitchExpressionArm(this.Syntax, locals, pattern, hasUnionMatching, whenClause, value, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5017,7 +5017,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || switchArms != this.SwitchArms || reachabilityDecisionDag != this.ReachabilityDecisionDag || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(defaultLabel, this.DefaultLabel) || reportedNotExhaustive != this.ReportedNotExhaustive || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundUnconvertedSwitchExpression(this.Syntax, expression, switchArms, reachabilityDecisionDag, defaultLabel, reportedNotExhaustive, type, this.HasErrors);
+                result := new BoundUnconvertedSwitchExpression(this.Syntax, expression, switchArms, reachabilityDecisionDag, defaultLabel, reportedNotExhaustive, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5051,7 +5051,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(naturalTypeOpt, this.NaturalTypeOpt, TypeCompareKind.ConsiderEverything) || wasTargetTyped != this.WasTargetTyped || expression != this.Expression || switchArms != this.SwitchArms || reachabilityDecisionDag != this.ReachabilityDecisionDag || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(defaultLabel, this.DefaultLabel) || reportedNotExhaustive != this.ReportedNotExhaustive || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConvertedSwitchExpression(this.Syntax, naturalTypeOpt, wasTargetTyped, expression, switchArms, reachabilityDecisionDag, defaultLabel, reportedNotExhaustive, type, this.HasErrors);
+                result := new BoundConvertedSwitchExpression(this.Syntax, naturalTypeOpt, wasTargetTyped, expression, switchArms, reachabilityDecisionDag, defaultLabel, reportedNotExhaustive, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5081,7 +5081,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (rootNode != this.RootNode || suitableForLowering != this.SuitableForLowering)
             {
-                var result = new BoundDecisionDag(this.Syntax, rootNode, suitableForLowering, this.HasErrors);
+                result := new BoundDecisionDag(this.Syntax, rootNode, suitableForLowering, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5126,7 +5126,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (evaluation != this.Evaluation || next != this.Next)
             {
-                var result = new BoundEvaluationDecisionDagNode(this.Syntax, evaluation, next, this.HasErrors);
+                result := new BoundEvaluationDecisionDagNode(this.Syntax, evaluation, next, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5160,7 +5160,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (test != this.Test || whenTrue != this.WhenTrue || whenFalse != this.WhenFalse)
             {
-                var result = new BoundTestDecisionDagNode(this.Syntax, test, whenTrue, whenFalse, this.HasErrors);
+                result := new BoundTestDecisionDagNode(this.Syntax, test, whenTrue, whenFalse, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5195,7 +5195,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (bindings != this.Bindings || whenExpression != this.WhenExpression || whenTrue != this.WhenTrue || whenFalse != this.WhenFalse)
             {
-                var result = new BoundWhenDecisionDagNode(this.Syntax, bindings, whenExpression, whenTrue, whenFalse, this.HasErrors);
+                result := new BoundWhenDecisionDagNode(this.Syntax, bindings, whenExpression, whenTrue, whenFalse, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5232,7 +5232,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label))
             {
-                var result = new BoundLeafDecisionDagNode(this.Syntax, label, this.HasErrors);
+                result := new BoundLeafDecisionDagNode(this.Syntax, label, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5278,7 +5278,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything) || source != this.Source || index != this.Index)
             {
-                var result = new BoundDagTemp(this.Syntax, type, source, index, this.HasErrors);
+                result := new BoundDagTemp(this.Syntax, type, source, index, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5307,7 +5307,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything) || input != this.Input)
             {
-                var result = new BoundDagTypeTest(this.Syntax, type, input, this.HasErrors);
+                result := new BoundDagTypeTest(this.Syntax, type, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5335,7 +5335,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (isExplicitTest != this.IsExplicitTest || input != this.Input)
             {
-                var result = new BoundDagNonNullTest(this.Syntax, isExplicitTest, input, this.HasErrors);
+                result := new BoundDagNonNullTest(this.Syntax, isExplicitTest, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5361,7 +5361,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (input != this.Input)
             {
-                var result = new BoundDagExplicitNullTest(this.Syntax, input, this.HasErrors);
+                result := new BoundDagExplicitNullTest(this.Syntax, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5390,7 +5390,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value != this.Value || input != this.Input)
             {
-                var result = new BoundDagValueTest(this.Syntax, value, input, this.HasErrors);
+                result := new BoundDagValueTest(this.Syntax, value, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5421,7 +5421,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (operatorKind != this.OperatorKind || value != this.Value || input != this.Input)
             {
-                var result = new BoundDagRelationalTest(this.Syntax, operatorKind, value, input, this.HasErrors);
+                result := new BoundDagRelationalTest(this.Syntax, operatorKind, value, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5462,7 +5462,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(deconstructMethod, this.DeconstructMethod) || input != this.Input)
             {
-                var result = new BoundDagDeconstructEvaluation(this.Syntax, deconstructMethod, input, this.HasErrors);
+                result := new BoundDagDeconstructEvaluation(this.Syntax, deconstructMethod, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5491,7 +5491,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything) || input != this.Input)
             {
-                var result = new BoundDagTypeEvaluation(this.Syntax, type, input, this.HasErrors);
+                result := new BoundDagTypeEvaluation(this.Syntax, type, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5520,7 +5520,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(field, this.Field) || input != this.Input)
             {
-                var result = new BoundDagFieldEvaluation(this.Syntax, field, input, this.HasErrors);
+                result := new BoundDagFieldEvaluation(this.Syntax, field, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5551,7 +5551,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(property, this.Property) || isLengthOrCount != this.IsLengthOrCount || input != this.Input)
             {
-                var result = new BoundDagPropertyEvaluation(this.Syntax, property, isLengthOrCount, input, this.HasErrors);
+                result := new BoundDagPropertyEvaluation(this.Syntax, property, isLengthOrCount, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5582,7 +5582,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(property, this.Property) || index != this.Index || input != this.Input)
             {
-                var result = new BoundDagIndexEvaluation(this.Syntax, property, index, input, this.HasErrors);
+                result := new BoundDagIndexEvaluation(this.Syntax, property, index, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5629,7 +5629,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(indexerType, this.IndexerType, TypeCompareKind.ConsiderEverything) || lengthTemp != this.LengthTemp || index != this.Index || indexerAccess != this.IndexerAccess || receiverPlaceholder != this.ReceiverPlaceholder || argumentPlaceholder != this.ArgumentPlaceholder || input != this.Input)
             {
-                var result = new BoundDagIndexerEvaluation(this.Syntax, indexerType, lengthTemp, index, indexerAccess, receiverPlaceholder, argumentPlaceholder, input, this.HasErrors);
+                result := new BoundDagIndexerEvaluation(this.Syntax, indexerType, lengthTemp, index, indexerAccess, receiverPlaceholder, argumentPlaceholder, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5678,7 +5678,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(sliceType, this.SliceType, TypeCompareKind.ConsiderEverything) || lengthTemp != this.LengthTemp || startIndex != this.StartIndex || endIndex != this.EndIndex || indexerAccess != this.IndexerAccess || receiverPlaceholder != this.ReceiverPlaceholder || argumentPlaceholder != this.ArgumentPlaceholder || input != this.Input)
             {
-                var result = new BoundDagSliceEvaluation(this.Syntax, sliceType, lengthTemp, startIndex, endIndex, indexerAccess, receiverPlaceholder, argumentPlaceholder, input, this.HasErrors);
+                result := new BoundDagSliceEvaluation(this.Syntax, sliceType, lengthTemp, startIndex, endIndex, indexerAccess, receiverPlaceholder, argumentPlaceholder, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5707,7 +5707,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (target != this.Target || input != this.Input)
             {
-                var result = new BoundDagAssignmentEvaluation(this.Syntax, target, input, this.HasErrors);
+                result := new BoundDagAssignmentEvaluation(this.Syntax, target, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5733,7 +5733,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (input != this.Input)
             {
-                var result = new BoundDagPassThroughEvaluation(this.Syntax, input, this.HasErrors);
+                result := new BoundDagPassThroughEvaluation(this.Syntax, input, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5765,7 +5765,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || switchLabels != this.SwitchLabels || statements != this.Statements)
             {
-                var result = new BoundSwitchSection(this.Syntax, locals, switchLabels, statements, this.HasErrors);
+                result := new BoundSwitchSection(this.Syntax, locals, switchLabels, statements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5800,7 +5800,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(label, this.Label) || pattern != this.Pattern || hasUnionMatching != this.HasUnionMatching || whenClause != this.WhenClause)
             {
-                var result = new BoundSwitchLabel(this.Syntax, label, pattern, hasUnionMatching, whenClause, this.HasErrors);
+                result := new BoundSwitchLabel(this.Syntax, label, pattern, hasUnionMatching, whenClause, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5842,7 +5842,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSequencePointExpression(this.Syntax, expression, type, this.HasErrors);
+                result := new BoundSequencePointExpression(this.Syntax, expression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5878,7 +5878,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || sideEffects != this.SideEffects || value != this.Value || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSequence(this.Syntax, locals, sideEffects, value, type, this.HasErrors);
+                result := new BoundSequence(this.Syntax, locals, sideEffects, value, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5914,7 +5914,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || sideEffects != this.SideEffects || value != this.Value || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSpillSequence(this.Syntax, locals, sideEffects, value, type, this.HasErrors);
+                result := new BoundSpillSequence(this.Syntax, locals, sideEffects, value, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -5953,7 +5953,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || typeArgumentsOpt != this.TypeArgumentsOpt || name != this.Name || invoked != this.Invoked || indexed != this.Indexed || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicMemberAccess(this.Syntax, receiver, typeArgumentsOpt, name, invoked, indexed, type, this.HasErrors);
+                result := new BoundDynamicMemberAccess(this.Syntax, receiver, typeArgumentsOpt, name, invoked, indexed, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6006,7 +6006,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || applicableMethods != this.ApplicableMethods || expression != this.Expression || arguments != this.Arguments || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicInvocation(this.Syntax, argumentNamesOpt, argumentRefKindsOpt, applicableMethods, expression, arguments, type, this.HasErrors);
+                result := new BoundDynamicInvocation(this.Syntax, argumentNamesOpt, argumentRefKindsOpt, applicableMethods, expression, arguments, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6039,7 +6039,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || accessExpression != this.AccessExpression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConditionalAccess(this.Syntax, receiver, accessExpression, type, this.HasErrors);
+                result := new BoundConditionalAccess(this.Syntax, receiver, accessExpression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6080,7 +6080,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(hasValueMethodOpt, this.HasValueMethodOpt) || whenNotNull != this.WhenNotNull || whenNullOpt != this.WhenNullOpt || id != this.Id || forceCopyOfNullableValueType != this.ForceCopyOfNullableValueType || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLoweredConditionalAccess(this.Syntax, receiver, hasValueMethodOpt, whenNotNull, whenNullOpt, id, forceCopyOfNullableValueType, type, this.HasErrors);
+                result := new BoundLoweredConditionalAccess(this.Syntax, receiver, hasValueMethodOpt, whenNotNull, whenNullOpt, id, forceCopyOfNullableValueType, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6118,7 +6118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (id != this.Id || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConditionalReceiver(this.Syntax, id, type, this.HasErrors);
+                result := new BoundConditionalReceiver(this.Syntax, id, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6151,7 +6151,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (valueTypeReceiver != this.ValueTypeReceiver || referenceTypeReceiver != this.ReferenceTypeReceiver || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundComplexConditionalReceiver(this.Syntax, valueTypeReceiver, referenceTypeReceiver, type, this.HasErrors);
+                result := new BoundComplexConditionalReceiver(this.Syntax, valueTypeReceiver, referenceTypeReceiver, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6192,7 +6192,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (typeArgumentsOpt != this.TypeArgumentsOpt || name != this.Name || methods != this.Methods || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(lookupSymbolOpt, this.LookupSymbolOpt) || lookupError != this.LookupError || flags != this.Flags || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(functionType, this.FunctionType) || receiverOpt != this.ReceiverOpt || resultKind != this.ResultKind)
             {
-                var result = new BoundMethodGroup(this.Syntax, typeArgumentsOpt, name, methods, lookupSymbolOpt, lookupError, flags, functionType, receiverOpt, resultKind, this.HasErrors);
+                result := new BoundMethodGroup(this.Syntax, typeArgumentsOpt, name, methods, lookupSymbolOpt, lookupError, flags, functionType, receiverOpt, resultKind, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6220,7 +6220,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (properties != this.Properties || receiverOpt != this.ReceiverOpt || resultKind != this.ResultKind)
             {
-                var result = new BoundPropertyGroup(this.Syntax, properties, receiverOpt, resultKind, this.HasErrors);
+                result := new BoundPropertyGroup(this.Syntax, properties, receiverOpt, resultKind, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6279,7 +6279,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverOpt != this.ReceiverOpt || initialBindingReceiverIsSubjectToCloning != this.InitialBindingReceiverIsSubjectToCloning || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(method, this.Method) || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || isDelegateCall != this.IsDelegateCall || expanded != this.Expanded || invokedAsExtensionMethod != this.InvokedAsExtensionMethod || argsToParamsOpt != this.ArgsToParamsOpt || defaultArguments != this.DefaultArguments || resultKind != this.ResultKind || originalMethodsOpt != this.OriginalMethodsOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCall(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, method, arguments, argumentNamesOpt, argumentRefKindsOpt, isDelegateCall, expanded, invokedAsExtensionMethod, argsToParamsOpt, defaultArguments, resultKind, originalMethodsOpt, type, this.HasErrors);
+                result := new BoundCall(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, method, arguments, argumentNamesOpt, argumentRefKindsOpt, isDelegateCall, expanded, invokedAsExtensionMethod, argsToParamsOpt, defaultArguments, resultKind, originalMethodsOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6318,7 +6318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(@event, this.Event) || isAddition != this.IsAddition || isDynamic != this.IsDynamic || receiverOpt != this.ReceiverOpt || argument != this.Argument || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundEventAssignmentOperator(this.Syntax, @event, isAddition, isDynamic, receiverOpt, argument, type, this.HasErrors);
+                result := new BoundEventAssignmentOperator(this.Syntax, @event, isAddition, isDynamic, receiverOpt, argument, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6363,7 +6363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(constructor, this.Constructor) || constructorArguments != this.ConstructorArguments || constructorArgumentNamesOpt != this.ConstructorArgumentNamesOpt || constructorArgumentsToParamsOpt != this.ConstructorArgumentsToParamsOpt || constructorExpanded != this.ConstructorExpanded || constructorDefaultArguments != this.ConstructorDefaultArguments || namedArguments != this.NamedArguments || resultKind != this.ResultKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAttribute(this.Syntax, constructor, constructorArguments, constructorArgumentNamesOpt, constructorArgumentsToParamsOpt, constructorExpanded, constructorDefaultArguments, namedArguments, resultKind, type, this.HasErrors);
+                result := new BoundAttribute(this.Syntax, constructor, constructorArguments, constructorArgumentNamesOpt, constructorArgumentsToParamsOpt, constructorExpanded, constructorDefaultArguments, namedArguments, resultKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6401,7 +6401,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || initializerOpt != this.InitializerOpt || binder != this.Binder)
             {
-                var result = new BoundUnconvertedObjectCreationExpression(this.Syntax, arguments, argumentNamesOpt, argumentRefKindsOpt, initializerOpt, binder, this.HasErrors);
+                result := new BoundUnconvertedObjectCreationExpression(this.Syntax, arguments, argumentNamesOpt, argumentRefKindsOpt, initializerOpt, binder, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6473,7 +6473,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(constructor, this.Constructor) || constructorsGroup != this.ConstructorsGroup || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || expanded != this.Expanded || argsToParamsOpt != this.ArgsToParamsOpt || defaultArguments != this.DefaultArguments || constantValueOpt != this.ConstantValueOpt || initializerExpressionOpt != this.InitializerExpressionOpt || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundObjectCreationExpression(this.Syntax, constructor, constructorsGroup, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, argsToParamsOpt, defaultArguments, constantValueOpt, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
+                result := new BoundObjectCreationExpression(this.Syntax, constructor, constructorsGroup, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, argsToParamsOpt, defaultArguments, constantValueOpt, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6520,7 +6520,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (withElement != this.WithElement || elements != this.Elements)
             {
-                var result = new BoundUnconvertedCollectionExpression(this.Syntax, withElement, elements, this.HasErrors);
+                result := new BoundUnconvertedCollectionExpression(this.Syntax, withElement, elements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6552,7 +6552,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt)
             {
-                var result = new BoundUnconvertedWithElement(this.Syntax, arguments, argumentNamesOpt, argumentRefKindsOpt, this.HasErrors);
+                result := new BoundUnconvertedWithElement(this.Syntax, arguments, argumentNamesOpt, argumentRefKindsOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6601,7 +6601,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (collectionTypeKind != this.CollectionTypeKind || placeholder != this.Placeholder || collectionCreation != this.CollectionCreation || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(collectionBuilderMethod, this.CollectionBuilderMethod) || collectionBuilderElementsPlaceholder != this.CollectionBuilderElementsPlaceholder || wasTargetTyped != this.WasTargetTyped || hasWithElement != this.HasWithElement || unconvertedCollectionExpression != this.UnconvertedCollectionExpression || elements != this.Elements || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCollectionExpression(this.Syntax, collectionTypeKind, placeholder, collectionCreation, collectionBuilderMethod, collectionBuilderElementsPlaceholder, wasTargetTyped, hasWithElement, unconvertedCollectionExpression, elements, type, this.HasErrors);
+                result := new BoundCollectionExpression(this.Syntax, collectionTypeKind, placeholder, collectionCreation, collectionBuilderMethod, collectionBuilderElementsPlaceholder, wasTargetTyped, hasWithElement, unconvertedCollectionExpression, elements, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6629,7 +6629,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCollectionExpressionSpreadExpressionPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundCollectionExpressionSpreadExpressionPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6669,7 +6669,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || expressionPlaceholder != this.ExpressionPlaceholder || conversion != this.Conversion || enumeratorInfoOpt != this.EnumeratorInfoOpt || lengthOrCount != this.LengthOrCount || elementPlaceholder != this.ElementPlaceholder || iteratorBody != this.IteratorBody)
             {
-                var result = new BoundCollectionExpressionSpreadElement(this.Syntax, expression, expressionPlaceholder, conversion, enumeratorInfoOpt, lengthOrCount, elementPlaceholder, iteratorBody, this.HasErrors);
+                result := new BoundCollectionExpressionSpreadElement(this.Syntax, expression, expressionPlaceholder, conversion, enumeratorInfoOpt, lengthOrCount, elementPlaceholder, iteratorBody, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6714,7 +6714,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || inferredNamesOpt != this.InferredNamesOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTupleLiteral(this.Syntax, arguments, argumentNamesOpt, inferredNamesOpt, type, this.HasErrors);
+                result := new BoundTupleLiteral(this.Syntax, arguments, argumentNamesOpt, inferredNamesOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6744,7 +6744,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (sourceTuple != this.SourceTuple || wasTargetTyped != this.WasTargetTyped || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || inferredNamesOpt != this.InferredNamesOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConvertedTupleLiteral(this.Syntax, sourceTuple, wasTargetTyped, arguments, argumentNamesOpt, inferredNamesOpt, type, this.HasErrors);
+                result := new BoundConvertedTupleLiteral(this.Syntax, sourceTuple, wasTargetTyped, arguments, argumentNamesOpt, inferredNamesOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6787,7 +6787,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (name != this.Name || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || initializerExpressionOpt != this.InitializerExpressionOpt || applicableMethods != this.ApplicableMethods || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicObjectCreationExpression(this.Syntax, name, arguments, argumentNamesOpt, argumentRefKindsOpt, initializerExpressionOpt, applicableMethods, wasTargetTyped, type, this.HasErrors);
+                result := new BoundDynamicObjectCreationExpression(this.Syntax, name, arguments, argumentNamesOpt, argumentRefKindsOpt, initializerExpressionOpt, applicableMethods, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6819,7 +6819,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (guidString != this.GuidString || initializerExpressionOpt != this.InitializerExpressionOpt || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNoPiaObjectCreationExpression(this.Syntax, guidString, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
+                result := new BoundNoPiaObjectCreationExpression(this.Syntax, guidString, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6866,7 +6866,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (placeholder != this.Placeholder || initializers != this.Initializers || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundObjectInitializerExpression(this.Syntax, placeholder, initializers, type, this.HasErrors);
+                result := new BoundObjectInitializerExpression(this.Syntax, placeholder, initializers, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6915,7 +6915,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(memberSymbol, this.MemberSymbol) || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || expanded != this.Expanded || argsToParamsOpt != this.ArgsToParamsOpt || defaultArguments != this.DefaultArguments || resultKind != this.ResultKind || accessorKind != this.AccessorKind || !TypeSymbol.Equals(receiverType, this.ReceiverType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundObjectInitializerMember(this.Syntax, memberSymbol, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, argsToParamsOpt, defaultArguments, resultKind, accessorKind, receiverType, type, this.HasErrors);
+                result := new BoundObjectInitializerMember(this.Syntax, memberSymbol, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, argsToParamsOpt, defaultArguments, resultKind, accessorKind, receiverType, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6960,7 +6960,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (memberName != this.MemberName || !TypeSymbol.Equals(receiverType, this.ReceiverType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicObjectInitializerMember(this.Syntax, memberName, receiverType, type, this.HasErrors);
+                result := new BoundDynamicObjectInitializerMember(this.Syntax, memberName, receiverType, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -6988,7 +6988,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (placeholder != this.Placeholder || initializers != this.Initializers || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCollectionInitializerExpression(this.Syntax, placeholder, initializers, type, this.HasErrors);
+                result := new BoundCollectionInitializerExpression(this.Syntax, placeholder, initializers, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7033,7 +7033,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(addMethod, this.AddMethod) || arguments != this.Arguments || implicitReceiverOpt != this.ImplicitReceiverOpt || expanded != this.Expanded || argsToParamsOpt != this.ArgsToParamsOpt || defaultArguments != this.DefaultArguments || invokedAsExtensionMethod != this.InvokedAsExtensionMethod || resultKind != this.ResultKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundCollectionElementInitializer(this.Syntax, addMethod, arguments, implicitReceiverOpt, expanded, argsToParamsOpt, defaultArguments, invokedAsExtensionMethod, resultKind, type, this.HasErrors);
+                result := new BoundCollectionElementInitializer(this.Syntax, addMethod, arguments, implicitReceiverOpt, expanded, argsToParamsOpt, defaultArguments, invokedAsExtensionMethod, resultKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7065,7 +7065,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (applicableMethods != this.ApplicableMethods || expression != this.Expression || arguments != this.Arguments || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicCollectionElementInitializer(this.Syntax, applicableMethods, expression, arguments, type, this.HasErrors);
+                result := new BoundDynamicCollectionElementInitializer(this.Syntax, applicableMethods, expression, arguments, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7100,7 +7100,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundImplicitReceiver(this.Syntax, type, this.HasErrors);
+                result := new BoundImplicitReceiver(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7136,7 +7136,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(constructor, this.Constructor) || arguments != this.Arguments || declarations != this.Declarations || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAnonymousObjectCreationExpression(this.Syntax, constructor, arguments, declarations, type, this.HasErrors);
+                result := new BoundAnonymousObjectCreationExpression(this.Syntax, constructor, arguments, declarations, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7176,7 +7176,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(property, this.Property) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundAnonymousPropertyDeclaration(this.Syntax, property, type, this.HasErrors);
+                result := new BoundAnonymousPropertyDeclaration(this.Syntax, property, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7206,7 +7206,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (initializerExpressionOpt != this.InitializerExpressionOpt || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNewT(this.Syntax, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
+                result := new BoundNewT(this.Syntax, initializerExpressionOpt, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7242,7 +7242,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (argument != this.Argument || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(methodOpt, this.MethodOpt) || isExtensionMethod != this.IsExtensionMethod || wasTargetTyped != this.WasTargetTyped || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDelegateCreationExpression(this.Syntax, argument, methodOpt, isExtensionMethod, wasTargetTyped, type, this.HasErrors);
+                result := new BoundDelegateCreationExpression(this.Syntax, argument, methodOpt, isExtensionMethod, wasTargetTyped, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7274,7 +7274,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (bounds != this.Bounds || initializerOpt != this.InitializerOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundArrayCreation(this.Syntax, bounds, initializerOpt, type, this.HasErrors);
+                result := new BoundArrayCreation(this.Syntax, bounds, initializerOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7305,7 +7305,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (isInferred != this.IsInferred || initializers != this.Initializers)
             {
-                var result = new BoundArrayInitialization(this.Syntax, isInferred, initializers, this.HasErrors);
+                result := new BoundArrayInitialization(this.Syntax, isInferred, initializers, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7351,7 +7351,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(elementType, this.ElementType, TypeCompareKind.ConsiderEverything) || count != this.Count || initializerOpt != this.InitializerOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundStackAllocArrayCreation(this.Syntax, elementType, count, initializerOpt, type, this.HasErrors);
+                result := new BoundStackAllocArrayCreation(this.Syntax, elementType, count, initializerOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7380,7 +7380,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(elementType, this.ElementType, TypeCompareKind.ConsiderEverything) || count != this.Count || initializerOpt != this.InitializerOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConvertedStackAllocExpression(this.Syntax, elementType, count, initializerOpt, type, this.HasErrors);
+                result := new BoundConvertedStackAllocExpression(this.Syntax, elementType, count, initializerOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7420,7 +7420,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverOpt != this.ReceiverOpt || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(fieldSymbol, this.FieldSymbol) || constantValueOpt != this.ConstantValueOpt || resultKind != this.ResultKind || isByValue != this.IsByValue || isDeclaration != this.IsDeclaration || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundFieldAccess(this.Syntax, receiverOpt, fieldSymbol, constantValueOpt, resultKind, isByValue, isDeclaration, type, this.HasErrors);
+                result := new BoundFieldAccess(this.Syntax, receiverOpt, fieldSymbol, constantValueOpt, resultKind, isByValue, isDeclaration, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7460,7 +7460,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(fieldSymbol, this.FieldSymbol) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundHoistedFieldAccess(this.Syntax, fieldSymbol, type, this.HasErrors);
+                result := new BoundHoistedFieldAccess(this.Syntax, fieldSymbol, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7498,7 +7498,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverOpt != this.ReceiverOpt || initialBindingReceiverIsSubjectToCloning != this.InitialBindingReceiverIsSubjectToCloning || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(propertySymbol, this.PropertySymbol) || autoPropertyAccessorKind != this.AutoPropertyAccessorKind || resultKind != this.ResultKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPropertyAccess(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, propertySymbol, autoPropertyAccessorKind, resultKind, type, this.HasErrors);
+                result := new BoundPropertyAccess(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, propertySymbol, autoPropertyAccessorKind, resultKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7534,7 +7534,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverOpt != this.ReceiverOpt || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(eventSymbol, this.EventSymbol) || isUsableAsField != this.IsUsableAsField || resultKind != this.ResultKind || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundEventAccess(this.Syntax, receiverOpt, eventSymbol, isUsableAsField, resultKind, type, this.HasErrors);
+                result := new BoundEventAccess(this.Syntax, receiverOpt, eventSymbol, isUsableAsField, resultKind, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7585,7 +7585,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverOpt != this.ReceiverOpt || initialBindingReceiverIsSubjectToCloning != this.InitialBindingReceiverIsSubjectToCloning || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(indexer, this.Indexer) || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || expanded != this.Expanded || accessorKind != this.AccessorKind || argsToParamsOpt != this.ArgsToParamsOpt || defaultArguments != this.DefaultArguments || originalIndexersOpt != this.OriginalIndexersOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundIndexerAccess(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, indexer, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, accessorKind, argsToParamsOpt, defaultArguments, originalIndexersOpt, type, this.HasErrors);
+                result := new BoundIndexerAccess(this.Syntax, receiverOpt, initialBindingReceiverIsSubjectToCloning, indexer, arguments, argumentNamesOpt, argumentRefKindsOpt, expanded, accessorKind, argsToParamsOpt, defaultArguments, originalIndexersOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7634,7 +7634,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || argument != this.Argument || lengthOrCountAccess != this.LengthOrCountAccess || receiverPlaceholder != this.ReceiverPlaceholder || indexerOrSliceAccess != this.IndexerOrSliceAccess || argumentPlaceholders != this.ArgumentPlaceholders || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundImplicitIndexerAccess(this.Syntax, receiver, argument, lengthOrCountAccess, receiverPlaceholder, indexerOrSliceAccess, argumentPlaceholders, type, this.HasErrors);
+                result := new BoundImplicitIndexerAccess(this.Syntax, receiver, argument, lengthOrCountAccess, receiverPlaceholder, indexerOrSliceAccess, argumentPlaceholders, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7675,7 +7675,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || argument != this.Argument || isValue != this.IsValue || getItemOrSliceHelper != this.GetItemOrSliceHelper || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundInlineArrayAccess(this.Syntax, expression, argument, isValue, getItemOrSliceHelper, type, this.HasErrors);
+                result := new BoundInlineArrayAccess(this.Syntax, expression, argument, isValue, getItemOrSliceHelper, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7715,7 +7715,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || arguments != this.Arguments || argumentNamesOpt != this.ArgumentNamesOpt || argumentRefKindsOpt != this.ArgumentRefKindsOpt || applicableIndexers != this.ApplicableIndexers || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDynamicIndexerAccess(this.Syntax, receiver, arguments, argumentNamesOpt, argumentRefKindsOpt, applicableIndexers, type, this.HasErrors);
+                result := new BoundDynamicIndexerAccess(this.Syntax, receiver, arguments, argumentNamesOpt, argumentRefKindsOpt, applicableIndexers, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7755,7 +7755,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (unboundLambda != this.UnboundLambda || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(symbol, this.Symbol) || body != this.Body || diagnostics != this.Diagnostics || binder != this.Binder || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundLambda(this.Syntax, unboundLambda, symbol, body, diagnostics, binder, type, this.HasErrors);
+                result := new BoundLambda(this.Syntax, unboundLambda, symbol, body, diagnostics, binder, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7799,7 +7799,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (data != this.Data || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(functionType, this.FunctionType) || withDependencies != this.WithDependencies)
             {
-                var result = new UnboundLambda(this.Syntax, data, functionType, withDependencies, this.HasErrors);
+                result := new UnboundLambda(this.Syntax, data, functionType, withDependencies, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7840,7 +7840,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value != this.Value || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(definedSymbol, this.DefinedSymbol) || operation != this.Operation || cast != this.Cast || binder != this.Binder || unoptimizedForm != this.UnoptimizedForm || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundQueryClause(this.Syntax, value, definedSymbol, operation, cast, binder, unoptimizedForm, type, this.HasErrors);
+                result := new BoundQueryClause(this.Syntax, value, definedSymbol, operation, cast, binder, unoptimizedForm, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7866,7 +7866,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statements != this.Statements)
             {
-                var result = new BoundTypeOrInstanceInitializers(this.Syntax, statements, this.HasErrors);
+                result := new BoundTypeOrInstanceInitializers(this.Syntax, statements, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7903,7 +7903,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (argument != this.Argument || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNameOfOperator(this.Syntax, argument, constantValueOpt, type, this.HasErrors);
+                result := new BoundNameOfOperator(this.Syntax, argument, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7945,7 +7945,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (parts != this.Parts || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundUnconvertedInterpolatedString(this.Syntax, parts, constantValueOpt, type, this.HasErrors);
+                result := new BoundUnconvertedInterpolatedString(this.Syntax, parts, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -7973,7 +7973,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!interpolationData.Equals(this.InterpolationData) || parts != this.Parts || constantValueOpt != this.ConstantValueOpt || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundInterpolatedString(this.Syntax, interpolationData, parts, constantValueOpt, type, this.HasErrors);
+                result := new BoundInterpolatedString(this.Syntax, interpolationData, parts, constantValueOpt, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8001,7 +8001,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundInterpolatedStringHandlerPlaceholder(this.Syntax, type, this.HasErrors);
+                result := new BoundInterpolatedStringHandlerPlaceholder(this.Syntax, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8039,7 +8039,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (argumentIndex != this.ArgumentIndex || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundInterpolatedStringArgumentPlaceholder(this.Syntax, argumentIndex, type, this.HasErrors);
+                result := new BoundInterpolatedStringArgumentPlaceholder(this.Syntax, argumentIndex, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8074,7 +8074,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value != this.Value || alignment != this.Alignment || format != this.Format || isInterpolatedStringHandlerAppendCall != this.IsInterpolatedStringHandlerAppendCall)
             {
-                var result = new BoundStringInsert(this.Syntax, value, alignment, format, isInterpolatedStringHandlerAppendCall, this.HasErrors);
+                result := new BoundStringInsert(this.Syntax, value, alignment, format, isInterpolatedStringHandlerAppendCall, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8118,7 +8118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || pattern != this.Pattern || hasUnionMatching != this.HasUnionMatching || isNegated != this.IsNegated || reachabilityDecisionDag != this.ReachabilityDecisionDag || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(whenTrueLabel, this.WhenTrueLabel) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(whenFalseLabel, this.WhenFalseLabel) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundIsPatternExpression(this.Syntax, expression, pattern, hasUnionMatching, isNegated, reachabilityDecisionDag, whenTrueLabel, whenFalseLabel, type, this.HasErrors);
+                result := new BoundIsPatternExpression(this.Syntax, expression, pattern, hasUnionMatching, isNegated, reachabilityDecisionDag, whenTrueLabel, whenFalseLabel, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8189,7 +8189,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (value != this.Value || constantValue != this.ConstantValue || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundConstantPattern(this.Syntax, value, constantValue, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundConstantPattern(this.Syntax, value, constantValue, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8231,7 +8231,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(unionMatchingInputType, this.UnionMatchingInputType, TypeCompareKind.ConsiderEverything) || leftOfPendingConjunction != this.LeftOfPendingConjunction || valueProperty != this.ValueProperty || valuePattern != this.ValuePattern || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPatternWithUnionMatching(this.Syntax, unionMatchingInputType, leftOfPendingConjunction, valueProperty, valuePattern, inputType, narrowedType, this.HasErrors);
+                result := new BoundPatternWithUnionMatching(this.Syntax, unionMatchingInputType, leftOfPendingConjunction, valueProperty, valuePattern, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8271,7 +8271,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDiscardPattern(this.Syntax, inputType, narrowedType, this.HasErrors);
+                result := new BoundDiscardPattern(this.Syntax, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8326,7 +8326,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (declaredType != this.DeclaredType || isVar != this.IsVar || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variable, this.Variable) || variableAccess != this.VariableAccess || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDeclarationPattern(this.Syntax, declaredType, isVar, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundDeclarationPattern(this.Syntax, declaredType, isVar, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8367,7 +8367,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (declaredType != this.DeclaredType || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(deconstructMethod, this.DeconstructMethod) || deconstruction != this.Deconstruction || properties != this.Properties || isExplicitNotNullTest != this.IsExplicitNotNullTest || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variable, this.Variable) || variableAccess != this.VariableAccess || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRecursivePattern(this.Syntax, declaredType, deconstructMethod, deconstruction, properties, isExplicitNotNullTest, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundRecursivePattern(this.Syntax, declaredType, deconstructMethod, deconstruction, properties, isExplicitNotNullTest, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8411,7 +8411,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (subpatterns != this.Subpatterns || hasSlice != this.HasSlice || lengthAccess != this.LengthAccess || indexerAccess != this.IndexerAccess || receiverPlaceholder != this.ReceiverPlaceholder || argumentPlaceholder != this.ArgumentPlaceholder || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variable, this.Variable) || variableAccess != this.VariableAccess || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundListPattern(this.Syntax, subpatterns, hasSlice, lengthAccess, indexerAccess, receiverPlaceholder, argumentPlaceholder, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundListPattern(this.Syntax, subpatterns, hasSlice, lengthAccess, indexerAccess, receiverPlaceholder, argumentPlaceholder, variable, variableAccess, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8450,7 +8450,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (pattern != this.Pattern || indexerAccess != this.IndexerAccess || receiverPlaceholder != this.ReceiverPlaceholder || argumentPlaceholder != this.ArgumentPlaceholder || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundSlicePattern(this.Syntax, pattern, indexerAccess, receiverPlaceholder, argumentPlaceholder, inputType, narrowedType, this.HasErrors);
+                result := new BoundSlicePattern(this.Syntax, pattern, indexerAccess, receiverPlaceholder, argumentPlaceholder, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8492,7 +8492,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getLengthMethod, this.GetLengthMethod) || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(getItemMethod, this.GetItemMethod) || subpatterns != this.Subpatterns || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundITuplePattern(this.Syntax, getLengthMethod, getItemMethod, subpatterns, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundITuplePattern(this.Syntax, getLengthMethod, getItemMethod, subpatterns, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8538,7 +8538,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(symbol, this.Symbol) || pattern != this.Pattern)
             {
-                var result = new BoundPositionalSubpattern(this.Syntax, symbol, pattern, this.HasErrors);
+                result := new BoundPositionalSubpattern(this.Syntax, symbol, pattern, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8568,7 +8568,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (member != this.Member || isLengthOrCount != this.IsLengthOrCount || pattern != this.Pattern)
             {
-                var result = new BoundPropertySubpattern(this.Syntax, member, isLengthOrCount, pattern, this.HasErrors);
+                result := new BoundPropertySubpattern(this.Syntax, member, isLengthOrCount, pattern, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8600,7 +8600,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(symbol, this.Symbol) || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundPropertySubpatternMember(this.Syntax, receiver, symbol, type, this.HasErrors);
+                result := new BoundPropertySubpatternMember(this.Syntax, receiver, symbol, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8638,7 +8638,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (declaredType != this.DeclaredType || isExplicitNotNullTest != this.IsExplicitNotNullTest || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundTypePattern(this.Syntax, declaredType, isExplicitNotNullTest, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundTypePattern(this.Syntax, declaredType, isExplicitNotNullTest, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8677,7 +8677,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (disjunction != this.Disjunction || left != this.Left || right != this.Right || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundBinaryPattern(this.Syntax, disjunction, left, right, inputType, narrowedType, this.HasErrors);
+                result := new BoundBinaryPattern(this.Syntax, disjunction, left, right, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8713,7 +8713,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (negated != this.Negated || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundNegatedPattern(this.Syntax, negated, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundNegatedPattern(this.Syntax, negated, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8754,7 +8754,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (relation != this.Relation || value != this.Value || constantValue != this.ConstantValue || isUnionMatching != this.IsUnionMatching || !TypeSymbol.Equals(inputType, this.InputType, TypeCompareKind.ConsiderEverything) || !TypeSymbol.Equals(narrowedType, this.NarrowedType, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundRelationalPattern(this.Syntax, relation, value, constantValue, isUnionMatching, inputType, narrowedType, this.HasErrors);
+                result := new BoundRelationalPattern(this.Syntax, relation, value, constantValue, isUnionMatching, inputType, narrowedType, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8789,7 +8789,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (nullableAnnotation != this.NullableAnnotation || isInferred != this.IsInferred || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundDiscardExpression(this.Syntax, nullableAnnotation, isInferred, type, this.HasErrors);
+                result := new BoundDiscardExpression(this.Syntax, nullableAnnotation, isInferred, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8817,7 +8817,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundThrowExpression(this.Syntax, expression, type, this.HasErrors);
+                result := new BoundThrowExpression(this.Syntax, expression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8860,7 +8860,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variableSymbol, this.VariableSymbol) || receiverOpt != this.ReceiverOpt)
             {
-                var result = new OutVariablePendingInference(this.Syntax, variableSymbol, receiverOpt, this.HasErrors);
+                result := new OutVariablePendingInference(this.Syntax, variableSymbol, receiverOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8886,7 +8886,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variableSymbol, this.VariableSymbol) || receiverOpt != this.ReceiverOpt)
             {
-                var result = new DeconstructionVariablePendingInference(this.Syntax, variableSymbol, receiverOpt, this.HasErrors);
+                result := new DeconstructionVariablePendingInference(this.Syntax, variableSymbol, receiverOpt, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8921,7 +8921,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(variableSymbol, this.VariableSymbol) || isDiscardExpression != this.IsDiscardExpression)
             {
-                var result = new OutDeconstructVarPendingInference(this.Syntax, variableSymbol, isDiscardExpression, this.HasErrors);
+                result := new OutDeconstructVarPendingInference(this.Syntax, variableSymbol, isDiscardExpression, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8957,7 +8957,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (blockBody != this.BlockBody || expressionBody != this.ExpressionBody)
             {
-                var result = new BoundNonConstructorMethodBody(this.Syntax, blockBody, expressionBody, this.HasErrors);
+                result := new BoundNonConstructorMethodBody(this.Syntax, blockBody, expressionBody, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -8987,7 +8987,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (locals != this.Locals || initializer != this.Initializer || blockBody != this.BlockBody || expressionBody != this.ExpressionBody)
             {
-                var result = new BoundConstructorMethodBody(this.Syntax, locals, initializer, blockBody, expressionBody, this.HasErrors);
+                result := new BoundConstructorMethodBody(this.Syntax, locals, initializer, blockBody, expressionBody, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -9018,7 +9018,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (expression != this.Expression || nullableAnnotation != this.NullableAnnotation || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundExpressionWithNullability(this.Syntax, expression, nullableAnnotation, type, this.HasErrors);
+                result := new BoundExpressionWithNullability(this.Syntax, expression, nullableAnnotation, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -9043,7 +9043,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (originalExpression != this.OriginalExpression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundValueForNullableAnalysis(this.Syntax, originalExpression, type, this.HasErrors);
+                result := new BoundValueForNullableAnalysis(this.Syntax, originalExpression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }
@@ -9078,7 +9078,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiver != this.Receiver || !Symbols.SymbolEqualityComparer.ConsiderEverything.Equals(cloneMethod, this.CloneMethod) || initializerExpression != this.InitializerExpression || !TypeSymbol.Equals(type, this.Type, TypeCompareKind.ConsiderEverything))
             {
-                var result = new BoundWithExpression(this.Syntax, receiver, cloneMethod, initializerExpression, type, this.HasErrors);
+                result := new BoundWithExpression(this.Syntax, receiver, cloneMethod, initializerExpression, type, this.HasErrors);
                 result.CopyAttributes(this);
                 return result;
             }

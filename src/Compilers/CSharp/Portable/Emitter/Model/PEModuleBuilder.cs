@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                    emitOptions,
                    new ModuleCompilationState())
         {
-            var specifiedName = sourceModule.MetadataName;
+            specifiedName := sourceModule.MetadataName;
 
             _metadataName = specifiedName != Microsoft.CodeAnalysis.Compilation.UnspecifiedModuleAssemblyName ?
                             specifiedName :
@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 diagnostics.Add(new CSDiagnosticInfo(ErrorCode.WRN_RefCultureMismatch, assembly, refIdentity.CultureName), NoLocation.Singleton);
             }
 
-            var refMachine = assembly.Machine;
+            refMachine := assembly.Machine;
             // If other assembly is agnostic this is always safe
             // Also, if no mscorlib was specified for back compat we add a reference to mscorlib
             // that resolves to the current framework directory. If the compiler is 64-bit
@@ -196,7 +196,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             if ((object)assembly != (object)assembly.CorLibrary &&
                 !(refMachine == Machine.I386 && !assembly.Bit32Required))
             {
-                var machine = SourceModule.Machine;
+                machine := SourceModule.Machine;
 
                 if (!(machine == Machine.I386 && !SourceModule.Bit32Required) &&
                     machine != refMachine)
@@ -219,20 +219,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public sealed override IEnumerable<(Cci.ITypeDefinition, ImmutableArray<Cci.DebugSourceDocument>)> GetTypeToDebugDocumentMap(EmitContext context)
         {
-            var typesToProcess = ArrayBuilder<Cci.ITypeDefinition>.GetInstance();
-            var debugDocuments = ArrayBuilder<Cci.DebugSourceDocument>.GetInstance();
-            var methodDocumentList = PooledHashSet<Cci.DebugSourceDocument>.GetInstance();
+            typesToProcess := ArrayBuilder<Cci.ITypeDefinition>.GetInstance();
+            debugDocuments := ArrayBuilder<Cci.DebugSourceDocument>.GetInstance();
+            methodDocumentList := PooledHashSet<Cci.DebugSourceDocument>.GetInstance();
 
-            var namespacesAndTopLevelTypesToProcess = ArrayBuilder<NamespaceOrTypeSymbol>.GetInstance();
+            namespacesAndTopLevelTypesToProcess := ArrayBuilder<NamespaceOrTypeSymbol>.GetInstance();
             namespacesAndTopLevelTypesToProcess.Push(SourceModule.GlobalNamespace);
             while (namespacesAndTopLevelTypesToProcess.Count > 0)
             {
-                var symbol = namespacesAndTopLevelTypesToProcess.Pop();
+                symbol := namespacesAndTopLevelTypesToProcess.Pop();
 
                 switch (symbol.Kind)
                 {
                     case SymbolKind.Namespace:
-                        var location = GetSmallestSourceLocationOrNull(symbol);
+                        location := GetSmallestSourceLocationOrNull(symbol);
 
                         // filtering out synthesized symbols not having real source
                         // locations such as anonymous types, etc...
@@ -257,7 +257,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                         Debug.Assert(methodDocumentList.Count == 0);
                         Debug.Assert(typesToProcess.Count == 0);
 
-                        var typeDefinition = (Cci.ITypeDefinition)symbol.GetCciAdapter();
+                        typeDefinition := (Cci.ITypeDefinition)symbol.GetCciAdapter();
                         typesToProcess.Push(typeDefinition);
                         GetDocumentsForMethodsAndNestedTypes(methodDocumentList, typesToProcess, context);
 
@@ -268,8 +268,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                                 continue;
                             }
 
-                            var span = loc.GetLineSpan();
-                            var debugDocument = DebugDocumentsBuilder.TryGetDebugDocument(span.Path, basePath: null);
+                            span := loc.GetLineSpan();
+                            debugDocument := DebugDocumentsBuilder.TryGetDebugDocument(span.Path, basePath: null);
 
                             // If we have a debug document that is already referenced by method debug info in this type, or a nested type,
                             // then we don't need to include it. Since its impossible to declare a nested type without also including
@@ -312,12 +312,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             while (typesToProcess.Count > 0)
             {
-                var definition = typesToProcess.Pop();
+                definition := typesToProcess.Pop();
 
-                var typeMethods = definition.GetMethods(context);
+                typeMethods := definition.GetMethods(context);
                 foreach (var method in typeMethods)
                 {
-                    var body = method.GetBody(context);
+                    body := method.GetBody(context);
                     if (body is null)
                     {
                         continue;
@@ -329,7 +329,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     }
                 }
 
-                var nestedTypes = definition.GetNestedTypes(context);
+                nestedTypes := definition.GetNestedTypes(context);
                 foreach (var nestedTypeDefinition in nestedTypes)
                 {
                     typesToProcess.Push(nestedTypeDefinition);
@@ -339,9 +339,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public sealed override MultiDictionary<Cci.DebugSourceDocument, Cci.DefinitionWithLocation> GetSymbolToLocationMap()
         {
-            var result = new MultiDictionary<Cci.DebugSourceDocument, Cci.DefinitionWithLocation>();
+            result := new MultiDictionary<Cci.DebugSourceDocument, Cci.DefinitionWithLocation>();
 
-            var namespacesAndTypesToProcess = new Stack<NamespaceOrTypeSymbol>();
+            namespacesAndTypesToProcess := new Stack<NamespaceOrTypeSymbol>();
             namespacesAndTypesToProcess.Push(SourceModule.GlobalNamespace);
 
             Location location = null;
@@ -398,7 +398,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                                     case SymbolKind.Method:
                                         // NOTE: Dev11 does not add synthesized static constructors to this map,
                                         //       but adds synthesized instance constructors, Roslyn adds both
-                                        var method = (MethodSymbol)member;
+                                        method := (MethodSymbol)member;
                                         if (!method.ShouldEmit())
                                         {
                                             break;
@@ -450,7 +450,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private void AddSymbolLocation(MultiDictionary<Cci.DebugSourceDocument, Cci.DefinitionWithLocation> result, Symbol symbol)
         {
-            var location = GetSmallestSourceLocationOrNull(symbol);
+            location := GetSmallestSourceLocationOrNull(symbol);
             if (location != null)
             {
                 AddSymbolLocation(result, location, (Cci.IDefinition)symbol.GetCciAdapter());
@@ -558,12 +558,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public override IEnumerable<Cci.INamespaceTypeDefinition> GetTopLevelSourceTypeDefinitions(EmitContext context)
         {
-            var namespacesToProcess = new Stack<NamespaceSymbol>();
+            namespacesToProcess := new Stack<NamespaceSymbol>();
             namespacesToProcess.Push(SourceModule.GlobalNamespace);
 
             while (namespacesToProcess.Count > 0)
             {
-                var ns = namespacesToProcess.Pop();
+                ns := namespacesToProcess.Pop();
                 foreach (var member in ns.GetMembers())
                 {
                     if (member.Kind == SymbolKind.Namespace)
@@ -601,7 +601,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             foreach (var member in (symbol.IsNamespace ? symbol.GetMembers() : symbol.GetTypeMembers().Cast<NamedTypeSymbol, Symbol>()))
             {
-                var namespaceOrType = member as NamespaceOrTypeSymbol;
+                namespaceOrType := member as NamespaceOrTypeSymbol;
                 if ((object)namespaceOrType != null)
                 {
                     Debug.Assert(namespaceOrType is PENamespaceSymbol or PENamedTypeSymbol);
@@ -619,7 +619,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             if (haveExtensions)
             {
-                var groupingTypes = ArrayBuilder<PENamedTypeSymbol>.GetInstance();
+                groupingTypes := ArrayBuilder<PENamedTypeSymbol>.GetInstance();
                 GetNestedExtensionGroupingTypes((PENamedTypeSymbol)symbol, groupingTypes);
                 Debug.Assert(!groupingTypes.IsEmpty);
 
@@ -634,7 +634,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private static ArrayBuilder<PENamedTypeSymbol> GetNestedExtensionGroupingTypes(PENamedTypeSymbol symbol, ArrayBuilder<PENamedTypeSymbol> groupingTypes)
         {
-            var seenGroupingTypes = PooledHashSet<PENamedTypeSymbol>.GetInstance();
+            seenGroupingTypes := PooledHashSet<PENamedTypeSymbol>.GetInstance();
 
             foreach (var type in symbol.GetTypeMembers(""))
             {
@@ -643,7 +643,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     continue;
                 }
 
-                var groupingType = ((PENamedTypeSymbol)type).ExtensionGroupingType;
+                groupingType := ((PENamedTypeSymbol)type).ExtensionGroupingType;
                 if (seenGroupingTypes.Add(groupingType))
                 {
                     groupingTypes.Add(groupingType);
@@ -661,7 +661,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             if (_lazyExportedTypes.IsDefault)
             {
-                var initialized = ImmutableInterlocked.InterlockedInitialize(ref _lazyExportedTypes, CalculateExportedTypes(context));
+                initialized := ImmutableInterlocked.InterlockedInitialize(ref _lazyExportedTypes, CalculateExportedTypes(context));
 
                 if (initialized && _lazyExportedTypes.Length > 0)
                 {
@@ -679,11 +679,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         private ImmutableArray<Cci.ExportedType> CalculateExportedTypes(EmitContext context)
         {
             SourceAssemblySymbol sourceAssembly = SourceModule.ContainingSourceAssembly;
-            var builder = ArrayBuilder<Cci.ExportedType>.GetInstance();
+            builder := ArrayBuilder<Cci.ExportedType>.GetInstance();
 
             if (!OutputKind.IsNetModule())
             {
-                var modules = sourceAssembly.Modules;
+                modules := sourceAssembly.Modules;
                 for (int i = 1; i < modules.Length; i++) //NOTE: skipping modules[0]
                 {
                     GetExportedTypes(modules[i].GlobalNamespace, -1, builder);
@@ -702,7 +702,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         /// </summary>
         internal static HashSet<NamedTypeSymbol> GetForwardedTypes(SourceAssemblySymbol sourceAssembly, ArrayBuilder<Cci.ExportedType>? builder, EmitContext? context)
         {
-            var seenTopLevelForwardedTypes = new HashSet<NamedTypeSymbol>();
+            seenTopLevelForwardedTypes := new HashSet<NamedTypeSymbol>();
             GetForwardedTypes(seenTopLevelForwardedTypes, sourceAssembly.GetSourceDecodedWellKnownAttributeData(), builder, context);
 
             if (!sourceAssembly.DeclaringCompilation.Options.OutputKind.IsNetModule())
@@ -716,8 +716,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private void ReportExportedTypeNameCollisions(ImmutableArray<Cci.ExportedType> exportedTypes, DiagnosticBag diagnostics)
         {
-            var sourceAssembly = SourceModule.ContainingSourceAssembly;
-            var exportedNamesMap = new Dictionary<string, NamedTypeSymbol>(StringOrdinalComparer.Instance);
+            sourceAssembly := SourceModule.ContainingSourceAssembly;
+            exportedNamesMap := new Dictionary<string, NamedTypeSymbol>(StringOrdinalComparer.Instance);
 
             foreach (var exportedType in exportedTypes)
             {
@@ -730,7 +730,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 }
 
                 // Other types are expected to be top-level types backed by regular C# type symbols.
-                var type = (NamedTypeSymbol)exportedType.Type.GetInternalSymbol();
+                type := (NamedTypeSymbol)exportedType.Type.GetInternalSymbol();
 
                 Debug.Assert(type.IsDefinition);
                 Debug.Assert(type.IsTopLevelType());
@@ -797,7 +797,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             if (wellKnownAttributeData?.ForwardedTypes?.Count > 0)
             {
                 // (type, index of the parent exported type in builder, or -1 if the type is a top-level type)
-                var stack = ArrayBuilder<(NamedTypeSymbol type, int parentIndex)>.GetInstance();
+                stack := ArrayBuilder<(NamedTypeSymbol type, int parentIndex)>.GetInstance();
 
                 // Hashset enumeration is not guaranteed to be deterministic. Emitting in the order of fully qualified names.
                 IEnumerable<NamedTypeSymbol> orderedForwardedTypes = wellKnownAttributeData.ForwardedTypes;
@@ -819,7 +819,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     if (builder is object)
                     {
                         Debug.Assert(contextOpt is not null);
-                        var context = contextOpt.GetValueOrDefault();
+                        context := contextOpt.GetValueOrDefault();
 
                         // Return all nested types.
                         // Note the order: depth first, children in reverse order (to match dev10, not a requirement).
@@ -864,7 +864,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     {
                         case PENamedTypeSymbol peType:
                             {
-                                var groupingTypes = ArrayBuilder<PENamedTypeSymbol>.GetInstance();
+                                groupingTypes := ArrayBuilder<PENamedTypeSymbol>.GetInstance();
                                 GetNestedExtensionGroupingTypes(peType, groupingTypes);
                                 Debug.Assert(!groupingTypes.IsEmpty);
 
@@ -967,7 +967,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             Debug.Assert(diagnostics != null);
 
-            var typeSymbol = SourceModule.ContainingAssembly.GetSpecialType(specialType);
+            typeSymbol := SourceModule.ContainingAssembly.GetSpecialType(specialType);
 
             DiagnosticInfo info = typeSymbol.GetUseSiteInfo().DiagnosticInfo;
             if (info != null)
@@ -995,7 +995,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public sealed override bool IsPlatformType(Cci.ITypeReference typeRef, Cci.PlatformType platformType)
         {
-            var namedType = typeRef.GetInternalSymbol() as NamedTypeSymbol;
+            namedType := typeRef.GetInternalSymbol() as NamedTypeSymbol;
             if ((object)namedType != null)
             {
                 if (platformType == Cci.PlatformType.SystemType)
@@ -1232,7 +1232,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             // this should never happen, in theory,
             // but if it does happen we should make it a failure.
             // NOTE: declaredBase could be null for interfaces
-            var declaredBase = namedTypeSymbol.BaseTypeNoUseSiteDiagnostics;
+            declaredBase := namedTypeSymbol.BaseTypeNoUseSiteDiagnostics;
             if ((object)declaredBase != null && declaredBase.SpecialType == SpecialType.System_ValueType)
             {
                 return;
@@ -1244,10 +1244,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return;
             }
 
-            var location = syntaxNodeOpt == null ? NoLocation.Singleton : syntaxNodeOpt.Location;
+            location := syntaxNodeOpt == null ? NoLocation.Singleton : syntaxNodeOpt.Location;
             if ((object)declaredBase != null)
             {
-                var diagnosticInfo = declaredBase.GetUseSiteInfo().DiagnosticInfo;
+                diagnosticInfo := declaredBase.GetUseSiteInfo().DiagnosticInfo;
                 if (diagnosticInfo != null && diagnosticInfo.Severity == DiagnosticSeverity.Error)
                 {
                     diagnostics.Add(diagnosticInfo, location);
@@ -1542,7 +1542,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             // NOTE: all parameters must always agree on whether they need wrapping
             if (param.IsDefinition)
             {
-                var container = param.ContainingSymbol;
+                container := param.ContainingSymbol;
                 if (ContainerIsGeneric(container))
                 {
                     return true;
@@ -1554,7 +1554,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private ImmutableArray<Cci.IParameterTypeInformation> TranslateAll(ImmutableArray<ParameterSymbol> @params)
         {
-            var builder = ArrayBuilder<Cci.IParameterTypeInformation>.GetInstance();
+            builder := ArrayBuilder<Cci.IParameterTypeInformation>.GetInstance();
             foreach (var param in @params)
             {
                 builder.Add(CreateParameterTypeInformationWrapper(param));
@@ -1720,7 +1720,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return null;
             }
 
-            var flagsBuilder = ArrayBuilder<byte>.GetInstance();
+            flagsBuilder := ArrayBuilder<byte>.GetInstance();
             type.AddNullableTransforms(flagsBuilder);
 
             SynthesizedAttributeData attribute;
@@ -1739,8 +1739,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 else
                 {
                     NamedTypeSymbol byteType = Compilation.GetSpecialType(SpecialType.System_Byte);
-                    var byteArrayType = ArrayTypeSymbol.CreateSZArray(byteType.ContainingAssembly, TypeWithAnnotations.Create(byteType));
-                    var value = flagsBuilder.SelectAsArray((flag, byteType) => new TypedConstant(byteType, TypedConstantKind.Primitive, flag), byteType);
+                    byteArrayType := ArrayTypeSymbol.CreateSZArray(byteType.ContainingAssembly, TypeWithAnnotations.Create(byteType));
+                    value := flagsBuilder.SelectAsArray((flag, byteType) => new TypedConstant(byteType, TypedConstantKind.Primitive, flag), byteType);
                     attribute = SynthesizeNullableAttribute(
                         WellKnownMember.System_Runtime_CompilerServices_NullableAttribute__ctorTransformFlags,
                         ImmutableArray.Create(new TypedConstant(byteArrayType, value)));
@@ -1774,7 +1774,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         internal SynthesizedAttributeData SynthesizeNullableContextAttribute(Symbol symbol, byte value)
         {
-            var module = Compilation.SourceModule;
+            module := Compilation.SourceModule;
             if ((object)module != symbol && (object)module != symbol.ContainingModule)
             {
                 // For symbols that are not defined in the same compilation (like NoPia), don't synthesize this attribute.
@@ -1809,7 +1809,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return null;
             }
 
-            var builder = ArrayBuilder<bool>.GetInstance();
+            builder := ArrayBuilder<bool>.GetInstance();
             CSharpCompilation.NativeIntegerTransformsEncoder.Encode(builder, type);
 
             Debug.Assert(builder.Any());
@@ -1824,9 +1824,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             {
                 NamedTypeSymbol booleanType = Compilation.GetSpecialType(SpecialType.System_Boolean);
                 Debug.Assert((object)booleanType != null);
-                var transformFlags = builder.SelectAsArray((flag, constantType) => new TypedConstant(constantType, TypedConstantKind.Primitive, flag), booleanType);
-                var boolArray = ArrayTypeSymbol.CreateSZArray(booleanType.ContainingAssembly, TypeWithAnnotations.Create(booleanType));
-                var arguments = ImmutableArray.Create(new TypedConstant(boolArray, transformFlags));
+                transformFlags := builder.SelectAsArray((flag, constantType) => new TypedConstant(constantType, TypedConstantKind.Primitive, flag), booleanType);
+                boolArray := ArrayTypeSymbol.CreateSZArray(booleanType.ContainingAssembly, TypeWithAnnotations.Create(booleanType));
+                arguments := ImmutableArray.Create(new TypedConstant(boolArray, transformFlags));
                 attribute = SynthesizeNativeIntegerAttribute(WellKnownMember.System_Runtime_CompilerServices_NativeIntegerAttribute__ctorTransformFlags, arguments);
             }
 
@@ -2025,8 +2025,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private MethodSymbol EnsurePrivateImplClassMethodExists<TArg>(SyntaxNode syntaxNode, string methodName, Func<SynthesizedPrivateImplementationDetailsType, TArg, MethodSymbol> createMethodSymbol, TArg arg, DiagnosticBag diagnostics)
         {
-            var privateImplClass = GetPrivateImplClass(syntaxNode, diagnostics);
-            var methodAdapter = privateImplClass.PrivateImplementationDetails.GetMethod(methodName);
+            privateImplClass := GetPrivateImplClass(syntaxNode, diagnostics);
+            methodAdapter := privateImplClass.PrivateImplementationDetails.GetMethod(methodName);
             if (methodAdapter is not null)
             {
                 Debug.Assert(methodAdapter.Name == methodName);
@@ -2120,7 +2120,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             if (arrayLength is >= 2 and <= 16)
             {
                 // In .NET 10 and up, the runtime provides InlineArrayN<T> types for N from 2 to 16.
-                var arrayWellKnownType = WellKnownType.System_Runtime_CompilerServices_InlineArray2 + (arrayLength - 2);
+                arrayWellKnownType := WellKnownType.System_Runtime_CompilerServices_InlineArray2 + (arrayLength - 2);
                 Debug.Assert(arrayWellKnownType is >= WellKnownType.System_Runtime_CompilerServices_InlineArray2 and <= WellKnownType.System_Runtime_CompilerServices_InlineArray16);
                 if (Binder.TryGetOptionalWellKnownType(Compilation, arrayWellKnownType, diagnostics, syntaxNode.Location, out var existingType))
                 {
@@ -2130,11 +2130,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
             return _inlineArrayTypes.GetOrAdd(arrayLength, static (arrayLength, arg) =>
                 {
-                    var attributeConstructor = (MethodSymbol)arg.factory.SpecialMember(SpecialMember.System_Runtime_CompilerServices_InlineArrayAttribute__ctor);
+                    attributeConstructor := (MethodSymbol)arg.factory.SpecialMember(SpecialMember.System_Runtime_CompilerServices_InlineArrayAttribute__ctor);
                     Debug.Assert(attributeConstructor is { });
 
                     string typeName = GeneratedNames.MakeSynthesizedInlineArrayName(arrayLength, arg.@this.CurrentGenerationOrdinal);
-                    var typeSymbol = new SynthesizedInlineArrayTypeSymbol(arg.@this.SourceModule, typeName, arrayLength, attributeConstructor);
+                    typeSymbol := new SynthesizedInlineArrayTypeSymbol(arg.@this.SourceModule, typeName, arrayLength, attributeConstructor);
                     return typeSymbol;
                 },
                 (@this: this, factory));
@@ -2156,7 +2156,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             }
 
             typeSymbol = readOnlyListType;
-            var info = typeSymbol.GetUseSiteInfo().DiagnosticInfo;
+            info := typeSymbol.GetUseSiteInfo().DiagnosticInfo;
             if (info is { })
             {
                 Symbol.ReportUseSiteDiagnostic(info, diagnostics, syntaxNode.Location);
@@ -2286,9 +2286,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public sealed override ImmutableArray<NamedTypeSymbol> GetEmbeddedTypes(DiagnosticBag diagnostics)
         {
-            var bindingDiagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
+            bindingDiagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
 
-            var result = GetEmbeddedTypes(bindingDiagnostics);
+            result := GetEmbeddedTypes(bindingDiagnostics);
 
             diagnostics.AddRange(bindingDiagnostics.DiagnosticBag);
             bindingDiagnostics.Free();

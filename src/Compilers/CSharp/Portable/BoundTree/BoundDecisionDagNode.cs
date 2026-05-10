@@ -71,8 +71,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal new string GetDebuggerDisplay()
         {
-            var pooledBuilder = PooledStringBuilder.GetInstance();
-            var builder = pooledBuilder.Builder;
+            pooledBuilder := PooledStringBuilder.GetInstance();
+            builder := pooledBuilder.Builder;
             builder.Append($"[{this.Id}]: ");
             switch (this)
             {

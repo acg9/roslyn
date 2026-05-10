@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static BoundStatement AddSequencePoint(VariableDeclaratorSyntax declaratorSyntax, BoundStatement rewrittenStatement)
         {
             GetBreakpointSpan(declaratorSyntax, out _, out TextSpan? part);
-            var result = BoundSequencePoint.Create(declaratorSyntax, part, rewrittenStatement);
+            result := BoundSequencePoint.Create(declaratorSyntax, part, rewrittenStatement);
             result.WasCompilerGenerated = rewrittenStatement.WasCompilerGenerated;
             return result;
         }
@@ -32,7 +32,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             int end = declarationSyntax.Initializer.Span.End;
             TextSpan part = TextSpan.FromBounds(start, end);
 
-            var result = BoundSequencePoint.Create(declarationSyntax, part, rewrittenStatement);
+            result := BoundSequencePoint.Create(declarationSyntax, part, rewrittenStatement);
             result.WasCompilerGenerated = rewrittenStatement.WasCompilerGenerated;
             return result;
         }
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static void GetBreakpointSpan(VariableDeclaratorSyntax declaratorSyntax, out SyntaxNode node, out TextSpan? part)
         {
             Debug.Assert(declaratorSyntax.Parent != null);
-            var declarationSyntax = (VariableDeclarationSyntax)declaratorSyntax.Parent;
+            declarationSyntax := (VariableDeclarationSyntax)declaratorSyntax.Parent;
             Debug.Assert(declarationSyntax.Parent != null);
 
             if (declarationSyntax.Variables.First() == declaratorSyntax)
@@ -97,15 +97,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case SyntaxKind.EventFieldDeclaration:
                     case SyntaxKind.FieldDeclaration:
                         {
-                            var modifiers = ((BaseFieldDeclarationSyntax)declarationSyntax.Parent).Modifiers;
+                            modifiers := ((BaseFieldDeclarationSyntax)declarationSyntax.Parent).Modifiers;
                             GetFirstLocalOrFieldBreakpointSpan(modifiers.Any() ? modifiers[0] : (SyntaxToken?)null, declaratorSyntax, out node, out part);
                         }
                         break;
 
                     case SyntaxKind.LocalDeclarationStatement:
                         {
-                            var parent = (LocalDeclarationStatementSyntax)declarationSyntax.Parent;
-                            var modifiers = parent.Modifiers;
+                            parent := (LocalDeclarationStatementSyntax)declarationSyntax.Parent;
+                            modifiers := parent.Modifiers;
                             Debug.Assert(!modifiers.Any(SyntaxKind.ConstKeyword)); // const locals don't have a sequence point
                             var firstToken =
                                 modifiers.Any() ? modifiers[0] :
@@ -143,7 +143,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(declaratorSyntax.Parent != null);
 
-            var declarationSyntax = (VariableDeclarationSyntax)declaratorSyntax.Parent;
+            declarationSyntax := (VariableDeclarationSyntax)declaratorSyntax.Parent;
 
             Debug.Assert(declarationSyntax.Parent != null);
 
@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // The local has to be associated with a syntax that is tracked by EnC source mapping.
             // At most one ConditionalBranchDiscriminator variable shall be associated with any given EnC tracked syntax node.
-            var local = factory.SynthesizedLocal(condition.Type, synthesizedVariableSyntax, kind: SynthesizedLocalKind.ConditionalBranchDiscriminator);
+            local := factory.SynthesizedLocal(condition.Type, synthesizedVariableSyntax, kind: SynthesizedLocalKind.ConditionalBranchDiscriminator);
 
             // Add hidden sequence point unless the condition is a constant expression.
             // Constant expression must stay a const to not invalidate results of control flow analysis.

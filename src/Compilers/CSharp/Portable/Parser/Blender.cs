@@ -53,12 +53,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 // once we have normalized collection for TextSpan we will not need to collapse all
                 // the change spans.
 
-                var collapsed = TextChangeRange.Collapse(changes);
+                collapsed := TextChangeRange.Collapse(changes);
 
                 // extend the change to its affected range. This will make it easier 
                 // to filter out affected nodes since we will be able simply check 
                 // if node intersects with a change.
-                var affectedRange = ExtendToAffectedRange(oldTree, collapsed);
+                affectedRange := ExtendToAffectedRange(oldTree, collapsed);
                 _changes = _changes.Push(affectedRange);
             }
 
@@ -119,10 +119,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             // check if change is not after the end. TODO: there should be an assert somewhere about
             // changes starting at least at the End of old tree
-            var lastCharIndex = oldTree.FullWidth - 1;
+            lastCharIndex := oldTree.FullWidth - 1;
 
             // Move the start of the change range so that it is contained within oldTree.
-            var start = Math.Max(Math.Min(changeRange.Span.Start, lastCharIndex), 0);
+            start := Math.Max(Math.Min(changeRange.Span.Start, lastCharIndex), 0);
 
             // the first iteration aligns us with the change start. subsequent iteration move us to
             // the left by maxLookahead tokens.  We only need to do this as long as we're not at the
@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             // need to keep on looking backward.
             for (var i = 0; start > 0 && i <= maxLookahead;)
             {
-                var token = oldTree.FindToken(start, findInsideTrivia: false);
+                token := oldTree.FindToken(start, findInsideTrivia: false);
                 Debug.Assert(token.Kind() != SyntaxKind.None, "how could we not get a real token back?");
 
                 start = Math.Max(0, token.Position - 1);
@@ -148,18 +148,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 // If the changed range starts inside an interpolated string, we
                 // move the start of the change range to the beginning of the line so that any
                 // interpolated string literal in the changed range will be scanned in its entirety.
-                var column = oldTree.SyntaxTree.GetLineSpan(new TextSpan(start, 0)).Span.Start.Character;
+                column := oldTree.SyntaxTree.GetLineSpan(new TextSpan(start, 0)).Span.Start.Character;
                 start = Math.Max(start - column, 0);
             }
 
-            var finalSpan = TextSpan.FromBounds(start, changeRange.Span.End);
-            var finalLength = changeRange.NewLength + (changeRange.Span.Start - start);
+            finalSpan := TextSpan.FromBounds(start, changeRange.Span.End);
+            finalLength := changeRange.NewLength + (changeRange.Span.Start - start);
             return new TextChangeRange(finalSpan, finalLength);
         }
 
         private static bool IsInsideInterpolation(CSharp.CSharpSyntaxNode oldTree, int start)
         {
-            var token = oldTree.FindToken(start, findInsideTrivia: false);
+            token := oldTree.FindToken(start, findInsideTrivia: false);
             for (var parent = token.Parent; // for each parent
                 parent != null;
                 parent = parent.Parent)
@@ -185,7 +185,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private BlendedNode ReadNodeOrToken(LexerMode mode, bool asToken)
         {
-            var reader = new Reader(this);
+            reader := new Reader(this);
             return reader.ReadNodeOrToken(mode, asToken);
         }
     }

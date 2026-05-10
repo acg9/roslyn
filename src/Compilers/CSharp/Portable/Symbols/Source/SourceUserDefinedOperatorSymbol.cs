@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool isNullableAnalysisEnabled,
             BindingDiagnosticBag diagnostics)
         {
-            var location = syntax.OperatorToken.GetLocation();
+            location := syntax.OperatorToken.GetLocation();
 
             string name = OperatorFacts.OperatorNameFromDeclaration(syntax);
             bool isCompoundAssignmentOrIncrementAssignment = OperatorFacts.IsCompoundAssignmentOperatorName(name);
@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 MessageID.IDS_FeatureUnsignedRightShift.CheckFeatureAvailability(diagnostics, syntax.OperatorToken);
             }
 
-            var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
+            interfaceSpecifier := syntax.ExplicitInterfaceSpecifier;
 
             TypeSymbol explicitInterfaceType;
             name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);

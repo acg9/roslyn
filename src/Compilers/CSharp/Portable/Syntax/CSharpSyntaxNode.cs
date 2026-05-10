@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var result = this._syntaxTree ?? ComputeSyntaxTree(this);
+                result := this._syntaxTree ?? ComputeSyntaxTree(this);
                 Debug.Assert(result != null);
                 return result;
             }
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
                 }
 
-                var parent = node.Parent;
+                parent := node.Parent;
                 if (parent == null)
                 {
                     // set the tree on the root node atomically
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 foreach (var n in nodes)
                 {
-                    var existingTree = n._syntaxTree;
+                    existingTree := n._syntaxTree;
                     if (existingTree != null)
                     {
                         Debug.Assert(existingTree == tree, "how could this node belong to a different tree?");
@@ -163,7 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public new SyntaxTriviaList GetLeadingTrivia()
         {
-            var firstToken = this.GetFirstToken(includeZeroWidth: true);
+            firstToken := this.GetFirstToken(includeZeroWidth: true);
             return firstToken.LeadingTrivia;
         }
 
@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public new SyntaxTriviaList GetTrailingTrivia()
         {
-            var lastToken = this.GetLastToken(includeZeroWidth: true);
+            lastToken := this.GetLastToken(includeZeroWidth: true);
             return lastToken.TrailingTrivia;
         }
 
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (child.AsNode(out var node))
                     {
-                        var d = node.GetFirstDirective(predicate);
+                        d := node.GetFirstDirective(predicate);
                         if (d != null)
                         {
                             return d;
@@ -241,14 +241,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var token = child.AsToken();
+                        token := child.AsToken();
 
                         // directives can only occur in leading trivia
                         foreach (var tr in token.LeadingTrivia)
                         {
                             if (tr.IsDirective)
                             {
-                                var d = (DirectiveTriviaSyntax)tr.GetStructure()!;
+                                d := (DirectiveTriviaSyntax)tr.GetStructure()!;
                                 if (predicate == null || predicate(d))
                                 {
                                     return d;
@@ -273,7 +273,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (child.AsNode(out var node))
                     {
-                        var d = node.GetLastDirective(predicate);
+                        d := node.GetLastDirective(predicate);
                         if (d != null)
                         {
                             return d;
@@ -281,14 +281,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var token = child.AsToken();
+                        token := child.AsToken();
 
                         // directives can only occur in leading trivia
                         foreach (var tr in token.LeadingTrivia.Reverse())
                         {
                             if (tr.IsDirective)
                             {
-                                var d = (DirectiveTriviaSyntax)tr.GetStructure()!;
+                                d := (DirectiveTriviaSyntax)tr.GetStructure()!;
                                 if (predicate == null || predicate(d))
                                 {
                                     return d;
@@ -519,7 +519,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (this.Kind() == SyntaxKind.Block)
             {
-                var parent = this.Parent;
+                parent := this.Parent;
                 if (parent is MemberDeclarationSyntax || parent is AccessorDeclarationSyntax)
                 {
                     return true;
@@ -545,7 +545,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static TreeDumperNode makeTree(SyntaxNodeOrToken nodeOrToken)
             {
-                var kind = nodeOrToken.Kind().ToString();
+                kind := nodeOrToken.Kind().ToString();
 
                 if (nodeOrToken.AsNode(out var node)
                     && node is not IdentifierNameSyntax)

@@ -26,9 +26,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             try
             {
-                var baseConstructor = ContainingType.BaseTypeNoUseSiteDiagnostics.InstanceConstructors.Single();
-                var field = ContainingType.GetFieldsToEmit().Single();
-                var parameter = Parameters.Single();
+                baseConstructor := ContainingType.BaseTypeNoUseSiteDiagnostics.InstanceConstructors.Single();
+                field := ContainingType.GetFieldsToEmit().Single();
+                parameter := Parameters.Single();
 
                 var block = f.Block(
                     // object..ctor();

@@ -88,9 +88,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
-            var annotation = ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.NotAnnotated;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
+            annotation := ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.NotAnnotated;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_Boolean, location, diagnostics)),
                     Parameters: ImmutableArray.Create<ParameterSymbol>(
                         new SourceSimpleParameterSymbol(owner: this,
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.MethodChecks(diagnostics);
 
-            var overridden = OverriddenMethod;
+            overridden := OverriddenMethod;
 
             if (overridden is object &&
                 !overridden.ContainingType.Equals(ContainingType.BaseTypeNoUseSiteDiagnostics, TypeCompareKind.AllIgnoreOptions))
@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
             try
             {
                 ImmutableArray<Symbol> printableMembers = ContainingType.GetMembers().WhereAsArray(m => isPrintable(m));
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         return;
                     }
 
-                    var basePrintCall = F.Call(receiver: F.Base(ContainingType.BaseTypeNoUseSiteDiagnostics), basePrintMethod, builder);
+                    basePrintCall := F.Call(receiver: F.Base(ContainingType.BaseTypeNoUseSiteDiagnostics), basePrintMethod, builder);
                     if (printableMembers.IsEmpty)
                     {
                         // return base.PrintMembers(builder);
@@ -187,8 +187,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // The only printable members are fields and properties,
                     // which cannot be generic so as to have variant names
 
-                    var member = printableMembers[i];
-                    var memberHeader = $"{member.Name} = ";
+                    member := printableMembers[i];
+                    memberHeader := $"{member.Name} = ";
                     if (i > 0)
                     {
                         memberHeader = ", " + memberHeader;
@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     else if (!value.Type.IsRestrictedType())
                     {
                         // Otherwise, an error has been reported elsewhere (SourceMemberFieldSymbol.TypeChecks)
-                        var objectType = F.SpecialType(SpecialType.System_Object);
+                        objectType := F.SpecialType(SpecialType.System_Object);
                         Conversion c = F.ClassifyEmitConversion(value, objectType);
                         Debug.Assert(c.IsImplicit);
                         Debug.Assert(c.IsIdentity || c.IsReference || c.IsBoxing);
@@ -256,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (m.Kind is SymbolKind.Property)
                 {
-                    var property = (PropertySymbol)m;
+                    property := (PropertySymbol)m;
                     return IsPrintableProperty(property);
                 }
 
@@ -287,7 +287,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var overridden = overriding.OverriddenMethod;
+                overridden := overriding.OverriddenMethod;
 
                 if (overridden is object &&
                     !overridden.ContainingType.Equals(baseType, TypeCompareKind.AllIgnoreOptions))
@@ -316,13 +316,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     continue;
                 }
 
-                var property = (PropertySymbol)member;
+                property := (PropertySymbol)member;
                 if (!IsPublicInstanceMember(property) || !IsPrintableProperty(property))
                 {
                     continue;
                 }
 
-                var getterMethod = property.GetMethod;
+                getterMethod := property.GetMethod;
                 if (property.GetMethod is not null && !getterMethod.IsEffectivelyReadOnly)
                 {
                     return false;

@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static SyntaxNode GetSyntax(SyntaxReference reference, CancellationToken cancellationToken)
         {
-            var node = (CSharpSyntaxNode)reference.GetSyntax(cancellationToken);
+            node := (CSharpSyntaxNode)reference.GetSyntax(cancellationToken);
 
             // If the node is a name syntax, it's something like "X" or "X.Y" in :
             //    namespace X.Y.Z

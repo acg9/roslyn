@@ -46,8 +46,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return;
                 }
 
-                var additionMap = OrderPreservingMultiDictionary<SyntaxNode, BoundNode>.GetInstance();
-                var builder = new NodeMapBuilder(additionMap, tree, node);
+                additionMap := OrderPreservingMultiDictionary<SyntaxNode, BoundNode>.GetInstance();
+                builder := new NodeMapBuilder(additionMap, tree, node);
                 builder.Visit(root);
 
 #if NET
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 foreach (CSharpSyntaxNode key in additionMap.Keys)
                 {
-                    var nodesToAdd = additionMap.GetAsOneOrMany(key);
+                    nodesToAdd := additionMap.GetAsOneOrMany(key);
                     if (!map.TryAdd(key, nodesToAdd))
                     {
 #if DEBUG
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // Once again, we'll end up with map entries for "1", "P", "P.M(1)", and "P.M(1);".  They will
                         // have the same structure as the original map entries, but will not be ReferenceEquals.
 
-                        var existing = map[key];
+                        existing := map[key];
                         Debug.Assert(existing.Count == nodesToAdd.Count, "existing.Count == nodesToAdd.Length");
                         for (int i = 0; i < existing.Count; i++)
                         {
@@ -193,7 +193,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (current is BoundBinaryOperator binOp)
                 {
-                    var stack = ArrayBuilder<BoundExpression>.GetInstance();
+                    stack := ArrayBuilder<BoundExpression>.GetInstance();
 
                     stack.Push(binOp.Right);
                     current = binOp.Left;
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else if (current is BoundBinaryPattern binaryPattern)
                 {
-                    var stack = ArrayBuilder<BoundPattern>.GetInstance();
+                    stack := ArrayBuilder<BoundPattern>.GetInstance();
 
                     stack.Push(binaryPattern.Right);
                     BoundPattern currentPattern = binaryPattern.Left;
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     this.Visit(node.Condition);
                     this.Visit(node.Consequence);
 
-                    var alternative = node.AlternativeOpt;
+                    alternative := node.AlternativeOpt;
                     if (alternative is null)
                     {
                         break;

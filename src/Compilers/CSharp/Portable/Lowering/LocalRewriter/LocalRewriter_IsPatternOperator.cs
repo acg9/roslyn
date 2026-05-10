@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (canProduceLinearSequence(decisionDag.RootNode, whenTrueLabel: node.WhenTrueLabel, whenFalseLabel: node.WhenFalseLabel))
             {
                 // If we can build a linear test sequence `(e1 && e2 && e3)` for the dag, do so.
-                var isPatternRewriter = new IsPatternExpressionLinearLocalRewriter(node, this);
+                isPatternRewriter := new IsPatternExpressionLinearLocalRewriter(node, this);
                 result = isPatternRewriter.LowerIsPatternAsLinearTestSequence(node, decisionDag, whenTrueLabel: node.WhenTrueLabel, whenFalseLabel: node.WhenFalseLabel);
                 isPatternRewriter.Free();
             }
@@ -31,14 +31,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Note that the positive case will be handled by canProduceLinearSequence above, however, we avoid to produce a full inverted linear sequence here
                 // because we may be able to generate better code for a sequence of `or` patterns, using a switch dispatch, for example, which is done in the general rewriter.
                 negated = !negated;
-                var isPatternRewriter = new IsPatternExpressionLinearLocalRewriter(node, this);
+                isPatternRewriter := new IsPatternExpressionLinearLocalRewriter(node, this);
                 result = isPatternRewriter.LowerIsPatternAsLinearTestSequence(node, decisionDag, whenTrueLabel: node.WhenFalseLabel, whenFalseLabel: node.WhenTrueLabel);
                 isPatternRewriter.Free();
             }
             else
             {
                 // We need to lower a generalized dag, so we produce a label for the true and false branches and assign to a temporary containing the result.
-                var isPatternRewriter = new IsPatternExpressionGeneralLocalRewriter(node.Syntax, this);
+                isPatternRewriter := new IsPatternExpressionGeneralLocalRewriter(node.Syntax, this);
                 result = isPatternRewriter.LowerGeneralIsPattern(node, decisionDag);
                 isPatternRewriter.Free();
             }
@@ -109,8 +109,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             internal BoundExpression LowerGeneralIsPattern(BoundIsPatternExpression node, BoundDecisionDag decisionDag)
             {
                 _factory.Syntax = node.Syntax;
-                var resultBuilder = ArrayBuilder<BoundStatement>.GetInstance();
-                var inputExpression = _localRewriter.VisitExpression(node.Expression);
+                resultBuilder := ArrayBuilder<BoundStatement>.GetInstance();
+                inputExpression := _localRewriter.VisitExpression(node.Expression);
                 decisionDag = ShareTempsIfPossibleAndEvaluateInput(decisionDag, inputExpression, resultBuilder, out _);
 
                 // lower the decision dag.
@@ -195,13 +195,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case BoundDagEvaluation eval:
                         {
-                            var sideEffect = LowerEvaluation(eval);
+                            sideEffect := LowerEvaluation(eval);
                             _sideEffectBuilder.Add(sideEffect);
                             return;
                         }
                     case var _:
                         {
-                            var testExpression = LowerTest(test);
+                            testExpression := LowerTest(test);
                             if (testExpression != null)
                             {
                                 if (invert)
@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // an is-pattern expression because there is no when clause that could possibly intervene during
                 // the execution of the pattern-matching automaton and change one of those variables.
                 decisionDag = ShareTempsAndEvaluateInput(loweredInput, decisionDag, expr => _sideEffectBuilder.Add(expr), out _);
-                var node = decisionDag.RootNode;
+                node := decisionDag.RootNode;
                 return ProduceLinearTestSequence(node, whenTrueLabel, whenFalseLabel);
             }
 
@@ -313,7 +313,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 _conjunctBuilder.Clear();
                 Debug.Assert(result != null);
-                var allTemps = _tempAllocator.AllTemps();
+                allTemps := _tempAllocator.AllTemps();
                 if (allTemps.Length > 0)
                 {
                     result = _factory.Sequence(allTemps, ImmutableArray<BoundExpression>.Empty, result);

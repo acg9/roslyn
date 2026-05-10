@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             public void SetHasRequiredMemberAttribute(bool isRequired)
             {
-                var bitsToSet = (isRequired ? HasRequiredMemberAttribute : 0) | RequiredMemberCompletionBit;
+                bitsToSet := (isRequired ? HasRequiredMemberAttribute : 0) | RequiredMemberCompletionBit;
                 ThreadSafeFlagOperations.Set(ref _bits, bitsToSet);
             }
 
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             public void SetHasUnscopedRefAttribute(bool unscopedRef)
             {
-                var bitsToSet = (unscopedRef ? HasUnscopedRefAttribute : 0) | UnscopedRefCompletionBit;
+                bitsToSet := (unscopedRef ? HasUnscopedRefAttribute : 0) | UnscopedRefCompletionBit;
                 ThreadSafeFlagOperations.Set(ref _bits, bitsToSet);
             }
 
@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             public void SetRequiresUnsafe(bool requiresUnsafe)
             {
-                var bitsToSet = (requiresUnsafe ? RequiresUnsafeBit : 0) | RequiresUnsafePopulatedBit;
+                bitsToSet := (requiresUnsafe ? RequiresUnsafeBit : 0) | RequiresUnsafePopulatedBit;
                 ThreadSafeFlagOperations.Set(ref _bits, bitsToSet);
             }
 
@@ -217,20 +217,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             Debug.Assert((object)containingType != null);
             Debug.Assert(!handle.IsNil);
 
-            var metadataDecoder = new MetadataDecoder(moduleSymbol, containingType);
+            metadataDecoder := new MetadataDecoder(moduleSymbol, containingType);
             SignatureHeader callingConvention;
             BadImageFormatException propEx;
-            var propertyParams = metadataDecoder.GetSignatureForProperty(handle, out callingConvention, out propEx);
+            propertyParams := metadataDecoder.GetSignatureForProperty(handle, out callingConvention, out propEx);
             Debug.Assert(propertyParams.Length > 0);
 
-            var returnInfo = propertyParams[0];
+            returnInfo := propertyParams[0];
 
             PEPropertySymbol result = returnInfo.CustomModifiers.IsDefaultOrEmpty && returnInfo.RefCustomModifiers.IsDefaultOrEmpty
                 ? new PEPropertySymbol(moduleSymbol, containingType, handle, getMethod, setMethod, propertyParams, metadataDecoder)
                 : new PEPropertySymbolWithCustomModifiers(moduleSymbol, containingType, handle, getMethod, setMethod, propertyParams, metadataDecoder);
 
             // A property should always have this modreq, and vice versa.
-            var isBad = (result.RefKind == RefKind.In) != result.RefCustomModifiers.HasInAttributeModifier();
+            isBad := (result.RefKind == RefKind.In) != result.RefCustomModifiers.HasInAttributeModifier();
 
             if (propEx != null || isBad)
             {
@@ -251,7 +251,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             MetadataDecoder metadataDecoder)
         {
             _containingType = containingType;
-            var module = moduleSymbol.Module;
+            module := moduleSymbol.Module;
             PropertyAttributes mdFlags = 0;
             BadImageFormatException mrEx = null;
 
@@ -275,9 +275,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             SignatureHeader unusedCallingConvention;
             BadImageFormatException getEx = null;
-            var getMethodParams = (object)getMethod == null ? null : metadataDecoder.GetSignatureForMethod(getMethod.Handle, out unusedCallingConvention, out getEx);
+            getMethodParams := (object)getMethod == null ? null : metadataDecoder.GetSignatureForMethod(getMethod.Handle, out unusedCallingConvention, out getEx);
             BadImageFormatException setEx = null;
-            var setMethodParams = (object)setMethod == null ? null : metadataDecoder.GetSignatureForMethod(setMethod.Handle, out unusedCallingConvention, out setEx);
+            setMethodParams := (object)setMethod == null ? null : metadataDecoder.GetSignatureForMethod(setMethod.Handle, out unusedCallingConvention, out setEx);
 
             // NOTE: property parameter names are not recorded in metadata, so we have to
             // use the parameter names from one of the indexers
@@ -294,8 +294,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 _flags.SetUseSiteDiagnosticPopulated();
             }
 
-            var returnInfo = propertyParams[0];
-            var typeCustomModifiers = CSharpCustomModifier.Convert(returnInfo.CustomModifiers);
+            returnInfo := propertyParams[0];
+            typeCustomModifiers := CSharpCustomModifier.Convert(returnInfo.CustomModifiers);
 
             if (returnInfo.IsByRef)
             {
@@ -323,7 +323,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             originalPropertyType = originalPropertyType.AsDynamicIfNoPia(_containingType);
 
             // We start without annotation (they will be decoded below)
-            var propertyTypeWithAnnotations = TypeWithAnnotations.Create(originalPropertyType, customModifiers: typeCustomModifiers);
+            propertyTypeWithAnnotations := TypeWithAnnotations.Create(originalPropertyType, customModifiers: typeCustomModifiers);
 
             // Decode nullable before tuple types to avoid converting between
             // NamedTypeSymbol and TupleTypeSymbol unnecessarily.
@@ -369,12 +369,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private UncommonFields AccessUncommonFields()
         {
-            var retVal = _uncommonFields;
+            retVal := _uncommonFields;
             return retVal ?? InterlockedOperations.Initialize(ref _uncommonFields, createUncommonFields());
 
             UncommonFields createUncommonFields()
             {
-                var retVal = new UncommonFields();
+                retVal := new UncommonFields();
                 if (!_flags.IsObsoleteAttributePopulated)
                 {
                     retVal._lazyObsoleteAttributeData = ObsoleteAttributeData.Uninitialized;
@@ -636,7 +636,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (!_flags.TryGetHasRequiredMemberAttribute(out bool hasRequiredMemberAttribute))
                 {
-                    var containingPEModuleSymbol = (PEModuleSymbol)this.ContainingModule;
+                    containingPEModuleSymbol := (PEModuleSymbol)this.ContainingModule;
                     hasRequiredMemberAttribute = containingPEModuleSymbol.Module.HasAttribute(_handle, AttributeDescription.RequiredMemberAttribute);
                     _flags.SetHasRequiredMemberAttribute(hasRequiredMemberAttribute);
                 }
@@ -651,7 +651,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (!_flags.TryGetHasUnscopedRefAttribute(out bool hasUnscopedRefAttribute))
                 {
-                    var containingPEModuleSymbol = (PEModuleSymbol)this.ContainingModule;
+                    containingPEModuleSymbol := (PEModuleSymbol)this.ContainingModule;
                     hasUnscopedRefAttribute = containingPEModuleSymbol.Module.HasUnscopedRefAttribute(_handle);
                     _flags.SetHasUnscopedRefAttribute(hasUnscopedRefAttribute);
                 }
@@ -666,7 +666,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (!_flags.TryGetRequiresUnsafe(out bool requiresUnsafe))
                 {
-                    var containingPEModuleSymbol = (PEModuleSymbol)this.ContainingModule;
+                    containingPEModuleSymbol := (PEModuleSymbol)this.ContainingModule;
                     bool hasRequiresUnsafeAttribute = containingPEModuleSymbol.Module.HasAttribute(_handle, AttributeDescription.RequiresUnsafeAttribute);
                     requiresUnsafe = ComputeRequiresUnsafe(hasRequiresUnsafeAttribute);
                     _flags.SetRequiresUnsafe(requiresUnsafe);
@@ -768,7 +768,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var metadataDecoder = new MetadataDecoder(_containingType.ContainingPEModule, _containingType);
+                metadataDecoder := new MetadataDecoder(_containingType.ContainingPEModule, _containingType);
                 return (Microsoft.Cci.CallingConvention)(metadataDecoder.GetSignatureHeaderForProperty(_handle).RawValue);
             }
         }
@@ -793,7 +793,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (!_flags.IsCustomAttributesPopulated)
             {
-                var attributes = loadAndFilterAttributes(out var hasRequiredMemberAttribute, out var hasRequiresUnsafeAttribute);
+                attributes := loadAndFilterAttributes(out var hasRequiredMemberAttribute, out var hasRequiresUnsafeAttribute);
                 if (!attributes.IsEmpty)
                 {
                     ImmutableInterlocked.InterlockedInitialize(ref AccessUncommonFields()._lazyCustomAttributes, attributes);
@@ -804,14 +804,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 _flags.SetCustomAttributesPopulated();
             }
 
-            var uncommonFields = _uncommonFields;
+            uncommonFields := _uncommonFields;
             if (uncommonFields == null)
             {
                 return ImmutableArray<CSharpAttributeData>.Empty;
             }
             else
             {
-                var result = uncommonFields._lazyCustomAttributes;
+                result := uncommonFields._lazyCustomAttributes;
                 if (result.IsDefault)
                 {
                     result = ImmutableArray<CSharpAttributeData>.Empty;
@@ -826,14 +826,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 hasRequiredMemberAttribute = false;
                 hasRequiresUnsafeAttribute = false;
 
-                var containingModule = (PEModuleSymbol)this.ContainingModule;
+                containingModule := (PEModuleSymbol)this.ContainingModule;
                 if (!containingModule.TryGetNonEmptyCustomAttributes(_handle, out var customAttributeHandles))
                 {
                     return [];
                 }
 
-                var filterIsReadOnlyAttribute = this.RefKind == RefKind.RefReadOnly;
-                var filterExtensionMarkerAttribute = this.IsExtensionBlockMember();
+                filterIsReadOnlyAttribute := this.RefKind == RefKind.RefReadOnly;
+                filterExtensionMarkerAttribute := this.IsExtensionBlockMember();
 
                 using var builder = TemporaryArray<CSharpAttributeData>.Empty;
                 foreach (var handle in customAttributeHandles)
@@ -889,10 +889,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return ImmutableArray<PropertySymbol>.Empty;
                 }
 
-                var propertiesWithImplementedGetters = PEPropertyOrEventHelpers.GetPropertiesForExplicitlyImplementedAccessor(_getMethod);
-                var propertiesWithImplementedSetters = PEPropertyOrEventHelpers.GetPropertiesForExplicitlyImplementedAccessor(_setMethod);
+                propertiesWithImplementedGetters := PEPropertyOrEventHelpers.GetPropertiesForExplicitlyImplementedAccessor(_getMethod);
+                propertiesWithImplementedSetters := PEPropertyOrEventHelpers.GetPropertiesForExplicitlyImplementedAccessor(_setMethod);
 
-                var builder = ArrayBuilder<PropertySymbol>.GetInstance();
+                builder := ArrayBuilder<PropertySymbol>.GetInstance();
 
                 foreach (var prop in propertiesWithImplementedGetters)
                 {
@@ -948,13 +948,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             if (hasGetMethod && hasSetMethod)
             {
-                var lastPropertyParamIndex = propertyParams.Length - 1;
-                var getHandle = getMethodParams[lastPropertyParamIndex].Handle;
-                var setHandle = setMethodParams[lastPropertyParamIndex].Handle;
-                var getterHasParamArray = !getHandle.IsNil && module.HasParamArrayAttribute(getHandle);
-                var setterHasParamArray = !setHandle.IsNil && module.HasParamArrayAttribute(setHandle);
-                var getterHasParamCollection = !getHandle.IsNil && module.HasParamCollectionAttribute(getHandle);
-                var setterHasParamCollection = !setHandle.IsNil && module.HasParamCollectionAttribute(setHandle);
+                lastPropertyParamIndex := propertyParams.Length - 1;
+                getHandle := getMethodParams[lastPropertyParamIndex].Handle;
+                setHandle := setMethodParams[lastPropertyParamIndex].Handle;
+                getterHasParamArray := !getHandle.IsNil && module.HasParamArrayAttribute(getHandle);
+                setterHasParamArray := !setHandle.IsNil && module.HasParamArrayAttribute(setHandle);
+                getterHasParamCollection := !getHandle.IsNil && module.HasParamCollectionAttribute(getHandle);
+                setterHasParamCollection := !setHandle.IsNil && module.HasParamCollectionAttribute(setHandle);
                 if (getterHasParamArray != setterHasParamArray || getterHasParamCollection != setterHasParamCollection)
                 {
                     return false;
@@ -989,14 +989,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return ImmutableArray<ParameterSymbol>.Empty;
             }
 
-            var numAccessorParams = accessorParams.Length;
+            numAccessorParams := accessorParams.Length;
 
-            var parameters = new ParameterSymbol[propertyParams.Length - 1];
+            parameters := new ParameterSymbol[propertyParams.Length - 1];
             for (int i = 1; i < propertyParams.Length; i++) // from 1 to skip property/return type
             {
                 // NOTE: this is a best guess at the Dev10 behavior.  The actual behavior is
                 // in the unmanaged helper code that Dev10 uses to load the metadata.
-                var propertyParam = propertyParams[i];
+                propertyParam := propertyParams[i];
                 ParameterHandle paramHandle;
                 Symbol nullableContext;
                 if (i < numAccessorParams)
@@ -1009,7 +1009,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     paramHandle = propertyParam.Handle;
                     nullableContext = property;
                 }
-                var ordinal = i - 1;
+                ordinal := i - 1;
                 bool isBad;
 
                 parameters[ordinal] = PEParameterSymbol.Create(moduleSymbol, property, accessor.IsMetadataVirtual(), ordinal, paramHandle, propertyParam, nullableContext, out isBad);
@@ -1034,9 +1034,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             if (!_flags.IsUseSiteDiagnosticPopulated)
             {
-                var result = new UseSiteInfo<AssemblySymbol>(primaryDependency);
+                result := new UseSiteInfo<AssemblySymbol>(primaryDependency);
                 CalculateUseSiteDiagnostic(ref result);
-                var diag = deriveCompilerFeatureRequiredUseSiteInfo();
+                diag := deriveCompilerFeatureRequiredUseSiteInfo();
                 MergeUseSiteDiagnostics(ref diag, result.DiagnosticInfo);
                 result = result.AdjustDiagnosticInfo(diag);
 
@@ -1048,14 +1048,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 _flags.SetUseSiteDiagnosticPopulated();
             }
 
-            var uncommonFields = _uncommonFields;
+            uncommonFields := _uncommonFields;
             if (uncommonFields == null)
             {
                 return new UseSiteInfo<AssemblySymbol>(primaryDependency);
             }
             else
             {
-                var result = uncommonFields._lazyCachedUseSiteInfo;
+                result := uncommonFields._lazyCachedUseSiteInfo;
                 if (!result.IsInitialized)
                 {
                     uncommonFields._lazyCachedUseSiteInfo.InterlockedInitializeFromSentinel(primaryDependency, new UseSiteInfo<AssemblySymbol>(primaryDependency));
@@ -1067,9 +1067,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             DiagnosticInfo deriveCompilerFeatureRequiredUseSiteInfo()
             {
-                var containingType = (PENamedTypeSymbol)ContainingType;
+                containingType := (PENamedTypeSymbol)ContainingType;
                 PEModuleSymbol containingPEModule = _containingType.ContainingPEModule;
-                var decoder = new MetadataDecoder(containingPEModule, containingType);
+                decoder := new MetadataDecoder(containingPEModule, containingType);
                 var diag = PEUtilities.DeriveCompilerFeatureRequiredAttributeDiagnostic(
                     this,
                     containingPEModule,
@@ -1101,7 +1101,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (!_flags.IsObsoleteAttributePopulated)
                 {
-                    var result = ObsoleteAttributeHelpers.GetObsoleteDataFromMetadata(_handle, (PEModuleSymbol)(this.ContainingModule), ignoreByRefLikeMarker: false, ignoreRequiredMemberMarker: false);
+                    result := ObsoleteAttributeHelpers.GetObsoleteDataFromMetadata(_handle, (PEModuleSymbol)(this.ContainingModule), ignoreByRefLikeMarker: false, ignoreRequiredMemberMarker: false);
                     if (result != null)
                     {
                         result = InterlockedOperations.Initialize(ref AccessUncommonFields()._lazyObsoleteAttributeData, result, ObsoleteAttributeData.Uninitialized);
@@ -1111,14 +1111,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return result;
                 }
 
-                var uncommonFields = _uncommonFields;
+                uncommonFields := _uncommonFields;
                 if (uncommonFields == null)
                 {
                     return null;
                 }
                 else
                 {
-                    var result = uncommonFields._lazyObsoleteAttributeData;
+                    result := uncommonFields._lazyObsoleteAttributeData;
                     return ReferenceEquals(result, ObsoleteAttributeData.Uninitialized)
                         ? InterlockedOperations.Initialize(ref uncommonFields._lazyObsoleteAttributeData, initializedValue: null, ObsoleteAttributeData.Uninitialized)
                         : result;
@@ -1179,7 +1179,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     propertyParams,
                     metadataDecoder)
             {
-                var returnInfo = propertyParams[0];
+                returnInfo := propertyParams[0];
                 _refCustomModifiers = CSharpCustomModifier.Convert(returnInfo.RefCustomModifiers);
             }
 

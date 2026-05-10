@@ -33,13 +33,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Debug.Assert(type?.IsNullableTypeOrTypeParameter() != true);
                 return new TypeWithState(type, defaultState);
             }
-            var state = defaultState != NullableFlowState.NotNull && type?.CanContainNull() != false ? NullableFlowState.MaybeNull : NullableFlowState.NotNull;
+            state := defaultState != NullableFlowState.NotNull && type?.CanContainNull() != false ? NullableFlowState.MaybeNull : NullableFlowState.NotNull;
             return new TypeWithState(type, state);
         }
 
         public static TypeWithState Create(TypeWithAnnotations typeWithAnnotations, FlowAnalysisAnnotations annotations = FlowAnalysisAnnotations.None)
         {
-            var type = typeWithAnnotations.Type;
+            type := typeWithAnnotations.Type;
             Debug.Assert((object)type != null);
 
             NullableFlowState state;
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (Type?.IsTypeParameterDisallowingAnnotationInCSharp8() == true)
             {
-                var type = TypeWithAnnotations.Create(Type, NullableAnnotation.NotAnnotated);
+                type := TypeWithAnnotations.Create(Type, NullableAnnotation.NotAnnotated);
                 return (State == NullableFlowState.MaybeDefault || asAnnotatedType) ? type.SetIsAnnotated(compilation) : type;
             }
             NullableAnnotation annotation = asAnnotatedType ?

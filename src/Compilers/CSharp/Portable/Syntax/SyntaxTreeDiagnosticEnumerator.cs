@@ -39,11 +39,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             using var stack = new NodeIterationStack(DefaultStackCapacity);
             stack.PushNodeOrToken(root);
 
-            var fullTreeLength = syntaxTree.GetRoot().FullSpan.Length;
+            fullTreeLength := syntaxTree.GetRoot().FullSpan.Length;
 
             while (stack.Any())
             {
-                var node = stack.Top.Node;
+                node := stack.Top.Node;
 
                 if (!stack.Top.ProcessedDiagnostics)
                 {
@@ -55,8 +55,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         int leadingWidthToAdd = node.IsToken ? 0 : node.GetLeadingTriviaWidth();
 
                         // don't produce locations outside of tree span
-                        var spanStart = Math.Min(position + leadingWidthToAdd + sdi.Offset, fullTreeLength);
-                        var spanEnd = Math.Min(spanStart + sdi.Width, fullTreeLength);
+                        spanStart := Math.Min(position + leadingWidthToAdd + sdi.Offset, fullTreeLength);
+                        spanEnd := Math.Min(spanStart + sdi.Width, fullTreeLength);
                         yield return new CSDiagnostic(sdi, new SourceLocation(syntaxTree, TextSpan.FromBounds(spanStart, spanEnd)));
                     }
                     stack.Top.ProcessedDiagnostics = true;
@@ -83,7 +83,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     for (var nextSlotIndex = stack.Top.SlotIndex + 1; nextSlotIndex < node.SlotCount; nextSlotIndex++)
                     {
-                        var child = node.GetSlot(nextSlotIndex);
+                        child := node.GetSlot(nextSlotIndex);
                         if (child == null)
                             continue;
 
@@ -163,7 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (_count >= _stack.Length)
                 {
-                    var tmp = ArrayPool<NodeIteration>.Shared.Rent(_stack.Length * 2);
+                    tmp := ArrayPool<NodeIteration>.Shared.Rent(_stack.Length * 2);
                     Array.Copy(_stack, tmp, _stack.Length);
                     ArrayPool<NodeIteration>.Shared.Return(_stack, clearArray: true);
                     _stack = tmp;

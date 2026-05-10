@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var merged = _container as MergedNamespaceSymbol;
+                merged := _container as MergedNamespaceSymbol;
                 return ((object)merged != null) ? merged.GetConstituentForCompilation(this.Compilation) : _container;
             }
         }
@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override bool IsAccessibleHelper(Symbol symbol, TypeSymbol accessThroughType, out bool failedThroughTypeCheck, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo, ConsList<TypeSymbol> basesBeingResolved)
         {
-            var type = _container as NamedTypeSymbol;
+            type := _container as NamedTypeSymbol;
             if ((object)type != null)
             {
                 return this.IsSymbolAccessibleConditional(symbol, type, accessThroughType, out failedThroughTypeCheck, ref useSiteInfo);
@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (Next is WithExternAndUsingAliasesBinder withUsingAliases && withUsingAliases.IsUsingAlias(name, originalBinder.IsSemanticModelBinder, basesBeingResolved))
                         {
                             CSDiagnosticInfo diagInfo = new CSDiagnosticInfo(ErrorCode.ERR_ConflictAliasAndMember, name, _container);
-                            var error = new ExtendedErrorTypeSymbol((NamespaceOrTypeSymbol)null, name, arity, diagInfo, unreported: true);
+                            error := new ExtendedErrorTypeSymbol((NamespaceOrTypeSymbol)null, name, arity, diagInfo, unreported: true);
                             result.SetFrom(LookupResult.Good(error)); // force lookup to be done w/ error symbol as result
                         }
                     }

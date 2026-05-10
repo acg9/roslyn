@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #endif
             )
         {
-            var origSynthesized = (SynthesizedLocal)_originalVariable;
+            origSynthesized := (SynthesizedLocal)_originalVariable;
             return new TypeSubstitutedLocalSymbol(
                     origSynthesized.WithSynthesizedLocalKindAndSyntax(
                         kind, syntax

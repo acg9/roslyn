@@ -34,7 +34,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
 
                 case SyntaxKind.SelectClause:
-                    var selectClause = (SelectClauseSyntax)node;
+                    selectClause := (SelectClauseSyntax)node;
                     return !IsReducedSelectOrGroupByClause(selectClause, selectClause.Expression);
 
                 case SyntaxKind.FromClause:
@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static SyntaxNode GetLambda(SyntaxNode lambdaBody)
         {
             Debug.Assert(lambdaBody.Parent is object);
-            var lambda = lambdaBody.Parent;
+            lambda := lambdaBody.Parent;
             if (lambda.IsKind(SyntaxKind.ArrowExpressionClause))
             {
                 // In case of expression bodied local functions there is a three level hierarchy: 
@@ -95,21 +95,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return ((OrderingSyntax)newLambda).Expression;
 
                 case SyntaxKind.SelectClause:
-                    var selectClause = (SelectClauseSyntax)newLambda;
+                    selectClause := (SelectClauseSyntax)newLambda;
 
                     // Select clause is not considered to be lambda if it's reduced,
                     // however to avoid complexity we allow it to be passed in and just return null.
                     return IsReducedSelectOrGroupByClause(selectClause, selectClause.Expression) ? null : selectClause.Expression;
 
                 case SyntaxKind.JoinClause:
-                    var oldJoin = (JoinClauseSyntax)oldBody.Parent;
-                    var newJoin = (JoinClauseSyntax)newLambda;
+                    oldJoin := (JoinClauseSyntax)oldBody.Parent;
+                    newJoin := (JoinClauseSyntax)newLambda;
                     Debug.Assert(oldJoin.LeftExpression == oldBody || oldJoin.RightExpression == oldBody);
                     return (oldJoin.LeftExpression == oldBody) ? newJoin.LeftExpression : newJoin.RightExpression;
 
                 case SyntaxKind.GroupClause:
-                    var oldGroup = (GroupClauseSyntax)oldBody.Parent;
-                    var newGroup = (GroupClauseSyntax)newLambda;
+                    oldGroup := (GroupClauseSyntax)oldBody.Parent;
+                    newGroup := (GroupClauseSyntax)newLambda;
                     Debug.Assert(oldGroup.GroupExpression == oldBody || oldGroup.ByExpression == oldBody);
                     return (oldGroup.GroupExpression == oldBody) ?
                         (IsReducedSelectOrGroupByClause(newGroup, newGroup.GroupExpression) ? null : newGroup.GroupExpression) : newGroup.ByExpression;
@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool IsLambdaBody(SyntaxNode node, bool allowReducedLambdas = false)
         {
-            var parent = node?.Parent;
+            parent := node?.Parent;
             if (parent == null)
             {
                 return false;
@@ -151,44 +151,44 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ParenthesizedLambdaExpression:
                 case SyntaxKind.SimpleLambdaExpression:
                 case SyntaxKind.AnonymousMethodExpression:
-                    var anonymousFunction = (AnonymousFunctionExpressionSyntax)parent;
+                    anonymousFunction := (AnonymousFunctionExpressionSyntax)parent;
                     return anonymousFunction.Body == node;
 
                 case SyntaxKind.LocalFunctionStatement:
-                    var localFunction = (LocalFunctionStatementSyntax)parent;
+                    localFunction := (LocalFunctionStatementSyntax)parent;
                     return localFunction.Body == node;
 
                 case SyntaxKind.ArrowExpressionClause:
-                    var arrowExpressionClause = (ArrowExpressionClauseSyntax)parent;
+                    arrowExpressionClause := (ArrowExpressionClauseSyntax)parent;
                     return arrowExpressionClause.Expression == node && arrowExpressionClause.Parent is LocalFunctionStatementSyntax;
 
                 case SyntaxKind.FromClause:
-                    var fromClause = (FromClauseSyntax)parent;
+                    fromClause := (FromClauseSyntax)parent;
                     return fromClause.Expression == node && fromClause.Parent is QueryBodySyntax;
 
                 case SyntaxKind.JoinClause:
-                    var joinClause = (JoinClauseSyntax)parent;
+                    joinClause := (JoinClauseSyntax)parent;
                     return joinClause.LeftExpression == node || joinClause.RightExpression == node;
 
                 case SyntaxKind.LetClause:
-                    var letClause = (LetClauseSyntax)parent;
+                    letClause := (LetClauseSyntax)parent;
                     return letClause.Expression == node;
 
                 case SyntaxKind.WhereClause:
-                    var whereClause = (WhereClauseSyntax)parent;
+                    whereClause := (WhereClauseSyntax)parent;
                     return whereClause.Condition == node;
 
                 case SyntaxKind.AscendingOrdering:
                 case SyntaxKind.DescendingOrdering:
-                    var ordering = (OrderingSyntax)parent;
+                    ordering := (OrderingSyntax)parent;
                     return ordering.Expression == node;
 
                 case SyntaxKind.SelectClause:
-                    var selectClause = (SelectClauseSyntax)parent;
+                    selectClause := (SelectClauseSyntax)parent;
                     return selectClause.Expression == node && (allowReducedLambdas || !IsReducedSelectOrGroupByClause(selectClause, selectClause.Expression));
 
                 case SyntaxKind.GroupClause:
-                    var groupClause = (GroupClauseSyntax)parent;
+                    groupClause := (GroupClauseSyntax)parent;
                     return (groupClause.GroupExpression == node && (allowReducedLambdas || !IsReducedSelectOrGroupByClause(groupClause, groupClause.GroupExpression))) ||
                            groupClause.ByExpression == node;
             }
@@ -222,22 +222,22 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var selectorIdentifier = ((IdentifierNameSyntax)selectOrGroupExpression).Identifier;
+            selectorIdentifier := ((IdentifierNameSyntax)selectOrGroupExpression).Identifier;
 
             SyntaxToken sourceIdentifier;
             QueryBodySyntax containingBody;
 
             Debug.Assert(selectOrGroupClause.Parent!.Parent is object);
-            var containingQueryOrContinuation = selectOrGroupClause.Parent.Parent;
+            containingQueryOrContinuation := selectOrGroupClause.Parent.Parent;
             if (containingQueryOrContinuation.IsKind(SyntaxKind.QueryExpression))
             {
-                var containingQuery = (QueryExpressionSyntax)containingQueryOrContinuation;
+                containingQuery := (QueryExpressionSyntax)containingQueryOrContinuation;
                 containingBody = containingQuery.Body;
                 sourceIdentifier = containingQuery.FromClause.Identifier;
             }
             else
             {
-                var containingContinuation = (QueryContinuationSyntax)containingQueryOrContinuation;
+                containingContinuation := (QueryContinuationSyntax)containingQueryOrContinuation;
                 sourceIdentifier = containingContinuation.Identifier;
                 containingBody = containingContinuation.Body;
             }
@@ -306,7 +306,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
 
                 case SyntaxKind.JoinClause:
-                    var joinClause = (JoinClauseSyntax)node;
+                    joinClause := (JoinClauseSyntax)node;
                     lambdaBody1 = joinClause.LeftExpression;
                     lambdaBody2 = joinClause.RightExpression;
                     return true;
@@ -325,7 +325,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
 
                 case SyntaxKind.SelectClause:
-                    var selectClause = (SelectClauseSyntax)node;
+                    selectClause := (SelectClauseSyntax)node;
                     if (IsReducedSelectOrGroupByClause(selectClause, selectClause.Expression))
                     {
                         return false;
@@ -335,7 +335,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
 
                 case SyntaxKind.GroupClause:
-                    var groupClause = (GroupClauseSyntax)node;
+                    groupClause := (GroupClauseSyntax)node;
                     if (IsReducedSelectOrGroupByClause(groupClause, groupClause.GroupExpression))
                     {
                         lambdaBody1 = groupClause.ByExpression;

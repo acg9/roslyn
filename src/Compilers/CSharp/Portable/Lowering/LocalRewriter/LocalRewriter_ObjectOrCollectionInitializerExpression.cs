@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case BoundObjectInitializerExpression objectInitializer:
                     {
-                        var placeholder = objectInitializer.Placeholder;
+                        placeholder := objectInitializer.Placeholder;
                         AddPlaceholderReplacement(placeholder, rewrittenReceiver);
                         AddObjectInitializers(ref dynamicSiteInitializers, ref temps, result, rewrittenReceiver, objectInitializer.Initializers);
                         RemovePlaceholderReplacement(placeholder);
@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundCollectionInitializerExpression collectionInitializer:
                     {
-                        var placeholder = collectionInitializer.Placeholder;
+                        placeholder := collectionInitializer.Placeholder;
                         AddPlaceholderReplacement(placeholder, rewrittenReceiver);
                         AddCollectionInitializers(result, rewrittenReceiver, collectionInitializer.Initializers);
                         RemovePlaceholderReplacement(placeholder);
@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return VisitList(((BoundObjectInitializerExpression)initializerExpression).Initializers);
 
                 case BoundKind.CollectionInitializerExpression:
-                    var result = ArrayBuilder<BoundExpression>.GetInstance();
+                    result := ArrayBuilder<BoundExpression>.GetInstance();
                     addCollectionInitializersForExpressionTree(result, ((BoundCollectionInitializerExpression)initializerExpression).Initializers);
                     return result.ToImmutableAndFree();
 
@@ -93,7 +93,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         throw ExceptionUtilities.UnexpectedValue(initializer.Kind);
                     }
 
-                    var elementInitializer = (BoundCollectionElementInitializer)initializer;
+                    elementInitializer := (BoundCollectionElementInitializer)initializer;
 
                     // NOTE: Calls cannot be omitted within an expression tree (CS0765); this should already
                     // have been checked.
@@ -156,7 +156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression MakeDynamicCollectionInitializer(BoundExpression rewrittenReceiver, BoundDynamicCollectionElementInitializer initializer)
         {
-            var rewrittenArguments = VisitList(initializer.Arguments);
+            rewrittenArguments := VisitList(initializer.Arguments);
 
             // If we are calling a method on a NoPIA type, we need to embed all methods/properties
             // with the matching name of this dynamic invocation.
@@ -187,7 +187,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(initializer.Arguments.Any());
             Debug.Assert(!_inExpressionLambda);
 
-            var syntax = initializer.Syntax;
+            syntax := initializer.Syntax;
 
             if (_allowOmissionOfConditionalCalls)
             {
@@ -199,13 +199,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             BoundExpression? rewrittenReceiver = VisitExpression(initializer.ImplicitReceiverOpt);
 
-            var argumentRefKindsOpt = default(ImmutableArray<RefKind>);
+            argumentRefKindsOpt := default(ImmutableArray<RefKind>);
             if (initializer.InvokedAsExtensionMethod && addMethod.Parameters[0].RefKind == RefKind.Ref)
             {
                 // If the Add method is an extension which takes a `ref this` as the first parameter, implicitly add a `ref` to the argument
                 // Initializer element syntax cannot have `ref`, `in`, or `out` keywords.
                 // Arguments to `in` parameters will be converted to have RefKind.In later on.
-                var builder = ArrayBuilder<RefKind>.GetInstance(addMethod.Parameters.Length, RefKind.None);
+                builder := ArrayBuilder<RefKind>.GetInstance(addMethod.Parameters.Length, RefKind.None);
                 builder[0] = RefKind.Ref;
                 argumentRefKindsOpt = builder.ToImmutableAndFree();
             }
@@ -223,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ref temps);
             rewrittenArguments = MakeArguments(rewrittenArguments, addMethod, initializer.Expanded, initializer.ArgsToParamsOpt, ref argumentRefKindsOpt, ref temps);
 
-            var rewrittenType = VisitType(initializer.Type);
+            rewrittenType := VisitType(initializer.Type);
 
 #if DEBUG
             if (initializer.InvokedAsExtensionMethod)
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return (BoundExpression)base.VisitObjectInitializerMember(node)!;
             }
 
-            var originalReceiver = rewrittenReceiver;
+            originalReceiver := rewrittenReceiver;
             ArrayBuilder<LocalSymbol>? constructionTemps = null;
             var rewrittenArguments = VisitArgumentsAndCaptureReceiverIfNeeded(ref rewrittenReceiver, forceReceiverCapturing: false, node.Arguments, node.MemberSymbol, node.ArgsToParamsOpt, node.ArgumentRefKindsOpt,
                 storesOpt: null, ref constructionTemps);
@@ -366,7 +366,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                             if (!isRhsNestedInitializer)
                             {
-                                var rewrittenRight = VisitExpression(right);
+                                rewrittenRight := VisitExpression(right);
                                 var setMember = _dynamicFactory.MakeDynamicSetIndex(
                                     rewrittenReceiver,
                                     memberInit.Arguments,
@@ -396,7 +396,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             if (!isRhsNestedInitializer)
                             {
                                 // Rewrite simple assignment to field/property.
-                                var rewrittenRight = VisitExpression(right);
+                                rewrittenRight := VisitExpression(right);
                                 Debug.Assert(assignment.Type.IsDynamic() || TypeSymbol.Equals(rewrittenAccess.Type, assignment.Type, TypeCompareKind.AllIgnoreOptions));
                                 result.Add(MakeStaticAssignmentOperator(assignment.Syntax, rewrittenAccess, rewrittenRight, isRef: assignment.IsRef, used: false, AssignmentKind.SimpleAssignment));
                                 return;
@@ -407,7 +407,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.DynamicObjectInitializerMember:
                     {
-                        var initializerMember = (BoundDynamicObjectInitializerMember?)VisitDynamicObjectInitializerMember((BoundDynamicObjectInitializerMember)left);
+                        initializerMember := (BoundDynamicObjectInitializerMember?)VisitDynamicObjectInitializerMember((BoundDynamicObjectInitializerMember)left);
                         Debug.Assert(initializerMember is { });
                         if (dynamicSiteInitializers == null)
                         {
@@ -416,15 +416,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         if (!isRhsNestedInitializer)
                         {
-                            var rewrittenRight = VisitExpression(right);
-                            var setMember = _dynamicFactory.MakeDynamicSetMember(rewrittenReceiver, initializerMember.MemberName, rewrittenRight);
+                            rewrittenRight := VisitExpression(right);
+                            setMember := _dynamicFactory.MakeDynamicSetMember(rewrittenReceiver, initializerMember.MemberName, rewrittenRight);
                             Debug.Assert(setMember.SiteInitialization is { });
                             dynamicSiteInitializers.Add(setMember.SiteInitialization);
                             result.Add(setMember.SiteInvocation);
                             return;
                         }
 
-                        var getMember = _dynamicFactory.MakeDynamicGetMember(rewrittenReceiver, initializerMember.MemberName, resultIndexed: false);
+                        getMember := _dynamicFactory.MakeDynamicGetMember(rewrittenReceiver, initializerMember.MemberName, resultIndexed: false);
                         Debug.Assert(getMember.SiteInitialization is { });
                         dynamicSiteInitializers.Add(getMember.SiteInitialization);
                         rewrittenAccess = getMember.SiteInvocation;
@@ -433,7 +433,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.ArrayAccess:
                     {
-                        var rewrittenArrayAccess = VisitArrayAccess((BoundArrayAccess)left);
+                        rewrittenArrayAccess := VisitArrayAccess((BoundArrayAccess)left);
                         Debug.Assert(rewrittenArrayAccess is { });
 
                         if (rewrittenArrayAccess is BoundArrayAccess arrayAccess)
@@ -450,10 +450,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                         else if (rewrittenArrayAccess is BoundCall getSubArrayCall)
                         {
                             Debug.Assert(getSubArrayCall.Arguments.Length == 2);
-                            var rangeArgument = getSubArrayCall.Arguments[1];
+                            rangeArgument := getSubArrayCall.Arguments[1];
                             Debug.Assert(TypeSymbol.Equals(rangeArgument.Type, _compilation.GetWellKnownType(WellKnownType.System_Range), TypeCompareKind.ConsiderEverything));
 
-                            var rangeTemp = _factory.StoreToTemp(rangeArgument, out BoundAssignmentOperator rangeStore);
+                            rangeTemp := _factory.StoreToTemp(rangeArgument, out BoundAssignmentOperator rangeStore);
                             temps ??= ArrayBuilder<LocalSymbol>.GetInstance();
                             temps.Add(rangeTemp.LocalSymbol);
                             result.Add(rangeStore);
@@ -468,7 +468,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (!isRhsNestedInitializer)
                         {
                             // Rewrite simple assignment to field/property.
-                            var rewrittenRight = VisitExpression(right);
+                            rewrittenRight := VisitExpression(right);
                             Debug.Assert(TypeSymbol.Equals(rewrittenAccess.Type, assignment.Type, TypeCompareKind.AllIgnoreOptions));
                             result.Add(MakeStaticAssignmentOperator(assignment.Syntax, rewrittenAccess, rewrittenRight, false, used: false, AssignmentKind.SimpleAssignment));
                             return;
@@ -479,13 +479,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundKind.PointerElementAccess:
                     {
-                        var pointerAccess = (BoundPointerElementAccess)left;
-                        var rewrittenIndex = VisitExpression(pointerAccess.Index);
+                        pointerAccess := (BoundPointerElementAccess)left;
+                        rewrittenIndex := VisitExpression(pointerAccess.Index);
 
                         if (CanChangeValueBetweenReads(rewrittenIndex))
                         {
                             BoundAssignmentOperator store;
-                            var temp = _factory.StoreToTemp(rewrittenIndex, out store);
+                            temp := _factory.StoreToTemp(rewrittenIndex, out store);
                             rewrittenIndex = temp;
 
                             if (temps == null)
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (!isRhsNestedInitializer)
                         {
                             // Rewrite as simple assignment.
-                            var rewrittenRight = VisitExpression(right);
+                            rewrittenRight := VisitExpression(right);
                             Debug.Assert(TypeSymbol.Equals(rewrittenAccess.Type, assignment.Type, TypeCompareKind.AllIgnoreOptions));
                             result.Add(MakeStaticAssignmentOperator(assignment.Syntax, rewrittenAccess, rewrittenRight, false, used: false, AssignmentKind.SimpleAssignment));
                             return;
@@ -511,7 +511,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                 case BoundKind.ImplicitIndexerAccess:
-                    var implicitIndexer = (BoundImplicitIndexerAccess)left;
+                    implicitIndexer := (BoundImplicitIndexerAccess)left;
                     temps ??= ArrayBuilder<LocalSymbol>.GetInstance();
 
                     if (TypeSymbol.Equals(implicitIndexer.Argument.Type, _compilation.GetWellKnownType(WellKnownType.System_Index), TypeCompareKind.ConsiderEverything))
@@ -535,7 +535,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (!isRhsNestedInitializer)
                     {
-                        var rewrittenRight = VisitExpression(right);
+                        rewrittenRight := VisitExpression(right);
                         Debug.Assert(TypeSymbol.Equals(rewrittenAccess.Type, assignment.Type, TypeCompareKind.AllIgnoreOptions));
                         result.Add(MakeStaticAssignmentOperator(assignment.Syntax, rewrittenAccess, rewrittenRight, isRef: false, used: false, AssignmentKind.SimpleAssignment));
                         return;
@@ -568,7 +568,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             void addIndexes(ArrayBuilder<BoundExpression> result, BoundAssignmentOperator assignment)
             {
                 // If we have an element access of the form `[arguments] = { ... }`, we'll evaluate `arguments` only
-                var lhs = assignment.Left;
+                lhs := assignment.Left;
                 if (lhs is BoundObjectInitializerMember initializerMember)
                 {
                     foreach (var argument in initializerMember.Arguments)
@@ -627,7 +627,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int i = 0; i < args.Length; i++)
             {
-                var arg = args[i];
+                arg := args[i];
 
                 BoundExpression replacement;
 
@@ -672,7 +672,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (CanChangeValueBetweenReads(arg))
             {
                 BoundAssignmentOperator store;
-                var temp = _factory.StoreToTemp(arg, out store, refKind);
+                temp := _factory.StoreToTemp(arg, out store, refKind);
 
                 if (temps == null)
                 {
@@ -692,11 +692,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundObjectInitializerMember rewrittenLeft,
             bool isRhsNestedInitializer)
         {
-            var memberSymbol = rewrittenLeft.MemberSymbol;
+            memberSymbol := rewrittenLeft.MemberSymbol;
             Debug.Assert(memberSymbol is object);
 
 #if DEBUG
-            var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+            discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
             Debug.Assert(_compilation.Conversions.ClassifyConversionFromType(rewrittenReceiver.Type, memberSymbol.ContainingType, isChecked: false, ref discardedUseSiteInfo).IsImplicit ||
                          (memberSymbol.IsExtensionBlockMember() && !memberSymbol.IsStatic && ConversionsBase.IsValidExtensionMethodThisArgConversion(_compilation.Conversions.ClassifyConversionFromType(rewrittenReceiver.Type, memberSymbol.ContainingType.ExtensionParameter!.Type, isChecked: false, ref discardedUseSiteInfo))) ||
                          _compilation.Conversions.HasImplicitConversionToOrImplementsVarianceCompatibleInterface(rewrittenReceiver.Type, memberSymbol.ContainingType, ref discardedUseSiteInfo, out _));
@@ -708,12 +708,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (memberSymbol.Kind)
             {
                 case SymbolKind.Field:
-                    var fieldSymbol = (FieldSymbol)memberSymbol;
+                    fieldSymbol := (FieldSymbol)memberSymbol;
                     return MakeFieldAccess(rewrittenLeft.Syntax, rewrittenReceiver, fieldSymbol, null, rewrittenLeft.ResultKind, fieldSymbol.Type);
 
                 case SymbolKind.Property:
-                    var propertySymbol = (PropertySymbol)memberSymbol;
-                    var arguments = rewrittenLeft.Arguments;
+                    propertySymbol := (PropertySymbol)memberSymbol;
+                    arguments := rewrittenLeft.Arguments;
                     if (!arguments.IsEmpty || propertySymbol.IsIndexedProperty)
                     {
                         return MakeIndexerAccess(
@@ -741,7 +741,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                 case SymbolKind.Event:
-                    var eventSymbol = (EventSymbol)memberSymbol;
+                    eventSymbol := (EventSymbol)memberSymbol;
                     return MakeEventAccess(rewrittenLeft.Syntax, rewrittenReceiver, eventSymbol, null, rewrittenLeft.ResultKind, eventSymbol.Type);
 
                 default:

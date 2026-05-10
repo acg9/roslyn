@@ -27,9 +27,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters)
             MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
-            var annotation = ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.Annotated;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
+            annotation := ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.Annotated;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_Boolean, location, diagnostics)),
                     Parameters: ImmutableArray.Create<ParameterSymbol>(
                                     new SourceSimpleParameterSymbol(owner: this,
@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
 
             try
             {
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return;
                 }
 
-                var paramAccess = F.Parameter(Parameters[0]);
+                paramAccess := F.Parameter(Parameters[0]);
 
                 BoundExpression expression;
                 if (ContainingType.IsRecordStruct)

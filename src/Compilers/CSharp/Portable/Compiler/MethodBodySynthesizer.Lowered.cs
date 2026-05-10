@@ -423,7 +423,7 @@ start:
             foreach (var field in fields)
             {
                 // Prepare constructed comparer
-                var constructedEqualityComparer = equalityComparerType.Construct(field.Type);
+                constructedEqualityComparer := equalityComparerType.Construct(field.Type);
 
                 // System.Collections.Generic.EqualityComparer<T_index>.
                 //   Default.Equals(this.backingFld_index, local.backingFld_index)'
@@ -454,7 +454,7 @@ start:
         /// <returns>Body for implementedMethod.</returns>
         internal static BoundBlock ConstructSingleInvocationMethodBody(SyntheticBoundNodeFactory F, MethodSymbol methodToInvoke, bool useBaseReference)
         {
-            var argBuilder = ArrayBuilder<BoundExpression>.GetInstance();
+            argBuilder := ArrayBuilder<BoundExpression>.GetInstance();
 
             RoslynDebug.AssertNotNull(F.CurrentFunction);
             foreach (var param in F.CurrentFunction.Parameters)

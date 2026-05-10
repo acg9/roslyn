@@ -32,11 +32,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static IEnumerable<Symbol> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion)
         {
-            var walker = new AlwaysAssignedWalker(compilation, member, node, firstInRegion, lastInRegion);
+            walker := new AlwaysAssignedWalker(compilation, member, node, firstInRegion, lastInRegion);
             bool badRegion = false;
             try
             {
-                var result = walker.Analyze(ref badRegion);
+                result := walker.Analyze(ref badRegion);
                 return badRegion ? SpecializedCollections.EmptyEnumerable<Symbol>() : result;
             }
             finally
@@ -59,7 +59,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
-                    var v = base.variableBySlot[i];
+                    v := base.variableBySlot[i];
                     if (v.Exists && !(v.Symbol is FieldSymbol))
                     {
                         result.Add(v.Symbol);

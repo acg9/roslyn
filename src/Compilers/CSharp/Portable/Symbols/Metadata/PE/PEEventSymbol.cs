@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             try
             {
-                var module = moduleSymbol.Module;
+                module := moduleSymbol.Module;
                 module.GetEventDefPropsOrThrow(handle, out _name, out mdFlags, out eventType);
             }
             catch (BadImageFormatException mrEx)
@@ -93,15 +93,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             TypeSymbol originalEventType = _eventTypeWithAnnotations.Type;
             if (!_eventTypeWithAnnotations.HasType)
             {
-                var metadataDecoder = new MetadataDecoder(moduleSymbol, containingType);
+                metadataDecoder := new MetadataDecoder(moduleSymbol, containingType);
                 originalEventType = metadataDecoder.GetTypeOfToken(eventType);
 
                 const int targetSymbolCustomModifierCount = 0;
-                var typeSymbol = DynamicTypeDecoder.TransformType(originalEventType, targetSymbolCustomModifierCount, handle, moduleSymbol);
+                typeSymbol := DynamicTypeDecoder.TransformType(originalEventType, targetSymbolCustomModifierCount, handle, moduleSymbol);
                 typeSymbol = NativeIntegerTypeDecoder.TransformType(typeSymbol, handle, moduleSymbol, _containingType);
 
                 // We start without annotation (they will be decoded below)
-                var type = TypeWithAnnotations.Create(typeSymbol);
+                type := TypeWithAnnotations.Create(typeSymbol);
 
                 // Decode nullable before tuple types to avoid converting between
                 // NamedTypeSymbol and TupleTypeSymbol unnecessarily.
@@ -364,9 +364,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (_lazyCustomAttributes.IsDefault)
             {
-                var containingPEModuleSymbol = (PEModuleSymbol)this.ContainingModule;
+                containingPEModuleSymbol := (PEModuleSymbol)this.ContainingModule;
 
-                var requiresUnsafeState = (ThreeState)Volatile.Read(ref _lazyRequiresUnsafe);
+                requiresUnsafeState := (ThreeState)Volatile.Read(ref _lazyRequiresUnsafe);
                 bool checkForRequiresUnsafe = requiresUnsafeState != ThreeState.False;
 
                 if (checkForRequiresUnsafe)
@@ -428,14 +428,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return ImmutableArray<EventSymbol>.Empty;
                 }
 
-                var implementedEvents = PEPropertyOrEventHelpers.GetEventsForExplicitlyImplementedAccessor(_addMethod);
+                implementedEvents := PEPropertyOrEventHelpers.GetEventsForExplicitlyImplementedAccessor(_addMethod);
 
                 if (implementedEvents.Count != 0)
                 {
                     implementedEvents.IntersectWith(PEPropertyOrEventHelpers.GetEventsForExplicitlyImplementedAccessor(_removeMethod));
                 }
 
-                var builder = ArrayBuilder<EventSymbol>.GetInstance();
+                builder := ArrayBuilder<EventSymbol>.GetInstance();
 
                 foreach (var @event in implementedEvents)
                 {
@@ -484,10 +484,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             PEMethodSymbol method)
         {
             // CONSIDER: It would be nice if we could reuse this signature information in the PEMethodSymbol.
-            var metadataDecoder = new MetadataDecoder(moduleSymbol, method);
+            metadataDecoder := new MetadataDecoder(moduleSymbol, method);
             SignatureHeader signatureHeader;
             BadImageFormatException? mrEx;
-            var methodParams = metadataDecoder.GetSignatureForMethod(method.Handle, out signatureHeader, out mrEx, setParamHandles: false);
+            methodParams := metadataDecoder.GetSignatureForMethod(method.Handle, out signatureHeader, out mrEx, setParamHandles: false);
 
             if (mrEx != null)
             {
@@ -518,7 +518,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             void deriveCompilerFeatureRequiredUseSiteInfo(ref UseSiteInfo<AssemblySymbol> result)
             {
-                var containingType = (PENamedTypeSymbol)ContainingType;
+                containingType := (PENamedTypeSymbol)ContainingType;
                 PEModuleSymbol containingPEModule = _containingType.ContainingPEModule;
                 var diag = PEUtilities.DeriveCompilerFeatureRequiredAttributeDiagnostic(
                     this,
@@ -549,10 +549,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var requiresUnsafeState = (ThreeState)Volatile.Read(ref _lazyRequiresUnsafe);
+                requiresUnsafeState := (ThreeState)Volatile.Read(ref _lazyRequiresUnsafe);
                 if (!requiresUnsafeState.HasValue())
                 {
-                    var containingPEModuleSymbol = (PEModuleSymbol)this.ContainingModule;
+                    containingPEModuleSymbol := (PEModuleSymbol)this.ContainingModule;
                     bool hasRequiresUnsafeAttribute = containingPEModuleSymbol.Module.HasAttribute(_handle, AttributeDescription.RequiresUnsafeAttribute);
                     bool requiresUnsafe = ComputeRequiresUnsafe(hasRequiresUnsafeAttribute);
                     _lazyRequiresUnsafe = (byte)requiresUnsafe.ToThreeState();

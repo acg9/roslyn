@@ -30,20 +30,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             Debug.Assert(ShouldAddDirective(directiveNode));
 
             // Get line number of NEXT line, hence the +1.
-            var directiveLineNumber = sourceText.Lines.IndexOf(directiveNode.SpanStart) + 1;
+            directiveLineNumber := sourceText.Lines.IndexOf(directiveNode.SpanStart) + 1;
 
             if (directiveNode is LineSpanDirectiveTriviaSyntax spanDirective)
             {
                 return GetLineSpanDirectiveEntry(spanDirective, directiveLineNumber);
             }
 
-            var directive = (LineDirectiveTriviaSyntax)directiveNode;
+            directive := (LineDirectiveTriviaSyntax)directiveNode;
 
             // The default for the current entry does the same thing as the previous entry, except
             // resetting hidden.
-            var unmappedLine = directiveLineNumber;
-            var mappedLine = (previous.State == PositionState.RemappedSpan) ? unmappedLine : previous.MappedLine + directiveLineNumber - previous.UnmappedLine;
-            var mappedPathOpt = (previous.State == PositionState.RemappedSpan) ? null : previous.MappedPathOpt;
+            unmappedLine := directiveLineNumber;
+            mappedLine := (previous.State == PositionState.RemappedSpan) ? unmappedLine : previous.MappedLine + directiveLineNumber - previous.UnmappedLine;
+            mappedPathOpt := (previous.State == PositionState.RemappedSpan) ? null : previous.MappedPathOpt;
             PositionState state = PositionState.Unmapped;
 
             // Modify the current entry based on the directive.
@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public override LineVisibility GetLineVisibility(SourceText sourceText, int position)
         {
-            var unmappedPos = sourceText.Lines.GetLinePosition(position);
+            unmappedPos := sourceText.Lines.GetLinePosition(position);
 
             // if there's only one entry (which is created as default for each file), all lines
             // are treated as being visible
@@ -189,8 +189,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return LineVisibility.Visible;
             }
 
-            var index = FindEntryIndex(unmappedPos.Line);
-            var entry = Entries[index];
+            index := FindEntryIndex(unmappedPos.Line);
+            entry := Entries[index];
 
             // the state should not be set to the ones used for VB only.
             Debug.Assert(entry.State != PositionState.Unknown &&
@@ -227,9 +227,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         internal override FileLinePositionSpan TranslateSpanAndVisibility(SourceText sourceText, string treeFilePath, TextSpan span, out bool isHiddenPosition)
         {
-            var lines = sourceText.Lines;
-            var unmappedStartPos = lines.GetLinePosition(span.Start);
-            var unmappedEndPos = lines.GetLinePosition(span.End);
+            lines := sourceText.Lines;
+            unmappedStartPos := lines.GetLinePosition(span.Start);
+            unmappedEndPos := lines.GetLinePosition(span.End);
 
             // most common case is where we have only one mapping entry.
             if (this.Entries.Length == 1)
@@ -243,7 +243,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return new FileLinePositionSpan(treeFilePath, unmappedStartPos, unmappedEndPos);
             }
 
-            var entry = FindEntry(unmappedStartPos.Line);
+            entry := FindEntry(unmappedStartPos.Line);
 
             // the state should not be set to the ones used for VB only.
             Debug.Assert(entry.State != PositionState.Unknown &&

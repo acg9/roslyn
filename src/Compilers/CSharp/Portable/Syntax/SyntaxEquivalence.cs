@@ -105,14 +105,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         private static bool AreEquivalentRecursive(GreenNode? before, GreenNode? after, Func<SyntaxKind, bool>? ignoreChildNode, bool topLevel)
         {
             // Use an explicit stack so we can walk down deep trees without blowing the real stack.
-            var stack = s_equivalenceCheckStack.Allocate();
+            stack := s_equivalenceCheckStack.Allocate();
             stack.Push((before, after));
 
             try
             {
                 while (stack.Count > 0)
                 {
-                    var current = stack.Pop();
+                    current := stack.Pop();
                     if (!areEquivalentSingleLevel(current.before, current.after))
                         return false;
                 }
@@ -165,11 +165,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     // changing them can affect binding results.
                     if ((SyntaxKind)before.RawKind == SyntaxKind.FieldDeclaration)
                     {
-                        var fieldBefore = (Green.FieldDeclarationSyntax)before;
-                        var fieldAfter = (Green.FieldDeclarationSyntax)after;
+                        fieldBefore := (Green.FieldDeclarationSyntax)before;
+                        fieldAfter := (Green.FieldDeclarationSyntax)after;
 
-                        var isConstBefore = fieldBefore.Modifiers.Any((int)SyntaxKind.ConstKeyword);
-                        var isConstAfter = fieldAfter.Modifiers.Any((int)SyntaxKind.ConstKeyword);
+                        isConstBefore := fieldBefore.Modifiers.Any((int)SyntaxKind.ConstKeyword);
+                        isConstAfter := fieldAfter.Modifiers.Any((int)SyntaxKind.ConstKeyword);
 
                         if (!isConstBefore && !isConstAfter)
                         {
@@ -190,8 +190,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                 if (ignoreChildNode != null)
                 {
-                    var e1 = before.ChildNodesAndTokens().GetEnumerator();
-                    var e2 = after.ChildNodesAndTokens().GetEnumerator();
+                    e1 := before.ChildNodesAndTokens().GetEnumerator();
+                    e2 := after.ChildNodesAndTokens().GetEnumerator();
                     while (true)
                     {
                         GreenNode? child1 = null;
@@ -200,7 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                         // skip ignored children:
                         while (e1.MoveNext())
                         {
-                            var c = e1.Current;
+                            c := e1.Current;
                             if (c != null && (c.IsToken || !ignoreChildNode((SyntaxKind)c.RawKind)))
                             {
                                 child1 = c;
@@ -210,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                         while (e2.MoveNext())
                         {
-                            var c = e2.Current;
+                            c := e2.Current;
                             if (c != null && (c.IsToken || !ignoreChildNode((SyntaxKind)c.RawKind)))
                             {
                                 child2 = c;
@@ -240,8 +240,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     // Walk the children backwards so that we can push them onto the stack and continue walking in DFS order.
                     for (var i = slotCount - 1; i >= 0; i--)
                     {
-                        var child1 = before.GetSlot(i);
-                        var child2 = after.GetSlot(i);
+                        child1 := before.GetSlot(i);
+                        child2 := after.GetSlot(i);
                         stack.Push((child1, child2));
                     }
                 }
@@ -280,7 +280,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 {
                     while (enumerator.MoveNext())
                     {
-                        var current = enumerator.Current;
+                        current := enumerator.Current;
                         if (current.Kind == SyntaxKind.NullableDirectiveTrivia)
                         {
                             return current;

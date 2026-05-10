@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return ((BoundFieldAccess)receiver).IsByValue;
 
                 case BoundKind.Local:
-                    var localSymbol = ((BoundLocal)receiver).LocalSymbol;
+                    localSymbol := ((BoundLocal)receiver).LocalSymbol;
                     return !(localSymbol.IsWritableVariable || localSymbol.IsRef);
 
                 default:
@@ -196,8 +196,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (i < method.ParameterCount)
                 {
-                    var parameterRefKind = method.ParameterRefKinds.IsDefault ? RefKind.None : method.ParameterRefKinds[i];
-                    var argumentRefKind = argumentRefKindsOpt.IsDefault ? RefKind.None : argumentRefKindsOpt[i];
+                    parameterRefKind := method.ParameterRefKinds.IsDefault ? RefKind.None : method.ParameterRefKinds[i];
+                    argumentRefKind := argumentRefKindsOpt.IsDefault ? RefKind.None : argumentRefKindsOpt[i];
                     Debug.Assert(argumentRefKind is RefKind.None or RefKind.Ref or RefKind.In or RefKind.Out or RefKindExtensions.StrictIn &&
                         (argumentRefKind == parameterRefKind ||
                         parameterRefKind switch
@@ -236,11 +236,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static ImmutableArray<RefKind> getArgumentRefKinds(MethodSymbol method)
             {
-                var result = method.ParameterRefKinds;
+                result := method.ParameterRefKinds;
 
                 if (!result.IsDefaultOrEmpty && result.Contains(RefKind.RefReadOnlyParameter))
                 {
-                    var builder = ArrayBuilder<RefKind>.GetInstance(result.Length);
+                    builder := ArrayBuilder<RefKind>.GetInstance(result.Length);
 
                     foreach (var refKind in result)
                     {
@@ -456,7 +456,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                           BoundExpression right,
                                           TypeSymbol type)
         {
-            var uncommonData = UncommonData.CreateIfNeeded(constantValueOpt, methodOpt, constrainedToTypeOpt, OriginalUserDefinedOperatorsOpt);
+            uncommonData := UncommonData.CreateIfNeeded(constantValueOpt, methodOpt, constrainedToTypeOpt, OriginalUserDefinedOperatorsOpt);
             return Update(operatorKind, uncommonData, resultKind, left, right, type);
         }
 

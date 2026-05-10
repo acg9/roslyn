@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _explicitInterfaceImplementations = ImmutableArray.Create<MethodSymbol>(interfaceMethod);
 
             // alpha-rename to get the implementation's type parameters
-            var typeMap = interfaceMethod.ContainingType.TypeSubstitution ?? TypeMap.Empty;
+            typeMap := interfaceMethod.ContainingType.TypeSubstitution ?? TypeMap.Empty;
             typeMap.WithAlphaRename(interfaceMethod, this, propagateAttributes: false, out _typeParameters);
 
             _interfaceMethod = interfaceMethod.ConstructIfGeneric(TypeArgumentsWithAnnotations);

@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             _fieldsForCleanup.AddRange(nonReusableFieldsForCleanup);
 
             // create cache local for reference type "this" in Release
-            var thisParameter = originalMethod.ThisParameter;
+            thisParameter := originalMethod.ThisParameter;
             CapturedSymbolReplacement? thisProxy;
             if (thisParameter is not null &&
                 thisParameter.Type.IsReferenceType &&
@@ -207,9 +207,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override BoundExpression FramePointer(SyntaxNode syntax, NamedTypeSymbol frameClass)
         {
-            var oldSyntax = F.Syntax;
+            oldSyntax := F.Syntax;
             F.Syntax = syntax;
-            var result = F.This();
+            result := F.This();
             Debug.Assert(TypeSymbol.Equals(frameClass, result.Type, TypeCompareKind.ConsiderEverything2));
             F.Syntax = oldSyntax;
             return result;
@@ -253,7 +253,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                            orderby kv.Value[0]
                            select F.SwitchSection(kv.Value.SelectAsArray(state => (int)state), F.Goto(kv.Key));
 
-            var result = F.Switch(F.Local(cachedState), sections.ToImmutableArray());
+            result := F.Switch(F.Local(cachedState), sections.ToImmutableArray());
 
             // Suspension states that were generated for any previous generation of the state machine
             // but are not present in the current version (awaits/yields have been deleted) need to be dispatched to a throw expression.
@@ -263,7 +263,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // has already been executed or skipping code that initializes some user state.
             if (isOutermost)
             {
-                var missingStateDispatch = GenerateMissingStateDispatch();
+                missingStateDispatch := GenerateMissingStateDispatch();
                 if (missingStateDispatch != null)
                 {
                     result = F.Block(result, missingStateDispatch);
@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return wrapped();
             }
 
-            var hoistedLocalsWithDebugScopes = ArrayBuilder<StateMachineFieldSymbol>.GetInstance();
+            hoistedLocalsWithDebugScopes := ArrayBuilder<StateMachineFieldSymbol>.GetInstance();
             foreach (var local in locals)
             {
                 if (!NeedsProxy(local))
@@ -344,8 +344,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var translatedStatement = wrapped();
-            var variableCleanup = ArrayBuilder<BoundExpression>.GetInstance();
+            translatedStatement := wrapped();
+            variableCleanup := ArrayBuilder<BoundExpression>.GetInstance();
 
             // produce cleanup code for all fields of locals defined by this block
             // as well as all proxies allocated by VisitAssignmentOperator within this block:
@@ -357,7 +357,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var simpleProxy = proxy as CapturedToStateMachineFieldReplacement;
+                simpleProxy := proxy as CapturedToStateMachineFieldReplacement;
                 if (simpleProxy != null)
                 {
                     AddVariableCleanup(variableCleanup, simpleProxy.HoistedField);
@@ -416,11 +416,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (statement.Kind == BoundKind.Block)
             {
-                var rewrittenBlock = (BoundBlock)statement;
-                var rewrittenStatements = rewrittenBlock.Statements;
+                rewrittenBlock := (BoundBlock)statement;
+                rewrittenStatements := rewrittenBlock.Statements;
                 if (rewrittenStatements.Length == 1 && rewrittenStatements[0].Kind == BoundKind.StateMachineScope)
                 {
-                    var stateMachineScope = (BoundStateMachineScope)rewrittenStatements[0];
+                    stateMachineScope := (BoundStateMachineScope)rewrittenStatements[0];
                     statement = stateMachineScope.Statement;
                     hoistedLocals = stateMachineScope.Fields;
                     return true;
@@ -437,7 +437,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         private void AddVariableCleanup(ArrayBuilder<BoundExpression> cleanup, FieldSymbol field)
         {
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
             bool isManaged = field.Type.IsManagedType(ref useSiteInfo);
             F.Diagnostics.Add(field.GetFirstLocationOrNone(), useSiteInfo);
             if (isManaged)
@@ -449,14 +449,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 #nullable enable
         protected BoundBlock GenerateAllHoistedLocalsCleanup()
         {
-            var variableCleanup = ArrayBuilder<BoundExpression>.GetInstance();
+            variableCleanup := ArrayBuilder<BoundExpression>.GetInstance();
 
             foreach (FieldSymbol fieldSymbol in _fieldsForCleanup)
             {
                 AddVariableCleanup(variableCleanup, fieldSymbol);
             }
 
-            var result = F.Block(variableCleanup.SelectAsArray((e, f) => (BoundStatement)f.ExpressionStatement(e), F));
+            result := F.Block(variableCleanup.SelectAsArray((e, f) => (BoundStatement)f.ExpressionStatement(e), F));
 
             variableCleanup.Free();
 
@@ -468,14 +468,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             ArrayBuilder<StateMachineFieldSymbol>? fields;
             if (_lazyAvailableReusableHoistedFields != null && _lazyAvailableReusableHoistedFields.TryGetValue(type, out fields) && fields.Count > 0)
             {
-                var field = fields.Last();
+                field := fields.Last();
                 fields.RemoveLast();
                 reused = true;
                 return field;
             }
 
             reused = false;
-            var slotIndex = _nextHoistedFieldId++;
+            slotIndex := _nextHoistedFieldId++;
 
             StateMachineFieldSymbol createdField;
             if (local?.SynthesizedKind == SynthesizedLocalKind.UserDefined)
@@ -514,9 +514,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode Visit(BoundNode node)
         {
             if (node == null) return node;
-            var oldSyntax = F.Syntax;
+            oldSyntax := F.Syntax;
             F.Syntax = node.Syntax;
-            var result = base.Visit(node);
+            result := base.Visit(node);
             F.Syntax = oldSyntax;
             return result;
         }
@@ -538,8 +538,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode VisitScope(BoundScope node)
         {
             Debug.Assert(!node.Locals.IsEmpty);
-            var newLocalsBuilder = ArrayBuilder<LocalSymbol>.GetInstance();
-            var hoistedLocalsWithDebugScopes = ArrayBuilder<StateMachineFieldSymbol>.GetInstance();
+            newLocalsBuilder := ArrayBuilder<LocalSymbol>.GetInstance();
+            hoistedLocalsWithDebugScopes := ArrayBuilder<StateMachineFieldSymbol>.GetInstance();
             bool localsRewritten = false;
             foreach (var local in node.Locals)
             {
@@ -559,7 +559,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 hoistedLocalsWithDebugScopes.Add(((CapturedToStateMachineFieldReplacement)proxies[local]).HoistedField);
             }
 
-            var statements = VisitList(node.Statements);
+            statements := VisitList(node.Statements);
 
             // wrap the node in an iterator scope for debugging
             if (hoistedLocalsWithDebugScopes.Count != 0)
@@ -622,7 +622,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return base.VisitAssignmentOperator(node);
             }
 
-            var leftLocal = ((BoundLocal)node.Left).LocalSymbol;
+            leftLocal := ((BoundLocal)node.Left).LocalSymbol;
             if (!NeedsProxy(leftLocal))
             {
                 return base.VisitAssignmentOperator(node);
@@ -647,7 +647,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We have an assignment to a variable that has not yet been assigned a proxy.
             // So we assign the proxy before translating the assignment.
-            var visitedRight = (BoundExpression)Visit(node.Right);
+            visitedRight := (BoundExpression)Visit(node.Right);
             return _refInitializationHoister.HoistRefInitialization(
                 leftLocal,
                 visitedRight,
@@ -679,7 +679,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(awaitSyntax != null);
 
                     int ordinal = @this._synthesizedLocalOrdinals.AssignLocalOrdinal(kind, syntaxOffset);
-                    var id = new LocalDebugId(syntaxOffset, ordinal);
+                    id := new LocalDebugId(syntaxOffset, ordinal);
 
                     // Editing await expression is not allowed. Thus all spilled fields will be present in the previous state machine.
                     // However, it may happen that the type changes, in which case we need to allocate a new slot.
@@ -728,7 +728,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public override BoundNode VisitTryStatement(BoundTryStatement node)
         {
-            var oldDispatches = _dispatches;
+            oldDispatches := _dispatches;
 
             _dispatches = null;
 
@@ -797,7 +797,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if ((object)this.cachedThis != null)
             {
                 CapturedSymbolReplacement proxy = proxies[this.OriginalMethod.ThisParameter];
-                var fetchThis = proxy.Replacement(F.Syntax, static (frameType, F) => F.This(), F);
+                fetchThis := proxy.Replacement(F.Syntax, static (frameType, F) => F.This(), F);
                 return F.Assignment(F.Local(this.cachedThis), fetchThis);
             }
 
@@ -813,7 +813,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return F.Local(this.cachedThis);
             }
 
-            var thisParameter = this.OriginalMethod.ThisParameter;
+            thisParameter := this.OriginalMethod.ThisParameter;
             CapturedSymbolReplacement proxy;
             if ((object)thisParameter == null || !proxies.TryGetValue(thisParameter, out proxy))
             {

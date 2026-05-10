@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 private string GetDebuggerDisplay()
                 {
                     int depth = 0;
-                    var current = Parent;
+                    current := Parent;
                     while (current != null)
                     {
                         depth++;
@@ -374,7 +374,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(node == FindNodeToAnalyze(node));
                     Debug.Assert(topLevelMethod != null);
 
-                    var rootScope = new Scope(parent: null, boundNode: node, containingFunction: null);
+                    rootScope := new Scope(parent: null, boundNode: node, containingFunction: null);
                     var builder = new ScopeTreeBuilder(
                         rootScope,
                         topLevelMethod,
@@ -405,7 +405,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     _scopesAfterLabel.Free();
 
                     Debug.Assert(_labelsInScope.Count == 1);
-                    var labels = _labelsInScope.Pop();
+                    labels := _labelsInScope.Pop();
                     labels.Free();
                     _labelsInScope.Free();
                 }
@@ -415,38 +415,38 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 public override BoundNode VisitBlock(BoundBlock node)
                 {
-                    var oldScope = _currentScope;
+                    oldScope := _currentScope;
                     PushOrReuseScope(node, node.Locals);
-                    var result = base.VisitBlock(node);
+                    result := base.VisitBlock(node);
                     PopScope(oldScope);
                     return result;
                 }
 
                 public override BoundNode VisitCatchBlock(BoundCatchBlock node)
                 {
-                    var oldScope = _currentScope;
+                    oldScope := _currentScope;
                     PushOrReuseScope(node, node.Locals);
-                    var result = base.VisitCatchBlock(node);
+                    result := base.VisitCatchBlock(node);
                     PopScope(oldScope);
                     return result;
                 }
 
                 public override BoundNode VisitSequence(BoundSequence node)
                 {
-                    var oldScope = _currentScope;
+                    oldScope := _currentScope;
                     PushOrReuseScope(node, node.Locals);
-                    var result = base.VisitSequence(node);
+                    result := base.VisitSequence(node);
                     PopScope(oldScope);
                     return result;
                 }
 
                 public override BoundNode VisitLambda(BoundLambda node)
                 {
-                    var oldInExpressionTree = _inExpressionTree;
+                    oldInExpressionTree := _inExpressionTree;
                     _inExpressionTree |= node.Type.IsExpressionTree();
 
                     _methodsConvertedToDelegates.Add(node.Symbol.OriginalDefinition);
-                    var result = VisitNestedFunction(node.Symbol, node.Body);
+                    result := VisitNestedFunction(node.Symbol, node.Body);
 
                     _inExpressionTree = oldInExpressionTree;
                     return result;
@@ -471,7 +471,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (node.MethodOpt?.MethodKind == MethodKind.LocalFunction)
                     {
                         // Use OriginalDefinition to strip generic type parameters
-                        var method = node.MethodOpt.OriginalDefinition;
+                        method := node.MethodOpt.OriginalDefinition;
                         AddIfCaptured(method, node.Syntax);
                         _methodsConvertedToDelegates.Add(method);
                     }
@@ -498,7 +498,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 public override BoundNode VisitThisReference(BoundThisReference node)
                 {
-                    var thisParam = _topLevelMethod.ThisParameter;
+                    thisParam := _topLevelMethod.ThisParameter;
                     if (thisParam != null)
                     {
                         AddIfCaptured(thisParam, node.Syntax);
@@ -579,13 +579,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     // Nested function is declared (lives) in the parent scope, but its
                     // variables are in a nested scope
-                    var function = new NestedFunction(functionSymbol, body.Syntax.GetReference());
+                    function := new NestedFunction(functionSymbol, body.Syntax.GetReference());
                     _currentScope.NestedFunctions.Add(function);
 
-                    var oldFunction = _currentFunction;
+                    oldFunction := _currentFunction;
                     _currentFunction = function;
 
-                    var oldScope = _currentScope;
+                    oldScope := _currentScope;
                     CreateAndPushScope(body);
 
                     // For the purposes of scoping, parameters live in the same scope as the
@@ -636,8 +636,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         AddDiagnosticIfRestrictedType(symbol, syntax);
 
                         // Record the captured variable where it's captured
-                        var scope = _currentScope;
-                        var function = _currentFunction;
+                        scope := _currentScope;
+                        function := _currentFunction;
                         while (function != null && symbol.ContainingSymbol != function.OriginalMethodSymbol)
                         {
                             function.CapturedVariables.Add(symbol);
@@ -729,7 +729,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 /// <param name="node"></param>
                 private void CreateAndPushScope(BoundNode node)
                 {
-                    var scope = CreateNestedScope(_currentScope, _currentFunction);
+                    scope := CreateNestedScope(_currentScope, _currentFunction);
 
                     foreach (var label in _labelsInScope.Peek())
                     {
@@ -744,7 +744,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         Debug.Assert(parentScope.BoundNode != node);
 
-                        var newScope = new Scope(parentScope, node, currentFunction);
+                        newScope := new Scope(parentScope, node, currentFunction);
                         parentScope.NestedScopes.Add(newScope);
                         return newScope;
                     }
@@ -769,11 +769,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // Since it is forbidden to jump into a scope, 
                     // we can forget all information we have about labels in the child scope
 
-                    var labels = _labelsInScope.Pop();
+                    labels := _labelsInScope.Pop();
 
                     foreach (var label in labels)
                     {
-                        var scopes = _scopesAfterLabel[label];
+                        scopes := _scopesAfterLabel[label];
                         scopes.Free();
                         _scopesAfterLabel.Remove(label);
                     }

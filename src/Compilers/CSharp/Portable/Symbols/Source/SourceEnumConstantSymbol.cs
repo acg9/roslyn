@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var incompletePart = state.NextIncompletePart;
+                incompletePart := state.NextIncompletePart;
                 switch (incompletePart)
                 {
                     case CompletionPart.Attributes:
@@ -154,7 +154,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override ConstantValue MakeConstantValue(HashSet<SourceFieldSymbolWithSyntaxReference> dependencies, bool earlyDecodingWellKnownAttributes, BindingDiagnosticBag diagnostics)
             {
-                var constantType = this.ContainingType.EnumUnderlyingType.SpecialType;
+                constantType := this.ContainingType.EnumUnderlyingType.SpecialType;
                 return Microsoft.CodeAnalysis.ConstantValue.Default(constantType);
             }
         }
@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override ConstantValue MakeConstantValue(HashSet<SourceFieldSymbolWithSyntaxReference> dependencies, bool earlyDecodingWellKnownAttributes, BindingDiagnosticBag diagnostics)
             {
-                var syntax = this.SyntaxNode;
+                syntax := this.SyntaxNode;
                 Debug.Assert(syntax.EqualsValue != null);
 
                 return ConstantValueUtils.EvaluateFieldConstant(this, syntax.EqualsValue, dependencies, earlyDecodingWellKnownAttributes, diagnostics);
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override ConstantValue MakeConstantValue(HashSet<SourceFieldSymbolWithSyntaxReference> dependencies, bool earlyDecodingWellKnownAttributes, BindingDiagnosticBag diagnostics)
             {
-                var otherValue = _otherConstant.GetConstantValue(new ConstantFieldsInProgress(this, dependencies), earlyDecodingWellKnownAttributes);
+                otherValue := _otherConstant.GetConstantValue(new ConstantFieldsInProgress(this, dependencies), earlyDecodingWellKnownAttributes);
                 // Value may be Unset if there are dependencies
                 // that must be evaluated first.
                 if (otherValue == Microsoft.CodeAnalysis.ConstantValue.Unset)
@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return Microsoft.CodeAnalysis.ConstantValue.Bad;
                 }
                 ConstantValue value;
-                var overflowKind = EnumConstantHelper.OffsetValue(otherValue, _otherConstantOffset, out value);
+                overflowKind := EnumConstantHelper.OffsetValue(otherValue, _otherConstantOffset, out value);
                 if (overflowKind == EnumOverflowKind.OverflowReport)
                 {
                     // Report an error if the value is immediately

@@ -300,7 +300,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     bool hasPathAttribute = pathAttr != null;
                     if (!hasFileAttribute || !hasPathAttribute)
                     {
-                        var subMessage = hasFileAttribute ? MessageID.IDS_XMLMISSINGINCLUDEPATH.Localize() : MessageID.IDS_XMLMISSINGINCLUDEFILE.Localize();
+                        subMessage := hasFileAttribute ? MessageID.IDS_XMLMISSINGINCLUDEPATH.Localize() : MessageID.IDS_XMLMISSINGINCLUDEFILE.Localize();
                         includeDiagnostics.Add(ErrorCode.WRN_InvalidInclude, location, subMessage);
                         commentMessage = MakeCommentMessage(location, MessageID.IDS_XMLBADINCLUDE);
                         return null;
@@ -309,7 +309,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     string xpathValue = pathAttr.Value;
                     string filePathValue = fileAttr.Value;
 
-                    var resolver = _compilation.Options.XmlReferenceResolver;
+                    resolver := _compilation.Options.XmlReferenceResolver;
                     if (resolver == null)
                     {
                         includeDiagnostics.Add(ErrorCode.WRN_FailedInclude, location, filePathValue, xpathValue, new CodeAnalysisResourcesLocalizableErrorArgument(nameof(CodeAnalysisResources.XmlReferencesNotSupported)));
@@ -515,7 +515,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 Binder binder = BinderFactory.MakeCrefBinder(crefSyntax, memberDeclSyntax, _compilation.GetBinderFactory(memberDeclSyntax.SyntaxTree));
 
-                var crefDiagnostics = BindingDiagnosticBag.GetInstance(_diagnostics);
+                crefDiagnostics := BindingDiagnosticBag.GetInstance(_diagnostics);
                 attribute.Value = GetEscapedDocumentationCommentId(crefSyntax, binder, crefDiagnostics); // NOTE: mutation (element must be a copy)
                 RecordBindingDiagnostics(crefDiagnostics, sourceLocation); // Respects DocumentationMode.
                 crefDiagnostics.Free();
@@ -535,7 +535,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(memberDeclSyntax != null,
                     "Why are we processing a documentation comment that is not attached to a member declaration?");
 
-                var nameDiagnostics = BindingDiagnosticBag.GetInstance(_diagnostics);
+                nameDiagnostics := BindingDiagnosticBag.GetInstance(_diagnostics);
                 Binder binder = MakeNameBinder(isParameter, isTypeParameterRef, _memberSymbol, _compilation, originatingSyntax.SyntaxTree);
                 DocumentationCommentCompiler.BindName(attrSyntax, binder, _memberSymbol, ref _documentedParameters, ref _documentedTypeParameters, nameDiagnostics);
                 RecordBindingDiagnostics(nameDiagnostics, sourceLocation); // Respects DocumentationMode.

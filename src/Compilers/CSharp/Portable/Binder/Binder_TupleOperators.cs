@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (@operator.InfoKind == TupleBinaryOperatorInfoKind.Multiple && expr is BoundTupleLiteral tuple)
                 {
                     // Although the tuple will remain typeless, we'll give elements converted types as possible
-                    var multiple = (TupleBinaryOperatorInfo.Multiple)@operator;
+                    multiple := (TupleBinaryOperatorInfo.Multiple)@operator;
                     if (multiple.Operators.Length == 0)
                     {
                         return BindToNaturalType(expr, diagnostics, reportNoTargetType: false);
@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     int length = arguments.Length;
                     Debug.Assert(length == multiple.Operators.Length);
 
-                    var builder = ArrayBuilder<BoundExpression>.GetInstance(length);
+                    builder := ArrayBuilder<BoundExpression>.GetInstance(length);
                     for (int i = 0; i < length; i++)
                     {
                         builder.Add(ApplyConvertedTypes(arguments[i], multiple.Operators[i], isRight, diagnostics));
@@ -240,15 +240,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             int length = leftParts.Length;
             Debug.Assert(length == rightParts.Length);
 
-            var operatorsBuilder = ArrayBuilder<TupleBinaryOperatorInfo>.GetInstance(length);
+            operatorsBuilder := ArrayBuilder<TupleBinaryOperatorInfo>.GetInstance(length);
 
             for (int i = 0; i < length; i++)
             {
                 operatorsBuilder.Add(BindTupleBinaryOperatorInfo(node, kind, leftParts[i], rightParts[i], diagnostics));
             }
 
-            var compilation = this.Compilation;
-            var operators = operatorsBuilder.ToImmutableAndFree();
+            compilation := this.Compilation;
+            operators := operatorsBuilder.ToImmutableAndFree();
 
             // typeless tuple literals are not nullable
             bool leftNullable = left.Type?.IsNullableType() == true;

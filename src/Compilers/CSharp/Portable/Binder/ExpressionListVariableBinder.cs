@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {
-            var builder = ArrayBuilder<LocalSymbol>.GetInstance();
+            builder := ArrayBuilder<LocalSymbol>.GetInstance();
             ExpressionVariableFinder.FindExpressionVariables(this, builder, _expressions);
             return builder.ToImmutableAndFree();
         }

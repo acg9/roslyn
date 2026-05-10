@@ -1386,7 +1386,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return default(SeparatedSyntaxList<TNode>);
             }
 
-            var collection = nodes as ICollection<TNode>;
+            collection := nodes as ICollection<TNode>;
 
             if (collection != null && collection.Count == 0)
             {
@@ -1400,18 +1400,18 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return default(SeparatedSyntaxList<TNode>);
                 }
 
-                var firstNode = enumerator.Current;
+                firstNode := enumerator.Current;
 
                 if (!enumerator.MoveNext())
                 {
                     return SingletonSeparatedList<TNode>(firstNode);
                 }
 
-                var builder = new SeparatedSyntaxListBuilder<TNode>(collection != null ? collection.Count : 3);
+                builder := new SeparatedSyntaxListBuilder<TNode>(collection != null ? collection.Count : 3);
 
                 builder.Add(firstNode);
 
-                var commaToken = Token(SyntaxKind.CommaToken);
+                commaToken := Token(SyntaxKind.CommaToken);
 
                 do
                 {
@@ -1509,7 +1509,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             for (int i = 0, n = list.Count; i < n; i++)
             {
-                var element = list[i];
+                element := list[i];
                 if (element.IsNode && !(element.AsNode() is TNode))
                 {
                     return false;
@@ -1523,7 +1523,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             for (int i = 0, n = list.Count; i < n; i++)
             {
-                var element = list[i];
+                element := list[i];
                 if (element.IsToken == ((i & 1) == 0))
                 {
                     return false;
@@ -1686,10 +1686,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             using (var lexer = new InternalSyntax.Lexer(MakeSourceText(text, offset), options ?? CSharpParseOptions.Default))
             {
-                var position = initialTokenPosition;
+                position := initialTokenPosition;
                 while (true)
                 {
-                    var token = lexer.Lex(InternalSyntax.LexerMode.Syntax);
+                    token := lexer.Lex(InternalSyntax.LexerMode.Syntax);
                     yield return new SyntaxToken(parent: null, token: token, position: position, index: 0);
 
                     position += token.FullWidth;
@@ -1720,7 +1720,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseName();
+                node := parser.ParseName();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<NameSyntax>(node, lexer.Options);
             }
@@ -1744,7 +1744,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseTypeName();
+                node := parser.ParseTypeName();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<TypeSyntax>(node, lexer.Options);
             }
@@ -1763,7 +1763,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseExpression();
+                node := parser.ParseExpression();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<ExpressionSyntax>(node, lexer.Options);
             }
@@ -1782,7 +1782,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseStatement();
+                node := parser.ParseStatement();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<StatementSyntax>(node, lexer.Options);
             }
@@ -1802,7 +1802,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseMemberDeclaration();
+                node := parser.ParseMemberDeclaration();
                 if (node == null)
                 {
                     return null;
@@ -1827,7 +1827,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseCompilationUnit();
+                node := parser.ParseCompilationUnit();
                 return CreateRed<CompilationUnitSyntax>(node, lexer.Options);
             }
         }
@@ -1845,7 +1845,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseParenthesizedParameterList(forExtensionOrUnion: false);
+                node := parser.ParseParenthesizedParameterList(forExtensionOrUnion: false);
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<ParameterListSyntax>(node, lexer.Options);
             }
@@ -1864,7 +1864,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseBracketedParameterList();
+                node := parser.ParseBracketedParameterList();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<BracketedParameterListSyntax>(node, lexer.Options);
             }
@@ -1883,7 +1883,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseParenthesizedArgumentList();
+                node := parser.ParseParenthesizedArgumentList();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<ArgumentListSyntax>(node, lexer.Options);
             }
@@ -1902,7 +1902,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             using (var lexer = MakeLexer(text, offset, (CSharpParseOptions?)options))
             using (var parser = MakeParser(lexer))
             {
-                var node = parser.ParseBracketedArgumentList();
+                node := parser.ParseBracketedArgumentList();
                 if (consumeFullText) node = parser.ConsumeUnexpectedTokens(node);
                 return CreateRed<BracketedArgumentListSyntax>(node, lexer.Options);
             }
@@ -1936,7 +1936,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static TSyntax CreateRed<TSyntax>(InternalSyntax.CSharpSyntaxNode green, CSharpParseOptions options)
             where TSyntax : CSharpSyntaxNode
         {
-            var red = (TSyntax)green.CreateRed();
+            red := (TSyntax)green.CreateRed();
             Debug.Assert(red._syntaxTree is null);
 #pragma warning disable RS0030 // Do not use banned APIs (CreateWithoutClone is intended to be used from this call site)
             red._syntaxTree = CSharpSyntaxTree.CreateWithoutClone(red, options);
@@ -2104,13 +2104,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node != null)
             {
-                var parent = node.Parent as ExpressionSyntax;
+                parent := node.Parent as ExpressionSyntax;
                 if (parent != null && (node.Kind() == SyntaxKind.IdentifierName || node.Kind() == SyntaxKind.GenericName))
                 {
                     switch (parent.Kind())
                     {
                         case SyntaxKind.QualifiedName:
-                            var qualifiedName = (QualifiedNameSyntax)parent;
+                            qualifiedName := (QualifiedNameSyntax)parent;
                             if (qualifiedName.Right == node)
                             {
                                 return qualifiedName;
@@ -2118,7 +2118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                             break;
                         case SyntaxKind.AliasQualifiedName:
-                            var aliasQualifiedName = (AliasQualifiedNameSyntax)parent;
+                            aliasQualifiedName := (AliasQualifiedNameSyntax)parent;
                             if (aliasQualifiedName.Name == node)
                             {
                                 return aliasQualifiedName;
@@ -2290,7 +2290,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal static ConditionalAccessExpressionSyntax? FindConditionalAccessNodeForBinding(CSharpSyntaxNode node)
         {
-            var currentNode = node;
+            currentNode := node;
 
             Debug.Assert(currentNode.Kind() == SyntaxKind.MemberBindingExpression ||
                          currentNode.Kind() == SyntaxKind.ElementBindingExpression);
@@ -2304,7 +2304,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (currentNode.Kind() == SyntaxKind.ConditionalAccessExpression)
                 {
-                    var condAccess = (ConditionalAccessExpressionSyntax)currentNode;
+                    condAccess := (ConditionalAccessExpressionSyntax)currentNode;
                     if (condAccess.OperatorToken.EndPosition == node.Position)
                     {
                         return condAccess;
@@ -2328,26 +2328,26 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case SyntaxKind.SimpleMemberAccessExpression:
                     case SyntaxKind.PointerMemberAccessExpression:
-                        var max = (MemberAccessExpressionSyntax)expression;
+                        max := (MemberAccessExpressionSyntax)expression;
                         if (max.Name.Kind() == SyntaxKind.GenericName)
                         {
-                            var gn = (GenericNameSyntax)max.Name;
+                            gn := (GenericNameSyntax)max.Name;
                             return SyntaxFactory.BinaryExpression(expression.Kind(), max.Expression, max.OperatorToken, SyntaxFactory.IdentifierName(gn.Identifier));
                         }
                         break;
                     case SyntaxKind.QualifiedName:
-                        var qn = (QualifiedNameSyntax)expression;
+                        qn := (QualifiedNameSyntax)expression;
                         if (qn.Right.Kind() == SyntaxKind.GenericName)
                         {
-                            var gn = (GenericNameSyntax)qn.Right;
+                            gn := (GenericNameSyntax)qn.Right;
                             return SyntaxFactory.QualifiedName(qn.Left, qn.DotToken, SyntaxFactory.IdentifierName(gn.Identifier));
                         }
                         break;
                     case SyntaxKind.AliasQualifiedName:
-                        var an = (AliasQualifiedNameSyntax)expression;
+                        an := (AliasQualifiedNameSyntax)expression;
                         if (an.Name.Kind() == SyntaxKind.GenericName)
                         {
-                            var gn = (GenericNameSyntax)an.Name;
+                            gn := (GenericNameSyntax)an.Name;
                             return SyntaxFactory.AliasQualifiedName(an.Alias, an.ColonColonToken, SyntaxFactory.IdentifierName(gn.Identifier));
                         }
                         break;
@@ -2376,7 +2376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var compilation = (CompilationUnitSyntax)tree.GetRoot();
+            compilation := (CompilationUnitSyntax)tree.GetRoot();
             if (!compilation.HasErrors)
             {
                 return true;
@@ -2393,7 +2393,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var lastNode = compilation.ChildNodes().LastOrDefault();
+            lastNode := compilation.ChildNodes().LastOrDefault();
             if (lastNode == null)
             {
                 return true;
@@ -2414,12 +2414,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             // should have a closing token (semicolon, closing brace or bracket) to be complete.
             if (!lastNode.IsKind(SyntaxKind.GlobalStatement))
             {
-                var closingToken = lastNode.GetLastToken(includeZeroWidth: true, includeSkipped: true, includeDirectives: true, includeDocumentationComments: true);
+                closingToken := lastNode.GetLastToken(includeZeroWidth: true, includeSkipped: true, includeDirectives: true, includeDocumentationComments: true);
                 return !closingToken.IsMissing;
             }
 
-            var globalStatement = (GlobalStatementSyntax)lastNode;
-            var token = lastNode.GetLastToken(includeZeroWidth: true, includeSkipped: true, includeDirectives: true, includeDocumentationComments: true);
+            globalStatement := (GlobalStatementSyntax)lastNode;
+            token := lastNode.GetLastToken(includeZeroWidth: true, includeSkipped: true, includeDirectives: true, includeDocumentationComments: true);
 
             if (token.IsMissing)
             {
@@ -2769,8 +2769,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         public static SwitchStatementSyntax SwitchStatement(ExpressionSyntax expression, SyntaxList<SwitchSectionSyntax> sections)
         {
             bool needsParens = !(expression is TupleExpressionSyntax);
-            var openParen = needsParens ? SyntaxFactory.Token(SyntaxKind.OpenParenToken) : default;
-            var closeParen = needsParens ? SyntaxFactory.Token(SyntaxKind.CloseParenToken) : default;
+            openParen := needsParens ? SyntaxFactory.Token(SyntaxKind.OpenParenToken) : default;
+            closeParen := needsParens ? SyntaxFactory.Token(SyntaxKind.CloseParenToken) : default;
             return SyntaxFactory.SwitchStatement(
                 attributeLists: default,
                 SyntaxFactory.Token(SyntaxKind.SwitchKeyword),

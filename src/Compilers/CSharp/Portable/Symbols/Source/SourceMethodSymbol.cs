@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (!returnTypeSyntax.HasErrors)
             {
-                var refKeyword = returnTypeSyntax.GetFirstToken();
+                refKeyword := returnTypeSyntax.GetFirstToken();
                 diagnostics.Add(ErrorCode.ERR_UnexpectedToken, refKeyword.GetLocation(), refKeyword.ToString());
             }
         }
@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal void ReportAsyncParameterErrors(BindingDiagnosticBag diagnostics, Location location)
         {
-            var parameters = this.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: true);
+            parameters := this.GetParametersIncludingExtensionParameter(skipExtensionIfStatic: true);
 
             foreach (var parameter in parameters)
             {
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeIsReadOnlyAttribute(target));
             }
 
-            var compilation = target.DeclaringCompilation;
+            compilation := target.DeclaringCompilation;
 
             if (target.CallerUnsafeMode == CallerUnsafeMode.Explicit)
             {

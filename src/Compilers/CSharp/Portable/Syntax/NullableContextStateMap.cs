@@ -43,7 +43,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         internal static NullableContextStateMap Create(SyntaxTree tree)
         {
-            var contexts = GetContexts(tree);
+            contexts := GetContexts(tree);
             return new NullableContextStateMap(contexts);
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         private int GetContextStateIndex(int position)
         {
             // PositionComparer only checks the position, not the states
-            var searchContext = new NullableContextState(position, warningsState: NullableContextState.State.Unknown, annotationsState: NullableContextState.State.Unknown);
+            searchContext := new NullableContextState(position, warningsState: NullableContextState.State.Unknown, annotationsState: NullableContextState.State.Unknown);
             int index = _contexts.BinarySearch(searchContext, PositionComparer.Instance);
             if (index < 0)
             {
@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         internal NullableContextState GetContextState(int position)
         {
-            var index = GetContextStateIndex(position);
+            index := GetContextStateIndex(position);
             return index < 0 ? GetContextForFileStart() : _contexts[index];
         }
 
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             bool hasUnknownOrExplicitlyRestored = false;
             int index = GetContextStateIndex(span.Start);
-            var context = index < 0 ? GetContextForFileStart() : _contexts[index];
+            context := index < 0 ? GetContextForFileStart() : _contexts[index];
             Debug.Assert(context.Position <= span.Start);
 
             while (true)
@@ -135,22 +135,22 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         private static ImmutableArray<NullableContextState> GetContexts(SyntaxTree tree)
         {
-            var previousContext = GetContextForFileStart();
+            previousContext := GetContextForFileStart();
 
-            var builder = ArrayBuilder<NullableContextState>.GetInstance();
+            builder := ArrayBuilder<NullableContextState>.GetInstance();
             foreach (var d in tree.GetRoot().GetDirectives())
             {
                 if (d.Kind() != SyntaxKind.NullableDirectiveTrivia)
                 {
                     continue;
                 }
-                var nn = (NullableDirectiveTriviaSyntax)d;
+                nn := (NullableDirectiveTriviaSyntax)d;
                 if (nn.SettingToken.IsMissing || !nn.IsActive)
                 {
                     continue;
                 }
 
-                var position = nn.EndPosition;
+                position := nn.EndPosition;
                 var setting = (nn.SettingToken.Kind()) switch
                 {
                     SyntaxKind.EnableKeyword => NullableContextState.State.Enabled,

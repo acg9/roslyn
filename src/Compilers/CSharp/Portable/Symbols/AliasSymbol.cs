@@ -79,14 +79,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             // We can pass basesBeingResolved: null because base type cycles can't cross
             // submission boundaries - there's no way to depend on a subsequent submission.
-            var previousTarget = Target;
+            previousTarget := Target;
             if (previousTarget.Kind != SymbolKind.Namespace)
             {
                 return this;
             }
 
-            var expandedGlobalNamespace = compilation.GlobalNamespace;
-            var expandedNamespace = Imports.ExpandPreviousSubmissionNamespace((NamespaceSymbol)previousTarget, expandedGlobalNamespace);
+            expandedGlobalNamespace := compilation.GlobalNamespace;
+            expandedNamespace := Imports.ExpandPreviousSubmissionNamespace((NamespaceSymbol)previousTarget, expandedGlobalNamespace);
             return new AliasSymbolFromResolvedTarget(expandedNamespace, Name, ContainingSymbol, _locations, _isExtern);
         }
 
@@ -233,11 +233,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal void CheckConstraints(BindingDiagnosticBag diagnostics)
         {
-            var target = this.Target as TypeSymbol;
+            target := this.Target as TypeSymbol;
             if ((object?)target != null && Locations.Length > 0)
             {
-                var corLibrary = this.ContainingAssembly.CorLibrary;
-                var conversions = corLibrary.TypeConversions;
+                corLibrary := this.ContainingAssembly.CorLibrary;
+                conversions := corLibrary.TypeConversions;
                 target.CheckAllConstraints(DeclaringCompilation, conversions, GetFirstLocation(), diagnostics);
             }
         }
@@ -317,7 +317,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 // the target is not yet bound. If it is an ordinary alias, bind the target
                 // symbol. If it is an extern alias then find the target in the list of metadata references.
-                var newDiagnostics = BindingDiagnosticBag.GetInstance();
+                newDiagnostics := BindingDiagnosticBag.GetInstance();
 
                 NamespaceOrTypeSymbol symbol = this.IsExtern
                     ? ResolveExternAliasTarget(newDiagnostics)
@@ -383,8 +383,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 MessageID.IDS_FeatureUsingTypeAlias.CheckFeatureAvailability(diagnostics, usingDirective.NamespaceOrType);
             }
 
-            var syntax = usingDirective.NamespaceOrType;
-            var flags = BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks;
+            syntax := usingDirective.NamespaceOrType;
+            flags := BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks;
             if (usingDirective.UnsafeKeyword != default)
             {
                 this.CheckUnsafeModifier(DeclarationModifiers.Unsafe, usingDirective.UnsafeKeyword.GetLocation(), diagnostics);
@@ -404,7 +404,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 .GetBinder(syntax)
                 .WithAdditionalFlags(flags);
 
-            var annotatedNamespaceOrType = declarationBinder.BindNamespaceOrTypeSymbol(syntax, diagnostics, basesBeingResolved);
+            annotatedNamespaceOrType := declarationBinder.BindNamespaceOrTypeSymbol(syntax, diagnostics, basesBeingResolved);
 
             // `using X = RefType?;` is not legal.
             if (usingDirective.NamespaceOrType is NullableTypeSyntax nullableType &&
@@ -414,7 +414,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_BadNullableReferenceTypeInUsingAlias, nullableType.QuestionToken.GetLocation());
             }
 
-            var namespaceOrType = annotatedNamespaceOrType.NamespaceOrTypeSymbol;
+            namespaceOrType := annotatedNamespaceOrType.NamespaceOrTypeSymbol;
             if (namespaceOrType is TypeSymbol { IsNativeIntegerWrapperType: true } &&
                 (usingDirective.NamespaceOrType.IsNint || usingDirective.NamespaceOrType.IsNuint))
             {

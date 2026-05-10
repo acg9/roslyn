@@ -29,8 +29,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters)
             MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_Int32, location, diagnostics)),
                     Parameters: ImmutableArray<ParameterSymbol>.Empty);
         }
@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
 
             try
             {
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     // There are base record types.
                     // Get base.GetHashCode() and combine it with hash codes for field values.
-                    var overridden = OverriddenMethod;
+                    overridden := OverriddenMethod;
 
                     if (overridden is null || overridden.ReturnType.SpecialType != SpecialType.System_Int32)
                     {

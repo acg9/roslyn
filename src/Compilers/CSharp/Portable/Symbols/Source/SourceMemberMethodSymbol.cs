@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 get
                 {
                     int bits = _flags;
-                    var value = (bits & ReturnsVoidBit) != 0;
+                    value := (bits & ReturnsVoidBit) != 0;
                     Debug.Assert((bits & ReturnsVoidIsSetBit) != 0);
                     return value;
                 }
@@ -358,7 +358,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 ErrorCode.ERR_BadVisOpReturn :
                 ErrorCode.ERR_BadVisReturnType;
 
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
             if (!this.IsNoMoreVisibleThan(returnType, ref useSiteInfo))
             {
                 // Inconsistent accessibility: return type '{1}' is less accessible than method '{0}'
@@ -474,7 +474,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         // By setting StartMethodChecks, we've committed to doing the checks and setting
                         // FinishMethodChecks.  So there is no cancellation supported between one and the other.
-                        var diagnostics = BindingDiagnosticBag.GetInstance();
+                        diagnostics := BindingDiagnosticBag.GetInstance();
                         try
                         {
                             MethodChecks(diagnostics);
@@ -706,7 +706,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var cc = IsVararg ? Cci.CallingConvention.ExtraArguments : Cci.CallingConvention.Default;
+                cc := IsVararg ? Cci.CallingConvention.ExtraArguments : Cci.CallingConvention.Default;
 
                 if (IsGenericMethod)
                 {
@@ -884,7 +884,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var incompletePart = state.NextIncompletePart;
+                incompletePart := state.NextIncompletePart;
                 switch (incompletePart)
                 {
                     case CompletionPart.Attributes:
@@ -896,7 +896,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         break;
 
                     case CompletionPart.Type:
-                        var unusedType = this.ReturnTypeWithAnnotations;
+                        unusedType := this.ReturnTypeWithAnnotations;
                         state.NotePartComplete(CompletionPart.Type);
                         break;
 
@@ -959,7 +959,7 @@ done:
 
         protected sealed override void NoteAttributesComplete(bool forReturnType)
         {
-            var part = forReturnType ? CompletionPart.ReturnTypeAttributes : CompletionPart.Attributes;
+            part := forReturnType ? CompletionPart.ReturnTypeAttributes : CompletionPart.Attributes;
             state.NotePartComplete(part);
         }
 
@@ -967,7 +967,7 @@ done:
         {
             base.AfterAddingTypeMembersChecks(conversions, diagnostics);
 
-            var compilation = this.DeclaringCompilation;
+            compilation := this.DeclaringCompilation;
 
             if (IsDeclaredReadOnly && !ContainingType.IsReadOnly)
             {
@@ -976,7 +976,7 @@ done:
 
             if (CallerUnsafeMode == CallerUnsafeMode.Explicit)
             {
-                var modifiers = (syntaxReferenceOpt?.GetSyntax() as MemberDeclarationSyntax)?.Modifiers ?? default;
+                modifiers := (syntaxReferenceOpt?.GetSyntax() as MemberDeclarationSyntax)?.Modifiers ?? default;
                 compilation.EnsureRequiresUnsafeAttributeExists(diagnostics, modifiers.GetUnsafeOrExternLocation(_location), modifyCompilation: true);
             }
 
@@ -1002,13 +1002,13 @@ done:
 
         internal static byte? ComputeNullableContextValue(MethodSymbol method)
         {
-            var compilation = method.DeclaringCompilation;
+            compilation := method.DeclaringCompilation;
             if (!compilation.ShouldEmitNullableAttributes(method))
             {
                 return null;
             }
 
-            var builder = new MostCommonNullableValueBuilder();
+            builder := new MostCommonNullableValueBuilder();
             foreach (var typeParameter in method.TypeParameters)
             {
                 typeParameter.GetCommonNullableValues(compilation, ref builder);

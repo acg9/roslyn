@@ -50,8 +50,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
             CSharpCompilation compilation = this.DeclaringCompilation;
-            var typeWithAnnotations = this.TypeWithAnnotations;
-            var type = typeWithAnnotations.Type;
+            typeWithAnnotations := this.TypeWithAnnotations;
+            type := typeWithAnnotations.Type;
 
             // do not emit CompilerGenerated attributes for fields inside compiler generated types:
             if (!_containingType.IsImplicitlyDeclared)

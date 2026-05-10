@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (_symbol.TryGetInstanceExtensionParameter(out ParameterSymbol extensionParameter))
                 GetOrCreateSlot(extensionParameter);
 
-            var result = base.Scan(ref badRegion);
+            result := base.Scan(ref badRegion);
             return result;
         }
 

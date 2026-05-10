@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 if ((theBits & PackedFlags.HasMaybeNullAttribute) != 0) value |= FlowAnalysisAnnotations.MaybeNull;
                 if ((theBits & PackedFlags.HasNotNullAttribute) != 0) value |= FlowAnalysisAnnotations.NotNull;
 
-                var result = (theBits & FlowAnalysisAnnotationsCompletionBit) != 0;
+                result := (theBits & FlowAnalysisAnnotationsCompletionBit) != 0;
                 Debug.Assert(value == 0 || result);
                 return result;
             }
@@ -307,7 +307,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (_lazyType == null)
             {
-                var moduleSymbol = _containingType.ContainingPEModule;
+                moduleSymbol := _containingType.ContainingPEModule;
                 FieldInfo<TypeSymbol> fieldInfo = new MetadataDecoder(moduleSymbol, _containingType).DecodeFieldSignature(_handle);
                 TypeSymbol typeSymbol = fieldInfo.Type;
                 ImmutableArray<CustomModifier> customModifiersArray = CSharpCustomModifier.Convert(fieldInfo.CustomModifiers);
@@ -316,7 +316,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 typeSymbol = NativeIntegerTypeDecoder.TransformType(typeSymbol, _handle, moduleSymbol, _containingType);
 
                 // We start without annotations
-                var type = TypeWithAnnotations.Create(typeSymbol, customModifiers: customModifiersArray);
+                type := TypeWithAnnotations.Create(typeSymbol, customModifiers: customModifiersArray);
 
                 // Decode nullable before tuple types to avoid converting between
                 // NamedTypeSymbol and TupleTypeSymbol unnecessarily.
@@ -354,8 +354,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             PEModuleSymbol containingPEModule = this.ContainingPEModule;
             if (containingPEModule.Module.HasFixedBufferAttribute(_handle, out elementTypeName, out bufferSize))
             {
-                var decoder = new MetadataDecoder(containingPEModule);
-                var elementType = decoder.GetTypeSymbolForSerializedType(elementTypeName);
+                decoder := new MetadataDecoder(containingPEModule);
+                elementType := decoder.GetTypeSymbolForSerializedType(elementTypeName);
                 if (elementType.FixedBufferElementSizeInBytes() != 0)
                 {
                     fixedSize = bufferSize;
@@ -532,7 +532,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var access = Accessibility.Private;
+                access := Accessibility.Private;
 
                 switch (_flags & FieldAttributes.FieldAccessMask)
                 {
@@ -582,7 +582,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             if (RoslynImmutableInterlocked.VolatileRead(in _lazyCustomAttributes).IsDefault)
             {
-                var attributes = loadAndFilterAttributes(out var hasRequiredMemberAttribute);
+                attributes := loadAndFilterAttributes(out var hasRequiredMemberAttribute);
                 _packedFlags.SetHasRequiredMemberAttribute(hasRequiredMemberAttribute);
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyCustomAttributes, attributes);
             }
@@ -592,13 +592,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 hasRequiredMemberAttribute = false;
 
-                var containingModule = ContainingPEModule;
+                containingModule := ContainingPEModule;
                 if (!containingModule.TryGetNonEmptyCustomAttributes(_handle, out var customAttributeHandles))
                 {
                     return [];
                 }
 
-                var filterOutDecimalConstantAttribute = FilterOutDecimalConstantAttribute();
+                filterOutDecimalConstantAttribute := FilterOutDecimalConstantAttribute();
                 using var builder = TemporaryArray<CSharpAttributeData>.Empty;
                 foreach (var handle in customAttributeHandles)
                 {
@@ -636,7 +636,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             // Yield hidden attributes last, order might be important.
             if (FilterOutDecimalConstantAttribute())
             {
-                var containingPEModuleSymbol = _containingType.ContainingPEModule;
+                containingPEModuleSymbol := _containingType.ContainingPEModule;
                 yield return new PEAttributeData(containingPEModuleSymbol,
                                           containingPEModuleSymbol.Module.FindLastTargetAttribute(_handle, AttributeDescription.DecimalConstantAttribute).Handle);
             }
@@ -668,7 +668,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             void deriveCompilerFeatureRequiredUseSiteInfo(ref UseSiteInfo<AssemblySymbol> result)
             {
-                var containingType = (PENamedTypeSymbol)ContainingType;
+                containingType := (PENamedTypeSymbol)ContainingType;
                 PEModuleSymbol containingPEModule = _containingType.ContainingPEModule;
                 var diag = PEUtilities.DeriveCompilerFeatureRequiredAttributeDiagnostic(
                     this,

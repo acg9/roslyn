@@ -399,7 +399,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (isVar)
                 {
                     bool free = false;
-                    var localTypeInferenceInProgress = s_LocalTypeInferenceInProgress;
+                    localTypeInferenceInProgress := s_LocalTypeInferenceInProgress;
 
                     if (localTypeInferenceInProgress is null)
                     {
@@ -407,7 +407,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         localTypeInferenceInProgress = (s_LocalTypeInferenceInProgress = PooledHashSet<LocalTypeInferenceInProgressKey>.GetInstance());
                     }
 
-                    var key = new LocalTypeInferenceInProgressKey(this, reference);
+                    key := new LocalTypeInferenceInProgressKey(this, reference);
 
                     if (!localTypeInferenceInProgress.Add(key))
                     {
@@ -672,10 +672,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (this.IsConst && _constantTuple == null)
                 {
-                    var value = Microsoft.CodeAnalysis.ConstantValue.Bad;
-                    var diagnostics = BindingDiagnosticBag.GetInstance();
+                    value := Microsoft.CodeAnalysis.ConstantValue.Bad;
+                    diagnostics := BindingDiagnosticBag.GetInstance();
                     Debug.Assert(inProgress != this);
-                    var type = this.Type;
+                    type := this.Type;
                     if (boundInitValue == null)
                     {
                         boundInitValue = this._initializerBinder.BindVariableOrAutoPropInitializerValue(_initializer, this.RefKind, type, diagnostics);
@@ -774,7 +774,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (_deconstruction.Kind())
                 {
                     case SyntaxKind.SimpleAssignmentExpression:
-                        var assignment = (AssignmentExpressionSyntax)_deconstruction;
+                        assignment := (AssignmentExpressionSyntax)_deconstruction;
                         Debug.Assert(assignment.IsDeconstruction());
                         DeclarationExpressionSyntax? declaration = null;
                         ExpressionSyntax? expression = null;
@@ -836,7 +836,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     case SyntaxKind.ThisConstructorInitializer:
                     case SyntaxKind.BaseConstructorInitializer:
-                        var initializer = (ConstructorInitializerSyntax)_nodeToBind;
+                        initializer := (ConstructorInitializerSyntax)_nodeToBind;
                         _nodeBinder.BindConstructorInitializer(initializer, BindingDiagnosticBag.Discarded);
                         break;
                     case SyntaxKind.PrimaryConstructorBaseType:
@@ -865,8 +865,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         _nodeBinder.BindDeclaratorArguments((VariableDeclaratorSyntax)_nodeToBind, BindingDiagnosticBag.Discarded);
                         break;
                     case SyntaxKind.SwitchExpressionArm:
-                        var arm = (SwitchExpressionArmSyntax)_nodeToBind;
-                        var armBinder = (SwitchExpressionArmBinder)_nodeBinder;
+                        arm := (SwitchExpressionArmSyntax)_nodeToBind;
+                        armBinder := (SwitchExpressionArmBinder)_nodeBinder;
                         armBinder.BindSwitchExpressionArm(arm, BindingDiagnosticBag.Discarded);
                         break;
                     case SyntaxKind.GotoCaseStatement:

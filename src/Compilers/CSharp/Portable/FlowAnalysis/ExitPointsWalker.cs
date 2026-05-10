@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static ImmutableArray<StatementSyntax> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion)
         {
-            var walker = new ExitPointsWalker(compilation, member, node, firstInRegion, lastInRegion);
+            walker := new ExitPointsWalker(compilation, member, node, firstInRegion, lastInRegion);
             try
             {
                 return walker.Analyze();

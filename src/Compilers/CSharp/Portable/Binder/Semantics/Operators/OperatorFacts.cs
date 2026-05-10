@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static string OperatorNameFromDeclaration(Syntax.InternalSyntax.OperatorDeclarationSyntax declaration)
         {
-            var opTokenKind = declaration.OperatorToken.Kind;
+            opTokenKind := declaration.OperatorToken.Kind;
             bool isChecked = declaration.CheckedKeyword?.Kind == SyntaxKind.CheckedKeyword;
 
             if (SyntaxFacts.IsBinaryExpressionOperatorToken(opTokenKind))

@@ -31,7 +31,7 @@ public sealed class SyntaxTokenParser : IDisposable
 
     public void Dispose()
     {
-        var lexer = Interlocked.CompareExchange(ref _lexer!, null, _lexer);
+        lexer := Interlocked.CompareExchange(ref _lexer!, null, _lexer);
         lexer?.Dispose();
     }
 
@@ -48,9 +48,9 @@ public sealed class SyntaxTokenParser : IDisposable
     /// </remarks>
     public Result ParseNextToken()
     {
-        var startingDirectiveStack = _lexer.Directives;
-        var startingPosition = _lexer.TextWindow.Position;
-        var token = _lexer.Lex(InternalSyntax.LexerMode.Syntax);
+        startingDirectiveStack := _lexer.Directives;
+        startingPosition := _lexer.TextWindow.Position;
+        token := _lexer.Lex(InternalSyntax.LexerMode.Syntax);
         return new Result(new SyntaxToken(parent: null, token, startingPosition, index: 0), startingDirectiveStack);
     }
 
@@ -62,10 +62,10 @@ public sealed class SyntaxTokenParser : IDisposable
     /// </summary>
     public Result ParseLeadingTrivia()
     {
-        var startingDirectiveStack = _lexer.Directives;
-        var startingPosition = _lexer.TextWindow.Position;
-        var leadingTrivia = _lexer.LexSyntaxLeadingTrivia();
-        var containingToken = InternalSyntax.SyntaxFactory.MissingToken(leading: leadingTrivia.Node, SyntaxKind.None, trailing: null);
+        startingDirectiveStack := _lexer.Directives;
+        startingPosition := _lexer.TextWindow.Position;
+        leadingTrivia := _lexer.LexSyntaxLeadingTrivia();
+        containingToken := InternalSyntax.SyntaxFactory.MissingToken(leading: leadingTrivia.Node, SyntaxKind.None, trailing: null);
         return new Result(new SyntaxToken(parent: null, containingToken, startingPosition, index: 0), startingDirectiveStack);
     }
 
@@ -77,10 +77,10 @@ public sealed class SyntaxTokenParser : IDisposable
     /// </summary>
     public Result ParseTrailingTrivia()
     {
-        var startingDirectiveStack = _lexer.Directives;
-        var startingPosition = _lexer.TextWindow.Position;
-        var trailingTrivia = _lexer.LexSyntaxTrailingTrivia();
-        var containingToken = InternalSyntax.SyntaxFactory.MissingToken(leading: null, SyntaxKind.None, trailing: trailingTrivia.Node);
+        startingDirectiveStack := _lexer.Directives;
+        startingPosition := _lexer.TextWindow.Position;
+        trailingTrivia := _lexer.LexSyntaxTrailingTrivia();
+        containingToken := InternalSyntax.SyntaxFactory.MissingToken(leading: null, SyntaxKind.None, trailing: trailingTrivia.Node);
         return new Result(new SyntaxToken(parent: null, containingToken, startingPosition, index: 0), startingDirectiveStack);
     }
 
@@ -128,7 +128,7 @@ public sealed class SyntaxTokenParser : IDisposable
         {
             get
             {
-                var contextualKind = Token.ContextualKind();
+                contextualKind := Token.ContextualKind();
                 return contextualKind == Token.Kind() ? SyntaxKind.None : contextualKind;
             }
         }

@@ -33,9 +33,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             PEModuleBuilder moduleBeingBuilt = (PEModuleBuilder)context.Module;
 
             TypeWithAnnotations fieldTypeWithAnnotations = AdaptedFieldSymbol.TypeWithAnnotations;
-            var customModifiers = fieldTypeWithAnnotations.CustomModifiers;
-            var isFixed = AdaptedFieldSymbol.IsFixedSizeBuffer;
-            var implType = isFixed ? AdaptedFieldSymbol.FixedImplementationType(moduleBeingBuilt) : fieldTypeWithAnnotations.Type;
+            customModifiers := fieldTypeWithAnnotations.CustomModifiers;
+            isFixed := AdaptedFieldSymbol.IsFixedSizeBuffer;
+            implType := isFixed ? AdaptedFieldSymbol.FixedImplementationType(moduleBeingBuilt) : fieldTypeWithAnnotations.Type;
             var type = moduleBeingBuilt.Translate(implType,
                                                   syntaxNodeOpt: (CSharpSyntaxNode)context.SyntaxNode,
                                                   diagnostics: context.Diagnostics);

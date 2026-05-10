@@ -54,7 +54,7 @@ internal sealed class ModuleCancellationInstrumenter(
             return false;
         }
 
-        var throwMethod = factory.WellKnownMethod(WellKnownMember.System_Threading_CancellationToken__ThrowIfCancellationRequested, isOptional: true);
+        throwMethod := factory.WellKnownMethod(WellKnownMember.System_Threading_CancellationToken__ThrowIfCancellationRequested, isOptional: true);
         if (throwMethod is null)
         {
             return false;
@@ -68,8 +68,8 @@ internal sealed class ModuleCancellationInstrumenter(
     {
         base.InstrumentBlock(original, rewriter, ref additionalLocals, out prologue, out epilogue, out instrumentation);
 
-        var isMethodBody = rewriter.CurrentMethodBody == original;
-        var isLambdaBody = rewriter.CurrentLambdaBody == original;
+        isMethodBody := rewriter.CurrentMethodBody == original;
+        isLambdaBody := rewriter.CurrentLambdaBody == original;
 
         // Don't instrument blocks that are not a method or lambda body
         if (!isMethodBody && !isLambdaBody)
@@ -159,9 +159,9 @@ internal sealed class ModuleCancellationInstrumenter(
         }
 
         // Look for an overload of the definition with no type parameter substitutions.
-        var methodDefinition = method.OriginalDefinition;
+        methodDefinition := method.OriginalDefinition;
 
-        var methodsSetsRequiredMembers = methodDefinition.HasSetsRequiredMembers;
+        methodsSetsRequiredMembers := methodDefinition.HasSetsRequiredMembers;
 
         foreach (var member in methodDefinition.ContainingType.GetMembers(method.Name))
         {
@@ -190,7 +190,7 @@ internal sealed class ModuleCancellationInstrumenter(
                 lastParamType.Equals(_throwMethod.ContainingType, TypeCompareKind.ConsiderEverything) &&
                 (!methodsSetsRequiredMembers || overload.HasSetsRequiredMembers))
             {
-                var typeMap = (methodDefinition.Arity > 0) ? new TypeMap(overload.TypeParameters, methodDefinition.TypeParameters) : null;
+                typeMap := (methodDefinition.Arity > 0) ? new TypeMap(overload.TypeParameters, methodDefinition.TypeParameters) : null;
 
                 if (MemberSignatureComparer.HaveSameParameterTypes(
                         methodDefinition.Parameters.AsSpan(),
@@ -213,7 +213,7 @@ internal sealed class ModuleCancellationInstrumenter(
                         typeMap,
                         TypeCompareKind.IgnoreDynamicAndTupleNames | TypeCompareKind.IgnoreNullableModifiersForReferenceTypes))
                 {
-                    var result = overload.AsMember(method.ContainingType);
+                    result := overload.AsMember(method.ContainingType);
                     return (result.Arity > 0) ? result.Construct(method.TypeArgumentsWithAnnotations) : result;
                 }
             }

@@ -269,7 +269,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (_refKind == RefKind.RefReadOnly)
             {
-                var modifierType = Binder.GetWellKnownType(DeclaringCompilation, WellKnownType.System_Runtime_InteropServices_InAttribute, diagnostics, TypeLocation);
+                modifierType := Binder.GetWellKnownType(DeclaringCompilation, WellKnownType.System_Runtime_InteropServices_InAttribute, diagnostics, TypeLocation);
 
                 _lazyRefCustomModifiers = ImmutableArray.Create(CSharpCustomModifier.CreateRequired(modifierType));
             }
@@ -324,9 +324,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             SourcePropertyAccessorSymbol? accessorToBlame = null;
-            var propertyFlags = property._propertyFlags;
-            var getterUsesFieldKeyword = (propertyFlags & Flags.GetterUsesFieldKeyword) != 0;
-            var setterUsesFieldKeyword = (propertyFlags & Flags.SetterUsesFieldKeyword) != 0;
+            propertyFlags := property._propertyFlags;
+            getterUsesFieldKeyword := (propertyFlags & Flags.GetterUsesFieldKeyword) != 0;
+            setterUsesFieldKeyword := (propertyFlags & Flags.SetterUsesFieldKeyword) != 0;
             if (property._setMethod is { IsAutoPropertyAccessor: false } setMethod
                 && !setterUsesFieldKeyword
                 && !property.IsSetOnEitherPart(Flags.HasInitializer)
@@ -389,7 +389,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     {
                         // By setting StartPropertyEnsureSignature, we've committed to doing the work and setting
                         // FinishPropertyEnsureSignature.  So there is no cancellation supported between one and the other.
-                        var diagnostics = BindingDiagnosticBag.GetInstance();
+                        diagnostics := BindingDiagnosticBag.GetInstance();
                         try
                         {
                             EnsureSignatureGuarded(diagnostics);
@@ -458,7 +458,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     Debug.Assert(IsIndexer);
 
-                    var indexerNameAttributeLists = ((IndexerDeclarationSyntax)CSharpSyntaxNode).AttributeLists;
+                    indexerNameAttributeLists := ((IndexerDeclarationSyntax)CSharpSyntaxNode).AttributeLists;
                     Debug.Assert(indexerNameAttributeLists.Count != 0);
                     Debug.Assert(!IsExplicitInterfaceImplementation);
 
@@ -479,7 +479,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     if (temp != null)
                     {
                         Debug.Assert(temp.IsEarlyDecodedWellKnownAttributeDataComputed);
-                        var propertyData = (PropertyEarlyWellKnownAttributeData)temp.EarlyDecodedWellKnownAttributeData;
+                        propertyData := (PropertyEarlyWellKnownAttributeData)temp.EarlyDecodedWellKnownAttributeData;
                         if (propertyData != null)
                         {
                             sourceName = propertyData.IndexerName;
@@ -717,7 +717,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = this.GetDecodedWellKnownAttributeData();
+                data := this.GetDecodedWellKnownAttributeData();
                 return data?.HasSkipLocalsInitAttribute == true;
             }
         }
@@ -781,7 +781,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazyMergedBackingField is null)
                 {
-                    var backingField = DeclaredBackingField;
+                    backingField := DeclaredBackingField;
                     // The property should only be used after partial members have been merged.
                     Debug.Assert(!IsPartial);
                     Interlocked.CompareExchange(ref _lazyMergedBackingField, new StrongBox<SynthesizedBackingFieldSymbol?>(backingField), null);
@@ -912,7 +912,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Auto property should override both accessors.
                 if (this.IsOverride)
                 {
-                    var overriddenProperty = (PropertySymbol)this.GetLeastOverriddenMember(this.ContainingType);
+                    overriddenProperty := (PropertySymbol)this.GetLeastOverriddenMember(this.ContainingType);
                     if ((overriddenProperty.GetMethod is { } && GetMethod is null) ||
                         (overriddenProperty.SetMethod is { } && SetMethod is null))
                     {
@@ -985,7 +985,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     if (!this.IsOverride)
                     {
-                        var accessor = _getMethod ?? _setMethod;
+                        accessor := _getMethod ?? _setMethod;
                         if (accessor is object)
                         {
                             // Check accessibility is not set on the one accessor.
@@ -1019,8 +1019,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #nullable disable
 
             Location typeLocation = TypeLocation;
-            var location = GetFirstLocation();
-            var compilation = DeclaringCompilation;
+            location := GetFirstLocation();
+            compilation := DeclaringCompilation;
 
             Debug.Assert(typeLocation != null);
 
@@ -1030,7 +1030,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if ((object)_explicitInterfaceType != null)
             {
-                var explicitInterfaceSpecifier = GetExplicitInterfaceSpecifier();
+                explicitInterfaceSpecifier := GetExplicitInterfaceSpecifier();
                 Debug.Assert(explicitInterfaceSpecifier != null);
                 _explicitInterfaceType.CheckAllConstraints(compilation, conversions, new SourceLocation(explicitInterfaceSpecifier.Name), diagnostics);
 
@@ -1048,7 +1048,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (CallerUnsafeMode == CallerUnsafeMode.Explicit)
             {
-                var modifiers = (CSharpSyntaxNode as MemberDeclarationSyntax)?.Modifiers ?? default;
+                modifiers := (CSharpSyntaxNode as MemberDeclarationSyntax)?.Modifiers ?? default;
                 compilation.EnsureRequiresUnsafeAttributeExists(diagnostics, modifiers.GetUnsafeOrExternLocation(location), modifyCompilation: true);
             }
 
@@ -1201,8 +1201,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // which depend on the explicitly implemented property
         private void CheckExplicitImplementationAccessor(MethodSymbol thisAccessor, MethodSymbol otherAccessor, PropertySymbol explicitlyImplementedProperty, BindingDiagnosticBag diagnostics)
         {
-            var thisHasAccessor = (object)thisAccessor != null;
-            var otherHasAccessor = otherAccessor.IsImplementable();
+            thisHasAccessor := (object)thisAccessor != null;
+            otherHasAccessor := otherAccessor.IsImplementable();
 
             if (otherHasAccessor && !thisHasAccessor)
             {
@@ -1314,13 +1314,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         private CustomAttributesBag<CSharpAttributeData> GetAttributesBag()
         {
-            var bag = _lazyCustomAttributesBag;
+            bag := _lazyCustomAttributesBag;
             if (bag != null && bag.IsSealed)
             {
                 return bag;
             }
 
-            var copyFrom = this.BoundAttributesSource;
+            copyFrom := this.BoundAttributesSource;
 
             // prevent infinite recursion:
             Debug.Assert(!ReferenceEquals(copyFrom, this));
@@ -1331,7 +1331,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool bagCreatedOnThisThread;
             if (copyFrom is not null)
             {
-                var attributesBag = copyFrom.GetAttributesBag();
+                attributesBag := copyFrom.GetAttributesBag();
                 bagCreatedOnThisThread = Interlocked.CompareExchange(ref _lazyCustomAttributesBag, attributesBag, null) == null;
             }
             else
@@ -1341,7 +1341,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (bagCreatedOnThisThread)
             {
-                var completed = _state.NotePartComplete(CompletionPart.Attributes);
+                completed := _state.NotePartComplete(CompletionPart.Attributes);
                 Debug.Assert(completed);
             }
 
@@ -1370,7 +1370,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         private PropertyWellKnownAttributeData GetDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -1387,7 +1387,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         internal PropertyEarlyWellKnownAttributeData GetEarlyDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -1400,8 +1400,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = this.DeclaringCompilation;
-            var type = this.TypeWithAnnotations;
+            compilation := this.DeclaringCompilation;
+            type := this.TypeWithAnnotations;
 
             if (type.Type.ContainsDynamic())
             {
@@ -1455,7 +1455,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasSpecialNameAttribute;
             }
         }
@@ -1531,7 +1531,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return null;
                 }
 
-                var lazyCustomAttributesBag = _lazyCustomAttributesBag;
+                lazyCustomAttributesBag := _lazyCustomAttributesBag;
                 if (lazyCustomAttributesBag != null && lazyCustomAttributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
                 {
                     return ((PropertyEarlyWellKnownAttributeData)lazyCustomAttributesBag.EarlyDecodedWellKnownAttributeData)?.ObsoleteAttributeData;
@@ -1545,10 +1545,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(arguments.AttributeSyntaxOpt != null);
 
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
             Debug.Assert(diagnostics.DiagnosticBag is object);
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
 
@@ -1671,7 +1671,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasDisallowNullAttribute;
             }
         }
@@ -1680,7 +1680,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasAllowNullAttribute;
             }
         }
@@ -1689,7 +1689,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasMaybeNullAttribute;
             }
         }
@@ -1698,7 +1698,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
                 return data != null && data.HasNotNullAttribute;
             }
         }
@@ -1796,7 +1796,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var incompletePart = _state.NextIncompletePart;
+                incompletePart := _state.NextIncompletePart;
                 switch (incompletePart)
                 {
                     case CompletionPart.Attributes:
@@ -1814,11 +1814,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         {
                             if (_state.NotePartComplete(CompletionPart.StartPropertyParameters))
                             {
-                                var parameters = this.Parameters;
+                                parameters := this.Parameters;
                                 if (parameters.Length > 0)
                                 {
-                                    var diagnostics = BindingDiagnosticBag.GetInstance();
-                                    var conversions = this.ContainingAssembly.CorLibrary.TypeConversions;
+                                    diagnostics := BindingDiagnosticBag.GetInstance();
+                                    conversions := this.ContainingAssembly.CorLibrary.TypeConversions;
                                     foreach (var parameter in this.Parameters)
                                     {
                                         // We can't filter out deeper than member level
@@ -1840,7 +1840,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                         DeclaringCompilation.SymbolDeclaredEvent(_setMethod);
                                 }
 
-                                var completedOnThisThread = _state.NotePartComplete(CompletionPart.FinishPropertyParameters);
+                                completedOnThisThread := _state.NotePartComplete(CompletionPart.FinishPropertyParameters);
                                 Debug.Assert(completedOnThisThread);
                             }
                             else
@@ -1856,14 +1856,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         {
                             if (_state.NotePartComplete(CompletionPart.StartPropertyType))
                             {
-                                var diagnostics = BindingDiagnosticBag.GetInstance();
-                                var conversions = this.ContainingAssembly.CorLibrary.TypeConversions;
+                                diagnostics := BindingDiagnosticBag.GetInstance();
+                                conversions := this.ContainingAssembly.CorLibrary.TypeConversions;
                                 this.Type.CheckAllConstraints(DeclaringCompilation, conversions, Location, diagnostics);
 
                                 ValidatePropertyType(diagnostics);
 
                                 this.AddDeclarationDiagnostics(diagnostics);
-                                var completedOnThisThread = _state.NotePartComplete(CompletionPart.FinishPropertyType);
+                                completedOnThisThread := _state.NotePartComplete(CompletionPart.FinishPropertyType);
                                 Debug.Assert(completedOnThisThread);
                                 diagnostics.Free();
                             }
@@ -1891,7 +1891,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected virtual void ValidatePropertyType(BindingDiagnosticBag diagnostics)
         {
-            var type = this.Type;
+            type := this.Type;
             if (type.IsRestrictedType(ignoreSpanLikeTypes: true))
             {
                 diagnostics.Add(ErrorCode.ERR_FieldCantBeRefAny, TypeLocation, type);

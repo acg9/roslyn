@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             _assembly = assembly;
             _documentationProvider = documentationProvider;
 
-            var modules = new ModuleSymbol[assembly.Modules.Length];
+            modules := new ModuleSymbol[assembly.Modules.Length];
 
             for (int i = 0; i < assembly.Modules.Length; i++)
             {
@@ -148,13 +148,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
             ImmutableArray<CSharpAttributeData> loadAndFilterAttributes()
             {
-                var containingModule = this.PrimaryModule;
+                containingModule := this.PrimaryModule;
                 if (!containingModule.TryGetNonEmptyCustomAttributes(_assembly.Handle, out var customAttributeHandles))
                 {
                     return [];
                 }
 
-                var mightContainExtensions = this.MightContainExtensions;
+                mightContainExtensions := this.MightContainExtensions;
                 using var builder = TemporaryArray<CSharpAttributeData>.Empty;
                 foreach (var handle in customAttributeHandles)
                 {
@@ -339,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (_lazyObsoleteAttributeData == ObsoleteAttributeData.Uninitialized)
                 {
-                    var experimentalData = PrimaryModule.Module.TryDecodeExperimentalAttributeData(Assembly.Handle, new MetadataDecoder(PrimaryModule));
+                    experimentalData := PrimaryModule.Module.TryDecodeExperimentalAttributeData(Assembly.Handle, new MetadataDecoder(PrimaryModule));
                     Interlocked.CompareExchange(ref _lazyObsoleteAttributeData, experimentalData, ObsoleteAttributeData.Uninitialized);
                 }
 

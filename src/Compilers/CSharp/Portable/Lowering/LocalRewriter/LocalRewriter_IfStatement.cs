@@ -15,13 +15,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var stack = ArrayBuilder<(BoundIfStatement, GeneratedLabelSymbol, int)>.GetInstance();
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            stack := ArrayBuilder<(BoundIfStatement, GeneratedLabelSymbol, int)>.GetInstance();
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
 
             while (true)
             {
-                var rewrittenCondition = VisitExpression(node.Condition);
-                var rewrittenConsequence = VisitStatement(node.Consequence);
+                rewrittenCondition := VisitExpression(node.Condition);
+                rewrittenConsequence := VisitStatement(node.Consequence);
                 Debug.Assert(rewrittenConsequence is { });
 
                 // EnC: We need to insert a hidden sequence point to handle function remapping in case 
@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     rewrittenCondition = Instrumenter.InstrumentIfStatementCondition(node, rewrittenCondition, _factory);
                 }
 
-                var elseIfStatement = node.AlternativeOpt as BoundIfStatement;
+                elseIfStatement := node.AlternativeOpt as BoundIfStatement;
                 BoundStatement? rewrittenAlternative = null;
 
                 if (elseIfStatement is null)
@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     rewrittenAlternative = VisitStatement(node.AlternativeOpt);
                 }
 
-                var afterif = new GeneratedLabelSymbol("afterif");
+                afterif := new GeneratedLabelSymbol("afterif");
                 stack.Push((node, afterif, builder.Count));
 
                 if (elseIfStatement is null && rewrittenAlternative is null)
@@ -73,12 +73,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // alternative;
                     // afterif:
 
-                    var alt = new GeneratedLabelSymbol("alternative");
+                    alt := new GeneratedLabelSymbol("alternative");
 
                     builder.Add(new BoundConditionalGoto(rewrittenCondition.Syntax, rewrittenCondition, false, alt));
                     builder.Add(rewrittenConsequence);
                     builder.Add(BoundSequencePoint.CreateHidden());
-                    var syntax = (IfStatementSyntax)node.Syntax;
+                    syntax := (IfStatementSyntax)node.Syntax;
                     builder.Add(new BoundGotoStatement(syntax, afterif));
                     builder.Add(new BoundLabelStatement(syntax, alt));
 
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 (node, var afterif, var conditionalGotoIndex) = stack.Pop();
                 Debug.Assert(builder[conditionalGotoIndex] is BoundConditionalGoto);
 
-                var syntax = (IfStatementSyntax)node.Syntax;
+                syntax := (IfStatementSyntax)node.Syntax;
 
                 builder.Add(BoundSequencePoint.CreateHidden());
                 builder.Add(new BoundLabelStatement(syntax, afterif));
@@ -122,8 +122,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundStatement rewrittenConsequence,
             bool hasErrors)
         {
-            var afterif = new GeneratedLabelSymbol("afterif");
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            afterif := new GeneratedLabelSymbol("afterif");
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // if (condition) 
             //   consequence;  
@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             builder.Add(rewrittenConsequence);
             builder.Add(BoundSequencePoint.CreateHidden());
             builder.Add(new BoundLabelStatement(syntax, afterif));
-            var statements = builder.ToImmutableAndFree();
+            statements := builder.ToImmutableAndFree();
             return new BoundStatementList(syntax, statements, hasErrors);
         }
     }

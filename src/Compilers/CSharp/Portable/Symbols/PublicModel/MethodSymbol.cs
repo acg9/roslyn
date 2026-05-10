@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
         {
             if (_underlying.IsExtensionBlockMember() && SourceMemberContainerTypeSymbol.IsAllowedExtensionMember(_underlying))
             {
-                var csharpReceiver = receiverType.EnsureCSharpSymbolOrNull(nameof(receiverType));
+                csharpReceiver := receiverType.EnsureCSharpSymbolOrNull(nameof(receiverType));
                 return (IMethodSymbol?)SourceNamedTypeSymbol.ReduceExtensionMember(compilation: null, _underlying, csharpReceiver, wasExtensionFullyInferred: out _).GetPublicSymbol();
             }
 
@@ -356,17 +356,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
                     return null;
                 }
 
-                var implDefinition = _underlying.OriginalDefinition.TryGetCorrespondingExtensionImplementationMethod();
+                implDefinition := _underlying.OriginalDefinition.TryGetCorrespondingExtensionImplementationMethod();
                 if (implDefinition is null)
                 {
                     return null;
                 }
 
-                var enclosing = _underlying.ContainingType.ContainingType;
-                var implementation = implDefinition.AsMember(enclosing);
+                enclosing := _underlying.ContainingType.ContainingType;
+                implementation := implDefinition.AsMember(enclosing);
                 if (implementation.Arity != 0)
                 {
-                    var typeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance(implementation.Arity);
+                    typeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance(implementation.Arity);
                     typeArguments.AddRange(_underlying.ContainingType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics);
                     typeArguments.AddRange(_underlying.TypeArgumentsWithAnnotations);
                     implementation = implementation.Construct(typeArguments.ToImmutableAndFree());

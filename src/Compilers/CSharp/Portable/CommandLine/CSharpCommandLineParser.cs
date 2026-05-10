@@ -54,7 +54,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(baseDirectory == null || PathUtilities.IsAbsolute(baseDirectory));
 
             List<Diagnostic> diagnostics = new List<Diagnostic>();
-            var flattenedArgs = ArrayBuilder<string>.GetInstance();
+            flattenedArgs := ArrayBuilder<string>.GetInstance();
             List<string>? scriptArgs = IsScriptCommandLineParser ? new List<string>() : null;
             List<string>? responsePaths = IsScriptCommandLineParser ? new List<string>() : null;
             FlattenArgs(args, diagnostics, flattenedArgs, scriptArgs, baseDirectory, responsePaths);
@@ -103,24 +103,24 @@ namespace Microsoft.CodeAnalysis.CSharp
             List<CommandLineResource> managedResources = new List<CommandLineResource>();
             List<CommandLineSourceFile> sourceFiles = new List<CommandLineSourceFile>();
             List<CommandLineSourceFile> additionalFiles = new List<CommandLineSourceFile>();
-            var analyzerConfigPaths = ArrayBuilder<string>.GetInstance();
+            analyzerConfigPaths := ArrayBuilder<string>.GetInstance();
             List<CommandLineSourceFile> embeddedFiles = new List<CommandLineSourceFile>();
             bool sourceFilesSpecified = false;
             bool embedAllSourceFiles = false;
             bool resourcesOrModulesSpecified = false;
             Encoding? codepage = null;
-            var checksumAlgorithm = SourceHashAlgorithms.Default;
-            var defines = ArrayBuilder<string>.GetInstance();
+            checksumAlgorithm := SourceHashAlgorithms.Default;
+            defines := ArrayBuilder<string>.GetInstance();
             List<CommandLineReference> metadataReferences = new List<CommandLineReference>();
             List<CommandLineAnalyzerReference> analyzers = new List<CommandLineAnalyzerReference>();
             List<string> libPaths = new List<string>();
             List<string> sourcePaths = new List<string>();
             List<string> keyFileSearchPaths = new List<string>();
             List<string> usings = new List<string>();
-            var generalDiagnosticOption = ReportDiagnostic.Default;
-            var diagnosticOptions = new Dictionary<string, ReportDiagnostic>();
-            var noWarns = new Dictionary<string, ReportDiagnostic>();
-            var warnAsErrors = new Dictionary<string, ReportDiagnostic>();
+            generalDiagnosticOption := ReportDiagnostic.Default;
+            diagnosticOptions := new Dictionary<string, ReportDiagnostic>();
+            noWarns := new Dictionary<string, ReportDiagnostic>();
+            warnAsErrors := new Dictionary<string, ReportDiagnostic>();
             int warningLevel = Diagnostic.DefaultWarningLevel;
             bool highEntropyVA = false;
             bool printFullPaths = false;
@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (IsOption("ruleset", arg, out ReadOnlyMemory<char> name, out ReadOnlyMemory<char>? value))
                     {
-                        var unquoted = RemoveQuotesAndSlashes(value);
+                        unquoted := RemoveQuotesAndSlashes(value);
 
                         if (RoslynString.IsNullOrEmpty(unquoted))
                         {
@@ -292,7 +292,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                         else
                         {
-                            var timeout = TimeSpan.FromMinutes(2);
+                            timeout := TimeSpan.FromMinutes(2);
                             Console.WriteLine($"Compiler started with process ID {Environment.ProcessId}");
                             Console.WriteLine($"Waiting {timeout:g} for a debugger to attach");
                             using var timeoutSource = new CancellationTokenSource(timeout);
@@ -380,7 +380,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 continue;
                             }
 
-                            var encoding = TryParseEncodingName(value);
+                            encoding := TryParseEncodingName(value);
                             if (encoding == null)
                             {
                                 AddDiagnostic(diagnostics, ErrorCode.FTL_BadCodepage, value);
@@ -642,7 +642,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             continue;
 
                         case "modulename":
-                            var unquotedModuleName = RemoveQuotesAndSlashes(valueMemory);
+                            unquotedModuleName := RemoveQuotesAndSlashes(valueMemory);
                             if (string.IsNullOrEmpty(unquotedModuleName))
                             {
                                 AddDiagnostic(diagnostics, ErrorCode.ERR_SwitchNeedsString, MessageID.IDS_Text.Localize(), "modulename");
@@ -952,7 +952,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                             else
                             {
-                                var builder = ArrayBuilder<string>.GetInstance();
+                                builder := ArrayBuilder<string>.GetInstance();
                                 ParseWarnings(valueMemory.Value, builder);
                                 foreach (var id in builder)
                                 {
@@ -1495,7 +1495,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 AddDiagnostic(diagnostics, ErrorCode.ERR_CannotEmbedWithoutPdb);
             }
 
-            var parsedFeatures = ParseFeatures(features);
+            parsedFeatures := ParseFeatures(features);
 
             string? compilationName;
             GetCompilationAndModuleNames(diagnostics, outputKind, sourceFiles, sourceFilesSpecified, moduleAssemblyName, ref outputFileName, ref moduleName, out compilationName);
@@ -1513,7 +1513,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We want to report diagnostics with source suppression in the error log file.
             // However, these diagnostics won't be reported on the command line.
-            var reportSuppressedDiagnostics = errorLogOptions is object;
+            reportSuppressedDiagnostics := errorLogOptions is object;
 
             var options = new CSharpCompilationOptions
             (
@@ -1751,7 +1751,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private ImmutableArray<string> BuildSearchPaths(string? sdkDirectoryOpt, List<string> libPaths, List<string>? responsePathsOpt)
         {
-            var builder = ArrayBuilder<string>.GetInstance();
+            builder := ArrayBuilder<string>.GetInstance();
 
             // Match how Dev11 builds the list of search paths
             //    see PCWSTR LangCompiler::GetSearchPath()
@@ -1780,7 +1780,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static IEnumerable<string> ParseConditionalCompilationSymbols(string value, out IEnumerable<Diagnostic> diagnostics)
         {
-            var builder = ArrayBuilder<string>.GetInstance();
+            builder := ArrayBuilder<string>.GetInstance();
             ParseConditionalCompilationSymbols(value.AsMemory(), builder, out diagnostics);
             return builder.ToArrayAndFree();
         }
@@ -1796,9 +1796,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var valueSpan = valueMemory.Span;
-            var nextIndex = 0;
-            var index = 0;
+            valueSpan := valueMemory.Span;
+            nextIndex := 0;
+            index := 0;
             while (index < valueSpan.Length)
             {
                 if (valueSpan[index] is ';' or ',')
@@ -1816,7 +1816,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             void add()
             {
-                var id = valueMemory.Slice(nextIndex, index - nextIndex).Trim().ToString();
+                id := valueMemory.Slice(nextIndex, index - nextIndex).Trim().ToString();
                 if (SyntaxFacts.IsValidIdentifier(id))
                 {
                     defines.Add(id);
@@ -1911,7 +1911,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var builder = ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
+            builder := ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
             ParseSeparatedPathsEx(value, builder);
             foreach (var path in builder)
             {
@@ -1933,7 +1933,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var value = valueMemory.Value;
+            value := valueMemory.Value;
             if (value.Length == 0)
             {
                 AddDiagnostic(diagnostics, ErrorCode.ERR_NoFileSpec, arg);
@@ -1950,7 +1950,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // /r:alias=reference;reference      ... error 2034
             // /r:nonidf=reference               ... error 1679
 
-            var valueSpan = value.Span;
+            valueSpan := value.Span;
             int eqlOrQuote = valueSpan.IndexOfAny(s_quoteOrEquals);
 
             string? alias;
@@ -1970,9 +1970,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 alias = null;
             }
 
-            var builder = ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
+            builder := ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
             ParseSeparatedPathsEx(value, builder);
-            var pathCount = 0;
+            pathCount := 0;
             foreach (var path in builder)
             {
                 if (path.IsWhiteSpace())
@@ -1985,9 +1985,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // NOTE(tomat): Dev10 used to report CS1541: ERR_CantIncludeDirectory if the path was a directory.
                 // Since we now support /referencePaths option we would need to search them to see if the resolved path is a directory.
 
-                var aliases = (alias != null) ? ImmutableArray.Create(alias) : ImmutableArray<string>.Empty;
+                aliases := (alias != null) ? ImmutableArray.Create(alias) : ImmutableArray<string>.Empty;
 
-                var properties = new MetadataReferenceProperties(MetadataImageKind.Assembly, aliases, embedInteropTypes);
+                properties := new MetadataReferenceProperties(MetadataImageKind.Assembly, aliases, embedInteropTypes);
                 commandLineReferences.Add(new CommandLineReference(path.ToString(), properties));
             }
             builder.Free();
@@ -2098,9 +2098,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static void ParseWarnings(ReadOnlyMemory<char> value, ArrayBuilder<string> ids)
         {
             value = value.Unquote();
-            var parts = ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
+            parts := ArrayBuilder<ReadOnlyMemory<char>>.GetInstance();
 
-            var nullableSpan = "nullable".AsSpan();
+            nullableSpan := "nullable".AsSpan();
             ParseSeparatedStrings(value, s_warningSeparators, removeEmptyEntries: true, parts);
             foreach (ReadOnlyMemory<char> part in parts)
             {
@@ -2116,7 +2116,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var id = part.ToString();
+                id := part.ToString();
                 if (ushort.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out ushort number) &&
                        ErrorFacts.IsWarning((ErrorCode)number))
                 {
@@ -2138,7 +2138,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static void AddWarnings(Dictionary<string, ReportDiagnostic> d, ReportDiagnostic kind, ReadOnlyMemory<char> warningArgument)
         {
-            var idsBuilder = ArrayBuilder<string>.GetInstance();
+            idsBuilder := ArrayBuilder<string>.GetInstance();
             ParseWarnings(warningArgument, idsBuilder);
             foreach (var id in idsBuilder)
             {

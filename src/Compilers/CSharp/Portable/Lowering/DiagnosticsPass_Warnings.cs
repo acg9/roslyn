@@ -27,14 +27,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (argumentRefKindsOpt[i] != RefKind.None)
                     {
-                        var argument = arguments[i];
+                        argument := arguments[i];
                         switch (argument.Kind)
                         {
                             case BoundKind.FieldAccess:
                                 CheckFieldAddress((BoundFieldAccess)argument, method);
                                 break;
                             case BoundKind.Local:
-                                var local = (BoundLocal)argument;
+                                local := (BoundLocal)argument;
                                 if (local.Syntax.Kind() == SyntaxKind.DeclarationExpression)
                                 {
                                     CheckOutDeclaration(local);
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool IsInterlockedAPI(Symbol method)
         {
-            var interlocked = _compilation.GetWellKnownType(WellKnownType.System_Threading_Interlocked);
+            interlocked := _compilation.GetWellKnownType(WellKnownType.System_Threading_Interlocked);
             if ((object)interlocked != null && TypeSymbol.Equals(interlocked, method.ContainingType, TypeCompareKind.ConsiderEverything2))
                 return true;
 
@@ -201,26 +201,26 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (expr1.Kind)
             {
                 case BoundKind.Local:
-                    var local1 = (BoundLocal)expr1;
-                    var local2 = (BoundLocal)expr2;
+                    local1 := (BoundLocal)expr1;
+                    local2 := (BoundLocal)expr2;
                     return local1.LocalSymbol == local2.LocalSymbol;
                 case BoundKind.FieldAccess:
-                    var field1 = (BoundFieldAccess)expr1;
-                    var field2 = (BoundFieldAccess)expr2;
+                    field1 := (BoundFieldAccess)expr1;
+                    field2 := (BoundFieldAccess)expr2;
                     return field1.FieldSymbol == field2.FieldSymbol &&
                         (field1.FieldSymbol.IsStatic || IsSameLocalOrField(field1.ReceiverOpt, field2.ReceiverOpt));
                 case BoundKind.EventAccess:
-                    var event1 = (BoundEventAccess)expr1;
-                    var event2 = (BoundEventAccess)expr2;
+                    event1 := (BoundEventAccess)expr1;
+                    event2 := (BoundEventAccess)expr2;
                     return event1.EventSymbol == event2.EventSymbol &&
                         (event1.EventSymbol.IsStatic || IsSameLocalOrField(event1.ReceiverOpt, event2.ReceiverOpt));
                 case BoundKind.Parameter:
-                    var param1 = (BoundParameter)expr1;
-                    var param2 = (BoundParameter)expr2;
+                    param1 := (BoundParameter)expr1;
+                    param2 := (BoundParameter)expr2;
                     return param1.ParameterSymbol == param2.ParameterSymbol;
                 case BoundKind.RangeVariable:
-                    var rangeVar1 = (BoundRangeVariable)expr1;
-                    var rangeVar2 = (BoundRangeVariable)expr2;
+                    rangeVar1 := (BoundRangeVariable)expr1;
+                    rangeVar2 := (BoundRangeVariable)expr2;
                     return rangeVar1.RangeVariableSymbol == rangeVar2.RangeVariableSymbol;
                 case BoundKind.ThisReference:
                 case BoundKind.PreviousSubmissionReference:
@@ -350,7 +350,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             type = null;
             if (node.Kind != BoundKind.Conversion) return false;
-            var conv = (BoundConversion)node;
+            conv := (BoundConversion)node;
             if (conv.ExplicitCastInCode) return false;
             NamedTypeSymbol nt = conv.Operand.Type as NamedTypeSymbol;
             if ((object)nt == null || !nt.IsReferenceType || nt.IsInterface)
@@ -365,7 +365,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     MethodSymbol op = sym as MethodSymbol;
                     if ((object)op == null || op.MethodKind != MethodKind.UserDefinedOperator) continue;
-                    var parameters = op.GetParameters();
+                    parameters := op.GetParameters();
                     if (parameters.Length == 2 && TypeSymbol.Equals(parameters[0].Type, t, TypeCompareKind.ConsiderEverything2) && TypeSymbol.Equals(parameters[1].Type, t, TypeCompareKind.ConsiderEverything2))
                     {
                         type = t;
@@ -863,7 +863,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (node.Kind == BoundKind.Conversion)
             {
-                var conv = (BoundConversion)node;
+                conv := (BoundConversion)node;
                 if (conv.ConversionKind == ConversionKind.ExplicitNullable || conv.ConversionKind == ConversionKind.ImplicitNullable)
                 {
                     type = GetTypeForLiftedComparisonWarning(conv.Operand);
@@ -887,7 +887,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             while (right.Kind == BoundKind.Conversion)
             {
-                var conversion = (BoundConversion)right;
+                conversion := (BoundConversion)right;
                 switch (conversion.ConversionKind)
                 {
                     case ConversionKind.Deconstruction:
@@ -905,15 +905,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var rightTuple = (BoundTupleExpression)right;
-            var leftArguments = leftTuple.Arguments;
+            rightTuple := (BoundTupleExpression)right;
+            leftArguments := leftTuple.Arguments;
             int length = leftArguments.Length;
             Debug.Assert(length == rightTuple.Arguments.Length);
 
             for (int i = 0; i < length; i++)
             {
-                var leftArgument = leftArguments[i];
-                var rightArgument = rightTuple.Arguments[i];
+                leftArgument := leftArguments[i];
+                rightArgument := rightTuple.Arguments[i];
 
                 if (leftArgument is BoundTupleExpression tupleExpression)
                 {

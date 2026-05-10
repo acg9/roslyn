@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     return default;
                 }
-                var type = symbol as TypeSymbol;
+                type := symbol as TypeSymbol;
                 return type is null ?
                     new NamespaceOrTypeOrAliasSymbolWithAnnotations(symbol, isNullableEnabled) :
                     new NamespaceOrTypeOrAliasSymbolWithAnnotations(TypeWithAnnotations.Create(isNullableEnabled, type));

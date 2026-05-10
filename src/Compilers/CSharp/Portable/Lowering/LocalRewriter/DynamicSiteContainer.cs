@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var containingSymbol = _topLevelMethod.ContainingSymbol;
+                containingSymbol := _topLevelMethod.ContainingSymbol;
                 if (containingSymbol is NamedTypeSymbol { IsExtension: true })
                 {
                     return containingSymbol.ContainingSymbol;

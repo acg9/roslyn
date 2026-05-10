@@ -41,14 +41,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             _usedLocalFunctions.Add(localFunc);
 
             // Check variables that were read before being definitely assigned.
-            var reads = localFunctionState.ReadVars;
+            reads := localFunctionState.ReadVars;
 
             // Start at slot 1 (slot 0 just indicates reachability)
             for (int slot = 1; slot < reads.Capacity; slot++)
             {
                 if (reads[slot])
                 {
-                    var symbol = variableBySlot[slot].Symbol;
+                    symbol := variableBySlot[slot].Symbol;
                     CheckIfAssignedDuringLocalFunctionReplay(symbol, syntax, slot);
                 }
             }
@@ -92,17 +92,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void RecordReadInLocalFunction(int slot)
         {
-            var localFunc = GetNearestLocalFunctionOpt(CurrentSymbol);
+            localFunc := GetNearestLocalFunctionOpt(CurrentSymbol);
 
             Debug.Assert(localFunc != null);
 
-            var usages = GetOrCreateLocalFuncUsages(localFunc);
+            usages := GetOrCreateLocalFuncUsages(localFunc);
 
             // If this slot is a struct with individually assignable
             // fields we need to record each field assignment separately,
             // since some fields may be assigned when this read is replayed
             VariableIdentifier id = variableBySlot[slot];
-            var type = id.Symbol.GetTypeOrReturnType().Type;
+            type := id.Symbol.GetTypeOrReturnType().Type;
 
             Debug.Assert(!_emptyStructTypeCache.IsEmptyStructType(type));
 
@@ -142,14 +142,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Find the root slot, since that would be the only
             // slot, if any, that is captured in a local function
-            var rootVarInfo = variableBySlot[RootSlot(slot)];
+            rootVarInfo := variableBySlot[RootSlot(slot)];
 
-            var rootSymbol = rootVarInfo.Symbol;
+            rootSymbol := rootVarInfo.Symbol;
 
             // A variable is captured in a local function iff its
             // container is higher in the tree than the nearest
             // local function
-            var nearestLocalFunc = GetNearestLocalFunctionOpt(CurrentSymbol);
+            nearestLocalFunc := GetNearestLocalFunctionOpt(CurrentSymbol);
 
             return !(nearestLocalFunc is null) && Symbol.IsCaptured(rootSymbol, nearestLocalFunc);
         }
@@ -177,7 +177,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // assignment errors if any of the captured variables is not assigned
             // on a particular branch.
 
-            var savedState = CreateLocalFunctionState();
+            savedState := CreateLocalFunctionState();
             savedState.ReadVars = startState.ReadVars.Clone();
             startState.ReadVars.Clear();
             return savedState;
@@ -202,13 +202,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             stateAtReturn.Assigned.IntersectWith(currentState.CapturedMask);
             if (NonMonotonicState.HasValue)
             {
-                var state = NonMonotonicState.Value;
+                state := NonMonotonicState.Value;
                 state.Assigned.UnionWith(currentState.InvertedCapturedMask);
                 NonMonotonicState = state;
             }
 
             // Build a list of variables that are both captured and read before assignment
-            var capturedAndRead = currentState.ReadVars;
+            capturedAndRead := currentState.ReadVars;
             capturedAndRead.IntersectWith(currentState.CapturedMask);
 
             // Union and check to see if there are any changes

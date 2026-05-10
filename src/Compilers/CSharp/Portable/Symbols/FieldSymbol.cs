@@ -313,7 +313,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var info = MarshallingInformation;
+                info := MarshallingInformation;
                 return info != null ? info.UnmanagedType : 0;
             }
         }
@@ -483,7 +483,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return this.OriginalDefinition.TupleElementIndex;
                 }
 
-                var tupleElementPosition = NamedTypeSymbol.MatchesCanonicalTupleElementName(Name);
+                tupleElementPosition := NamedTypeSymbol.MatchesCanonicalTupleElementName(Name);
                 int arity = ContainingType.Arity;
                 if (tupleElementPosition <= 0 || tupleElementPosition > arity)
                 {

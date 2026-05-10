@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal TypeParameterSymbol MakeSymbol(int ordinal, IList<TypeParameterBuilder> builders, BindingDiagnosticBag diagnostics)
         {
-            var syntaxNode = (TypeParameterSyntax)_syntaxRef.GetSyntax();
+            syntaxNode := (TypeParameterSyntax)_syntaxRef.GetSyntax();
             var result = new SourceTypeTypeParameterSymbol(
                 _owner,
                 syntaxNode.Identifier.ValueText,
@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static ImmutableArray<Location> ToLocations(IList<TypeParameterBuilder> builders)
         {
-            var arrayBuilder = ArrayBuilder<Location>.GetInstance(builders.Count);
+            arrayBuilder := ArrayBuilder<Location>.GetInstance(builders.Count);
             foreach (var builder in builders)
             {
                 arrayBuilder.Add(builder._location);
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static ImmutableArray<SyntaxReference> ToSyntaxRefs(IList<TypeParameterBuilder> builders)
         {
-            var arrayBuilder = ArrayBuilder<SyntaxReference>.GetInstance(builders.Count);
+            arrayBuilder := ArrayBuilder<SyntaxReference>.GetInstance(builders.Count);
             foreach (var builder in builders)
             {
                 arrayBuilder.Add(builder._syntaxRef);

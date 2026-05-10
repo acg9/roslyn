@@ -136,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // and deduce an iterator element type from the return type.  If we didn't do this, the 
                 // TypeInfo.ConvertedType of the yield statement would always be an error type.  However, we will 
                 // not mutate any state (i.e. we won't store the result).
-                var elementType = GetIteratorElementTypeFromReturnType(Compilation, refKind, returnType, errorLocation: null, diagnostics: null);
+                elementType := GetIteratorElementTypeFromReturnType(Compilation, refKind, returnType, errorLocation: null, diagnostics: null);
                 return !elementType.IsDefault ? elementType : TypeWithAnnotations.Create(CreateErrorType());
             }
 
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case SpecialType.System_Collections_IEnumerable:
                     case SpecialType.System_Collections_IEnumerator:
-                        var objectType = compilation.GetSpecialType(SpecialType.System_Object);
+                        objectType := compilation.GetSpecialType(SpecialType.System_Object);
                         if (diagnostics != null)
                         {
                             ReportUseSite(objectType, diagnostics, errorLocation);
@@ -201,10 +201,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var parameterMap = _lazyParameterMap;
+            parameterMap := _lazyParameterMap;
             if (parameterMap == null)
             {
-                var parameters = _methodSymbol.Parameters;
+                parameters := _methodSymbol.Parameters;
                 parameterMap = new MultiDictionary<string, ParameterSymbol>(parameters.Length, EqualityComparer<string>.Default);
                 foreach (var parameter in parameters)
                 {
@@ -243,9 +243,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static bool ReportConflictWithParameter(Symbol parameter, Symbol newSymbol, string name, Location newLocation, BindingDiagnosticBag diagnostics)
         {
 #if DEBUG
-            var locations = parameter.Locations;
+            locations := parameter.Locations;
             Debug.Assert(!locations.IsEmpty || parameter.IsImplicitlyDeclared);
-            var oldLocation = parameter.GetFirstLocationOrNone();
+            oldLocation := parameter.GetFirstLocationOrNone();
             Debug.Assert(oldLocation != newLocation || oldLocation == Location.None || newLocation.SourceTree?.GetRoot().ContainsDiagnostics == true,
                 "same nonempty location refers to different symbols?");
 #endif 
@@ -330,8 +330,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override bool EnsureSingleDefinition(Symbol symbol, string name, Location location, BindingDiagnosticBag diagnostics)
         {
-            var parameters = _methodSymbol.Parameters;
-            var typeParameters = _methodSymbol.TypeParameters;
+            parameters := _methodSymbol.Parameters;
+            typeParameters := _methodSymbol.TypeParameters;
 
             if (_methodSymbol.IsExtensionBlockMember())
             {
@@ -348,7 +348,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var map = _lazyDefinitionMap;
+            map := _lazyDefinitionMap;
 
             if (map == null)
             {

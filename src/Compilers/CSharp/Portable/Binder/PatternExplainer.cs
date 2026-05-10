@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             out bool requiresFalseWhenClause)
         {
             // compute the distance from each node to the endpoint.
-            var dist = PooledDictionary<BoundDecisionDagNode, (int distance, BoundDecisionDagNode next)>.GetInstance();
+            dist := PooledDictionary<BoundDecisionDagNode, (int distance, BoundDecisionDagNode next)>.GetInstance();
             int nodeCount = nodes.Length;
             int infinity = 2 * nodeCount + 2;
             int distance(BoundDecisionDagNode x)
@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             for (int i = nodeCount - 1; i >= 0; i--)
             {
-                var n = nodes[i];
+                n := nodes[i];
                 dist.Add(n, n switch
                 {
                     BoundEvaluationDecisionDagNode e => (distance(e.Next), e.Next),
@@ -68,9 +68,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // trace a path from the root node to the node of interest
-            var distanceToNode = dist[nodes[0]].distance;
+            distanceToNode := dist[nodes[0]].distance;
             requiresFalseWhenClause = distanceToNode > nodeCount;
-            var result = ArrayBuilder<BoundDecisionDagNode>.GetInstance(capacity: distanceToNode);
+            result := ArrayBuilder<BoundDecisionDagNode>.GetInstance(capacity: distanceToNode);
             for (BoundDecisionDagNode n = nodes[0]; n != node;)
             {
                 result.Add(n);
@@ -111,8 +111,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Func<ImmutableArray<BoundDecisionDagNode>, bool, bool> handler)
         {
 #nullable enable
-            var pathBuilder = ArrayBuilder<BoundDecisionDagNode>.GetInstance();
-            var stack = ArrayBuilder<BoundDecisionDagNode?>.GetInstance();
+            pathBuilder := ArrayBuilder<BoundDecisionDagNode>.GetInstance();
+            stack := ArrayBuilder<BoundDecisionDagNode?>.GetInstance();
             exploreToNode(rootNode, currentRequiresFalseWhenClause: false);
             stack.Free();
             pathBuilder.Free();
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             unnamedEnumValue = false;
 
             // Compute the path to the node, excluding the node itself.
-            var shortestPathToNode = ShortestPathToNode(nodes, targetNode, nullPaths, out requiresFalseWhenClause);
+            shortestPathToNode := ShortestPathToNode(nodes, targetNode, nullPaths, out requiresFalseWhenClause);
             gatherConstraintsAndEvaluations(targetNode, shortestPathToNode, out var constraints, out var evaluations);
 
             try
@@ -335,8 +335,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool requireExactType,
             ref bool unnamedEnumValue)
         {
-            var constraints = getArray(constraintMap, input);
-            var evaluations = getArray(evaluationMap, input);
+            constraints := getArray(constraintMap, input);
+            evaluations := getArray(evaluationMap, input);
 
             return
                 tryHandleSingleTest() ??
@@ -396,7 +396,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (constraintType is not null &&
                         constraintType.Equals(evaluationType, TypeCompareKind.AllIgnoreOptions) == sense)
                     {
-                        var typedTemp = te.MakeResultTemp();
+                        typedTemp := te.MakeResultTemp();
                         return SamplePatternForTemp(typedTemp, constraintMap, evaluationMap, requireExactType: true, ref unnamedEnumValue);
                     }
                 }
@@ -412,8 +412,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     evaluations[0] is BoundDagTypeEvaluation { Type: var evaluationType } te &&
                     input.Type.IsNullableType() && input.Type.GetNullableUnderlyingType().Equals(evaluationType, TypeCompareKind.AllIgnoreOptions))
                 {
-                    var typedTemp = te.MakeResultTemp();
-                    var result = SamplePatternForTemp(typedTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
+                    typedTemp := te.MakeResultTemp();
+                    result := SamplePatternForTemp(typedTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
                     // We need a null check. If not included in the result, add it.
                     return (result == "_") ? "not null" : result;
                 }
@@ -456,8 +456,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    var lengthTemp = lengthOrCount.MakeResultTemp();
-                    var lengthValues = (IConstantValueSet<int>)computeRemainingValues(ValueSetFactory.ForLength, getArray(constraintMap, lengthTemp));
+                    lengthTemp := lengthOrCount.MakeResultTemp();
+                    lengthValues := (IConstantValueSet<int>)computeRemainingValues(ValueSetFactory.ForLength, getArray(constraintMap, lengthTemp));
                     int lengthValue = lengthValues.Sample.Int32Value;
                     if (slice != null)
                     {
@@ -477,20 +477,20 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     }
 
-                    var subpatterns = new ArrayBuilder<string>(lengthValue);
+                    subpatterns := new ArrayBuilder<string>(lengthValue);
                     subpatterns.AddMany("_", lengthValue);
                     for (int i = 1; i < evaluations.Length; i++)
                     {
                         switch (evaluations[i])
                         {
                             case BoundDagIndexerEvaluation e:
-                                var indexerTemp = e.MakeResultTemp();
+                                indexerTemp := e.MakeResultTemp();
                                 int index = e.Index;
                                 int effectiveIndex = index < 0 ? lengthValue + index : index;
                                 if (effectiveIndex < 0 || effectiveIndex >= lengthValue)
                                     return null;
-                                var oldPattern = subpatterns[effectiveIndex];
-                                var newPattern = SamplePatternForTemp(indexerTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
+                                oldPattern := subpatterns[effectiveIndex];
+                                newPattern := SamplePatternForTemp(indexerTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
                                 subpatterns[effectiveIndex] = makeConjunct(oldPattern, newPattern);
                                 continue;
                             case BoundDagSliceEvaluation e:
@@ -503,8 +503,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (slice != null)
                     {
-                        var sliceTemp = slice.MakeResultTemp();
-                        var slicePattern = SamplePatternForTemp(sliceTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
+                        sliceTemp := slice.MakeResultTemp();
+                        slicePattern := SamplePatternForTemp(sliceTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
                         if (slicePattern != "_")
                         {
                             // If the slice is not matched against any pattern, the slice pattern would
@@ -526,19 +526,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                     constraints.IsEmpty &&
                     evaluations.All(e => e is BoundDagFieldEvaluation { Field: var field } && field.IsTupleElement()))
                 {
-                    var elements = input.Type.TupleElements;
+                    elements := input.Type.TupleElements;
                     int cardinality = elements.Length;
-                    var subpatterns = new ArrayBuilder<string>(cardinality);
+                    subpatterns := new ArrayBuilder<string>(cardinality);
                     subpatterns.AddMany("_", cardinality);
                     foreach (BoundDagFieldEvaluation e in evaluations)
                     {
-                        var elementTemp = e.MakeResultTemp();
-                        var index = e.Field.TupleElementIndex;
+                        elementTemp := e.MakeResultTemp();
+                        index := e.Field.TupleElementIndex;
                         if (index < 0 || index >= cardinality)
                             return null;
 
-                        var oldPattern = subpatterns[index];
-                        var newPattern = SamplePatternForTemp(elementTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
+                        oldPattern := subpatterns[index];
+                        newPattern := SamplePatternForTemp(elementTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
                         subpatterns[index] = makeConjunct(oldPattern, newPattern);
                     }
 
@@ -584,9 +584,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         _ => false
                     }))
                 {
-                    var conversions = input.Type.ContainingAssembly.TypeConversions;
-                    var remainingValues = factory.AllValues(conversions);
-                    var discardedInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    conversions := input.Type.ContainingAssembly.TypeConversions;
+                    remainingValues := factory.AllValues(conversions);
+                    discardedInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     foreach (var constraint in constraints)
                     {
                         var (test, sense) = constraint;
@@ -644,7 +644,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 string deconstruction = null;
-                var properties = new Dictionary<Symbol, string>();
+                properties := new Dictionary<Symbol, string>();
                 bool needsPropertyString = false;
 
                 foreach (var eval in evaluations)
@@ -652,15 +652,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                     switch (eval)
                     {
                         case BoundDagDeconstructEvaluation e:
-                            var method = e.DeconstructMethod;
+                            method := e.DeconstructMethod;
                             int extensionExtra = method.RequiresInstanceReceiver ? 0 : 1;
                             int count = method.Parameters.Length - extensionExtra;
-                            var subpatternBuilder = new StringBuilder("(");
+                            subpatternBuilder := new StringBuilder("(");
                             ArrayBuilder<BoundDagTemp> outParamTemps = e.MakeOutParameterTemps();
                             bool first = true;
                             foreach (var elementTemp in outParamTemps)
                             {
-                                var newPattern = SamplePatternForTemp(elementTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
+                                newPattern := SamplePatternForTemp(elementTemp, constraintMap, evaluationMap, requireExactType: false, ref unnamedEnumValue);
                                 if (first)
                                 {
                                     first = false;
@@ -674,7 +674,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
                             outParamTemps.Free();
                             subpatternBuilder.Append(')');
-                            var result = subpatternBuilder.ToString();
+                            result := subpatternBuilder.ToString();
                             if (deconstruction != null && needsPropertyString)
                             {
                                 deconstruction = deconstruction + " { }";
@@ -686,15 +686,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                             break;
                         case BoundDagFieldEvaluation e:
                             {
-                                var subInput = e.MakeResultTemp();
-                                var subPattern = SamplePatternForTemp(subInput, constraintMap, evaluationMap, false, ref unnamedEnumValue);
+                                subInput := e.MakeResultTemp();
+                                subPattern := SamplePatternForTemp(subInput, constraintMap, evaluationMap, false, ref unnamedEnumValue);
                                 properties.Add(e.Field, subPattern);
                             }
                             break;
                         case BoundDagPropertyEvaluation e:
                             {
-                                var subInput = e.MakeResultTemp();
-                                var subPattern = SamplePatternForTemp(subInput, constraintMap, evaluationMap, false, ref unnamedEnumValue);
+                                subInput := e.MakeResultTemp();
+                                subPattern := SamplePatternForTemp(subInput, constraintMap, evaluationMap, false, ref unnamedEnumValue);
 
                                 if (evaluations.Length == 1 && e.Property is { Name: WellKnownMemberNames.ValuePropertyName } property &&
                                     e.Input.Type is NamedTypeSymbol { IsUnionType: true } unionType &&
@@ -713,7 +713,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 string typeName = requireExactType ? input.Type.ToDisplayString() : null;
                 needsPropertyString |= deconstruction == null && typeName == null || properties.Count != 0;
-                var propertyString = needsPropertyString ? (deconstruction != null ? " {" : "{") + string.Join(", ", properties.Select(kvp => $" {kvp.Key.Name}: {kvp.Value}")) + " }" : null;
+                propertyString := needsPropertyString ? (deconstruction != null ? " {" : "{") + string.Join(", ", properties.Select(kvp => $" {kvp.Key.Name}: {kvp.Value}")) + " }" : null;
                 Debug.Assert(typeName != null || deconstruction != null || propertyString != null);
                 return typeName + deconstruction + propertyString;
             }
@@ -792,7 +792,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 unnamedEnumValue = true;
             }
 
-            var sample = remainingValues.Sample;
+            sample := remainingValues.Sample;
             if (sample != null)
                 return ValueString(sample, type, requireExactType);
 
@@ -800,7 +800,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // of values of `int` and `uint`. So if we get here we need to produce a pattern indicating
             // such an out-of-range value.
 
-            var underlyingType = type.EnumUnderlyingTypeOrSelf();
+            underlyingType := type.EnumUnderlyingTypeOrSelf();
             Debug.Assert(underlyingType.IsNativeIntegerType);
             if (underlyingType.SpecialType == SpecialType.System_IntPtr)
             {

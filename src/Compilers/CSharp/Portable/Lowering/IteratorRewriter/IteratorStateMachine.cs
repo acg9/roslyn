@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             this.ElementType = TypeMap.SubstituteType(elementType);
 
-            var interfaces = ArrayBuilder<NamedTypeSymbol>.GetInstance();
+            interfaces := ArrayBuilder<NamedTypeSymbol>.GetInstance();
             if (isEnumerable)
             {
                 interfaces.Add(ContainingAssembly.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerable_T).Construct(ElementType.Type));

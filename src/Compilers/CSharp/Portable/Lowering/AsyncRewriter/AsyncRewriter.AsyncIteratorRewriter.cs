@@ -160,7 +160,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(stateMachineType.Constructor is IteratorConstructor);
 
                 F.CurrentFunction = stateMachineType.Constructor;
-                var bodyBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+                bodyBuilder := ArrayBuilder<BoundStatement>.GetInstance();
                 bodyBuilder.Add(F.BaseInitialization());
 
                 // this.builder = System.Runtime.CompilerServices.AsyncIteratorMethodBuilder.Create();
@@ -168,7 +168,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 bodyBuilder.Add(F.Assignment(F.InstanceField(stateField), F.Parameter(F.CurrentFunction.Parameters[0]))); // this.state = state;
 
-                var managedThreadId = MakeCurrentThreadId();
+                managedThreadId := MakeCurrentThreadId();
                 if (managedThreadId != null && (object)initialThreadIdField != null)
                 {
                     // this.initialThreadId = {managedThreadId};
@@ -200,7 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             protected override void InitializeStateMachine(ArrayBuilder<BoundStatement> bodyBuilder, NamedTypeSymbol frameType, LocalSymbol stateMachineLocal)
             {
                 // var stateMachineLocal = new {StateMachineType}({initialState})
-                var initialState = _isEnumerable ? StateMachineState.FinishedState : StateMachineState.InitialAsyncIteratorState;
+                initialState := _isEnumerable ? StateMachineState.FinishedState : StateMachineState.InitialAsyncIteratorState;
                 bodyBuilder.Add(
                     F.Assignment(
                         F.Local(stateMachineLocal),
@@ -262,7 +262,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             protected override BoundStatement GenerateStateMachineCreation(LocalSymbol stateMachineVariable, NamedTypeSymbol frameType, IReadOnlyDictionary<Symbol, CapturedSymbolReplacement> proxies)
             {
-                var bodyBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+                bodyBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
                 bodyBuilder.Add(GenerateParameterStorage(stateMachineVariable, proxies));
 
@@ -302,7 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 MethodSymbol IAsyncEnumerableOfElementType_MoveNextAsync = F.WellKnownMethod(WellKnownMember.System_Collections_Generic_IAsyncEnumerator_T__MoveNextAsync)
                     .AsMember(IAsyncEnumeratorOfElementType);
 
-                var promiseType = (NamedTypeSymbol)_promiseOfValueOrEndField.Type;
+                promiseType := (NamedTypeSymbol)_promiseOfValueOrEndField.Type;
 
                 MethodSymbol promise_GetStatus = F.WellKnownMethod(WellKnownMember.System_Threading_Tasks_Sources_ManualResetValueTaskSourceCore_T__GetStatus)
                     .AsMember(promiseType);
@@ -310,7 +310,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 MethodSymbol promise_GetResult = F.WellKnownMethod(WellKnownMember.System_Threading_Tasks_Sources_ManualResetValueTaskSourceCore_T__GetResult)
                     .AsMember(promiseType);
 
-                var moveNextAsyncReturnType = (NamedTypeSymbol)IAsyncEnumerableOfElementType_MoveNextAsync.ReturnType;
+                moveNextAsyncReturnType := (NamedTypeSymbol)IAsyncEnumerableOfElementType_MoveNextAsync.ReturnType;
 
                 MethodSymbol valueTaskT_ctorValue = F.WellKnownMethod(WellKnownMember.System_Threading_Tasks_ValueTask_T__ctorValue)
                     .AsMember(moveNextAsyncReturnType);
@@ -334,9 +334,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                     thenClause: F.Return(F.Default(moveNextAsyncReturnType)));
 
                 // var version = _valueOrEndPromise.Version;
-                var versionSymbol = F.SynthesizedLocal(F.SpecialType(SpecialType.System_Int16));
-                var versionLocal = F.Local(versionSymbol);
-                var versionInit = F.Assignment(versionLocal, F.Call(F.Field(F.This(), _promiseOfValueOrEndField), promise_get_Version));
+                versionSymbol := F.SynthesizedLocal(F.SpecialType(SpecialType.System_Int16));
+                versionLocal := F.Local(versionSymbol);
+                versionInit := F.Assignment(versionLocal, F.Call(F.Field(F.This(), _promiseOfValueOrEndField), promise_get_Version));
 
                 var ifPromiseReady = F.If(
                     // if (_valueOrEndPromise.GetStatus(version) == ValueTaskSourceStatus.Succeeded)
@@ -349,7 +349,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // return new ValueTask<bool>(this, version);
                 // Note: we fall back to this slower method of returning when the promise doesn't yet have a value.
                 // This method of returning relies on two interface calls (`IValueTaskSource<bool>.GetStatus(version)` and `IValueTaskSource<bool>.GetResult(version)`).
-                var returnStatement = F.Return(F.New(valueTaskT_ctor, F.This(), versionLocal));
+                returnStatement := F.Return(F.New(valueTaskT_ctor, F.This(), versionLocal));
 
                 F.CloseMethod(F.Block(
                     ImmutableArray.Create(instSymbol, versionSymbol),
@@ -387,7 +387,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 instSymbol = F.SynthesizedLocal(this.stateMachineType);
 
                 // var inst = this;
-                var instLocal = F.Local(instSymbol);
+                instLocal := F.Local(instSymbol);
                 instAssignment = F.Assignment(instLocal, F.This());
 
                 // _builder.Start(ref inst);
@@ -454,7 +454,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     .AsMember((NamedTypeSymbol)IAsyncDisposable_DisposeAsync.ReturnType);
 
                 // return new ValueTask(this, _valueOrEndPromise.Version);
-                var returnStatement = F.Return(F.New(valueTask_ctor, F.This(), F.Call(F.InstanceField(_promiseOfValueOrEndField), promise_get_Version)));
+                returnStatement := F.Return(F.New(valueTask_ctor, F.This(), F.Call(F.InstanceField(_promiseOfValueOrEndField), promise_get_Version)));
 
                 F.CloseMethod(F.Block(
                     ImmutableArray.Create(instSymbol),

@@ -27,7 +27,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             foreach (var decl in node.LocalDeclarations)
             {
-                var init = VisitLocalDeclaration(decl);
+                init := VisitLocalDeclaration(decl);
 
                 if (init != null)
                 {

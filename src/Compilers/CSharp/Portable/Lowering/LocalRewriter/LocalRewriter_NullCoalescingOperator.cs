@@ -56,7 +56,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return new BoundNullCoalescingOperator(syntax, rewrittenLeft, rewrittenRight, leftPlaceholder, leftConversion, resultKind, @checked: false, rewrittenResultType);
             }
 
-            var isUnconstrainedTypeParameter = rewrittenLeft.Type is { IsReferenceType: false, IsValueType: false };
+            isUnconstrainedTypeParameter := rewrittenLeft.Type is { IsReferenceType: false, IsValueType: false };
 
             // first we can make a small optimization:
             // If left is a constant then we already know whether it is null or not. If it is null then we
@@ -98,11 +98,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (BoundNode.GetConversion(leftConversion, leftPlaceholder) is { IsIdentity: true } or { Kind: ConversionKind.ExplicitNullable })
             {
-                var conditionalAccess = rewrittenLeft as BoundLoweredConditionalAccess;
+                conditionalAccess := rewrittenLeft as BoundLoweredConditionalAccess;
                 if (conditionalAccess != null &&
                     (conditionalAccess.WhenNullOpt == null || NullableNeverHasValue(conditionalAccess.WhenNullOpt)))
                 {
-                    var notNullAccess = NullableAlwaysHasValue(conditionalAccess.WhenNotNull);
+                    notNullAccess := NullableAlwaysHasValue(conditionalAccess.WhenNotNull);
                     if (notNullAccess != null)
                     {
                         BoundExpression? whenNullOpt = rewrittenRight;
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (rewrittenLeft.Type.IsNullableType() &&
                 rewrittenRight.Type.Equals(rewrittenLeft.Type.GetNullableUnderlyingType(), TypeCompareKind.AllIgnoreOptions))
             {
-                var unwrappedRight = RemoveIdentityConversions(rewrittenRight);
+                unwrappedRight := RemoveIdentityConversions(rewrittenRight);
 
                 // Optimize left ?? right to left.GetValueOrDefault() when left is T? and right is the default value of T
                 if (unwrappedRight.IsDefaultValue() &&
@@ -194,9 +194,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var boundCall = (BoundCall)expression;
+            boundCall := (BoundCall)expression;
 
-            var method = boundCall.Method;
+            method := boundCall.Method;
 
             if (method.IsStatic && method.ContainingType.SpecialType == SpecialType.System_String)
             {
@@ -220,7 +220,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             while (expression.Kind == BoundKind.Conversion)
             {
-                var boundConversion = (BoundConversion)expression;
+                boundConversion := (BoundConversion)expression;
                 if (boundConversion.ConversionKind != ConversionKind.Identity)
                 {
                     return expression;
@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // before performing the leftConversion.
             // See comments in Binder.BindNullCoalescingOperator referring to GetConvertedLeftForNullCoalescingOperator for more details.
 
-            var conversionTakesNullableType = leftPlaceholder?.Type?.IsNullableType() == true;
+            conversionTakesNullableType := leftPlaceholder?.Type?.IsNullableType() == true;
 
             if (!TypeSymbol.Equals(rewrittenLeftType, rewrittenResultType, TypeCompareKind.ConsiderEverything2)
                 && rewrittenLeftType.IsNullableType()

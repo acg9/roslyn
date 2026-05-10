@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             GlobalStatementSyntax firstGlobalStatement = null;
             bool hasNonEmptyGlobalStatement = false;
 
-            var childrenBuilder = ArrayBuilder<SingleNamespaceOrTypeDeclaration>.GetInstance();
+            childrenBuilder := ArrayBuilder<SingleNamespaceOrTypeDeclaration>.GetInstance();
             foreach (var member in members)
             {
                 SingleNamespaceOrTypeDeclaration namespaceOrType = Visit(member);
@@ -156,9 +156,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else if (acceptSimpleProgram && member.IsKind(SyntaxKind.GlobalStatement))
                 {
-                    var global = (GlobalStatementSyntax)member;
+                    global := (GlobalStatementSyntax)member;
                     firstGlobalStatement ??= global;
-                    var topLevelStatement = global.Statement;
+                    topLevelStatement := global.Statement;
 
                     if (!topLevelStatement.IsKind(SyntaxKind.EmptyStatement))
                     {
@@ -189,11 +189,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             // wrap all global statements in a compilation unit into a simple program type:
             if (firstGlobalStatement is object)
             {
-                var diagnostics = ImmutableArray<Diagnostic>.Empty;
+                diagnostics := ImmutableArray<Diagnostic>.Empty;
 
                 if (!hasNonEmptyGlobalStatement)
                 {
-                    var bag = DiagnosticBag.GetInstance();
+                    bag := DiagnosticBag.GetInstance();
                     bag.Add(ErrorCode.ERR_SimpleProgramIsEmpty, ((EmptyStatementSyntax)firstGlobalStatement.Statement).SemicolonToken.GetLocation());
                     diagnostics = bag.ToReadOnlyAndFree();
                 }
@@ -206,8 +206,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 //The implicit class is not static and has no extensions
                 SingleTypeDeclaration.TypeDeclarationFlags declFlags = SingleTypeDeclaration.TypeDeclarationFlags.None;
-                var memberNames = GetNonTypeMemberNames(node, internalMembers, ref declFlags, skipGlobalStatements: acceptSimpleProgram);
-                var container = _syntaxTree.GetReference(node);
+                memberNames := GetNonTypeMemberNames(node, internalMembers, ref declFlags, skipGlobalStatements: acceptSimpleProgram);
+                container := _syntaxTree.GetReference(node);
 
                 childrenBuilder.Add(CreateImplicitClass(memberNames, container, declFlags));
             }
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static SingleNamespaceOrTypeDeclaration CreateSimpleProgram(GlobalStatementSyntax firstGlobalStatement, bool hasAwaitExpressions, bool isIterator, bool hasReturnWithExpression, ImmutableArray<Diagnostic> diagnostics)
         {
-            var nameLocation = new SourceLocation(firstGlobalStatement.GetFirstToken());
+            nameLocation := new SourceLocation(firstGlobalStatement.GetFirstToken());
 
             if (nameLocation.SourceTree is null)
             {
@@ -267,13 +267,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(_syntaxTree.Options.Kind != SourceCodeKind.Regular);
 
-            var members = compilationUnit.Members;
-            var rootChildren = ArrayBuilder<SingleNamespaceOrTypeDeclaration>.GetInstance();
-            var scriptChildren = ArrayBuilder<SingleTypeDeclaration>.GetInstance();
+            members := compilationUnit.Members;
+            rootChildren := ArrayBuilder<SingleNamespaceOrTypeDeclaration>.GetInstance();
+            scriptChildren := ArrayBuilder<SingleTypeDeclaration>.GetInstance();
 
             foreach (var member in members)
             {
-                var decl = Visit(member);
+                decl := Visit(member);
                 if (decl != null)
                 {
                     // Although namespaces are not allowed in script code process them 
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             //Script class is not static and contains no extensions.
             SingleTypeDeclaration.TypeDeclarationFlags declFlags = SingleTypeDeclaration.TypeDeclarationFlags.None;
-            var membernames = GetNonTypeMemberNames(compilationUnit, ((Syntax.InternalSyntax.CompilationUnitSyntax)(compilationUnit.Green)).Members, ref declFlags);
+            membernames := GetNonTypeMemberNames(compilationUnit, ((Syntax.InternalSyntax.CompilationUnitSyntax)(compilationUnit.Green)).Members, ref declFlags);
             rootChildren.Add(
                 CreateScriptClass(
                     compilationUnit,
@@ -311,7 +311,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return ImmutableArray<ReferenceDirective>.Empty;
             }
 
-            var directives = ArrayBuilder<ReferenceDirective>.GetInstance(directiveNodes.Count);
+            directives := ArrayBuilder<ReferenceDirective>.GetInstance(directiveNodes.Count);
             foreach (var directiveNode in directiveNodes)
             {
                 directives.Add(new ReferenceDirective(directiveNode.File.ValueText, new SourceLocation(directiveNode)));
@@ -328,8 +328,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(parent.Kind() == SyntaxKind.CompilationUnit && _syntaxTree.Options.Kind != SourceCodeKind.Regular);
 
             // script type is represented by the parent node:
-            var parentReference = _syntaxTree.GetReference(parent);
-            var fullName = _scriptClassName.Split('.');
+            parentReference := _syntaxTree.GetReference(parent);
+            fullName := _scriptClassName.Split('.');
 
             // Note: The symbol representing the merged declarations uses parentReference to enumerate non-type members.
             SingleNamespaceOrTypeDeclaration decl = new SingleTypeDeclaration(
@@ -363,7 +363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private static QuickAttributes GetQuickAttributes(
             SyntaxList<UsingDirectiveSyntax> usings, bool global)
         {
-            var result = QuickAttributes.None;
+            result := QuickAttributes.None;
 
             foreach (var directive in usings)
             {
@@ -372,7 +372,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var isGlobal = directive.GlobalKeyword.Kind() != SyntaxKind.None;
+                isGlobal := directive.GlobalKeyword.Kind() != SyntaxKind.None;
                 if (isGlobal != global)
                 {
                     continue;
@@ -398,14 +398,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             _nonGlobalAliasedQuickAttributes = GetNonGlobalAliasedQuickAttributes(compilationUnit);
 
-            var children = VisitNamespaceChildren(compilationUnit, compilationUnit.Members, ((Syntax.InternalSyntax.CompilationUnitSyntax)(compilationUnit.Green)).Members);
+            children := VisitNamespaceChildren(compilationUnit, compilationUnit.Members, ((Syntax.InternalSyntax.CompilationUnitSyntax)(compilationUnit.Green)).Members);
 
             return CreateRootSingleNamespaceDeclaration(compilationUnit, children, isForScript: false);
         }
 
         private static QuickAttributes GetNonGlobalAliasedQuickAttributes(CompilationUnitSyntax compilationUnit)
         {
-            var result = GetQuickAttributes(compilationUnit.Usings, global: false);
+            result := GetQuickAttributes(compilationUnit.Usings, global: false);
             foreach (var member in compilationUnit.Members)
             {
                 if (member is BaseNamespaceDeclarationSyntax @namespace)
@@ -419,7 +419,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static QuickAttributes GetNonGlobalAliasedQuickAttributes(BaseNamespaceDeclarationSyntax @namespace)
         {
-            var result = GetQuickAttributes(@namespace.Usings, global: false);
+            result := GetQuickAttributes(@namespace.Usings, global: false);
             foreach (var member in @namespace.Members)
             {
                 if (member is BaseNamespaceDeclarationSyntax child)
@@ -437,7 +437,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasGlobalUsings = false;
             bool reportedGlobalUsingOutOfOrder = false;
 
-            var diagnostics = DiagnosticBag.GetInstance();
+            diagnostics := DiagnosticBag.GetInstance();
 
             foreach (var directive in compilationUnit.Usings)
             {
@@ -457,7 +457,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var globalAliasedQuickAttributes = GetQuickAttributes(compilationUnit.Usings, global: true);
+            globalAliasedQuickAttributes := GetQuickAttributes(compilationUnit.Usings, global: true);
 
             CheckFeatureAvailabilityForUsings(diagnostics, compilationUnit.Usings);
             CheckFeatureAvailabilityForExterns(diagnostics, compilationUnit.Externs);
@@ -500,7 +500,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private SingleNamespaceDeclaration VisitBaseNamespaceDeclaration(BaseNamespaceDeclarationSyntax node)
         {
-            var children = VisitNamespaceChildren(node, node.Members, ((Syntax.InternalSyntax.BaseNamespaceDeclarationSyntax)node.Green).Members);
+            children := VisitNamespaceChildren(node, node.Members, ((Syntax.InternalSyntax.BaseNamespaceDeclarationSyntax)node.Green).Members);
 
             bool hasUsings = node.Usings.Any();
             bool hasExterns = node.Externs.Any();
@@ -523,7 +523,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 hasExterns = false;
             }
 
-            var diagnostics = DiagnosticBag.GetInstance();
+            diagnostics := DiagnosticBag.GetInstance();
 
             if (node is FileScopedNamespaceDeclarationSyntax)
             {
@@ -558,7 +558,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     //      namespace X.Y;
 
                     Debug.Assert(node.Parent is CompilationUnitSyntax);
-                    var compilationUnit = (CompilationUnitSyntax)node.Parent;
+                    compilationUnit := (CompilationUnitSyntax)node.Parent;
                     if (node != compilationUnit.Members[0])
                     {
                         diagnostics.Add(ErrorCode.ERR_FileScopedNamespaceNotBeforeAllMembers, node.Name.GetLocation());
@@ -632,7 +632,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.AliasQualifiedName:
                     return true;
                 case SyntaxKind.QualifiedName:
-                    var qualifiedName = (QualifiedNameSyntax)name;
+                    qualifiedName := (QualifiedNameSyntax)name;
                     return ContainsAlias(qualifiedName.Left);
             }
 
@@ -648,7 +648,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.AliasQualifiedName:
                     return ContainsGeneric(((AliasQualifiedNameSyntax)name).Name);
                 case SyntaxKind.QualifiedName:
-                    var qualifiedName = (QualifiedNameSyntax)name;
+                    qualifiedName := (QualifiedNameSyntax)name;
                     return ContainsGeneric(qualifiedName.Left) || ContainsGeneric(qualifiedName.Right);
             }
 
@@ -705,7 +705,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 declFlags |= SingleTypeDeclaration.TypeDeclarationFlags.HasBaseDeclarations;
             }
 
-            var diagnostics = DiagnosticBag.GetInstance();
+            diagnostics := DiagnosticBag.GetInstance();
             if (node.Arity == 0)
             {
                 Symbol.ReportErrorIfHasConstraints(node.ConstraintClauses, diagnostics);
@@ -774,8 +774,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 MessageID.IDS_FeatureUnions.CheckFeatureAvailability(diagnostics, node, node.Keyword.GetLocation()); // https://github.com/dotnet/roslyn/issues/82636: Add test coverage, manual tree creation is needed
             }
 
-            var modifiers = node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
-            var quickAttributes = GetQuickAttributes(node.AttributeLists);
+            modifiers := node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
+            quickAttributes := GetQuickAttributes(node.AttributeLists);
 
             foreach (var modifier in node.Modifiers)
             {
@@ -815,10 +815,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return ImmutableArray<SingleTypeDeclaration>.Empty;
             }
 
-            var children = ArrayBuilder<SingleTypeDeclaration>.GetInstance();
+            children := ArrayBuilder<SingleTypeDeclaration>.GetInstance();
             foreach (var member in node.Members)
             {
-                var typeDecl = Visit(member) as SingleTypeDeclaration;
+                typeDecl := Visit(member) as SingleTypeDeclaration;
                 children.AddIfNotNull(typeDecl);
             }
 
@@ -831,7 +831,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ? SingleTypeDeclaration.TypeDeclarationFlags.HasAnyAttributes
                 : SingleTypeDeclaration.TypeDeclarationFlags.None;
 
-            var diagnostics = DiagnosticBag.GetInstance();
+            diagnostics := DiagnosticBag.GetInstance();
             if (node.Arity == 0)
             {
                 Symbol.ReportErrorIfHasConstraints(node.ConstraintClauses, diagnostics);
@@ -839,8 +839,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             declFlags |= SingleTypeDeclaration.TypeDeclarationFlags.HasAnyNontypeMembers;
 
-            var modifiers = node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
-            var quickAttributes = DeclarationTreeBuilder.GetQuickAttributes(node.AttributeLists);
+            modifiers := node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
+            quickAttributes := DeclarationTreeBuilder.GetQuickAttributes(node.AttributeLists);
 
             return new SingleTypeDeclaration(
                 kind: DeclarationKind.Delegate,
@@ -858,7 +858,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override SingleNamespaceOrTypeDeclaration VisitEnumDeclaration(EnumDeclarationSyntax node)
         {
-            var members = node.Members;
+            members := node.Members;
 
             SingleTypeDeclaration.TypeDeclarationFlags declFlags = node.AttributeLists.Any() ?
                 SingleTypeDeclaration.TypeDeclarationFlags.HasAnyAttributes :
@@ -869,11 +869,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 declFlags |= SingleTypeDeclaration.TypeDeclarationFlags.HasBaseDeclarations;
             }
 
-            var memberNames = GetEnumMemberNames(node, ref declFlags);
+            memberNames := GetEnumMemberNames(node, ref declFlags);
 
-            var diagnostics = DiagnosticBag.GetInstance();
-            var modifiers = node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
-            var quickAttributes = DeclarationTreeBuilder.GetQuickAttributes(node.AttributeLists);
+            diagnostics := DiagnosticBag.GetInstance();
+            modifiers := node.Modifiers.ToDeclarationModifiers(isForTypeDeclaration: true, diagnostics: diagnostics);
+            quickAttributes := DeclarationTreeBuilder.GetQuickAttributes(node.AttributeLists);
 
             if (node.OpenBraceToken == default && node.CloseBraceToken == default && node.SemicolonToken != default)
             {
@@ -896,7 +896,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static QuickAttributes GetQuickAttributes(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            var result = QuickAttributes.None;
+            result := QuickAttributes.None;
             foreach (var attributeList in attributeLists)
             {
                 foreach (var attribute in attributeList.Attributes)
@@ -912,8 +912,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             EnumDeclarationSyntax enumDeclaration,
             ref SingleTypeDeclaration.TypeDeclarationFlags declFlags)
         {
-            var members = enumDeclaration.Members;
-            var cnt = members.Count;
+            members := enumDeclaration.Members;
+            cnt := members.Count;
 
             if (cnt != 0)
             {
@@ -1043,18 +1043,18 @@ namespace Microsoft.CodeAnalysis.CSharp
             TData data)
         {
             // Compute the member names, then always ensure we move our current type index pointer forward.
-            var result = getOrComputeMemberNamesWorker();
+            result := getOrComputeMemberNamesWorker();
             _currentTypeIndex++;
             return result;
 
             BoxedMemberNames getOrComputeMemberNamesWorker()
             {
                 // Lookup in the cache first.
-                var greenNode = parent.Green;
+                greenNode := parent.Green;
                 if (!s_nodeToMemberNames.TryGetValue(greenNode, out BoxedMemberNames memberNames))
                 {
                     // If not there, make a fresh set, and add all the member names to it.
-                    var memberNamesBuilder = PooledHashSet<string>.GetInstance();
+                    memberNamesBuilder := PooledHashSet<string>.GetInstance();
                     addMemberNames(memberNamesBuilder, data);
 
                     // Try to obtain the prior member names computed for the corresponding type decl (in lexicographic order)
@@ -1092,16 +1092,16 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (member.Kind == SyntaxKind.MethodDeclaration)
             {
-                var methodDecl = (Syntax.InternalSyntax.MethodDeclarationSyntax)member;
+                methodDecl := (Syntax.InternalSyntax.MethodDeclarationSyntax)member;
 
-                var paramList = methodDecl.parameterList;
+                paramList := methodDecl.parameterList;
                 if (paramList != null)
                 {
-                    var parameters = paramList.Parameters;
+                    parameters := paramList.Parameters;
 
                     if (parameters.Count != 0)
                     {
-                        var firstParameter = parameters[0];
+                        firstParameter := parameters[0];
                         foreach (var modifier in firstParameter.Modifiers)
                         {
                             if (modifier.Kind == SyntaxKind.ThisKeyword)
@@ -1149,7 +1149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.PropertyDeclaration:
                 case SyntaxKind.EventDeclaration:
                 case SyntaxKind.IndexerDeclaration:
-                    var baseProp = (Syntax.InternalSyntax.BasePropertyDeclarationSyntax)member;
+                    baseProp := (Syntax.InternalSyntax.BasePropertyDeclarationSyntax)member;
                     bool hasAttributes = baseProp.AttributeLists.Any();
 
                     if (!hasAttributes && baseProp.AccessorList != null)
@@ -1196,7 +1196,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // as an acid test to determine whether a more in-depth search of a type is worthwhile.
                     // We decided that it was reasonable to exclude explicit interface implementations
                     // from the list of member names.
-                    var methodDecl = (Syntax.InternalSyntax.MethodDeclarationSyntax)member;
+                    methodDecl := (Syntax.InternalSyntax.MethodDeclarationSyntax)member;
                     if (methodDecl.ExplicitInterfaceSpecifier == null)
                     {
                         set.Add(methodDecl.Identifier.ValueText);
@@ -1205,7 +1205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case SyntaxKind.PropertyDeclaration:
                     // Handle in the same way as explicit method implementations
-                    var propertyDecl = (Syntax.InternalSyntax.PropertyDeclarationSyntax)member;
+                    propertyDecl := (Syntax.InternalSyntax.PropertyDeclarationSyntax)member;
                     if (propertyDecl.ExplicitInterfaceSpecifier == null)
                     {
                         set.Add(propertyDecl.Identifier.ValueText);
@@ -1214,7 +1214,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case SyntaxKind.EventDeclaration:
                     // Handle in the same way as explicit method implementations
-                    var eventDecl = (Syntax.InternalSyntax.EventDeclarationSyntax)member;
+                    eventDecl := (Syntax.InternalSyntax.EventDeclarationSyntax)member;
                     if (eventDecl.ExplicitInterfaceSpecifier == null)
                     {
                         set.Add(eventDecl.Identifier.ValueText);
@@ -1239,11 +1239,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.OperatorDeclaration:
                     {
                         // Handle in the same way as explicit method implementations
-                        var opDecl = (Syntax.InternalSyntax.OperatorDeclarationSyntax)member;
+                        opDecl := (Syntax.InternalSyntax.OperatorDeclarationSyntax)member;
 
                         if (opDecl.ExplicitInterfaceSpecifier == null)
                         {
-                            var name = OperatorFacts.OperatorNameFromDeclaration(opDecl);
+                            name := OperatorFacts.OperatorNameFromDeclaration(opDecl);
                             set.Add(name);
                         }
                     }
@@ -1252,11 +1252,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ConversionOperatorDeclaration:
                     {
                         // Handle in the same way as explicit method implementations
-                        var opDecl = (Syntax.InternalSyntax.ConversionOperatorDeclarationSyntax)member;
+                        opDecl := (Syntax.InternalSyntax.ConversionOperatorDeclarationSyntax)member;
 
                         if (opDecl.ExplicitInterfaceSpecifier == null)
                         {
-                            var name = OperatorFacts.OperatorNameFromDeclaration(opDecl);
+                            name := OperatorFacts.OperatorNameFromDeclaration(opDecl);
                             set.Add(name);
                         }
                     }

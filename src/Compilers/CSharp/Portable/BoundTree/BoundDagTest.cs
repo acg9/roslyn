@@ -68,14 +68,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundDagFieldEvaluation e:
                     return $"{e.GetOutputTempDebuggerDisplay()} = {e.Input.GetDebuggerDisplay()}.{e.Field.Name}";
                 case BoundDagDeconstructEvaluation d:
-                    var result = "(";
+                    result := "(";
 
                     if (DecisionDagBuilder.IsUnionTryGetValueEvaluation(d, out TypeSymbol? targetType, out _))
                     {
                         result = $"TryGetValue({targetType}): " + result;
                     }
 
-                    var first = true;
+                    first := true;
 
                     foreach (var param in d.DeconstructMethod.Parameters)
                     {
@@ -110,7 +110,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case BoundDagEvaluation e:
                     return $"{e.GetOutputTempDebuggerDisplay()} = {e.Kind}({e.Input.GetDebuggerDisplay()})";
                 case BoundDagTypeTest b:
-                    var typeName = b.Type.TypeKind == TypeKind.Error ? "<error type>" : b.Type.ToString();
+                    typeName := b.Type.TypeKind == TypeKind.Error ? "<error type>" : b.Type.ToString();
                     return $"{b.Input.GetDebuggerDisplay()} is {typeName}";
                 case BoundDagValueTest v:
                     return $"{v.Input.GetDebuggerDisplay()} == {v.Value.GetValueToDisplay()}";

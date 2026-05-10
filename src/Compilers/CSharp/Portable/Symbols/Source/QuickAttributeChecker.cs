@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static QuickAttributeChecker CreatePredefinedQuickAttributeChecker()
         {
-            var result = new QuickAttributeChecker();
+            result := new QuickAttributeChecker();
             result.AddName(AttributeDescription.TypeIdentifierAttribute.Name, QuickAttributes.TypeIdentifier);
             result.AddName(AttributeDescription.TypeForwardedToAttribute.Name, QuickAttributes.TypeForwardedTo);
             result.AddName(AttributeDescription.IndexerNameAttribute.Name, QuickAttributes.IndexerName);
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 #if DEBUG
             Debug.Assert(!_sealed);
 #endif
-            var currentValue = QuickAttributes.None;
+            currentValue := QuickAttributes.None;
             _nameToAttributeMap.TryGetValue(name, out currentValue);
 
             QuickAttributes newValue = newAttributes | currentValue;
@@ -164,7 +164,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Update this code if we add new quick attributes.
             Debug.Assert(QuickAttributes.Last == QuickAttributes.AssemblySignatureKey);
 
-            var result = QuickAttributes.None;
+            result := QuickAttributes.None;
             if (matches(AttributeDescription.TypeIdentifierAttribute))
             {
                 result |= QuickAttributes.TypeIdentifier;

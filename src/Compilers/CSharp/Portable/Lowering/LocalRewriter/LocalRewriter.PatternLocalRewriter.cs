@@ -75,8 +75,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
                 public string Dump()
                 {
-                    var poolElement = PooledStringBuilder.GetInstance();
-                    var builder = poolElement.Builder;
+                    poolElement := PooledStringBuilder.GetInstance();
+                    builder := poolElement.Builder;
                     foreach (var kv in _map)
                     {
                         builder.Append("Key: ");
@@ -85,7 +85,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         builder.AppendLine(kv.Value.Dump());
                     }
 
-                    var result = builder.ToString();
+                    result := builder.ToString();
                     poolElement.Free();
                     return result;
                 }
@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (!_map.TryGetValue(dagTemp, out BoundExpression result))
                     {
-                        var kind = _generateSequencePoints ? SynthesizedLocalKind.SwitchCasePatternMatching : SynthesizedLocalKind.LoweringTemp;
+                        kind := _generateSequencePoints ? SynthesizedLocalKind.SwitchCasePatternMatching : SynthesizedLocalKind.LoweringTemp;
                         LocalSymbol temp = _factory.SynthesizedLocal(dagTemp.Type, syntax: _node, kind: kind);
                         result = _factory.Local(temp);
                         _map.Add(dagTemp, result);
@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundDagFieldEvaluation f:
                         {
                             FieldSymbol field = f.Field;
-                            var outputTemp = f.MakeResultTemp();
+                            outputTemp := f.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             BoundExpression access = _localRewriter.MakeFieldAccess(f.Syntax, input, field, null, LookupResultKind.Viable, field.Type);
                             access.WasCompilerGenerated = true;
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundDagPropertyEvaluation p:
                         {
                             PropertySymbol property = p.Property;
-                            var outputTemp = p.MakeResultTemp();
+                            outputTemp := p.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             // Tracked by https://github.com/dotnet/roslyn/issues/78827 : MQ, Consider preserving the BoundConversion from initial binding instead of using markAsChecked here
                             input = _localRewriter.ConvertReceiverForExtensionMemberIfNeeded(property, input, markAsChecked: true);
@@ -160,8 +160,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundDagDeconstructEvaluation d:
                         {
                             MethodSymbol method = d.DeconstructMethod;
-                            var refKindBuilder = ArrayBuilder<RefKind>.GetInstance();
-                            var argBuilder = ArrayBuilder<BoundExpression>.GetInstance();
+                            refKindBuilder := ArrayBuilder<RefKind>.GetInstance();
+                            argBuilder := ArrayBuilder<BoundExpression>.GetInstance();
                             BoundExpression receiver;
                             void addArg(RefKind refKind, BoundExpression expression)
                             {
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             }
 
                             TypeSymbol type = t.Type;
-                            var outputTemp = t.MakeResultTemp();
+                            outputTemp := t.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             CompoundUseSiteInfo<AssemblySymbol> useSiteInfo = _localRewriter.GetNewCompoundUseSiteInfo();
                             Conversion conversion = _factory.Compilation.Conversions.ClassifyBuiltInConversion(inputType, output.Type, isChecked: false, ref useSiteInfo);
@@ -261,7 +261,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Debug.Assert(e.Property.GetMethod.ParameterCount == 1);
                             Debug.Assert(e.Property.GetMethod.Parameters[0].Type.SpecialType == SpecialType.System_Int32);
                             TypeSymbol type = e.Property.GetMethod.ReturnType;
-                            var outputTemp = e.MakeResultTemp();
+                            outputTemp := e.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             return _factory.AssignmentExpression(output, _factory.Indexer(input, e.Property, _factory.Literal(e.Index)));
                         }
@@ -272,21 +272,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                             // this[int]
                             // array[Index]
 
-                            var indexerAccess = e.IndexerAccess;
+                            indexerAccess := e.IndexerAccess;
                             if (indexerAccess is BoundImplicitIndexerAccess implicitAccess)
                             {
                                 indexerAccess = implicitAccess.WithLengthOrCountAccess(_tempAllocator.GetTemp(e.LengthTemp));
                             }
 
-                            var placeholderValues = PooledDictionary<BoundEarlyValuePlaceholderBase, BoundExpression>.GetInstance();
+                            placeholderValues := PooledDictionary<BoundEarlyValuePlaceholderBase, BoundExpression>.GetInstance();
                             placeholderValues.Add(e.ReceiverPlaceholder, input);
                             placeholderValues.Add(e.ArgumentPlaceholder, makeUnloweredIndexArgument(e.Index));
                             indexerAccess = PlaceholderReplacer.Replace(placeholderValues, indexerAccess);
                             placeholderValues.Free();
 
-                            var access = (BoundExpression)_localRewriter.Visit(indexerAccess);
+                            access := (BoundExpression)_localRewriter.Visit(indexerAccess);
 
-                            var outputTemp = e.MakeResultTemp();
+                            outputTemp := e.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             return _factory.AssignmentExpression(output, access);
                         }
@@ -298,21 +298,21 @@ namespace Microsoft.CodeAnalysis.CSharp
                             // string.Substring(int, int)
                             // array[Range]
 
-                            var indexerAccess = e.IndexerAccess;
+                            indexerAccess := e.IndexerAccess;
                             if (indexerAccess is BoundImplicitIndexerAccess implicitAccess)
                             {
                                 indexerAccess = implicitAccess.WithLengthOrCountAccess(_tempAllocator.GetTemp(e.LengthTemp));
                             }
 
-                            var placeholderValues = PooledDictionary<BoundEarlyValuePlaceholderBase, BoundExpression>.GetInstance();
+                            placeholderValues := PooledDictionary<BoundEarlyValuePlaceholderBase, BoundExpression>.GetInstance();
                             placeholderValues.Add(e.ReceiverPlaceholder, input);
                             placeholderValues.Add(e.ArgumentPlaceholder, makeUnloweredRangeArgument(e));
                             indexerAccess = PlaceholderReplacer.Replace(placeholderValues, indexerAccess);
                             placeholderValues.Free();
 
-                            var access = (BoundExpression)_localRewriter.Visit(indexerAccess);
+                            access := (BoundExpression)_localRewriter.Visit(indexerAccess);
 
-                            var outputTemp = e.MakeResultTemp();
+                            outputTemp := e.MakeResultTemp();
                             BoundExpression output = _tempAllocator.GetTemp(outputTemp);
                             return _factory.AssignmentExpression(output, access);
                         }
@@ -335,7 +335,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 BoundExpression makeUnloweredIndexArgument(int index)
                 {
                     // LocalRewriter.MakePatternIndexOffsetExpression understands this format
-                    var ctor = (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Index__ctor);
+                    ctor := (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Index__ctor);
 
                     if (index < 0)
                     {
@@ -349,11 +349,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 BoundExpression makeUnloweredRangeArgument(BoundDagSliceEvaluation e)
                 {
                     // LocalRewriter.VisitRangeImplicitIndexerAccess understands this format
-                    var indexCtor = (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Index__ctor);
+                    indexCtor := (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Index__ctor);
                     var end = new BoundFromEndIndexExpression(_factory.Syntax, _factory.Literal(-e.EndIndex),
                         methodOpt: indexCtor, _factory.WellKnownType(WellKnownType.System_Index));
 
-                    var rangeCtor = (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Range__ctor);
+                    rangeCtor := (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_Range__ctor);
                     return new BoundRangeExpression(e.Syntax, makeUnloweredIndexArgument(e.StartIndex), end,
                         methodOpt: rangeCtor, _factory.WellKnownType(WellKnownType.System_Range));
                 }
@@ -400,7 +400,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (rewrittenExpr.Type.IsPointerOrFunctionPointer())
                 {
                     TypeSymbol objectType = _factory.SpecialType(SpecialType.System_Object);
-                    var operandType = new PointerTypeSymbol(TypeWithAnnotations.Create(_factory.SpecialType(SpecialType.System_Void)));
+                    operandType := new PointerTypeSymbol(TypeWithAnnotations.Create(_factory.SpecialType(SpecialType.System_Void)));
                     return _localRewriter.MakeBinaryOperator(
                         syntax,
                         operatorKind,
@@ -421,9 +421,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 TypeSymbol comparisonType = input.Type.EnumUnderlyingTypeOrSelf();
-                var operatorType = Binder.RelationalOperatorType(comparisonType);
+                operatorType := Binder.RelationalOperatorType(comparisonType);
                 Debug.Assert(operatorType != BinaryOperatorKind.Error);
-                var operatorKind = BinaryOperatorKind.Equal | operatorType;
+                operatorKind := BinaryOperatorKind.Equal | operatorType;
                 return MakeRelationalTest(syntax, input, operatorKind, value);
             }
 
@@ -465,14 +465,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private BoundExpression MakeSpanStringTest(BoundExpression input, ConstantValue value)
             {
-                var isReadOnlySpan = input.Type.IsReadOnlySpanChar();
+                isReadOnlySpan := input.Type.IsReadOnlySpanChar();
                 // Binder.ConvertPatternExpression() has checked for these well-known members.
                 var sequenceEqual =
                     ((MethodSymbol)_factory.WellKnownMember(isReadOnlySpan
                         ? WellKnownMember.System_MemoryExtensions__SequenceEqual_ReadOnlySpan_T
                         : WellKnownMember.System_MemoryExtensions__SequenceEqual_Span_T))
                     .Construct(_factory.SpecialType(SpecialType.System_Char));
-                var asSpan = (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_MemoryExtensions__AsSpan_String);
+                asSpan := (MethodSymbol)_factory.WellKnownMember(WellKnownMember.System_MemoryExtensions__AsSpan_String);
 
                 Debug.Assert(sequenceEqual != null && asSpan != null);
 
@@ -521,7 +521,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     typeEvaluation2.Input == nonNullTest.Input)
                 {
                     BoundExpression input = _tempAllocator.GetTemp(test.Input);
-                    var baseType = typeEvaluation2.Type;
+                    baseType := typeEvaluation2.Type;
                     BoundExpression output = _tempAllocator.GetTemp(evaluation.MakeResultTemp());
                     sideEffect = _factory.AssignmentExpression(output, _factory.Convert(baseType, input, conv));
                     testExpression = _factory.ObjectNotEqual(output, _factory.Null(baseType));
@@ -550,7 +550,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     decisionDag.TopologicallySortedNodes
                     .Any(static node => node is BoundWhenDecisionDagNode { WhenExpression: { ConstantValueOpt: null } });
 
-                var inputDagTemp = BoundDagTemp.ForOriginalInput(loweredInput);
+                inputDagTemp := BoundDagTemp.ForOriginalInput(loweredInput);
                 if ((loweredInput.Kind == BoundKind.Local || loweredInput.Kind == BoundKind.Parameter)
                     && loweredInput.GetRefKind() == RefKind.None &&
                     !anyWhenClause)
@@ -651,20 +651,20 @@ namespace Microsoft.CodeAnalysis.CSharp
                 int count = loweredInput.Arguments.Length;
 
                 // first evaluate the inputs (in order) into temps
-                var originalInput = BoundDagTemp.ForOriginalInput(loweredInput.Syntax, loweredInput.Type);
-                var newArguments = ArrayBuilder<BoundExpression>.GetInstance(loweredInput.Arguments.Length);
+                originalInput := BoundDagTemp.ForOriginalInput(loweredInput.Syntax, loweredInput.Type);
+                newArguments := ArrayBuilder<BoundExpression>.GetInstance(loweredInput.Arguments.Length);
                 for (int i = 0; i < count; i++)
                 {
-                    var field = loweredInput.Type.TupleElements[i].CorrespondingTupleField;
+                    field := loweredInput.Type.TupleElements[i].CorrespondingTupleField;
                     Debug.Assert(field != null);
-                    var expr = loweredInput.Arguments[i];
-                    var fieldFetchEvaluation = new BoundDagFieldEvaluation(expr.Syntax, field, originalInput);
-                    var temp = fieldFetchEvaluation.MakeResultTemp();
+                    expr := loweredInput.Arguments[i];
+                    fieldFetchEvaluation := new BoundDagFieldEvaluation(expr.Syntax, field, originalInput);
+                    temp := fieldFetchEvaluation.MakeResultTemp();
                     storeToTemp(temp, expr);
                     newArguments.Add(_tempAllocator.GetTemp(temp));
                 }
 
-                var rewrittenDag = decisionDag.Rewrite(makeReplacement);
+                rewrittenDag := decisionDag.Rewrite(makeReplacement);
                 savedInputExpression = loweredInput.Update(
                     loweredInput.Constructor, arguments: newArguments.ToImmutableAndFree(), loweredInput.ArgumentNamesOpt, loweredInput.ArgumentRefKindsOpt,
                     loweredInput.Expanded, loweredInput.ArgsToParamsOpt, loweredInput.DefaultArguments, loweredInput.ConstantValueOpt,
@@ -682,7 +682,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var tempToHoldInput = _tempAllocator.GetTemp(temp);
+                        tempToHoldInput := _tempAllocator.GetTemp(temp);
                         addCode(_factory.AssignmentExpression(tempToHoldInput, expr));
                     }
                 }

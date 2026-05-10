@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return ImmutableArray<MetadataReference>.Empty;
             }
 
-            var setOfReferences = new HashSet<MetadataReference>(ReferenceEqualityComparer.Instance);
+            setOfReferences := new HashSet<MetadataReference>(ReferenceEqualityComparer.Instance);
             ImmutableDictionary<MetadataReference, ImmutableArray<MetadataReference>> mergedAssemblyReferencesMap = GetBoundReferenceManager().MergedAssemblyReferencesMap;
 
             foreach (var reference in References)
@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Use stable ordering for the result, matching the order in References.
-            var builder = ArrayBuilder<MetadataReference>.GetInstance(setOfReferences.Count);
+            builder := ArrayBuilder<MetadataReference>.GetInstance(setOfReferences.Count);
 
             foreach (var reference in References)
             {
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (!_usedAssemblyReferencesFrozen && !Volatile.Read(ref _usedAssemblyReferencesFrozen))
             {
-                var diagnostics = BindingDiagnosticBag.GetConcurrentInstance();
+                diagnostics := BindingDiagnosticBag.GetConcurrentInstance();
                 RoslynDebug.Assert(diagnostics.DiagnosticBag is object);
 
                 GetDiagnosticsWithoutSeverityFiltering(CompilationStage.Declare, includeEarlierStages: true, diagnostics, symbolFilter: null, cancellationToken);
@@ -150,7 +150,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 return;
                             }
 
-                            var stack = ArrayBuilder<AssemblySymbol>.GetInstance(_lazyUsedAssemblyReferences.Count);
+                            stack := ArrayBuilder<AssemblySymbol>.GetInstance(_lazyUsedAssemblyReferences.Count);
                             stack.AddRange(_lazyUsedAssemblyReferences);
 
                             while (stack.Count != 0)

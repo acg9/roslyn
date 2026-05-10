@@ -15,9 +15,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
     {
         private LiteralExpressionSyntax ParseRawStringToken()
         {
-            var originalToken = this.EatToken();
+            originalToken := this.EatToken();
 
-            var expressionKind = SyntaxFacts.GetLiteralExpression(originalToken.Kind);
+            expressionKind := SyntaxFacts.GetLiteralExpression(originalToken.Kind);
             Debug.Assert(expressionKind != SyntaxKind.None);
 
             // We want to share as much code as possible with raw-interpolated-strings.  Especially the code for dealing
@@ -27,16 +27,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             Debug.Assert(originalToken.Text is ['"', '"', '"', ..]);
 
-            var interpolatedString = ParseInterpolatedOrRawStringToken(originalToken, isInterpolatedString: false);
+            interpolatedString := ParseInterpolatedOrRawStringToken(originalToken, isInterpolatedString: false);
 
             // Because there are no actual interpolations, we expect to only see a single text content node containing
             // the interpreted value of the raw string.
             Debug.Assert(interpolatedString.StringStartToken.Kind is SyntaxKind.InterpolatedSingleLineRawStringStartToken or SyntaxKind.InterpolatedMultiLineRawStringStartToken);
             Debug.Assert(interpolatedString.Contents is [InterpolatedStringTextSyntax]);
 
-            var interpolatedText = (InterpolatedStringTextSyntax)interpolatedString.Contents[0]!;
+            interpolatedText := (InterpolatedStringTextSyntax)interpolatedString.Contents[0]!;
 
-            var diagnostics = getDiagnostics();
+            diagnostics := getDiagnostics();
 
             // We preserve everything from the original raw token.  Except we use the computed value text from the
             // interpolated text token instead as long as we got no diagnostics for this raw string.
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             DiagnosticInfo[] getDiagnostics()
             {
-                var diagnosticsBuilder = ArrayBuilder<DiagnosticInfo>.GetInstance();
+                diagnosticsBuilder := ArrayBuilder<DiagnosticInfo>.GetInstance();
 
                 // And any diagnostics from the interpolated string as a whole.
                 diagnosticsBuilder.AddRange(interpolatedString.GetDiagnostics());
@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 // However, move them as they are relative to the text token, and now need to be relative to the start of
                 // the token as a whole.
                 Debug.Assert(!interpolatedText.TextToken.ContainsDiagnostics);
-                var textTokenDiagnostics = MoveDiagnostics(interpolatedText.GetDiagnostics(), interpolatedString.StringStartToken.Width);
+                textTokenDiagnostics := MoveDiagnostics(interpolatedText.GetDiagnostics(), interpolatedString.StringStartToken.Width);
                 if (textTokenDiagnostics != null)
                     diagnosticsBuilder.AddRange(textTokenDiagnostics);
 
@@ -78,8 +78,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
                 // Preserve what the lexer used to do here.  In the presence of any diagnostics, the text of the raw
                 // string minus the starting quotes is used as the value.
-                var startIndex = 0;
-                var originalText = originalToken.Text;
+                startIndex := 0;
+                originalText := originalToken.Text;
                 while (startIndex < originalText.Length && originalText[startIndex] is '"')
                     startIndex++;
 
@@ -110,7 +110,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             // they have no way to ask for the stream of tokens before parsing.
 
             Debug.Assert(this.CurrentToken.Kind == SyntaxKind.InterpolatedStringToken);
-            var originalToken = this.EatToken();
+            originalToken := this.EatToken();
 
             Debug.Assert(originalToken.Text[0] is '$' or '@');
 
@@ -127,20 +127,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             SyntaxToken originalToken,
             bool isInterpolatedString)
         {
-            var originalText = originalToken.Text;
-            var originalTextSpan = originalText.AsSpan();
+            originalText := originalToken.Text;
+            originalTextSpan := originalText.AsSpan();
 
             // compute the positions of the interpolations in the original string literal, if there was an error or not,
             // and where the open and close quotes can be found.
-            var interpolations = ArrayBuilder<Lexer.Interpolation>.GetInstance();
+            interpolations := ArrayBuilder<Lexer.Interpolation>.GetInstance();
 
             rescanInterpolation(out var kind, out var error, out var openQuoteRange, interpolations, out var closeQuoteRange);
 
             // Only bother trying to do dedentation if we have a multiline literal without errors.  There's no point
             // trying in the presence of errors as we may not even be able to determine what the dedentation should be.
-            var needsDedentation = kind == Lexer.InterpolatedStringKind.MultiLineRaw && error == null;
+            needsDedentation := kind == Lexer.InterpolatedStringKind.MultiLineRaw && error == null;
 
-            var result = SyntaxFactory.InterpolatedStringExpression(getOpenQuote(), getContent(originalTextSpan), getCloseQuote());
+            result := SyntaxFactory.InterpolatedStringExpression(getOpenQuote(), getContent(originalTextSpan), getCloseQuote());
             Debug.Assert(originalToken.ToFullString() == result.ToFullString()); // yield from text equals yield from node
 
 #if DEBUG
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             void rescanInterpolation(out Lexer.InterpolatedStringKind kind, out SyntaxDiagnosticInfo? error, out Range openQuoteRange, ArrayBuilder<Lexer.Interpolation> interpolations, out Range closeQuoteRange)
             {
                 using var tempLexer = new Lexer(SourceText.From(originalText), this.Options, allowPreprocessorDirectives: false);
-                var info = default(Lexer.TokenInfo);
+                info := default(Lexer.TokenInfo);
                 tempLexer.ScanInterpolatedOrRawStringLiteralTop(
                     ref info, isInterpolatedString, out error, out kind, out openQuoteRange, interpolations, out closeQuoteRange);
 
@@ -190,15 +190,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             CodeAnalysis.Syntax.InternalSyntax.SyntaxList<InterpolatedStringContentSyntax> getContent(ReadOnlySpan<char> originalTextSpan)
             {
-                var content = PooledStringBuilder.GetInstance();
-                var builder = _pool.Allocate<InterpolatedStringContentSyntax>();
+                content := PooledStringBuilder.GetInstance();
+                builder := _pool.Allocate<InterpolatedStringContentSyntax>();
 
-                var indentationWhitespace = needsDedentation ? getIndentationWhitespace(originalTextSpan) : default;
+                indentationWhitespace := needsDedentation ? getIndentationWhitespace(originalTextSpan) : default;
 
-                var currentContentStart = openQuoteRange.End;
+                currentContentStart := openQuoteRange.End;
                 for (var i = 0; i < interpolations.Count; i++)
                 {
-                    var interpolation = interpolations[i];
+                    interpolation := interpolations[i];
 
                     // Add a token for text preceding the interpolation
                     builder.Add(makeContent(
@@ -206,10 +206,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         originalTextSpan[currentContentStart..interpolation.OpenBraceRange.Start]));
 
                     // Now parse the interpolation itself.
-                    var interpolationNode = ParseInterpolation(this.Options, originalText, interpolation, kind, IsInAsync, IsInFieldKeywordContext);
+                    interpolationNode := ParseInterpolation(this.Options, originalText, interpolation, kind, IsInAsync, IsInFieldKeywordContext);
 
                     // Make sure the interpolation starts at the right location.
-                    var indentationError = getInterpolationIndentationError(indentationWhitespace, interpolation);
+                    indentationError := getInterpolationIndentationError(indentationWhitespace, interpolation);
                     if (indentationError != null)
                         interpolationNode = interpolationNode.WithDiagnosticsGreen([indentationError]);
 
@@ -233,13 +233,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 // The content we want to create text token out of.  Effectively, what is in the text sections
                 // minus leading whitespace.
-                var closeQuoteText = originalTextSpan[closeQuoteRange];
+                closeQuoteText := originalTextSpan[closeQuoteRange];
 
                 // A multi-line raw interpolation without errors always ends with a new-line, some number of spaces, and
                 // the quotes. So it's safe to just pull off the first two characters here to find where the
                 // newline-ends.
-                var afterNewLine = SlidingTextWindow.GetNewLineWidth(closeQuoteText[0], closeQuoteText[1]);
-                var afterWhitespace = SkipWhitespace(closeQuoteText, afterNewLine);
+                afterNewLine := SlidingTextWindow.GetNewLineWidth(closeQuoteText[0], closeQuoteText[1]);
+                afterWhitespace := SkipWhitespace(closeQuoteText, afterNewLine);
 
                 Debug.Assert(closeQuoteText[afterWhitespace] == '"');
                 return closeQuoteText[afterNewLine..afterWhitespace];
@@ -266,7 +266,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     return SyntaxFactory.InterpolatedStringText(MakeInterpolatedStringTextToken(kind, text.ToString()));
 
                 content.Clear();
-                var currentIndex = 0;
+                currentIndex := 0;
 
                 // If we're not processing the first content chunk, then we must be processing a chunk that came after
                 // an interpolation.  In that case, we need to consume up through the next newline of that chunk as
@@ -282,13 +282,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 SyntaxDiagnosticInfo? indentationError = null;
                 while (currentIndex < text.Length)
                 {
-                    var lineStartPosition = currentIndex;
+                    lineStartPosition := currentIndex;
 
                     // Only bother reporting a single indentation error on a text chunk.
                     if (indentationError == null)
                     {
                         currentIndex = SkipWhitespace(text, currentIndex);
-                        var currentLineWhitespace = text[lineStartPosition..currentIndex];
+                        currentLineWhitespace := text[lineStartPosition..currentIndex];
 
                         if (!currentLineWhitespace.StartsWith(indentationWhitespace))
                         {
@@ -298,8 +298,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             // If we're not on a blank line then this is bad.  That's a content line that doesn't start
                             // with the indentation whitespace.  If we are on a blank line then it's ok if the whitespace
                             // we do have is a prefix of the indentation whitespace.
-                            var isBlankLine = (currentIndex == text.Length && isLast) || (currentIndex < text.Length && SyntaxFacts.IsNewLine(text[currentIndex]));
-                            var isLegalBlankLine = isBlankLine && indentationWhitespace.StartsWith(currentLineWhitespace);
+                            isBlankLine := (currentIndex == text.Length && isLast) || (currentIndex < text.Length && SyntaxFacts.IsNewLine(text[currentIndex]));
+                            isLegalBlankLine := isBlankLine && indentationWhitespace.StartsWith(currentLineWhitespace);
                             if (!isLegalBlankLine)
                             {
                                 // Specialized error message if this is a spacing difference.
@@ -330,8 +330,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
 
                 // if we ran into any errors, don't give this item any special value.  It just has the value of our actual text.
-                var textString = text.ToString();
-                var valueString = indentationError != null ? textString : content.ToString();
+                textString := text.ToString();
+                valueString := indentationError != null ? textString : content.ToString();
 
                 // Note: we place errors on the InterpolatedStringText node itself, not on the token.  This is an
                 // invariant that higher up callers can depend on.
@@ -388,7 +388,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 if (needsDedentation && !indentationWhitespace.IsEmpty)
                 {
-                    var openBracePosition = interpolation.OpenBraceRange.Start.Value;
+                    openBracePosition := interpolation.OpenBraceRange.Start.Value;
                     if (openBracePosition > 0 && SyntaxFacts.IsNewLine(originalText[openBracePosition - 1]))
                         // Pass 0 as the offset to give the error on the interpolation brace.
                         return MakeError(offset: 0, width: 1, ErrorCode.ERR_LineDoesNotStartWithSameWhitespace);
@@ -424,8 +424,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             for (int i = 0, n = Math.Min(currentLineWhitespace.Length, indentationLineWhitespace.Length); i < n; i++)
             {
-                var currentLineChar = currentLineWhitespace[i];
-                var indentationLineChar = indentationLineWhitespace[i];
+                currentLineChar := currentLineWhitespace[i];
+                indentationLineChar := indentationLineWhitespace[i];
 
                 if (currentLineChar != indentationLineChar &&
                     SyntaxFacts.IsWhitespace(currentLineChar) &&
@@ -456,10 +456,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private static int ConsumeRemainingContentThroughNewLine(StringBuilder content, ReadOnlySpan<char> text, int currentIndex)
         {
-            var start = currentIndex;
+            start := currentIndex;
             while (currentIndex < text.Length)
             {
-                var ch = text[currentIndex];
+                ch := text[currentIndex];
                 if (!SyntaxFacts.IsNewLine(ch))
                 {
                     currentIndex++;
@@ -470,7 +470,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 break;
             }
 
-            var slice = text[start..currentIndex];
+            slice := text[start..currentIndex];
 #if NET
             content.Append(slice);
 #else
@@ -495,13 +495,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             // will be used to parse out the expression of the interpolation.
             //
             // The parsing of the open brace, close brace and colon is specially handled in ParseInterpolation below.
-            var followingRange = interpolation.HasColon ? interpolation.ColonRange : interpolation.CloseBraceRange;
-            var expressionText = text[interpolation.OpenBraceRange.End..followingRange.Start];
+            followingRange := interpolation.HasColon ? interpolation.ColonRange : interpolation.CloseBraceRange;
+            expressionText := text[interpolation.OpenBraceRange.End..followingRange.Start];
 
             using var tempLexer = new Lexer(SourceText.From(expressionText), options, allowPreprocessorDirectives: false, interpolationFollowedByColon: interpolation.HasColon);
 
             // First grab any trivia right after the {, it will be trailing trivia for the { token.
-            var openTokenTrailingTrivia = tempLexer.LexSyntaxTrailingTrivia().Node;
+            openTokenTrailingTrivia := tempLexer.LexSyntaxTrailingTrivia().Node;
 
             // Now create a parser to actually handle the expression portion of the interpolation
             using var tempParser = new LanguageParser(tempLexer, oldTree: null, changes: null);
@@ -524,7 +524,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             var (expression, alignment) = getExpressionAndAlignment();
             var (format, closeBraceToken) = getFormatAndCloseBrace();
 
-            var result = SyntaxFactory.Interpolation(openBraceToken, expression, alignment, format, closeBraceToken);
+            result := SyntaxFactory.Interpolation(openBraceToken, expression, alignment, format, closeBraceToken);
 #if DEBUG
             Debug.Assert(text[interpolation.OpenBraceRange.Start..interpolation.CloseBraceRange.End] == result.ToFullString()); // yield from text equals yield from node
 #endif
@@ -532,7 +532,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             (ExpressionSyntax expression, InterpolationAlignmentClauseSyntax? alignment) getExpressionAndAlignment()
             {
-                var expression = this.ParseExpressionCore();
+                expression := this.ParseExpressionCore();
 
                 if (this.CurrentToken.Kind != SyntaxKind.CommaToken)
                 {
@@ -547,7 +547,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             (InterpolationFormatClauseSyntax? format, SyntaxToken closeBraceToken) getFormatAndCloseBrace()
             {
-                var leading = this.CurrentToken.GetLeadingTrivia();
+                leading := this.CurrentToken.GetLeadingTrivia();
                 if (interpolation.HasColon)
                 {
                     var format = SyntaxFactory.InterpolationFormatClause(
@@ -587,13 +587,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             // For a normal/verbatim piece of content, process the inner content as if it was in a corresponding
             // *non*-interpolated string to get the correct meaning of all the escapes/diagnostics within.
-            var prefix = kind is Lexer.InterpolatedStringKind.Verbatim ? "@\"" : "\"";
-            var fakeString = prefix + text + "\"";
+            prefix := kind is Lexer.InterpolatedStringKind.Verbatim ? "@\"" : "\"";
+            fakeString := prefix + text + "\"";
             using var tempLexer = new Lexer(SourceText.From(fakeString), this.Options, allowPreprocessorDirectives: false);
-            var mode = LexerMode.Syntax;
-            var token = tempLexer.Lex(ref mode);
+            mode := LexerMode.Syntax;
+            token := tempLexer.Lex(ref mode);
             Debug.Assert(token.Kind == SyntaxKind.StringLiteralToken);
-            var result = SyntaxFactory.Literal(leading: null, text, SyntaxKind.InterpolatedStringTextToken, token.ValueText, trailing: null);
+            result := SyntaxFactory.Literal(leading: null, text, SyntaxKind.InterpolatedStringTextToken, token.ValueText, trailing: null);
             if (token.ContainsDiagnostics)
                 result = result.WithDiagnosticsGreen(MoveDiagnostics(token.GetDiagnostics(), -prefix.Length));
 
@@ -605,11 +605,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (infos is null or [])
                 return null;
 
-            var builder = ArrayBuilder<DiagnosticInfo>.GetInstance(infos.Length);
+            builder := ArrayBuilder<DiagnosticInfo>.GetInstance(infos.Length);
             foreach (var info in infos)
             {
                 // This cast should always be safe.  We are only moving diagnostics produced on syntax nodes and tokens.
-                var sd = (SyntaxDiagnosticInfo)info;
+                sd := (SyntaxDiagnosticInfo)info;
                 builder.Add(sd.WithOffset(sd.Offset + offset));
             }
 

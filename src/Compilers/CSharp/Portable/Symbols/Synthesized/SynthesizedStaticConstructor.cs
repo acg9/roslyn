@@ -378,7 +378,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override int CalculateLocalSyntaxOffset(int localPosition, SyntaxTree localTree)
         {
-            var containingType = (SourceMemberContainerTypeSymbol)this.ContainingType;
+            containingType := (SourceMemberContainerTypeSymbol)this.ContainingType;
             return containingType.CalculateSyntaxOffsetInSynthesizedConstructor(localPosition, localTree, isStatic: true);
         }
 
@@ -392,7 +392,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return _lazyShouldEmit.Value();
             }
 
-            var shouldEmit = CalculateShouldEmit(boundInitializersOpt);
+            shouldEmit := CalculateShouldEmit(boundInitializersOpt);
             _lazyShouldEmit = shouldEmit.ToThreeState();
             return shouldEmit;
         }

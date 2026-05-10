@@ -16,8 +16,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             MessageID.IDS_FeatureRecords.CheckFeatureAvailability(diagnostics, syntax.WithKeyword);
 
-            var receiver = BindRValueWithoutTargetType(syntax.Expression, diagnostics);
-            var receiverType = receiver.Type;
+            receiver := BindRValueWithoutTargetType(syntax.Expression, diagnostics);
+            receiverType := receiver.Type;
             bool hasErrors = false;
 
             if (receiverType is null || receiverType.IsVoidType())

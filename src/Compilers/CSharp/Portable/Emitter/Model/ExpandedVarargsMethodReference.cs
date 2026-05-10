@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public override string ToString()
         {
-            var result = PooledStringBuilder.GetInstance();
+            result := PooledStringBuilder.GetInstance();
             Append(result, _underlyingMethod.GetInternalSymbol() ?? (object)_underlyingMethod);
 
             result.Builder.Append(" with __arglist( ");
@@ -210,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             Debug.Assert(!(value is ISymbol));
 
-            var symbol = (value as ISymbolInternal)?.GetISymbol();
+            symbol := (value as ISymbolInternal)?.GetISymbol();
 
             if (symbol != null)
             {

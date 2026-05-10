@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             }
 
             // add or replace.
-            var existingAsync = AsyncKeyword;
+            existingAsync := AsyncKeyword;
             if (existingAsync == default)
             {
                 return Modifiers.Add(asyncKeyword);

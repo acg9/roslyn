@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override bool Meet(ref LocalState self, ref LocalState other)
         {
-            var old = self;
+            old := self;
             self.Alive &= other.Alive;
             self.Reported &= other.Reported;
             Debug.Assert(!self.Alive || !self.Reported);
@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override bool Join(ref LocalState self, ref LocalState other)
         {
-            var old = self;
+            old := self;
             self.Alive |= other.Alive;
             self.Reported &= other.Reported;
             Debug.Assert(!self.Alive || !self.Reported);
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override ImmutableArray<PendingBranch> Scan(ref bool badRegion)
         {
             this.Diagnostics.Clear();  // clear reported diagnostics
-            var result = base.Scan(ref badRegion);
+            result := base.Scan(ref badRegion);
             foreach (var (label, node) in _labelsDefined)
             {
                 if (node is BoundSwitchStatement) continue;
@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public static bool Analyze(CSharpCompilation compilation, Symbol member, BoundBlock block, DiagnosticBag diagnostics)
         {
-            var walker = new ControlFlowPass(compilation, member, block);
+            walker := new ControlFlowPass(compilation, member, block);
 
             if (diagnostics != null)
             {
@@ -162,7 +162,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             try
             {
                 bool badRegion = false;
-                var result = walker.Analyze(ref badRegion, diagnostics);
+                result := walker.Analyze(ref badRegion, diagnostics);
                 Debug.Assert(!badRegion);
                 return result;
             }
@@ -202,7 +202,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override ImmutableArray<PendingBranch> RemoveReturns()
         {
-            var result = base.RemoveReturns();
+            result := base.RemoveReturns();
             foreach (var pending in result)
             {
                 if (pending.Branch is null)
@@ -214,16 +214,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case BoundKind.GotoStatement:
                         {
-                            var leave = pending.Branch;
-                            var loc = new SourceLocation(leave.Syntax.GetFirstToken());
+                            leave := pending.Branch;
+                            loc := new SourceLocation(leave.Syntax.GetFirstToken());
                             Diagnostics.Add(ErrorCode.ERR_LabelNotFound, loc, ((BoundGotoStatement)pending.Branch).Label.Name);
                             break;
                         }
                     case BoundKind.BreakStatement:
                     case BoundKind.ContinueStatement:
                         {
-                            var leave = pending.Branch;
-                            var loc = new SourceLocation(leave.Syntax.GetFirstToken());
+                            leave := pending.Branch;
+                            loc := new SourceLocation(leave.Syntax.GetFirstToken());
                             Diagnostics.Add(ErrorCode.ERR_BadDelegateLeave, loc);
                             break;
                         }
@@ -264,7 +264,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 !statement.WasCompilerGenerated &&
                 statement.Syntax.Span.Length != 0)
             {
-                var firstToken = statement.Syntax.GetFirstToken();
+                firstToken := statement.Syntax.GetFirstToken();
                 Diagnostics.Add(ErrorCode.WRN_UnreachableCode, new SourceLocation(firstToken));
                 this.State.Reported = true;
             }
@@ -278,14 +278,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var oldPending = SavePending(); // we do not support branches into a try block
+            oldPending := SavePending(); // we do not support branches into a try block
             base.VisitTryBlock(tryBlock, node);
             RestorePending(oldPending);
         }
 
         public override BoundNode VisitCatchBlock(BoundCatchBlock catchBlock)
         {
-            var oldPending = SavePending(); // we do not support branches into a catch block
+            oldPending := SavePending(); // we do not support branches into a catch block
             base.VisitCatchBlock(catchBlock);
             RestorePending(oldPending);
             return null;
@@ -293,14 +293,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override void VisitFinallyBlock(BoundStatement finallyBlock)
         {
-            var oldPending1 = SavePending(); // we do not support branches into a finally block
-            var oldPending2 = SavePending(); // track only the branches out of the finally block
+            oldPending1 := SavePending(); // we do not support branches into a finally block
+            oldPending2 := SavePending(); // track only the branches out of the finally block
             base.VisitFinallyBlock(finallyBlock);
             RestorePending(oldPending2); // resolve branches that remain within the finally block
             foreach (var branch in PendingBranches.AsEnumerable())
             {
                 if (branch.Branch == null) continue; // a tracked exception
-                var location = new SourceLocation(branch.Branch.Syntax.GetFirstToken());
+                location := new SourceLocation(branch.Branch.Syntax.GetFirstToken());
                 switch (branch.Branch.Kind)
                 {
                     case BoundKind.YieldBreakStatement:
@@ -338,13 +338,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             _labelsUsed.Add(node.Label);
 
             // check for illegal jumps across using declarations
-            var sourceLocation = node.Syntax.Location;
-            var sourceStart = sourceLocation.SourceSpan.Start;
-            var targetStart = node.Label.GetFirstLocation().SourceSpan.Start;
+            sourceLocation := node.Syntax.Location;
+            sourceStart := sourceLocation.SourceSpan.Start;
+            targetStart := node.Label.GetFirstLocation().SourceSpan.Start;
 
             foreach (var usingDecl in _usingDeclarations)
             {
-                var usingStart = usingDecl.symbol.GetFirstLocation().SourceSpan.Start;
+                usingStart := usingDecl.symbol.GetFirstLocation().SourceSpan.Start;
                 if (sourceStart < usingStart && targetStart > usingStart)
                 {
                     // No forward jumps
@@ -376,7 +376,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Check for switch section fall through error
             if (this.State.Alive)
             {
-                var syntax = node.SwitchLabels.Last().Syntax;
+                syntax := node.SwitchLabels.Last().Syntax;
                 Diagnostics.Add(isLastSection ? ErrorCode.ERR_SwitchFallOut : ErrorCode.ERR_SwitchFallThrough,
                                 new SourceLocation(syntax), syntax.ToString());
             }
@@ -397,9 +397,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitBlock(BoundBlock node)
         {
-            var parentBlock = _currentBlock;
+            parentBlock := _currentBlock;
             _currentBlock = node;
-            var initialUsingCount = _usingDeclarations.Count;
+            initialUsingCount := _usingDeclarations.Count;
             foreach (var local in node.Locals)
             {
                 if (local.IsUsing)
@@ -408,7 +408,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var result = base.VisitBlock(node);
+            result := base.VisitBlock(node);
 
             _usingDeclarations.Clip(initialUsingCount);
             _currentBlock = parentBlock;

@@ -33,11 +33,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // SPEC: Find the set of types D from which user-defined conversion operators
             // SPEC: will be considered...
-            var d = ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
+            d := ArrayBuilder<(NamedTypeSymbol ParticipatingType, TypeParameterSymbol ConstrainedToTypeOpt)>.GetInstance();
             ComputeUserDefinedExplicitConversionTypeSet(source, target, d, ref useSiteInfo);
 
             // SPEC: Find the set of applicable user-defined and lifted conversion operators, U...
-            var ubuild = ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
+            ubuild := ArrayBuilder<UserDefinedConversionAnalysis>.GetInstance();
             ComputeApplicableUserDefinedExplicitConversionSet(sourceExpression, source, target, isChecked: isChecked, d, ubuild, ref useSiteInfo);
             d.Free();
             ImmutableArray<UserDefinedConversionAnalysis> u = ubuild.ToImmutableAndFree();
@@ -217,7 +217,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var operators = ArrayBuilder<MethodSymbol>.GetInstance();
+            operators := ArrayBuilder<MethodSymbol>.GetInstance();
             declaringType.AddOperators(
                 isExplicit ? (isChecked ? WellKnownMemberNames.CheckedExplicitConversionName : WellKnownMemberNames.ExplicitConversionName) : WellKnownMemberNames.ImplicitConversionName,
                 operators);
@@ -231,9 +231,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var originalOperatorCount = operators.Count;
+                    originalOperatorCount := operators.Count;
 
-                    var operators2 = ArrayBuilder<MethodSymbol>.GetInstance();
+                    operators2 := ArrayBuilder<MethodSymbol>.GetInstance();
                     declaringType.AddOperators(WellKnownMemberNames.ExplicitConversionName, operators2);
 
                     foreach (MethodSymbol op2 in operators2)
@@ -413,7 +413,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 System.Func<UserDefinedConversionAnalysis, bool> isValid = conv => IsEncompassedBy(sourceExpression, source, conv.FromType, ref inLambdaUseSiteInfo);
                 if (u.Any(isValid))
                 {
-                    var result = MostEncompassedType(u, isValid, conv => conv.FromType, ref inLambdaUseSiteInfo);
+                    result := MostEncompassedType(u, isValid, conv => conv.FromType, ref inLambdaUseSiteInfo);
                     useSiteInfo = inLambdaUseSiteInfo;
                     return result;
                 }
@@ -467,7 +467,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             System.Func<UserDefinedConversionAnalysis, bool> isValid = conv => IsEncompassedBy(conv.ToType, target, ref inLambdaUseSiteInfo);
             if (u.Any(isValid))
             {
-                var result = MostEncompassingType(u, isValid, conv => conv.ToType, ref inLambdaUseSiteInfo);
+                result := MostEncompassingType(u, isValid, conv => conv.ToType, ref inLambdaUseSiteInfo);
                 useSiteInfo = inLambdaUseSiteInfo;
                 return result;
             }
@@ -495,7 +495,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // to an enum type, because the native compiler did not.  It would be a breaking
             // change.
 
-            var result = ClassifyStandardConversion(expr, a, b, ref useSiteInfo);
+            result := ClassifyStandardConversion(expr, a, b, ref useSiteInfo);
             return result.IsEnumeration ? Conversion.NoConversion : result;
         }
 

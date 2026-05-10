@@ -25,7 +25,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             this.lambdaSymbol = lambdaSymbol;
             this.parameterMap = new MultiDictionary<string, ParameterSymbol>();
 
-            var parameters = lambdaSymbol.Parameters;
+            parameters := lambdaSymbol.Parameters;
             if (!parameters.IsDefaultOrEmpty)
             {
                 _definitionMap = new SmallDictionary<string, ParameterSymbol>();
@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (!parameter.IsDiscard)
                     {
-                        var name = parameter.Name;
+                        name := parameter.Name;
                         this.parameterMap.Add(name, parameter);
                         if (!_definitionMap.ContainsKey(name))
                         {
@@ -115,7 +115,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static bool ReportConflictWithParameter(ParameterSymbol parameter, Symbol newSymbol, string name, Location newLocation, BindingDiagnosticBag diagnostics)
         {
-            var oldLocation = parameter.GetFirstLocation();
+            oldLocation := parameter.GetFirstLocation();
             if (oldLocation == newLocation)
             {
                 // a query variable and its corresponding lambda parameter, for example
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal override bool EnsureSingleDefinition(Symbol symbol, string name, Location location, BindingDiagnosticBag diagnostics)
         {
             ParameterSymbol existingDeclaration;
-            var map = _definitionMap;
+            map := _definitionMap;
             if (map != null && map.TryGetValue(name, out existingDeclaration))
             {
                 return ReportConflictWithParameter(existingDeclaration, symbol, name, location, diagnostics);

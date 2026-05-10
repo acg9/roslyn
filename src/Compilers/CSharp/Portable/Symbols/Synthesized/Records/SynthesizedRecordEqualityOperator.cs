@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
 
             try
             {
@@ -58,8 +58,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return;
                 }
 
-                var left = F.Parameter(Parameters[0]);
-                var right = F.Parameter(Parameters[1]);
+                left := F.Parameter(Parameters[0]);
+                right := F.Parameter(Parameters[1]);
 
                 BoundExpression expression;
                 if (ContainingType.IsRecordStruct)

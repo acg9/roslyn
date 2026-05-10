@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<int> Related(BinaryOperatorKind relation, int value)
             {
-                var tc = IntTC.NonNegativeInstance;
+                tc := IntTC.NonNegativeInstance;
                 switch (relation)
                 {
                     case LessThan:

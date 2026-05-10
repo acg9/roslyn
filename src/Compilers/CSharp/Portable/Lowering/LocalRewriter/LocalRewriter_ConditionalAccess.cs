@@ -40,9 +40,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!_inExpressionLambda);
             Debug.Assert(node.AccessExpression.Type is { });
 
-            var loweredReceiver = this.VisitExpression(node.Receiver);
+            loweredReceiver := this.VisitExpression(node.Receiver);
             Debug.Assert(loweredReceiver.Type is { });
-            var receiverType = loweredReceiver.Type;
+            receiverType := loweredReceiver.Type;
 
             // Check trivial case
             if (loweredReceiver.IsDefaultValue() && receiverType.IsReferenceType)
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             ConditionalAccessLoweringKind loweringKind;
             // dynamic receivers are not directly supported in codegen and need to be lowered to a conditional
-            var lowerToConditional = node.AccessExpression.Type.IsDynamic();
+            lowerToConditional := node.AccessExpression.Type.IsDynamic();
 
             if (!lowerToConditional)
             {
@@ -73,8 +73,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 loweringKind = ConditionalAccessLoweringKind.Conditional;
             }
 
-            var previousConditionalAccessTarget = _currentConditionalAccessTarget;
-            var currentConditionalAccessID = ++_currentConditionalAccessID;
+            previousConditionalAccessTarget := _currentConditionalAccessTarget;
+            currentConditionalAccessID := ++_currentConditionalAccessID;
 
             LocalSymbol? temp = null;
 
@@ -173,9 +173,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case ConditionalAccessLoweringKind.Conditional:
                     {
                         // (object)r != null ? access : default(T)
-                        var condition = _factory.IsNotNullReference(loweredReceiver);
+                        condition := _factory.IsNotNullReference(loweredReceiver);
 
-                        var consequence = loweredAccessExpression;
+                        consequence := loweredAccessExpression;
 
                         result = RewriteConditionalOperator(node.Syntax,
                             condition,
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitConditionalReceiver(BoundConditionalReceiver node)
         {
-            var newtarget = _currentConditionalAccessTarget;
+            newtarget := _currentConditionalAccessTarget;
             Debug.Assert(newtarget is { Type: { } });
 
             if (newtarget.Type.IsNullableType())

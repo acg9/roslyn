@@ -136,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             position = Math.Min(position, _textEnd);
 
-            var amountToRead = Math.Min(_textEnd - position, DefaultWindowLength);
+            amountToRead := Math.Min(_textEnd - position, DefaultWindowLength);
             this.Text.CopyTo(position, _characterWindow.Array!, 0, amountToRead);
             _characterWindowStartPositionInText = position;
             _characterWindow = new(_characterWindow.Array!, 0, amountToRead);
@@ -156,7 +156,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             get
             {
-                var start = _positionInText - _characterWindowStartPositionInText;
+                start := _positionInText - _characterWindowStartPositionInText;
                 // If we are outside the bounds of the current character window, then we cannot return a span around any of it.
                 if (start < 0 || start >= _characterWindow.Count)
                     return default;
@@ -326,7 +326,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             if (IsReallyAtEnd())
                 return InvalidCharacter;
 
-            var position = _positionInText;
+            position := _positionInText;
 
             // If the position is outside of the bounds of the current character window, then update its contents to 
             // contain that position.
@@ -347,7 +347,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             int position = this.Position;
             this.AdvanceChar(delta);
-            var ch = PeekChar();
+            ch := PeekChar();
             this.Reset(position);
             return ch;
         }
@@ -401,7 +401,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// </summary>
         public readonly string GetText(int position, int length, bool intern)
         {
-            var span = new TextSpan(position, length);
+            span := new TextSpan(position, length);
 
 #if TRACING
             Interlocked.Add(ref TotalTextSize, length);
@@ -422,8 +422,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Interlocked.Increment(ref GetTextInsideWindowCount);
 #endif
 
-            var offset = position - _characterWindowStartPositionInText;
-            var array = _characterWindow.Array!;
+            offset := position - _characterWindowStartPositionInText;
+            array := _characterWindow.Array!;
 
             // PERF: Whether interning or not, there are some frequently occurring
             // easy cases we can pick off easily.

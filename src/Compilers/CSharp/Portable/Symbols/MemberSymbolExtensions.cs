@@ -296,7 +296,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // infer type arguments based off the receiver type if needed, check applicability
                 Debug.Assert(receiverType is not null);
                 Debug.Assert(property.IsExtensionBlockMember());
-                var result = (PropertySymbol?)SourceNamedTypeSymbol.ReduceExtensionMember(compilation, property, receiverType, wasExtensionFullyInferred: out bool wasFullyInferred);
+                result := (PropertySymbol?)SourceNamedTypeSymbol.ReduceExtensionMember(compilation, property, receiverType, wasExtensionFullyInferred: out bool wasFullyInferred);
                 if (checkFullyInferred && !wasFullyInferred)
                 {
                     return null;
@@ -377,11 +377,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             switch (symbol.Kind)
             {
                 case SymbolKind.Property:
-                    var propertySymbol = (PropertySymbol)symbol;
+                    propertySymbol := (PropertySymbol)symbol;
                     return isImplementableAndNotPublic(propertySymbol.GetMethod) || isImplementableAndNotPublic(propertySymbol.SetMethod);
 
                 case SymbolKind.Event:
-                    var eventSymbol = (EventSymbol)symbol;
+                    eventSymbol := (EventSymbol)symbol;
                     return isImplementableAndNotPublic(eventSymbol.AddMethod) || isImplementableAndNotPublic(eventSymbol.RemoveMethod);
             }
 
@@ -410,7 +410,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public static bool IsIndexedPropertyAccessor(this MethodSymbol methodSymbol)
         {
-            var propertyOrEvent = methodSymbol.AssociatedSymbol;
+            propertyOrEvent := methodSymbol.AssociatedSymbol;
             return ((object)propertyOrEvent != null) && propertyOrEvent.IsIndexedProperty();
         }
 
@@ -447,13 +447,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             int count = 0;
 
-            var methodReturnType = method.ReturnTypeWithAnnotations;
+            methodReturnType := method.ReturnTypeWithAnnotations;
             count += methodReturnType.CustomModifiers.Length + method.RefCustomModifiers.Length;
             count += methodReturnType.Type.CustomModifierCount();
 
             foreach (ParameterSymbol param in method.Parameters)
             {
-                var paramType = param.TypeWithAnnotations;
+                paramType := param.TypeWithAnnotations;
                 count += paramType.CustomModifiers.Length + param.RefCustomModifiers.Length;
                 count += paramType.Type.CustomModifierCount();
             }
@@ -496,13 +496,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             int count = 0;
 
-            var type = property.TypeWithAnnotations;
+            type := property.TypeWithAnnotations;
             count += type.CustomModifiers.Length + property.RefCustomModifiers.Length;
             count += type.Type.CustomModifierCount();
 
             foreach (ParameterSymbol param in property.Parameters)
             {
-                var paramType = param.TypeWithAnnotations;
+                paramType := param.TypeWithAnnotations;
                 count += paramType.CustomModifiers.Length + param.RefCustomModifiers.Length;
                 count += paramType.Type.CustomModifierCount();
             }
@@ -858,7 +858,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             switch (member.Kind)
             {
                 case SymbolKind.Method:
-                    var method = (MethodSymbol)member;
+                    method := (MethodSymbol)member;
                     return method.ReturnType.ContainsTupleNames() || method.Parameters.Any(static p => p.Type.ContainsTupleNames());
                 case SymbolKind.Property:
                     return ((PropertySymbol)member).Type.ContainsTupleNames();
@@ -905,15 +905,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             switch (member.Kind)
             {
                 case SymbolKind.Method:
-                    var method = (MethodSymbol)member;
+                    method := (MethodSymbol)member;
                     return method.GetConstructedLeastOverriddenMethod(accessingTypeOpt, requireSameReturnType: false);
 
                 case SymbolKind.Property:
-                    var property = (PropertySymbol)member;
+                    property := (PropertySymbol)member;
                     return property.GetLeastOverriddenProperty(accessingTypeOpt);
 
                 case SymbolKind.Event:
-                    var evnt = (EventSymbol)member;
+                    evnt := (EventSymbol)member;
                     return evnt.GetLeastOverriddenEvent(accessingTypeOpt);
 
                 default:

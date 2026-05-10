@@ -26,7 +26,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 int fieldsCount = properties.Length;
                 if (fieldsCount > 0)
                 {
-                    var paramsArr = ArrayBuilder<ParameterSymbol>.GetInstance(fieldsCount);
+                    paramsArr := ArrayBuilder<ParameterSymbol>.GetInstance(fieldsCount);
                     for (int index = 0; index < fieldsCount; index++)
                     {
                         PropertySymbol property = properties[index];

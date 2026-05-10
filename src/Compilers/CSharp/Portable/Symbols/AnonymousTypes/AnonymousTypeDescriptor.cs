@@ -39,7 +39,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static string ComputeKey<T>(ImmutableArray<T> fields, Func<T, string> getName)
         {
-            var key = PooledStringBuilder.GetInstance();
+            key := PooledStringBuilder.GetInstance();
             foreach (var field in fields)
             {
                 key.Builder.Append('|');
@@ -104,14 +104,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!newFieldTypes.IsDefault);
             Debug.Assert(newFieldTypes.Length == this.Fields.Length);
 
-            var newFields = Fields.ZipAsArray(newFieldTypes, static (field, type) => field.WithType(type));
+            newFields := Fields.ZipAsArray(newFieldTypes, static (field, type) => field.WithType(type));
             return new AnonymousTypeDescriptor(newFields, this.Location);
         }
 
         internal AnonymousTypeDescriptor SubstituteTypes(AbstractTypeMap map, out bool changed)
         {
-            var oldFieldTypes = Fields.SelectAsArray(f => f.TypeWithAnnotations);
-            var newFieldTypes = map.SubstituteTypes(oldFieldTypes);
+            oldFieldTypes := Fields.SelectAsArray(f => f.TypeWithAnnotations);
+            newFieldTypes := map.SubstituteTypes(oldFieldTypes);
             changed = (oldFieldTypes != newFieldTypes);
             return changed ? WithNewFieldsTypes(newFieldTypes) : this;
         }

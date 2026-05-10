@@ -30,7 +30,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return true;
                 }
 
-                var nodesOfInterest = node.DescendantNodesAndSelf(descendIntoChildren: childrenNeedChecking, descendIntoTrivia: false);
+                nodesOfInterest := node.DescendantNodesAndSelf(descendIntoChildren: childrenNeedChecking, descendIntoTrivia: false);
 
                 foreach (var n in nodesOfInterest)
                 {
@@ -171,7 +171,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             private bool CheckLambda(AnonymousFunctionExpressionSyntax lambdaSyntax, Binder enclosingBinder)
             {
                 UnboundLambda unboundLambda = enclosingBinder.AnalyzeAnonymousFunction(lambdaSyntax, BindingDiagnosticBag.Discarded);
-                var lambdaBodyBinder = CreateLambdaBodyBinder(enclosingBinder, unboundLambda);
+                lambdaBodyBinder := CreateLambdaBodyBinder(enclosingBinder, unboundLambda);
                 return CheckIdentifiersInNode(lambdaSyntax.Body, lambdaBodyBinder.GetBinder(lambdaSyntax.Body) ?? lambdaBodyBinder);
             }
 
@@ -197,7 +197,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(_lookupResult?.IsClear != false);
                 _lookupResult ??= LookupResult.GetInstance();
 
-                var useSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                useSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 enclosingBinder.LookupIdentifier(_lookupResult, id, SyntaxFacts.IsInvoked(id), ref useSiteInfo);
 
                 return CheckAndClearLookupResult(enclosingBinder, id, _lookupResult);
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 switch (id.Parent)
                 {
                     case MemberAccessExpressionSyntax { RawKind: (int)SyntaxKind.SimpleMemberAccessExpression } memberAccess when memberAccess.Expression == id:
-                        var simpleName = memberAccess.Name;
+                        simpleName := memberAccess.Name;
                         memberAccessNode = simpleName;
                         memberName = simpleName.Identifier.ValueText;
                         targetMemberArity = simpleName.Arity;
@@ -260,7 +260,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(!type.IsDynamic());
                 Debug.Assert(lookupResult.IsClear);
 
-                var useSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                useSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 enclosingBinder.LookupInstanceMember(lookupResult, type, leftIsBaseReference: false, memberName, targetMemberArity, invoked, ref useSiteInfo);
 
                 bool treatAsInstanceMemberAccess;
@@ -269,7 +269,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // This branch follows the logic of BindMemberOfType
                     Debug.Assert(lookupResult.Symbols.Any());
 
-                    var members = ArrayBuilder<Symbol>.GetInstance();
+                    members := ArrayBuilder<Symbol>.GetInstance();
                     Symbol symbol = enclosingBinder.GetSymbolOrMethodOrPropertyGroup(lookupResult, memberAccessNode, memberName, targetMemberArity, members, BindingDiagnosticBag.Discarded, wasError: out _,
                                                                                      qualifierOpt: null);
 
@@ -298,7 +298,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // At this point this could only be an extension member access or an error
                     bool haveInstanceCandidates;
                     lookupResult.Clear();
-                    var members = ArrayBuilder<Symbol>.GetInstance();
+                    members := ArrayBuilder<Symbol>.GetInstance();
 
                     enclosingBinder.CheckWhatCandidatesWeHave(members, type, memberName, targetMemberArity, invoked,
                                                               ref lookupResult, ref useSiteInfo,
@@ -372,9 +372,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                             //     from x in e select v
                             // is translated into
                             //     ( e ) . Select ( x => v )
-                            var selectClause = (SelectClauseSyntax)state.selectOrGroup;
-                            var x = state.rangeVariable;
-                            var v = selectClause.Expression;
+                            selectClause := (SelectClauseSyntax)state.selectOrGroup;
+                            x := state.rangeVariable;
+                            v := selectClause.Expression;
                             return MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), x, v);
                         }
                     case SyntaxKind.GroupClause:
@@ -385,10 +385,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                             //     ( e ) . GroupBy ( x => k , x => v )
                             // except when v is the identifier x, the translation is
                             //     ( e ) . GroupBy ( x => k )
-                            var groupClause = (GroupClauseSyntax)state.selectOrGroup;
-                            var x = state.rangeVariable;
-                            var v = groupClause.GroupExpression;
-                            var k = groupClause.ByExpression;
+                            groupClause := (GroupClauseSyntax)state.selectOrGroup;
+                            x := state.rangeVariable;
+                            v := groupClause.GroupExpression;
+                            k := groupClause.ByExpression;
 
                             return MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), x, k) &&
                                    MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), x, v);
@@ -406,7 +406,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             private bool ReduceQuery(Binder enclosingBinder, QueryTranslationState state)
             {
-                var topClause = state.clauses.Pop();
+                topClause := state.clauses.Pop();
                 switch (topClause.Kind())
                 {
                     case SyntaxKind.WhereClause:
@@ -446,7 +446,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (CheckIdentifiersInNode(join.InExpression, enclosingBinder) &&
                     MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), state.rangeVariable, join.LeftExpression))
                 {
-                    var x2 = state.AddRangeVariable(enclosingBinder, join.Identifier, BindingDiagnosticBag.Discarded);
+                    x2 := state.AddRangeVariable(enclosingBinder, join.Identifier, BindingDiagnosticBag.Discarded);
 
                     if (MakeQueryUnboundLambda(enclosingBinder, QueryTranslationState.RangeVariableMap(x2), x2, join.RightExpression))
                     {
@@ -499,7 +499,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             private bool ReduceFrom(Binder enclosingBinder, FromClauseSyntax from, QueryTranslationState state)
             {
-                var x1 = state.rangeVariable;
+                x1 := state.rangeVariable;
                 if (MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), x1, from.Expression))
                 {
                     state.AddRangeVariable(enclosingBinder, from.Identifier, BindingDiagnosticBag.Discarded);
@@ -521,13 +521,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // is translated into
                 //     from * in ( e ) . Select ( x => new { x , y = f } )
                 //     ...
-                var x = state.rangeVariable;
+                x := state.rangeVariable;
 
                 if (MakeQueryUnboundLambda(enclosingBinder, state.RangeVariableMap(), x, let.Expression))
                 {
                     state.rangeVariable = state.TransparentRangeVariable(enclosingBinder);
                     state.AddTransparentIdentifier(x.Name);
-                    var y = state.AddRangeVariable(enclosingBinder, let.Identifier, BindingDiagnosticBag.Discarded);
+                    y := state.AddRangeVariable(enclosingBinder, let.Identifier, BindingDiagnosticBag.Discarded);
                     state.allRangeVariables[y].Add(let.Identifier.ValueText);
                     return true;
                 }
@@ -544,7 +544,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         (LambdaSymbol lambdaSymbol, Binder lambdaBodyBinder, BindingDiagnosticBag diagnostics) => throw ExceptionUtilities.Unreachable()),
                     withDependencies: false);
 
-                var lambdaBodyBinder = CreateLambdaBodyBinder(enclosingBinder, unboundLambda);
+                lambdaBodyBinder := CreateLambdaBodyBinder(enclosingBinder, unboundLambda);
                 return CheckIdentifiersInNode(expression, lambdaBodyBinder.GetRequiredBinder(expression));
             }
         }

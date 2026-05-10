@@ -10,7 +10,7 @@ internal static class SyntaxListPoolExtensions
 {
     public static SyntaxList<SyntaxToken> ToTokenListAndFree(this SyntaxListPool pool, SyntaxListBuilder builder)
     {
-        var listNode = builder.ToListNode();
+        listNode := builder.ToListNode();
         pool.Free(builder);
         return new SyntaxList<SyntaxToken>(listNode);
     }

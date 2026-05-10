@@ -78,9 +78,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             AssertReferencesInitialized();
 
-            var ownerModule = this;
-            var ownerAssembly = ownerModule.ContainingAssembly;
-            var dependentAssembly = dependentType.ContainingAssembly;
+            ownerModule := this;
+            ownerAssembly := ownerModule.ContainingAssembly;
+            dependentAssembly := dependentType.ContainingAssembly;
             if (ownerAssembly == dependentAssembly)
             {
                 return false;
@@ -95,9 +95,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     continue;
                 }
 
-                var referenceId = unifiedAssembly.OriginalReference;
-                var definitionId = dependentAssembly.Identity;
-                var involvedAssemblies = ImmutableArray.Create<Symbol>(ownerAssembly, dependentAssembly);
+                referenceId := unifiedAssembly.OriginalReference;
+                definitionId := dependentAssembly.Identity;
+                involvedAssemblies := ImmutableArray.Create<Symbol>(ownerAssembly, dependentAssembly);
 
                 DiagnosticInfo info;
                 if (definitionId.Version > referenceId.Version)

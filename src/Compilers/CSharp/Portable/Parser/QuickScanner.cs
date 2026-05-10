@@ -192,9 +192,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private SyntaxToken? QuickScanSyntaxToken()
         {
             this.Start();
-            var state = QuickScanState.Initial;
+            state := QuickScanState.Initial;
 
-            var textWindowCharSpan = TextWindow.CurrentWindowSpan;
+            textWindowCharSpan := TextWindow.CurrentWindowSpan;
 
             // Cap how much of the char span we're willing to look at.
             textWindowCharSpan = textWindowCharSpan[..Math.Min(MaxCachedTokenSize, textWindowCharSpan.Length)];
@@ -202,16 +202,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             int hashCode = Hash.FnvOffsetBias;
 
             //localize frequently accessed fields
-            var charPropLength = CharProperties.Length;
+            charPropLength := CharProperties.Length;
 
             // Where we are currently pointing in the charWindow as we read in a character at a time.
-            var currentIndex = 0;
+            currentIndex := 0;
             for (; currentIndex < textWindowCharSpan.Length; currentIndex++)
             {
                 char c = textWindowCharSpan[currentIndex];
                 int uc = unchecked((int)c);
 
-                var flags = uc < charPropLength ? (CharFlags)CharProperties[uc] : CharFlags.Complex;
+                flags := uc < charPropLength ? (CharFlags)CharProperties[uc] : CharFlags.Complex;
 
                 state = (QuickScanState)s_stateTransitions[(int)state, (int)flags];
                 // NOTE: that Bad > Done and it is the only state like that
@@ -236,7 +236,7 @@ exitWhile:
             if (state == QuickScanState.Done)
             {
                 // this is a good token!
-                var tokenLength = currentIndex;
+                tokenLength := currentIndex;
 
                 Debug.Assert(tokenLength > 0);
 
@@ -261,10 +261,10 @@ exitWhile:
         private static SyntaxToken CreateQuickToken(Lexer lexer)
         {
 #if DEBUG
-            var quickWidth = lexer.CurrentLexemeWidth;
+            quickWidth := lexer.CurrentLexemeWidth;
 #endif
             lexer.TextWindow.Reset(lexer.LexemeStartPosition);
-            var token = lexer.LexSyntaxToken();
+            token := lexer.LexSyntaxToken();
 #if DEBUG
             Debug.Assert(quickWidth == token.FullWidth);
 #endif

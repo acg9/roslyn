@@ -135,7 +135,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override bool ApplyNullableTransforms(byte defaultTransformFlag, ImmutableArray<byte> transforms, ref int position, out TypeSymbol result)
         {
-            var newSignature = Signature.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position);
+            newSignature := Signature.ApplyNullableTransforms(defaultTransformFlag, transforms, ref position);
             bool madeChanges = (object)Signature != newSignature;
             result = madeChanges ? new FunctionPointerTypeSymbol(newSignature) : this;
             return madeChanges;
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal override TypeSymbol MergeEquivalentTypes(TypeSymbol other, VarianceKind variance)
         {
             Debug.Assert(this.Equals(other, TypeCompareKind.AllIgnoreOptions));
-            var mergedSignature = Signature.MergeEquivalentTypes(((FunctionPointerTypeSymbol)other).Signature, variance);
+            mergedSignature := Signature.MergeEquivalentTypes(((FunctionPointerTypeSymbol)other).Signature, variance);
             if ((object)mergedSignature != Signature)
             {
                 return new FunctionPointerTypeSymbol(mergedSignature);
@@ -172,7 +172,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override TypeSymbol SetNullabilityForReferenceTypes(Func<TypeWithAnnotations, TypeWithAnnotations> transform)
         {
-            var substitutedSignature = Signature.SetNullabilityForReferenceTypes(transform);
+            substitutedSignature := Signature.SetNullabilityForReferenceTypes(transform);
             if ((object)Signature != substitutedSignature)
             {
                 return new FunctionPointerTypeSymbol(substitutedSignature);

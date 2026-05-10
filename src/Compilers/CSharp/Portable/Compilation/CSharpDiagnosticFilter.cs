@@ -151,8 +151,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             hasPragmaSuppression = false;
 
             Debug.Assert(location.SourceTree is null || location.SourceTree is CSharpSyntaxTree);
-            var tree = location.SourceTree as CSharpSyntaxTree;
-            var position = location.SourceSpan.Start;
+            tree := location.SourceTree as CSharpSyntaxTree;
+            position := location.SourceSpan.Start;
 
             bool isNullableFlowAnalysisWarning = ErrorFacts.NullableWarnings.Contains(id);
             if (isNullableFlowAnalysisWarning)
@@ -198,7 +198,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var isCustomConfigured = false;
+            isCustomConfigured := false;
             if (AnalyzerManager.HasCustomSeverityConfigurableTag(customTags))
             {
                 // 3. Custom severity configuration applied by the analyzer
@@ -254,7 +254,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // If location.SourceTree is available, check out pragmas
-            var pragmaWarningState = tree?.GetPragmaDirectiveWarningState(id, position) ?? Syntax.PragmaWarningState.Default;
+            pragmaWarningState := tree?.GetPragmaDirectiveWarningState(id, position) ?? Syntax.PragmaWarningState.Default;
             if (pragmaWarningState == Syntax.PragmaWarningState.Disabled)
             {
                 hasPragmaSuppression = true;

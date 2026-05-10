@@ -114,9 +114,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ImmutableArray<ParameterSymbol> MakeParameters()
         {
             int ordinal = 0;
-            var builder = ArrayBuilder<ParameterSymbol>.GetInstance();
-            var parameters = this.BaseMethodParameters;
-            var inheritAttributes = InheritsBaseMethodAttributes;
+            builder := ArrayBuilder<ParameterSymbol>.GetInstance();
+            parameters := this.BaseMethodParameters;
+            inheritAttributes := InheritsBaseMethodAttributes;
             foreach (var p in parameters)
             {
                 builder.Add(SynthesizedParameterSymbol.Create(
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     isParams: this is SynthesizedClosureMethod && p.IsParams));
             }
 
-            var extraSynthed = ExtraSynthesizedRefParameters;
+            extraSynthed := ExtraSynthesizedRefParameters;
             if (!extraSynthed.IsDefaultOrEmpty)
             {
                 foreach (var extra in extraSynthed)

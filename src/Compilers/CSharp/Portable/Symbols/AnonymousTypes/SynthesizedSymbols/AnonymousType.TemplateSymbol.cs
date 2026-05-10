@@ -45,9 +45,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 int membersCount = fieldsCount * 3 + 1;
 
                 // members
-                var membersBuilder = ArrayBuilder<Symbol>.GetInstance(membersCount);
-                var propertiesBuilder = ArrayBuilder<AnonymousTypePropertySymbol>.GetInstance(fieldsCount);
-                var typeParametersBuilder = ArrayBuilder<TypeParameterSymbol>.GetInstance(fieldsCount);
+                membersBuilder := ArrayBuilder<Symbol>.GetInstance(membersCount);
+                propertiesBuilder := ArrayBuilder<AnonymousTypePropertySymbol>.GetInstance(fieldsCount);
+                typeParametersBuilder := ArrayBuilder<TypeParameterSymbol>.GetInstance(fieldsCount);
 
                 // Process fields
                 for (int fieldIndex = 0; fieldIndex < fieldsCount; fieldIndex++)
@@ -92,7 +92,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal AnonymousTypeKey GetAnonymousTypeKey()
             {
-                var properties = Properties.SelectAsArray(p => new AnonymousTypeKeyField(p.Name, isKey: false, ignoreCase: false));
+                properties := Properties.SelectAsArray(p => new AnonymousTypeKeyField(p.Name, isKey: false, ignoreCase: false));
                 return new AnonymousTypeKey(properties);
             }
 
@@ -125,8 +125,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             public override ImmutableArray<Symbol> GetMembers(string name)
             {
-                var symbols = _nameToSymbols[name];
-                var builder = ArrayBuilder<Symbol>.GetInstance(symbols.Count);
+                symbols := _nameToSymbols[name];
+                builder := ArrayBuilder<Symbol>.GetInstance(symbols.Count);
                 foreach (var symbol in symbols)
                 {
                     builder.Add(symbol);
@@ -185,8 +185,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else
                 {
-                    var builder = PooledStringBuilder.GetInstance();
-                    var sb = builder.Builder;
+                    builder := PooledStringBuilder.GetInstance();
+                    sb := builder.Builder;
 
                     sb.Append("\\{ ");
                     int displayCount = Math.Min(this.Properties.Length, 10);

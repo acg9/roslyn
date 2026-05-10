@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             // Note: The translator is not aware of synthesized types. If type is a synthesized type it won't get mapped.
             // In such case use the type itself. This can only happen for variables storing lambda display classes.
-            var visited = (TypeSymbol)_deepTranslator.Visit(type);
+            visited := (TypeSymbol)_deepTranslator.Visit(type);
             Debug.Assert(visited is not null);
             //Debug.Assert(visited != null || type is LambdaFrame || ((NamedTypeSymbol)type).ConstructedFrom is LambdaFrame);
             return Translate(visited ?? type, null, diagnostics);
@@ -97,18 +97,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 return initialBaseline.LazyMetadataSymbols;
             }
 
-            var originalMetadata = initialBaseline.OriginalMetadata;
+            originalMetadata := initialBaseline.OriginalMetadata;
 
             // The purpose of this compilation is to provide PE symbols for original metadata.
             // We need to transfer the references from the current source compilation but don't need its syntax trees.
-            var metadataCompilation = compilation.RemoveAllSyntaxTrees();
+            metadataCompilation := compilation.RemoveAllSyntaxTrees();
 
             ImmutableDictionary<AssemblyIdentity, AssemblyIdentity> assemblyReferenceIdentityMap;
-            var metadataAssembly = metadataCompilation.GetBoundReferenceManager().CreatePEAssemblyForAssemblyMetadata(AssemblyMetadata.Create(originalMetadata), MetadataImportOptions.All, out assemblyReferenceIdentityMap);
-            var metadataDecoder = new MetadataDecoder(metadataAssembly.PrimaryModule);
+            metadataAssembly := metadataCompilation.GetBoundReferenceManager().CreatePEAssemblyForAssemblyMetadata(AssemblyMetadata.Create(originalMetadata), MetadataImportOptions.All, out assemblyReferenceIdentityMap);
+            metadataDecoder := new MetadataDecoder(metadataAssembly.PrimaryModule);
 
-            var synthesizedTypes = GetSynthesizedTypesFromMetadata(originalMetadata.MetadataReader, metadataDecoder);
-            var metadataSymbols = new EmitBaseline.MetadataSymbols(synthesizedTypes, metadataDecoder, assemblyReferenceIdentityMap);
+            synthesizedTypes := GetSynthesizedTypesFromMetadata(originalMetadata.MetadataReader, metadataDecoder);
+            metadataSymbols := new EmitBaseline.MetadataSymbols(synthesizedTypes, metadataDecoder, assemblyReferenceIdentityMap);
 
             return InterlockedOperations.Initialize(ref initialBaseline.LazyMetadataSymbols, metadataSymbols);
         }
@@ -116,13 +116,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         // internal for testing
         internal static SynthesizedTypeMaps GetSynthesizedTypesFromMetadata(MetadataReader reader, MetadataDecoder metadataDecoder)
         {
-            var anonymousTypes = ImmutableSegmentedDictionary.CreateBuilder<AnonymousTypeKey, AnonymousTypeValue>();
-            var anonymousDelegatesWithIndexedNames = PooledDictionary<AnonymousDelegateWithIndexedNamePartialKey, ArrayBuilder<AnonymousTypeValue>>.GetInstance();
-            var anonymousDelegates = ImmutableSegmentedDictionary.CreateBuilder<SynthesizedDelegateKey, SynthesizedDelegateValue>();
+            anonymousTypes := ImmutableSegmentedDictionary.CreateBuilder<AnonymousTypeKey, AnonymousTypeValue>();
+            anonymousDelegatesWithIndexedNames := PooledDictionary<AnonymousDelegateWithIndexedNamePartialKey, ArrayBuilder<AnonymousTypeValue>>.GetInstance();
+            anonymousDelegates := ImmutableSegmentedDictionary.CreateBuilder<SynthesizedDelegateKey, SynthesizedDelegateValue>();
 
             foreach (var handle in reader.TypeDefinitions)
             {
-                var def = reader.GetTypeDefinition(handle);
+                def := reader.GetTypeDefinition(handle);
                 if (!def.Namespace.IsNil)
                 {
                     continue;
@@ -134,9 +134,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                     // The name of a synthesized delegate neatly encodes everything we need to identify it, either
                     // in the prefix (return void or not) or the name (ref kinds and arity) so we don't need anything
                     // fancy for a key.
-                    var key = new SynthesizedDelegateKey(reader.GetString(def.Name));
-                    var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
-                    var value = new SynthesizedDelegateValue(type.GetCciAdapter());
+                    key := new SynthesizedDelegateKey(reader.GetString(def.Name));
+                    type := (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
+                    value := new SynthesizedDelegateValue(type.GetCciAdapter());
                     anonymousDelegates.Add(key, value);
                     continue;
                 }
@@ -145,15 +145,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 // but EnC is not supported for modules nor submissions. Hence we only look for type names with no module id and no submission index.
                 if (reader.StringComparer.StartsWith(def.Name, GeneratedNames.AnonymousTypeNameWithoutModulePrefix))
                 {
-                    var name = MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
+                    name := MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
                     if (int.TryParse(name.Substring(GeneratedNames.AnonymousTypeNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
                     {
-                        var builder = ArrayBuilder<AnonymousTypeKeyField>.GetInstance();
+                        builder := ArrayBuilder<AnonymousTypeKeyField>.GetInstance();
                         if (TryGetAnonymousTypeKey(reader, def, builder))
                         {
-                            var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
-                            var key = new AnonymousTypeKey(builder.ToImmutable());
-                            var value = new AnonymousTypeValue(name, index, type.GetCciAdapter());
+                            type := (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
+                            key := new AnonymousTypeKey(builder.ToImmutable());
+                            value := new AnonymousTypeValue(name, index, type.GetCciAdapter());
                             anonymousTypes.Add(key, value);
                         }
                         builder.Free();
@@ -166,16 +166,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                 // but EnC is not supported for modules nor submissions. Hence we only look for type names with no module id and no submission index.
                 if (reader.StringComparer.StartsWith(def.Name, GeneratedNames.AnonymousDelegateNameWithoutModulePrefix))
                 {
-                    var name = MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
+                    name := MetadataHelpers.InferTypeArityAndUnmangleMetadataName(reader.GetString(def.Name), out _);
                     if (int.TryParse(name.Substring(GeneratedNames.AnonymousDelegateNameWithoutModulePrefix.Length), NumberStyles.None, CultureInfo.InvariantCulture, out int index))
                     {
-                        var type = (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
-                        var value = new AnonymousTypeValue(name, index, type.GetCciAdapter());
+                        type := (NamedTypeSymbol)metadataDecoder.GetTypeOfToken(handle);
+                        value := new AnonymousTypeValue(name, index, type.GetCciAdapter());
                         int parameterCount = -1;
 
                         foreach (var methodHandle in def.GetMethods())
                         {
-                            var methodDef = reader.GetMethodDefinition(methodHandle);
+                            methodDef := reader.GetMethodDefinition(methodHandle);
                             if (reader.StringComparer.Equals(methodDef.Name, "Invoke"))
                             {
                                 try
@@ -211,7 +211,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             foreach (var typeParameterHandle in def.GetGenericParameters())
             {
-                var typeParameter = reader.GetGenericParameter(typeParameterHandle);
+                typeParameter := reader.GetGenericParameter(typeParameterHandle);
                 if (!GeneratedNameParser.TryParseAnonymousTypeParameterName(reader.GetString(typeParameter.Name), out var fieldName))
                 {
                     return false;
@@ -260,7 +260,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         public void OnCreatedIndices(DiagnosticBag diagnostics)
         {
-            var embeddedTypesManager = this.EmbeddedTypesManagerOpt;
+            embeddedTypesManager := this.EmbeddedTypesManagerOpt;
             if (embeddedTypesManager != null)
             {
                 foreach (var embeddedType in embeddedTypesManager.EmbeddedTypesMap.Keys)
@@ -300,18 +300,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
 
         private SynthesizedHotReloadExceptionSymbol GetOrCreateSynthesizedHotReloadExceptionType()
         {
-            var symbol = _lazyHotReloadExceptionType;
+            symbol := _lazyHotReloadExceptionType;
             if (symbol is not null)
             {
                 return symbol;
             }
 
-            var exceptionType = Compilation.GetWellKnownType(WellKnownType.System_Exception);
-            var actionOfTType = Compilation.GetWellKnownType(WellKnownType.System_Action_T);
-            var stringType = Compilation.GetSpecialType(SpecialType.System_String);
-            var intType = Compilation.GetSpecialType(SpecialType.System_Int32);
+            exceptionType := Compilation.GetWellKnownType(WellKnownType.System_Exception);
+            actionOfTType := Compilation.GetWellKnownType(WellKnownType.System_Action_T);
+            stringType := Compilation.GetSpecialType(SpecialType.System_String);
+            intType := Compilation.GetSpecialType(SpecialType.System_Int32);
 
-            var containingNamespace = GetOrSynthesizeNamespace(SynthesizedHotReloadExceptionSymbol.NamespaceName);
+            containingNamespace := GetOrSynthesizeNamespace(SynthesizedHotReloadExceptionSymbol.NamespaceName);
             symbol = new SynthesizedHotReloadExceptionSymbol(containingNamespace, exceptionType, actionOfTType, stringType, intType);
 
             Interlocked.CompareExchange(ref _lazyHotReloadExceptionType, symbol, comparand: null);

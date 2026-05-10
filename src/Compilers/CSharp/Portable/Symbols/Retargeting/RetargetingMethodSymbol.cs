@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<ParameterSymbol> RetargetParameters()
         {
-            var list = _underlyingMethod.Parameters;
+            list := _underlyingMethod.Parameters;
             int count = list.Length;
 
             if (count == 0)
@@ -176,7 +176,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             }
             else
             {
-                var parameters = ArrayBuilder<ParameterSymbol>.GetInstance(count);
+                parameters := ArrayBuilder<ParameterSymbol>.GetInstance(count);
 
                 for (int i = 0; i < count; i++)
                 {
@@ -191,7 +191,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             get
             {
-                var associatedPropertyOrEvent = _underlyingMethod.AssociatedSymbol;
+                associatedPropertyOrEvent := _underlyingMethod.AssociatedSymbol;
                 return (object)associatedPropertyOrEvent == null ? null : this.RetargetingTranslator.Retarget(associatedPropertyOrEvent);
             }
         }
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
         {
             if (ReferenceEquals(_lazyUnmanagedAttributeData, UnmanagedCallersOnlyAttributeData.Uninitialized))
             {
-                var data = _underlyingMethod.GetUnmanagedCallersOnlyAttributeData(forceComplete);
+                data := _underlyingMethod.GetUnmanagedCallersOnlyAttributeData(forceComplete);
                 if (ReferenceEquals(data, UnmanagedCallersOnlyAttributeData.Uninitialized)
                     || ReferenceEquals(data, UnmanagedCallersOnlyAttributeData.AttributePresentDataNotBound))
                 {
@@ -244,7 +244,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
                 if (data?.CallingConventionTypes.IsEmpty == false)
                 {
-                    var builder = PooledHashSet<INamedTypeSymbolInternal>.GetInstance();
+                    builder := PooledHashSet<INamedTypeSymbolInternal>.GetInstance();
                     foreach (var identifier in data.CallingConventionTypes)
                     {
                         builder.Add((INamedTypeSymbolInternal)RetargetingTranslator.Retarget((NamedTypeSymbol)identifier));
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
         private ImmutableArray<MethodSymbol> RetargetExplicitInterfaceImplementations()
         {
-            var impls = _underlyingMethod.ExplicitInterfaceImplementations;
+            impls := _underlyingMethod.ExplicitInterfaceImplementations;
 
             if (impls.IsEmpty)
             {
@@ -327,11 +327,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
 
             // CONSIDER: we could skip the builder until the first time we see a different method after retargeting
 
-            var builder = ArrayBuilder<MethodSymbol>.GetInstance();
+            builder := ArrayBuilder<MethodSymbol>.GetInstance();
 
             for (int i = 0; i < impls.Length; i++)
             {
-                var retargeted = this.RetargetingTranslator.Retarget(impls[i], MemberSignatureComparer.RetargetedExplicitImplementationComparer);
+                retargeted := this.RetargetingTranslator.Retarget(impls[i], MemberSignatureComparer.RetargetedExplicitImplementationComparer);
                 if ((object)retargeted != null)
                 {
                     builder.Add(retargeted);
@@ -360,7 +360,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Retargeting
             if (!_lazyCachedUseSiteInfo.IsInitialized)
             {
                 AssemblySymbol primaryDependency = PrimaryDependency;
-                var result = new UseSiteInfo<AssemblySymbol>(primaryDependency);
+                result := new UseSiteInfo<AssemblySymbol>(primaryDependency);
                 CalculateUseSiteDiagnostic(ref result);
                 _lazyCachedUseSiteInfo.Initialize(primaryDependency, result);
             }

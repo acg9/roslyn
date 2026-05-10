@@ -214,7 +214,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             foreach (var member in GetTypeMembers(name, arity))
             {
-                var memberT = member as SourceNamedTypeSymbol;
+                memberT := member as SourceNamedTypeSymbol;
                 if ((object?)memberT != null && memberT.TypeKind == typeKind)
                 {
                     if (syntax != null)
@@ -224,7 +224,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         Debug.Assert(memberT.MergedDeclaration.Declarations.SelectAsArray(decl => decl.NameLocation).SequenceEqual(memberT.Locations));
                         foreach (var declaration in memberT.MergedDeclaration.Declarations)
                         {
-                            var loc = declaration.NameLocation;
+                            loc := declaration.NameLocation;
                             if (loc.IsInSource && loc.SourceTree == syntax.SyntaxTree && syntax.Span.Contains(loc.SourceSpan))
                             {
                                 return memberT;

@@ -24,17 +24,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 return root;
             }
 
-            var nodeArray = nodes.ToArray();
+            nodeArray := nodes.ToArray();
 
             if (nodeArray.Length == 0)
             {
                 return root;
             }
 
-            var remover = new SyntaxRemover(nodes.ToArray(), options);
-            var result = remover.Visit(root);
+            remover := new SyntaxRemover(nodes.ToArray(), options);
+            result := remover.Visit(root);
 
-            var residualTrivia = remover.ResidualTrivia;
+            residualTrivia := remover.ResidualTrivia;
 
             // the result of the SyntaxRemover will be null when the root node is removed.
             if (result != null && residualTrivia.Count > 0)
@@ -66,13 +66,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             private static TextSpan ComputeTotalSpan(SyntaxNode[] nodes)
             {
-                var span0 = nodes[0].FullSpan;
+                span0 := nodes[0].FullSpan;
                 int start = span0.Start;
                 int end = span0.End;
 
                 for (int i = 1; i < nodes.Length; i++)
                 {
-                    var span = nodes[i].FullSpan;
+                    span := nodes[i].FullSpan;
                     start = Math.Min(start, span.Start);
                     end = Math.Max(end, span.End);
                 }
@@ -206,13 +206,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
             // deal with separated lists and removal of associated separators
             public override SeparatedSyntaxList<TNode> VisitList<TNode>(SeparatedSyntaxList<TNode> list)
             {
-                var withSeps = list.GetWithSeparators();
+                withSeps := list.GetWithSeparators();
                 bool removeNextSeparator = false;
 
                 SyntaxNodeOrTokenListBuilder? alternate = null;
                 for (int i = 0, n = withSeps.Count; i < n; i++)
                 {
-                    var item = withSeps[i];
+                    item := withSeps[i];
                     SyntaxNodeOrToken visited;
 
                     if (item.IsToken) // separator
@@ -229,7 +229,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                     }
                     else
                     {
-                        var node = (TNode)item.AsNode()!;
+                        node := (TNode)item.AsNode()!;
 
                         if (this.IsForRemoval(node))
                         {
@@ -247,13 +247,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                                 alternate.Count > 0 &&
                                 alternate[alternate.Count - 1].IsToken)
                             {
-                                var separator = alternate[alternate.Count - 1].AsToken();
+                                separator := alternate[alternate.Count - 1].AsToken();
                                 this.AddTrivia(separator, node);
                                 alternate.RemoveLast();
                             }
                             else if (nextTokenIsSeparator)
                             {
-                                var separator = withSeps[i + 1].AsToken();
+                                separator := withSeps[i + 1].AsToken();
                                 this.AddTrivia(node, separator);
                                 removeNextSeparator = true;
                             }
@@ -341,8 +341,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                 if ((_options & (SyntaxRemoveOptions.KeepDirectives | SyntaxRemoveOptions.KeepUnbalancedDirectives)) != 0)
                 {
-                    var span = TextSpan.FromBounds(token.Span.Start, node.Span.End);
-                    var fullSpan = TextSpan.FromBounds(token.FullSpan.Start, node.FullSpan.End);
+                    span := TextSpan.FromBounds(token.Span.Start, node.Span.End);
+                    fullSpan := TextSpan.FromBounds(token.FullSpan.Start, node.FullSpan.End);
                     this.AddDirectives(node.Parent, GetRemovedSpan(span, fullSpan));
                 }
 
@@ -375,8 +375,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                 if ((_options & (SyntaxRemoveOptions.KeepDirectives | SyntaxRemoveOptions.KeepUnbalancedDirectives)) != 0)
                 {
-                    var span = TextSpan.FromBounds(node.Span.Start, token.Span.End);
-                    var fullSpan = TextSpan.FromBounds(node.FullSpan.Start, token.FullSpan.End);
+                    span := TextSpan.FromBounds(node.Span.Start, token.Span.End);
+                    fullSpan := TextSpan.FromBounds(node.FullSpan.Start, token.FullSpan.End);
                     this.AddDirectives(node.Parent, GetRemovedSpan(span, fullSpan));
                 }
 
@@ -403,7 +403,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             private TextSpan GetRemovedSpan(TextSpan span, TextSpan fullSpan)
             {
-                var removedSpan = fullSpan;
+                removedSpan := fullSpan;
 
                 if ((_options & SyntaxRemoveOptions.KeepLeadingTrivia) != 0)
                 {
@@ -450,8 +450,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                         else if (HasRelatedDirectives(directive))
                         {
                             // a balanced directive with respect to a given node has all related directives rooted under that node
-                            var relatedDirectives = directive.GetRelatedDirectives();
-                            var balanced = relatedDirectives.All(rd => rd.FullSpan.OverlapsWith(span));
+                            relatedDirectives := directive.GetRelatedDirectives();
+                            balanced := relatedDirectives.All(rd => rd.FullSpan.OverlapsWith(span));
 
                             if (!balanced)
                             {
@@ -465,7 +465,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                         if (_directivesToKeep.Contains(directive))
                         {
-                            var parentTrivia = directive.ParentTrivia;
+                            parentTrivia := directive.ParentTrivia;
                             var (triviaList, directiveTriviaListIndex) = getTriviaListAndIndex(parentTrivia);
 
                             // If we're keeping a directive, and it's not at the start of the line, keep the indentation
@@ -484,9 +484,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
                 static (SyntaxTriviaList triviaList, int index) getTriviaListAndIndex(SyntaxTrivia trivia)
                 {
-                    var parentToken = trivia.Token;
+                    parentToken := trivia.Token;
 
-                    var index = parentToken.LeadingTrivia.IndexOf(trivia);
+                    index := parentToken.LeadingTrivia.IndexOf(trivia);
                     return index >= 0
                         ? (parentToken.LeadingTrivia, index)
                         : (parentToken.TrailingTrivia, parentToken.TrailingTrivia.IndexOf(trivia));

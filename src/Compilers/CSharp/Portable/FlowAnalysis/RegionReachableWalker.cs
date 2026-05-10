@@ -17,8 +17,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static void Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion,
             out bool startPointIsReachable, out bool endPointIsReachable)
         {
-            var walker = new RegionReachableWalker(compilation, member, node, firstInRegion, lastInRegion);
-            var diagnostics = DiagnosticBag.GetInstance();
+            walker := new RegionReachableWalker(compilation, member, node, firstInRegion, lastInRegion);
+            diagnostics := DiagnosticBag.GetInstance();
             bool badRegion = false;
             try
             {

@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     // If that doesn't work, choose from a sufficiently large random selection of values.
                     // Since this is an excluded set, they cannot all be excluded
-                    var candidates = _tc.RandomValues(_membersIncludedOrExcluded.Count + 1, new Random(0), _membersIncludedOrExcluded.Count + 1);
+                    candidates := _tc.RandomValues(_membersIncludedOrExcluded.Count + 1, new Random(0), _membersIncludedOrExcluded.Count + 1);
                     foreach (var value in candidates)
                     {
                         if (this.Any(BinaryOperatorKind.Equal, value))
@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (this == o)
                     return this;
-                var other = (EnumeratedValueSet<T>)o;
+                other := (EnumeratedValueSet<T>)o;
                 Debug.Assert(object.ReferenceEquals(this._tc, other._tc));
 
                 var (larger, smaller) = (this._membersIncludedOrExcluded.Count > other._membersIncludedOrExcluded.Count) ? (this, other) : (other, this);
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (this == o)
                     return this;
-                var other = (EnumeratedValueSet<T>)o;
+                other := (EnumeratedValueSet<T>)o;
                 Debug.Assert(object.ReferenceEquals(this._tc, other._tc));
 
                 var (larger, smaller) = (this._membersIncludedOrExcluded.Count > other._membersIncludedOrExcluded.Count) ? (this, other) : (other, this);

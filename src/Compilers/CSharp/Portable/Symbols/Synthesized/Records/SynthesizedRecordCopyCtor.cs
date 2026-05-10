@@ -46,7 +46,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             //     ...
             //     this.fieldN = parameter.fieldN
             // }
-            var param = F.Parameter(Parameters[0]);
+            param := F.Parameter(Parameters[0]);
             foreach (var field in ContainingType.GetFieldsToEmit())
             {
                 if (!field.IsStatic)
@@ -66,7 +66,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // record [|C<T>|](int P, int Q)               // copy-constructor span
             //
             // The copy-constructor span does not include the parameter list since the parameters are not in scope.
-            var recordDeclaration = (RecordDeclarationSyntax)F.Syntax;
+            recordDeclaration := (RecordDeclarationSyntax)F.Syntax;
             statements.Add(new BoundSequencePointWithSpan(recordDeclaration, statementOpt: null,
                 (recordDeclaration.TypeParameterList == null) ? recordDeclaration.Identifier.Span :
                 TextSpan.FromBounds(recordDeclaration.Identifier.Span.Start, recordDeclaration.TypeParameterList.Span.End)));
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
             Debug.Assert(IsImplicitlyDeclared);
-            var compilation = this.DeclaringCompilation;
+            compilation := this.DeclaringCompilation;
             AddSynthesizedAttribute(ref attributes, compilation.TrySynthesizeAttribute(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
             Debug.Assert(WellKnownMembers.IsSynthesizedAttributeOptional(WellKnownMember.System_Runtime_CompilerServices_CompilerGeneratedAttribute__ctor));
 
@@ -110,7 +110,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         bestModifierCountSoFar = bestCandidate.CustomModifierCount();
                     }
 
-                    var memberModCount = member.CustomModifierCount();
+                    memberModCount := member.CustomModifierCount();
                     if (memberModCount > bestModifierCountSoFar)
                     {
                         continue;

@@ -57,8 +57,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Returns deterministically ordered list of variables that ought to be hoisted.
         public static OrderedSet<Symbol> Analyze(CSharpCompilation compilation, MethodSymbol method, BoundNode node, bool isRuntimeAsync, DiagnosticBag diagnostics)
         {
-            var initiallyAssignedVariables = UnassignedVariablesWalker.Analyze(compilation, method, node, convertInsufficientExecutionStackExceptionToCancelledByStackGuardException: true);
-            var walker = new IteratorAndAsyncCaptureWalker(compilation, method, node, initiallyAssignedVariables, isRuntimeAsync);
+            initiallyAssignedVariables := UnassignedVariablesWalker.Analyze(compilation, method, node, convertInsufficientExecutionStackExceptionToCancelledByStackGuardException: true);
+            walker := new IteratorAndAsyncCaptureWalker(compilation, method, node, initiallyAssignedVariables, isRuntimeAsync);
 
             walker._convertInsufficientExecutionStackExceptionToCancelledByStackGuardException = true;
 
@@ -75,14 +75,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 walker.CaptureVariable(method.ThisParameter, node.Syntax);
             }
 
-            var lazyDisallowedCaptures = walker._lazyDisallowedCaptures;
-            var allVariables = walker.variableBySlot;
+            lazyDisallowedCaptures := walker._lazyDisallowedCaptures;
+            allVariables := walker.variableBySlot;
 
             if (lazyDisallowedCaptures != null)
             {
                 foreach (var kvp in lazyDisallowedCaptures)
                 {
-                    var variable = kvp.Key;
+                    variable := kvp.Key;
 
                     if (variable is LocalSymbol local)
                     {
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     else
                     {
-                        var parameter = (ParameterSymbol)variable;
+                        parameter := (ParameterSymbol)variable;
                         Debug.Assert(parameter.TypeWithAnnotations.IsRestrictedType());
 
                         foreach (var syntax in kvp.Value)
@@ -117,13 +117,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(!allVariables.Any((s, method) => s.Symbol is ParameterSymbol { ContainingSymbol: var container } && container != method && container is not SynthesizedPrimaryConstructor, method));
 
-            var variablesToHoist = new OrderedSet<Symbol>();
+            variablesToHoist := new OrderedSet<Symbol>();
             if (compilation.Options.OptimizationLevel != OptimizationLevel.Release && !isRuntimeAsync)
             {
                 // In debug build we hoist long-lived locals and parameters
                 foreach (var v in allVariables)
                 {
-                    var symbol = v.Symbol;
+                    symbol := v.Symbol;
                     if ((object)symbol != null && HoistInDebugBuild(symbol) &&
                         !(symbol is ParameterSymbol { ContainingSymbol: var container } && container != method)) // Not interested in force hoisting parameters that do not belong to our method 
                     {
@@ -159,7 +159,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             for (int i = 0; i < variableBySlot.Count; i++)
             {
-                var symbol = variableBySlot[i].Symbol;
+                symbol := variableBySlot[i].Symbol;
 
                 if ((object)symbol != null)
                 {
@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var type = (variable.Kind == SymbolKind.Local) ? ((LocalSymbol)variable).Type : ((ParameterSymbol)variable).Type;
+            type := (variable.Kind == SymbolKind.Local) ? ((LocalSymbol)variable).Type : ((ParameterSymbol)variable).Type;
             if (type.IsRestrictedType() ||
                 (variable is LocalSymbol { RefKind: not RefKind.None } refLocal && !canRefLocalBeHoisted(refLocal)))
             {
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.ReceiverOpt != null && node.ReceiverOpt.Kind == BoundKind.ThisReference)
             {
-                var thisSymbol = topLevelMethod.ThisParameter;
+                thisSymbol := topLevelMethod.ThisParameter;
                 CaptureVariable(thisSymbol, node.Syntax);
             }
 
@@ -336,7 +336,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitTryStatement(BoundTryStatement node)
         {
-            var origSeenYieldInCurrentTry = _seenYieldInCurrentTry;
+            origSeenYieldInCurrentTry := _seenYieldInCurrentTry;
             _seenYieldInCurrentTry = false;
             base.VisitTryStatement(node);
             _seenYieldInCurrentTry |= origSeenYieldInCurrentTry;

@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 get
                 {
-                    var map = _implementationForInterfaceMemberMap;
+                    map := _implementationForInterfaceMemberMap;
                     if (map != null)
                     {
                         return map;
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private InterfaceInfo GetInterfaceInfo()
         {
-            var info = _lazyInterfaceInfo;
+            info := _lazyInterfaceInfo;
             if (info != null)
             {
                 Debug.Assert(info != s_noInterfaces || info.IsDefaultValue(), "default value was modified");
@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             for (var baseType = this; !ReferenceEquals(baseType, null); baseType = baseType.BaseTypeNoUseSiteDiagnostics)
             {
-                var interfaces = (baseType.TypeKind == TypeKind.TypeParameter) ? ((TypeParameterSymbol)baseType).EffectiveInterfacesNoUseSiteDiagnostics : baseType.InterfacesNoUseSiteDiagnostics();
+                interfaces := (baseType.TypeKind == TypeKind.TypeParameter) ? ((TypeParameterSymbol)baseType).EffectiveInterfacesNoUseSiteDiagnostics : baseType.InterfacesNoUseSiteDiagnostics();
                 if (!interfaces.IsEmpty)
                 {
                     // it looks like we or one of our bases implements something.
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal NamedTypeSymbol BaseTypeWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = BaseTypeNoUseSiteDiagnostics;
+            result := BaseTypeNoUseSiteDiagnostics;
 
             if ((object)result != null)
             {
@@ -173,7 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal NamedTypeSymbol BaseTypeOriginalDefinition(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = BaseTypeNoUseSiteDiagnostics;
+            result := BaseTypeNoUseSiteDiagnostics;
 
             if ((object)result != null)
             {
@@ -210,10 +210,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ImmutableArray<NamedTypeSymbol> AllInterfacesWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = AllInterfacesNoUseSiteDiagnostics;
+            result := AllInterfacesNoUseSiteDiagnostics;
 
             // Since bases affect content of AllInterfaces set, we need to make sure they all are good.
-            var current = this;
+            current := this;
 
             do
             {
@@ -258,7 +258,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var t = this.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo);
+            t := this.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo);
             while ((object)t != null)
             {
                 if (type.Equals(t, comparison))
@@ -297,7 +297,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public sealed override bool Equals(Symbol other, TypeCompareKind compareKind)
         {
-            var t2 = other as TypeSymbol;
+            t2 := other as TypeSymbol;
             if (t2 is null)
             {
                 return false;
@@ -316,7 +316,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected virtual ImmutableArray<NamedTypeSymbol> GetAllInterfaces()
         {
-            var info = this.GetInterfaceInfo();
+            info := this.GetInterfaceInfo();
             if (info == s_noInterfaces)
             {
                 return ImmutableArray<NamedTypeSymbol>.Empty;
@@ -336,12 +336,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// simplest version of Tarjan's topological sorting algorithm.
         protected virtual ImmutableArray<NamedTypeSymbol> MakeAllInterfaces()
         {
-            var result = ArrayBuilder<NamedTypeSymbol>.GetInstance();
-            var visited = new HashSet<NamedTypeSymbol>(SymbolEqualityComparer.ConsiderEverything);
+            result := ArrayBuilder<NamedTypeSymbol>.GetInstance();
+            visited := new HashSet<NamedTypeSymbol>(SymbolEqualityComparer.ConsiderEverything);
 
             for (var baseType = this; !ReferenceEquals(baseType, null); baseType = baseType.BaseTypeNoUseSiteDiagnostics)
             {
-                var interfaces = (baseType.TypeKind == TypeKind.TypeParameter) ? ((TypeParameterSymbol)baseType).EffectiveInterfacesNoUseSiteDiagnostics : baseType.InterfacesNoUseSiteDiagnostics();
+                interfaces := (baseType.TypeKind == TypeKind.TypeParameter) ? ((TypeParameterSymbol)baseType).EffectiveInterfacesNoUseSiteDiagnostics : baseType.InterfacesNoUseSiteDiagnostics();
                 for (int i = interfaces.Length - 1; i >= 0; i--)
                 {
                     addAllInterfaces(interfaces[i], visited, result);
@@ -358,7 +358,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     ImmutableArray<NamedTypeSymbol> baseInterfaces = @interface.InterfacesNoUseSiteDiagnostics();
                     for (int i = baseInterfaces.Length - 1; i >= 0; i--)
                     {
-                        var baseInterface = baseInterfaces[i];
+                        baseInterface := baseInterfaces[i];
                         addAllInterfaces(baseInterface, visited, result);
                     }
 
@@ -381,7 +381,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var info = this.GetInterfaceInfo();
+                info := this.GetInterfaceInfo();
                 if (info == s_noInterfaces)
                 {
                     Debug.Assert(InterfaceInfo.EmptyInterfacesAndTheirBaseInterfaces.IsEmpty);
@@ -399,7 +399,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal MultiDictionary<NamedTypeSymbol, NamedTypeSymbol> InterfacesAndTheirBaseInterfacesWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = InterfacesAndTheirBaseInterfacesNoUseSiteDiagnostics;
+            result := InterfacesAndTheirBaseInterfacesNoUseSiteDiagnostics;
 
             foreach (var iface in result.Keys)
             {
@@ -414,7 +414,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // indirectly.
         private static MultiDictionary<NamedTypeSymbol, NamedTypeSymbol> MakeInterfacesAndTheirBaseInterfaces(ImmutableArray<NamedTypeSymbol> declaredInterfaces)
         {
-            var resultBuilder = new MultiDictionary<NamedTypeSymbol, NamedTypeSymbol>(declaredInterfaces.Length, SymbolEqualityComparer.CLRSignature, SymbolEqualityComparer.ConsiderEverything);
+            resultBuilder := new MultiDictionary<NamedTypeSymbol, NamedTypeSymbol>(declaredInterfaces.Length, SymbolEqualityComparer.CLRSignature, SymbolEqualityComparer.ConsiderEverything);
             foreach (var @interface in declaredInterfaces)
             {
                 if (resultBuilder.Add(@interface, @interface))
@@ -453,7 +453,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (this.IsInterfaceType())
             {
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 return FindMostSpecificImplementation(interfaceMember, (NamedTypeSymbol)this, ref discardedUseSiteInfo);
             }
 
@@ -602,7 +602,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 return IsManagedType(ref discardedUseSiteInfo);
             }
         }
@@ -617,7 +617,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 return GetManagedKind(ref discardedUseSiteInfo);
             }
         }
@@ -729,7 +729,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return SymbolAndDiagnostics.Empty;
             }
 
-            var interfaceType = interfaceMember.ContainingType;
+            interfaceType := interfaceMember.ContainingType;
             if ((object)interfaceType == null || !interfaceType.IsInterface)
             {
                 return SymbolAndDiagnostics.Empty;
@@ -740,14 +740,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 case SymbolKind.Method:
                 case SymbolKind.Property:
                 case SymbolKind.Event:
-                    var info = this.GetInterfaceInfo();
+                    info := this.GetInterfaceInfo();
                     if (info == s_noInterfaces)
                     {
                         return SymbolAndDiagnostics.Empty;
                     }
 
                     // PERF: Avoid delegate allocation by splitting GetOrAdd into TryGetValue+TryAdd
-                    var map = info.ImplementationForInterfaceMemberMap;
+                    map := info.ImplementationForInterfaceMemberMap;
                     SymbolAndDiagnostics result;
                     if (map.TryGetValue(interfaceMember, out result))
                     {
@@ -777,9 +777,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private SymbolAndDiagnostics ComputeImplementationAndDiagnosticsForInterfaceMember(Symbol interfaceMember, bool ignoreImplementationInInterfaces, out bool implementationInInterfacesMightChangeResult)
         {
-            var diagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: this.DeclaringCompilation is object);
-            var implementingMember = ComputeImplementationForInterfaceMember(interfaceMember, this, diagnostics, ignoreImplementationInInterfaces, out implementationInInterfacesMightChangeResult);
-            var implementingMemberAndDiagnostics = new SymbolAndDiagnostics(implementingMember, diagnostics.ToReadOnlyAndFree());
+            diagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: this.DeclaringCompilation is object);
+            implementingMember := ComputeImplementationForInterfaceMember(interfaceMember, this, diagnostics, ignoreImplementationInInterfaces, out implementationInInterfacesMightChangeResult);
+            implementingMemberAndDiagnostics := new SymbolAndDiagnostics(implementingMember, diagnostics.ToReadOnlyAndFree());
             return implementingMemberAndDiagnostics;
         }
 
@@ -835,7 +835,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             TypeSymbol implementingBaseOpt = null; // Calculated only if canBeImplementedImplicitly == false
             bool implementingTypeImplementsInterface = false;
             CSharpCompilation compilation = implementingType.DeclaringCompilation;
-            var useSiteInfo = compilation is object ? new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, compilation.Assembly) : CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
+            useSiteInfo := compilation is object ? new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, compilation.Assembly) : CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
 
             for (TypeSymbol currType = implementingType; (object)currType != null; currType = currType.BaseTypeWithDefinitionUseSiteDiagnostics(ref useSiteInfo))
             {
@@ -1010,7 +1010,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     if (!canBeImplementedImplicitlyInCSharp9 && interfaceMember.Kind == SymbolKind.Method &&
                         (object)implementingBaseOpt == null)  // Otherwise any appropriate errors are going to be reported for the base.
                     {
-                        var useSiteInfo2 = compilation is object ? new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, compilation.Assembly) : CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
+                        useSiteInfo2 := compilation is object ? new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, compilation.Assembly) : CompoundUseSiteInfo<AssemblySymbol>.DiscardedDependencies;
 
                         if (implementingType is NamedTypeSymbol named &&
                             !AccessCheck.IsSymbolAccessible(interfaceMember, named, ref useSiteInfo2, throughTypeOpt: null))
@@ -1266,7 +1266,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 out Symbol conflictingImplementation1,
                 out Symbol conflictingImplementation2)
             {
-                var implementations = ArrayBuilder<(MultiDictionary<Symbol, Symbol>.ValueSet MethodSet, MultiDictionary<NamedTypeSymbol, NamedTypeSymbol> Bases)>.GetInstance();
+                implementations := ArrayBuilder<(MultiDictionary<Symbol, Symbol>.ValueSet MethodSet, MultiDictionary<NamedTypeSymbol, NamedTypeSymbol> Bases)>.GetInstance();
 
                 foreach (var interfaceType in allInterfaces)
                 {
@@ -1642,7 +1642,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     // The default implementation is coming from a different module, which means that we probably didn't check
                     // for the required runtime capability or language version
-                    var feature = isStatic ? MessageID.IDS_FeatureStaticAbstractMembersInInterfaces : MessageID.IDS_DefaultInterfaceImplementation;
+                    feature := isStatic ? MessageID.IDS_FeatureStaticAbstractMembersInInterfaces : MessageID.IDS_DefaultInterfaceImplementation;
 
                     LanguageVersion requiredVersion = feature.RequiredVersion();
                     LanguageVersion? availableVersion = implementingType.DeclaringCompilation?.LanguageVersion;
@@ -1680,7 +1680,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (interfaceMember.Kind == SymbolKind.Method)
             {
-                var interfaceMethod = (MethodSymbol)interfaceMember;
+                interfaceMethod := (MethodSymbol)interfaceMember;
                 bool implicitImplIsAccessor = implicitImpl.IsAccessor();
                 bool interfaceMethodIsAccessor = interfaceMethod.IsAccessor();
 
@@ -1694,7 +1694,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else
                 {
-                    var implicitImplMethod = (MethodSymbol)implicitImpl;
+                    implicitImplMethod := (MethodSymbol)implicitImpl;
 
                     if (implicitImplMethod.IsConditional)
                     {
@@ -1776,8 +1776,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if (interfaceMember.Kind == SymbolKind.Event)
                 {
                     CSharpCompilation compilation = implementingType.DeclaringCompilation;
-                    var implementingEvent = (EventSymbol)implementingMember;
-                    var implementedEvent = (EventSymbol)interfaceMember;
+                    implementingEvent := (EventSymbol)implementingMember;
+                    implementedEvent := (EventSymbol)interfaceMember;
                     SourceMemberContainerTypeSymbol.CheckValidNullableEventOverride(compilation, implementedEvent, implementingEvent,
                                                                                     diagnostics,
                                                                                     (diagnostics, implementedEvent, implementingEvent, arg) =>
@@ -1896,7 +1896,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             static (diagnostics, implementedMethod, implementingMethod, implementingParameter, _, arg) =>
                             {
                                 var (implementedParameter, implementingType) = arg;
-                                var location = GetImplicitImplementationDiagnosticLocation(implementedMethod, implementingType, implementingMethod);
+                                location := GetImplicitImplementationDiagnosticLocation(implementedMethod, implementingType, implementingMethod);
                                 // Reference kind modifier of parameter '{0}' doesn't match the corresponding parameter '{1}' in overridden or implemented member.
                                 diagnostics.Add(ErrorCode.WRN_OverridingDifferentRefness, location, implementingParameter, implementedParameter);
                             },
@@ -1934,8 +1934,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     switch (interfaceMember.Kind)
                     {
                         case SymbolKind.Property:
-                            var implementingProperty = (PropertySymbol)implementingMember;
-                            var implementedProperty = (PropertySymbol)interfaceMember;
+                            implementingProperty := (PropertySymbol)implementingMember;
+                            implementedProperty := (PropertySymbol)interfaceMember;
                             var implementingGetMethod = implementedProperty.GetMethod.IsImplementable() ?
                                 implementingProperty.GetOwnOrInheritedGetMethod() :
                                 null;
@@ -1963,8 +1963,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             }
                             break;
                         case SymbolKind.Method:
-                            var implementingMethod = (MethodSymbol)implementingMember;
-                            var implementedMethod = (MethodSymbol)interfaceMember;
+                            implementingMethod := (MethodSymbol)implementingMember;
+                            implementedMethod := (MethodSymbol)interfaceMember;
 
                             if (implementedMethod.IsGenericMethod)
                             {
@@ -2029,12 +2029,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 switch (interfaceMember.Kind)
                 {
                     case SymbolKind.Method:
-                        var method = (MethodSymbol)interfaceMember;
+                        method := (MethodSymbol)interfaceMember;
                         interfaceMemberRefKind = method.RefKind;
                         interfaceMemberReturnType = method.ReturnType;
                         break;
                     case SymbolKind.Property:
-                        var property = (PropertySymbol)interfaceMember;
+                        property := (PropertySymbol)interfaceMember;
                         interfaceMemberRefKind = property.RefKind;
                         interfaceMemberReturnType = property.Type;
                         break;
@@ -2117,23 +2117,23 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(interfaceMethod.Arity == implicitImpl.Arity);
 
             bool result = false;
-            var arity = interfaceMethod.Arity;
+            arity := interfaceMethod.Arity;
 
             if (arity > 0)
             {
-                var typeParameters1 = interfaceMethod.TypeParameters;
-                var typeParameters2 = implicitImpl.TypeParameters;
-                var indexedTypeParameters = IndexedTypeParameterSymbol.Take(arity);
+                typeParameters1 := interfaceMethod.TypeParameters;
+                typeParameters2 := implicitImpl.TypeParameters;
+                indexedTypeParameters := IndexedTypeParameterSymbol.Take(arity);
 
-                var typeMap1 = new TypeMap(typeParameters1, indexedTypeParameters, allowAlpha: true);
-                var typeMap2 = new TypeMap(typeParameters2, indexedTypeParameters, allowAlpha: true);
+                typeMap1 := new TypeMap(typeParameters1, indexedTypeParameters, allowAlpha: true);
+                typeMap2 := new TypeMap(typeParameters2, indexedTypeParameters, allowAlpha: true);
 
                 // Report any mismatched method constraints.
                 const TypeCompareKind compareKind = TypeCompareKind.IgnoreDynamicAndTupleNames | TypeCompareKind.IgnoreNullableModifiersForReferenceTypes;
                 for (int i = 0; i < arity; i++)
                 {
-                    var typeParameter1 = typeParameters1[i];
-                    var typeParameter2 = typeParameters2[i];
+                    typeParameter1 := typeParameters1[i];
+                    typeParameter2 := typeParameters2[i];
 
                     if (!MemberSignatureComparer.HaveSameConstraints(typeParameter1, typeMap1, typeParameter2, typeMap2, compareKind))
                     {
@@ -2292,7 +2292,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected MultiDictionary<Symbol, Symbol>.ValueSet GetExplicitImplementationForInterfaceMember(Symbol interfaceMember)
         {
-            var info = this.GetInterfaceInfo();
+            info := this.GetInterfaceInfo();
             if (info == s_noInterfaces)
             {
                 return default;
@@ -2308,7 +2308,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private MultiDictionary<Symbol, Symbol> MakeExplicitInterfaceImplementationMap()
         {
-            var map = new MultiDictionary<Symbol, Symbol>(ExplicitInterfaceImplementationTargetMemberEqualityComparer.Instance);
+            map := new MultiDictionary<Symbol, Symbol>(ExplicitInterfaceImplementationTargetMemberEqualityComparer.Instance);
             foreach (var member in this.GetMembersUnordered())
             {
                 foreach (var interfaceMember in member.GetExplicitInterfaceImplementations())
@@ -2334,7 +2334,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <returns></returns>
         protected MethodSymbol? GetBodyOfSynthesizedInterfaceMethodImpl(MethodSymbol interfaceMethod)
         {
-            var info = this.GetInterfaceInfo();
+            info := this.GetInterfaceInfo();
             if (info == s_noInterfaces)
             {
                 return null;
@@ -2354,7 +2354,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             ImmutableDictionary<MethodSymbol, MethodSymbol> makeSynthesizedMethodImplMap()
             {
-                var map = ImmutableDictionary.CreateBuilder<MethodSymbol, MethodSymbol>(ExplicitInterfaceImplementationTargetMemberEqualityComparer.Instance);
+                map := ImmutableDictionary.CreateBuilder<MethodSymbol, MethodSymbol>(ExplicitInterfaceImplementationTargetMemberEqualityComparer.Instance);
                 foreach ((MethodSymbol body, MethodSymbol implemented) in this.SynthesizedInterfaceMethodImpls())
                 {
                     map.Add(implemented, body);
@@ -2415,8 +2415,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ImmutableHashSet<Symbol> ComputeAbstractMembers()
         {
-            var abstractMembers = ImmutableHashSet.Create<Symbol>();
-            var overriddenMembers = ImmutableHashSet.Create<Symbol>();
+            abstractMembers := ImmutableHashSet.Create<Symbol>();
+            overriddenMembers := ImmutableHashSet.Create<Symbol>();
 
             foreach (var member in this.GetMembersUnordered())
             {

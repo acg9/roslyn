@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal ImmutableArray<TypeWithAnnotations> TypeArgumentsWithDefinitionUseSiteDiagnostics(ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            result := TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
             foreach (var typeArgument in result)
             {
@@ -83,7 +83,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal TypeWithAnnotations TypeArgumentWithDefinitionUseSiteDiagnostics(int index, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var result = TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[index];
+            result := TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[index];
             result.Type.OriginalDefinition.AddUseSiteInfo(ref useSiteInfo);
             return result;
         }
@@ -181,13 +181,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return null;
                 }
 
-                var methods = GetMembers(WellKnownMemberNames.DelegateInvokeName);
+                methods := GetMembers(WellKnownMemberNames.DelegateInvokeName);
                 if (methods.Length != 1)
                 {
                     return null;
                 }
 
-                var method = methods[0] as MethodSymbol;
+                method := methods[0] as MethodSymbol;
 
                 //EDMAURER we used to also check 'method.IsVirtual' because section 13.6
                 //of the CLI spec dictates that it be virtual, but real world
@@ -359,11 +359,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (member.Kind == SymbolKind.Method)
                 {
-                    var method = (MethodSymbol)member;
+                    method := (MethodSymbol)member;
                     if (method.IsExtensionMethod &&
                         ((options & LookupOptions.AllMethodsOnArityZero) != 0 || arity == method.Arity))
                     {
-                        var thisParam = method.Parameters.First();
+                        thisParam := method.Parameters.First();
                         if (!IsValidExtensionReceiverParameter(thisParam))
                         {
                             continue;
@@ -534,7 +534,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var kind = TypeKind;
+                kind := TypeKind;
                 return kind != TypeKind.Enum && kind != TypeKind.Struct && kind != TypeKind.Error;
             }
         }
@@ -548,7 +548,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var kind = TypeKind;
+                kind := TypeKind;
                 return kind == TypeKind.Struct || kind == TypeKind.Enum;
             }
         }
@@ -601,7 +601,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal SynthesizedEntryPointSymbol GetScriptEntryPoint()
         {
             Debug.Assert(IsScriptClass);
-            var name = (TypeKind == TypeKind.Submission) ? SynthesizedEntryPointSymbol.FactoryName : SynthesizedEntryPointSymbol.MainName;
+            name := (TypeKind == TypeKind.Submission) ? SynthesizedEntryPointSymbol.FactoryName : SynthesizedEntryPointSymbol.MainName;
             return (SynthesizedEntryPointSymbol)GetMembers(name).Single();
         }
 
@@ -631,7 +631,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var fileIdentifier = this.GetFileLocalTypeMetadataNamePrefix();
+                fileIdentifier := this.GetFileLocalTypeMetadataNamePrefix();
                 // If we have a file prefix, the type will definitely use CLS arity encoding for nonzero arity.
                 Debug.Assert(!(fileIdentifier != null && !MangleName && Arity > 0));
                 return fileIdentifier != null || MangleName
@@ -763,8 +763,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return false;
                 }
 
-                var baseAllRequiredMembers = BaseTypeNoUseSiteDiagnostics?.AllRequiredMembers ?? ImmutableSegmentedDictionary<string, Symbol>.Empty;
-                var hasDeclaredRequiredMembers = HasDeclaredRequiredMembers;
+                baseAllRequiredMembers := BaseTypeNoUseSiteDiagnostics?.AllRequiredMembers ?? ImmutableSegmentedDictionary<string, Symbol>.Empty;
+                hasDeclaredRequiredMembers := HasDeclaredRequiredMembers;
 
                 foreach (var member in GetMembersUnordered())
                 {
@@ -977,8 +977,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if ((object)other == null) return false;
 
             // Compare OriginalDefinitions.
-            var thisOriginalDefinition = this.OriginalDefinition;
-            var otherOriginalDefinition = other.OriginalDefinition;
+            thisOriginalDefinition := this.OriginalDefinition;
+            otherOriginalDefinition := other.OriginalDefinition;
 
             bool thisIsOriginalDefinition = ((object)this == (object)thisOriginalDefinition);
             bool otherIsOriginalDefinition = ((object)other == (object)otherOriginalDefinition);
@@ -1020,8 +1020,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var thisIsNotConstructed = ReferenceEquals(ConstructedFrom, this);
-            var otherIsNotConstructed = ReferenceEquals(other.ConstructedFrom, other);
+            thisIsNotConstructed := ReferenceEquals(ConstructedFrom, this);
+            otherIsNotConstructed := ReferenceEquals(other.ConstructedFrom, other);
 
             if (thisIsNotConstructed && otherIsNotConstructed)
             {
@@ -1044,8 +1044,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var typeArguments = this.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
-            var otherTypeArguments = other.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            typeArguments := this.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            otherTypeArguments := other.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
             int count = typeArguments.Length;
 
             // since both are constructed from the same (original) type, they must have the same arity
@@ -1053,8 +1053,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             for (int i = 0; i < count; i++)
             {
-                var typeArgument = typeArguments[i];
-                var otherTypeArgument = otherTypeArguments[i];
+                typeArgument := typeArguments[i];
+                otherTypeArgument := otherTypeArguments[i];
                 if (!typeArgument.Equals(otherTypeArgument, comparison))
                 {
                     return false;
@@ -1073,8 +1073,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Make sure field names are the same.
                 if ((comparison & TypeCompareKind.IgnoreTupleNames) == 0)
                 {
-                    var elementNames = TupleElementNames;
-                    var otherElementNames = other.TupleElementNames;
+                    elementNames := TupleElementNames;
+                    otherElementNames := other.TupleElementNames;
                     return elementNames.IsDefault ? otherElementNames.IsDefault : !otherElementNames.IsDefault && elementNames.SequenceEqual(otherElementNames);
                 }
 
@@ -1100,7 +1100,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            var allTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            allTypeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             GetAllTypeArgumentsNoUseSiteDiagnostics(allTypeArguments);
 
             bool haveChanges = false;
@@ -1133,7 +1133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return this;
             }
 
-            var allTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            allTypeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             GetAllTypeArgumentsNoUseSiteDiagnostics(allTypeArguments);
 
             bool haveChanges = false;
@@ -1155,7 +1155,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal NamedTypeSymbol WithTypeArguments(ImmutableArray<TypeWithAnnotations> allTypeArguments)
         {
-            var definition = this.OriginalDefinition;
+            definition := this.OriginalDefinition;
             TypeMap substitution = new TypeMap(definition.GetAllTypeParameters(), allTypeArguments);
             return substitution.SubstituteNamedType(definition).WithTupleDataFrom(this);
         }
@@ -1169,8 +1169,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return other.IsDynamic() ? other : this;
             }
 
-            var allTypeParameters = ArrayBuilder<TypeParameterSymbol>.GetInstance();
-            var allTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            allTypeParameters := ArrayBuilder<TypeParameterSymbol>.GetInstance();
+            allTypeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             bool haveChanges = MergeEquivalentTypeArguments(this, (NamedTypeSymbol)other, variance, allTypeParameters, allTypeArguments);
 
             NamedTypeSymbol result;
@@ -1209,16 +1209,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Tuple types act as covariant when merging equivalent types.
             bool isTuple = typeA.IsTupleType;
 
-            var definition = typeA.OriginalDefinition;
+            definition := typeA.OriginalDefinition;
             bool haveChanges = false;
 
             while (true)
             {
-                var typeParameters = definition.TypeParameters;
+                typeParameters := definition.TypeParameters;
                 if (typeParameters.Length > 0)
                 {
-                    var typeArgumentsA = typeA.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
-                    var typeArgumentsB = typeB.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                    typeArgumentsA := typeA.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                    typeArgumentsB := typeB.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
                     allTypeParameters.AddRange(typeParameters);
                     for (int i = 0; i < typeArgumentsA.Length; i++)
                     {
@@ -1436,7 +1436,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // Given C<int>.D<string, double>, yields { int, string, double }
         internal void GetAllTypeArguments(ref TemporaryArray<TypeSymbol> builder, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var outer = ContainingType;
+            outer := ContainingType;
             if (!ReferenceEquals(outer, null))
             {
                 outer.GetAllTypeArguments(ref builder, ref useSiteInfo);
@@ -1457,7 +1457,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal void GetAllTypeArguments(ArrayBuilder<TypeWithAnnotations> builder, ref CompoundUseSiteInfo<AssemblySymbol> useSiteInfo)
         {
-            var outer = ContainingType;
+            outer := ContainingType;
             if (!ReferenceEquals(outer, null))
             {
                 outer.GetAllTypeArguments(builder, ref useSiteInfo);
@@ -1476,7 +1476,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             int count = TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Length;
 
-            var outer = ContainingType;
+            outer := ContainingType;
             if (!ReferenceEquals(outer, null))
             {
                 count += outer.AllTypeArgumentCount();
@@ -1696,7 +1696,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 // Conditional attributes are inherited by derived types.
-                var baseType = this.BaseTypeNoUseSiteDiagnostics;
+                baseType := this.BaseTypeNoUseSiteDiagnostics;
                 return (object)baseType != null ? baseType.IsConditional : false;
             }
         }
@@ -1818,13 +1818,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return [];
                 }
 
-                var builder = ArrayBuilder<TypeSymbol>.GetInstance();
+                builder := ArrayBuilder<TypeSymbol>.GetInstance();
 
                 foreach (var ctor in this.InstanceConstructors)
                 {
                     if (IsSuitableUnionConstructor(ctor))
                     {
-                        var candidate = ctor.Parameters[0].Type.StrippedType();
+                        candidate := ctor.Parameters[0].Type.StrippedType();
                         if (!builder.Any(static (t1, t2) => t1.Equals(t2, TypeCompareKind.AllIgnoreOptions), candidate))
                         {
                             builder.Add(candidate);

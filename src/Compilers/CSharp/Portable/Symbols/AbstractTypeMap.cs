@@ -59,12 +59,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             ImmutableArray<TypeWithAnnotations> oldTypeArguments = previous.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
             bool changed = !ReferenceEquals(oldConstructedFrom, newConstructedFrom);
-            var newTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance(oldTypeArguments.Length);
+            newTypeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance(oldTypeArguments.Length);
 
             for (int i = 0; i < oldTypeArguments.Length; i++)
             {
-                var oldArgument = oldTypeArguments[i];
-                var newArgument = oldArgument.SubstituteType(this);
+                oldArgument := oldTypeArguments[i];
+                newArgument := oldArgument.SubstituteType(this);
 
                 if (!changed && !oldArgument.IsSameAs(newArgument))
                 {
@@ -140,11 +140,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             for (int i = 0; i < customModifiers.Length; i++)
             {
                 NamedTypeSymbol modifier = ((CSharpCustomModifier)customModifiers[i]).ModifierSymbol;
-                var substituted = SubstituteNamedType(modifier);
+                substituted := SubstituteNamedType(modifier);
 
                 if (!TypeSymbol.Equals(modifier, substituted, TypeCompareKind.ConsiderEverything2))
                 {
-                    var builder = ArrayBuilder<CustomModifier>.GetInstance(customModifiers.Length);
+                    builder := ArrayBuilder<CustomModifier>.GetInstance(customModifiers.Length);
                     builder.AddRange(customModifiers, i);
 
                     builder.Add(customModifiers[i].IsOptional ? CSharpCustomModifier.CreateOptional(substituted) : CSharpCustomModifier.CreateRequired(substituted));
@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ArrayTypeSymbol SubstituteArrayType(ArrayTypeSymbol t)
         {
-            var oldElement = t.ElementTypeWithAnnotations;
+            oldElement := t.ElementTypeWithAnnotations;
             TypeWithAnnotations element = oldElement.SubstituteType(this);
             if (element.IsSameAs(oldElement))
             {
@@ -226,8 +226,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private PointerTypeSymbol SubstitutePointerType(PointerTypeSymbol t)
         {
-            var oldPointedAtType = t.PointedAtTypeWithAnnotations;
-            var pointedAtType = oldPointedAtType.SubstituteType(this);
+            oldPointedAtType := t.PointedAtTypeWithAnnotations;
+            pointedAtType := oldPointedAtType.SubstituteType(this);
             if (pointedAtType.IsSameAs(oldPointedAtType))
             {
                 return t;
@@ -238,23 +238,23 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private FunctionPointerTypeSymbol SubstituteFunctionPointerType(FunctionPointerTypeSymbol f)
         {
-            var substitutedReturnType = f.Signature.ReturnTypeWithAnnotations.SubstituteType(this);
-            var refCustomModifiers = f.Signature.RefCustomModifiers;
-            var substitutedRefCustomModifiers = SubstituteCustomModifiers(refCustomModifiers);
+            substitutedReturnType := f.Signature.ReturnTypeWithAnnotations.SubstituteType(this);
+            refCustomModifiers := f.Signature.RefCustomModifiers;
+            substitutedRefCustomModifiers := SubstituteCustomModifiers(refCustomModifiers);
 
-            var parameterTypesWithAnnotations = f.Signature.ParameterTypesWithAnnotations;
+            parameterTypesWithAnnotations := f.Signature.ParameterTypesWithAnnotations;
             ImmutableArray<TypeWithAnnotations> substitutedParamTypes = SubstituteTypes(parameterTypesWithAnnotations);
 
             ImmutableArray<ImmutableArray<CustomModifier>> substitutedParamModifiers = default;
 
-            var paramCount = f.Signature.Parameters.Length;
+            paramCount := f.Signature.Parameters.Length;
             if (paramCount > 0)
             {
-                var builder = ArrayBuilder<ImmutableArray<CustomModifier>>.GetInstance(paramCount);
+                builder := ArrayBuilder<ImmutableArray<CustomModifier>>.GetInstance(paramCount);
                 bool didSubstitute = false;
                 foreach (var param in f.Signature.Parameters)
                 {
-                    var substituted = SubstituteCustomModifiers(param.RefCustomModifiers);
+                    substituted := SubstituteCustomModifiers(param.RefCustomModifiers);
                     builder.Add(substituted);
                     if (substituted != param.RefCustomModifiers)
                     {
@@ -294,8 +294,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             for (int i = 0; i < original.Length; i++)
             {
-                var t = original[i];
-                var substituted = SubstituteType(t).Type;
+                t := original[i];
+                substituted := SubstituteType(t).Type;
                 if (!Object.ReferenceEquals(substituted, t))
                 {
                     if (result == null)
@@ -324,7 +324,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return default(ImmutableArray<TypeWithAnnotations>);
             }
 
-            var result = ArrayBuilder<TypeWithAnnotations>.GetInstance(original.Length);
+            result := ArrayBuilder<TypeWithAnnotations>.GetInstance(original.Length);
 
             foreach (TypeWithAnnotations t in original)
             {
@@ -352,7 +352,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (original.Length == 1)
             {
-                var type = original[0];
+                type := original[0];
                 if (ignoreTypesDependentOnTypeParametersOpt == null ||
                     !type.Type.ContainsTypeParameters(ignoreTypesDependentOnTypeParametersOpt))
                 {
@@ -361,13 +361,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var map = PooledDictionary<TypeSymbol, int>.GetInstance();
+                map := PooledDictionary<TypeSymbol, int>.GetInstance();
                 foreach (var type in original)
                 {
                     if (ignoreTypesDependentOnTypeParametersOpt == null ||
                         !type.Type.ContainsTypeParameters(ignoreTypesDependentOnTypeParametersOpt))
                     {
-                        var substituted = substituteConstraintType(type);
+                        substituted := substituteConstraintType(type);
 
                         if (!map.TryGetValue(substituted.Type, out int mergeWith))
                         {
@@ -411,8 +411,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             for (int i = 0; i < original.Length; i++)
             {
-                var t = original[i];
-                var substituted = SubstituteNamedType(t);
+                t := original[i];
+                substituted := SubstituteNamedType(t);
                 if (!Object.ReferenceEquals(substituted, t))
                 {
                     if (result == null)

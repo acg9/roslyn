@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public DirectiveTriviaSyntax? GetNextDirective(Func<DirectiveTriviaSyntax, bool>? predicate = null)
         {
-            var token = (SyntaxToken)this.ParentTrivia.Token;
+            token := (SyntaxToken)this.ParentTrivia.Token;
             bool next = false;
             while (token.Kind() != SyntaxKind.None)
             {
@@ -76,7 +76,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 {
                     if (tr.IsDirective)
                     {
-                        var d = (DirectiveTriviaSyntax)tr.GetStructure()!;
+                        d := (DirectiveTriviaSyntax)tr.GetStructure()!;
                         if (next)
                         {
                             if (predicate == null || predicate(d))
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public DirectiveTriviaSyntax? GetPreviousDirective(Func<DirectiveTriviaSyntax, bool>? predicate = null)
         {
-            var token = (SyntaxToken)this.ParentTrivia.Token;
+            token := (SyntaxToken)this.ParentTrivia.Token;
             bool next = false;
             while (token.Kind() != SyntaxKind.None)
             {
@@ -107,7 +107,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
                 {
                     if (tr.IsDirective)
                     {
-                        var d = (DirectiveTriviaSyntax)tr.GetStructure()!;
+                        d := (DirectiveTriviaSyntax)tr.GetStructure()!;
                         if (next)
                         {
                             if (predicate == null || predicate(d))
@@ -130,7 +130,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
         public List<DirectiveTriviaSyntax> GetRelatedDirectives()
         {
-            var list = new List<DirectiveTriviaSyntax>();
+            list := new List<DirectiveTriviaSyntax>();
             this.GetRelatedDirectives(list);
             return list;
         }
@@ -138,7 +138,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         private void GetRelatedDirectives(List<DirectiveTriviaSyntax> list)
         {
             list.Clear();
-            var p = this.GetPreviousRelatedDirective();
+            p := this.GetPreviousRelatedDirective();
             while (p != null)
             {
                 list.Add(p);
@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
 
             list.Reverse();
             list.Add(this);
-            var n = this.GetNextRelatedDirective();
+            n := this.GetNextRelatedDirective();
             while (n != null)
             {
                 list.Add(n);

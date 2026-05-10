@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // there are no target types for an anonymous object creation.
             AssertNoImplicitInterpolatedStringHandlerConversions(node.Arguments);
             // Rewrite the arguments.
-            var rewrittenArguments = VisitList(node.Arguments);
+            rewrittenArguments := VisitList(node.Arguments);
 
             return new BoundObjectCreationExpression(
                 syntax: node.Syntax,

@@ -30,10 +30,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         // Control flow analysis does not normally scan the body of a lambda, but region analysis does.
         public override BoundNode VisitLambda(BoundLambda node)
         {
-            var oldPending = SavePending(); // We do not support branches *into* a lambda.
+            oldPending := SavePending(); // We do not support branches *into* a lambda.
             LocalState finalState = this.State;
             this.State = TopState();
-            var oldPending2 = SavePending();
+            oldPending2 := SavePending();
             VisitAlways(node.Body);
             RestorePending(oldPending2); // process any forward branches within the lambda body
             ImmutableArray<PendingBranch> pendingReturns = RemoveReturns();

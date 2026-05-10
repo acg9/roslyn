@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             try
             {
-                var diagnosticPass = new DiagnosticsPass(compilation, diagnostics, containingSymbol);
+                diagnosticPass := new DiagnosticsPass(compilation, diagnostics, containingSymbol);
                 diagnosticPass.Visit(node);
             }
             catch (CancelledByStackGuardException ex)
@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitArrayCreation(BoundArrayCreation node)
         {
-            var arrayType = (ArrayTypeSymbol)node.Type;
+            arrayType := (ArrayTypeSymbol)node.Type;
             if (_inExpressionLambda && node.InitializerOpt != null && !arrayType.IsSZArray)
             {
                 Error(ErrorCode.ERR_ExpressionTreeContainsMultiDimensionalArrayInitializer, node);
@@ -152,12 +152,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             ExecutableCodeBinder.ValidateIteratorMethod(_compilation, node.Symbol, _diagnostics);
 
-            var outerLocalFunction = _staticLocalOrAnonymousFunction;
+            outerLocalFunction := _staticLocalOrAnonymousFunction;
             if (node.Symbol.IsStatic)
             {
                 _staticLocalOrAnonymousFunction = (SourceMethodSymbol)node.Symbol;
             }
-            var result = base.VisitLocalFunctionStatement(node);
+            result := base.VisitLocalFunctionStatement(node);
             _staticLocalOrAnonymousFunction = outerLocalFunction;
             return result;
         }
@@ -485,7 +485,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (node.ReceiverOpt is BoundCall receiver1)
             {
-                var calls = ArrayBuilder<BoundCall>.GetInstance();
+                calls := ArrayBuilder<BoundCall>.GetInstance();
 
                 calls.Push(node);
                 node = receiver1;
@@ -564,8 +564,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitIndexerAccess(BoundIndexerAccess node)
         {
-            var indexer = node.Indexer;
-            var method = indexer.GetOwnOrInheritedGetMethod() ?? indexer.GetOwnOrInheritedSetMethod();
+            indexer := node.Indexer;
+            method := indexer.GetOwnOrInheritedGetMethod() ?? indexer.GetOwnOrInheritedSetMethod();
             if ((object)method != null)
             {
                 VisitCall(method, indexer, node.Arguments, node.ArgumentRefKindsOpt, node.ArgumentNamesOpt, node.ArgsToParamsOpt, node.DefaultArguments, node);
@@ -584,7 +584,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode VisitPropertyAccess(BoundPropertyAccess node)
         {
-            var property = node.PropertySymbol;
+            property := node.PropertySymbol;
             CheckRefReturningPropertyAccess(node, property);
             CheckReceiverIfField(node.ReceiverOpt);
 
@@ -607,7 +607,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (_inExpressionLambda)
             {
-                var lambda = node.Symbol;
+                lambda := node.Symbol;
                 bool reportedAttributes = false;
 
                 if (!lambda.GetAttributes().IsEmpty || !lambda.GetReturnTypeAttributes().IsEmpty)
@@ -638,7 +638,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case SyntaxKind.ParenthesizedLambdaExpression:
                         {
-                            var lambdaSyntax = (ParenthesizedLambdaExpressionSyntax)node.Syntax;
+                            lambdaSyntax := (ParenthesizedLambdaExpressionSyntax)node.Syntax;
                             if (lambdaSyntax.AsyncKeyword.Kind() == SyntaxKind.AsyncKeyword)
                             {
                                 Error(ErrorCode.ERR_BadAsyncExpressionTree, node);
@@ -656,7 +656,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case SyntaxKind.SimpleLambdaExpression:
                         {
-                            var lambdaSyntax = (SimpleLambdaExpressionSyntax)node.Syntax;
+                            lambdaSyntax := (SimpleLambdaExpressionSyntax)node.Syntax;
                             if (lambdaSyntax.AsyncKeyword.Kind() == SyntaxKind.AsyncKeyword)
                             {
                                 Error(ErrorCode.ERR_BadAsyncExpressionTree, node);
@@ -682,12 +682,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var outerLocalFunction = _staticLocalOrAnonymousFunction;
+            outerLocalFunction := _staticLocalOrAnonymousFunction;
             if (node.Symbol.IsStatic)
             {
                 _staticLocalOrAnonymousFunction = (SourceMethodSymbol)node.Symbol;
             }
-            var result = base.VisitLambda(node);
+            result := base.VisitLambda(node);
             _staticLocalOrAnonymousFunction = outerLocalFunction;
             return result;
         }
@@ -750,8 +750,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (_inExpressionLambda)
             {
-                var binary = node.LogicalOperator;
-                var unary = node.OperatorKind.Operator() == BinaryOperatorKind.And ? node.FalseOperator : node.TrueOperator;
+                binary := node.LogicalOperator;
+                unary := node.OperatorKind.Operator() == BinaryOperatorKind.And ? node.FalseOperator : node.TrueOperator;
 
                 if (((binary.IsAbstract || binary.IsVirtual) && binary.IsStatic) || ((unary.IsAbstract || unary.IsVirtual) && unary.IsStatic))
                 {
@@ -911,7 +911,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     break;
             }
 
-            var result = base.VisitConversion(node);
+            result := base.VisitConversion(node);
             _inExpressionLambda = wasInExpressionLambda;
             _reportedUnsafe = oldReportedUnsafe;
             return result;
@@ -1144,7 +1144,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 this.Visit(node.Condition);
                 this.Visit(node.Consequence);
 
-                var alternative = node.AlternativeOpt;
+                alternative := node.AlternativeOpt;
                 if (alternative is null)
                 {
                     break;

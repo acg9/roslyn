@@ -13,14 +13,14 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         public override BoundNode? VisitFunctionPointerInvocation(BoundFunctionPointerInvocation node)
         {
-            var rewrittenExpression = VisitExpression(node.InvokedExpression);
+            rewrittenExpression := VisitExpression(node.InvokedExpression);
             Debug.Assert(rewrittenExpression != null);
 
             // There are target types so we can have handler conversions, but there are no attributes so contexts cannot
             // be involved.
             AssertNoImplicitInterpolatedStringHandlerConversions(node.Arguments, allowConversionsWithNoContext: true);
             MethodSymbol functionPointer = node.FunctionPointer.Signature;
-            var argumentRefKindsOpt = node.ArgumentRefKindsOpt;
+            argumentRefKindsOpt := node.ArgumentRefKindsOpt;
             BoundExpression? discardedReceiver = null;
             ArrayBuilder<LocalSymbol>? temps = null;
             var rewrittenArgs = VisitArgumentsAndCaptureReceiverIfNeeded(

@@ -68,7 +68,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             int depth = 1;
             for (int i = openingOffset + 1; i < str.Length; i++)
             {
-                var c = str[i];
+                c := str[i];
                 if (c == opening)
                 {
                     depth++;
@@ -218,15 +218,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 displayFileName = groups[1].Value;
 
-                var checksumString = groups[2].Value;
-                var builder = new byte[sha256LengthBytes];
+                checksumString := groups[2].Value;
+                builder := new byte[sha256LengthBytes];
                 for (var i = 0; i < sha256LengthBytes; i++)
                 {
                     builder[i] = (byte)((hexCharToByte(checksumString[i * 2]) << 4) | hexCharToByte(checksumString[i * 2 + 1]));
                 }
                 checksum = builder;
 
-                var prefixEndsAt = index + length;
+                prefixEndsAt := index + length;
                 originalTypeName = generatedName.Substring(prefixEndsAt);
                 return true;
             }

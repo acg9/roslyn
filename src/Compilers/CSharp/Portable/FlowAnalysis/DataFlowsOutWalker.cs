@@ -32,11 +32,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static HashSet<Symbol> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion, HashSet<Symbol> unassignedVariables, ImmutableArray<ISymbol> dataFlowsIn)
         {
-            var walker = new DataFlowsOutWalker(compilation, member, node, firstInRegion, lastInRegion, unassignedVariables, dataFlowsIn);
+            walker := new DataFlowsOutWalker(compilation, member, node, firstInRegion, lastInRegion, unassignedVariables, dataFlowsIn);
             try
             {
                 bool badRegion = false;
-                var result = walker.Analyze(ref badRegion);
+                result := walker.Analyze(ref badRegion);
 #if DEBUG
                 // Assert that DataFlowsOut only contains variables that were assigned to inside the region
                 // https://github.com/dotnet/roslyn/issues/41600 blocks some tests with local functions. 
@@ -93,7 +93,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // any reachable assignment to a ref or out parameter can be visible to the caller in the face of exceptions.
             if (this.State.Reachable && IsInside)
             {
-                var param = variable as ParameterSymbol;
+                param := variable as ParameterSymbol;
                 if (FlowsOut(param))
                 {
                     _dataFlowsOut.Add(param);
@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case BoundKind.FieldAccess:
                         {
-                            var fieldAccess = (BoundFieldAccess)node;
+                            fieldAccess := (BoundFieldAccess)node;
                             if (MayRequireTracking(fieldAccess.ReceiverOpt, fieldAccess.FieldSymbol))
                             {
                                 node = fieldAccess.ReceiverOpt;
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case BoundKind.CatchBlock:
                         {
-                            var local = ((BoundCatchBlock)node).Locals.FirstOrDefault();
+                            local := ((BoundCatchBlock)node).Locals.FirstOrDefault();
                             return local?.DeclarationKind == LocalDeclarationKind.CatchVariable ? local : null;
                         }
 
@@ -169,7 +169,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case BoundKind.EventAccess:
                         {
-                            var eventAccess = (BoundEventAccess)node;
+                            eventAccess := (BoundEventAccess)node;
                             FieldSymbol associatedField = eventAccess.EventSymbol.AssociatedField;
                             if ((object)associatedField != null)
                             {

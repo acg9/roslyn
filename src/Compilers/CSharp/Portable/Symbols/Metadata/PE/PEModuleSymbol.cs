@@ -305,7 +305,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         internal void LoadCustomAttributes(EntityHandle token, ref ImmutableArray<CSharpAttributeData> customAttributes)
         {
-            var loaded = GetCustomAttributesForToken(token);
+            loaded := GetCustomAttributesForToken(token);
             ImmutableInterlocked.InterlockedInitialize(ref customAttributes, loaded);
         }
 
@@ -424,7 +424,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             get
             {
-                var assembly = _assemblySymbol as PEAssemblySymbol;
+                assembly := _assemblySymbol as PEAssemblySymbol;
                 if ((object)assembly != null)
                 {
                     return assembly.DocumentationProvider;
@@ -590,7 +590,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         internal NamedTypeSymbol LookupTopLevelMetadataTypeWithNoPiaLocalTypeUnification(ref MetadataTypeName emittedName, out bool isNoPiaLocalType)
         {
             NamedTypeSymbol? result;
-            var scope = (PENamespaceSymbol?)this.GlobalNamespace.LookupNestedNamespace(emittedName.NamespaceSegmentsMemory);
+            scope := (PENamespaceSymbol?)this.GlobalNamespace.LookupNestedNamespace(emittedName.NamespaceSegmentsMemory);
 
             if ((object?)scope == null)
             {
@@ -654,7 +654,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
         {
             foreach (KeyValuePair<string, (int FirstIndex, int SecondIndex)> forwarder in Module.GetForwardedTypes())
             {
-                var name = MetadataTypeName.FromFullName(forwarder.Key);
+                name := MetadataTypeName.FromFullName(forwarder.Key);
 
                 Debug.Assert(forwarder.Value.FirstIndex >= 0, "First index should never be negative");
                 AssemblySymbol firstSymbol = this.GetReferencedAssemblySymbol(forwarder.Value.FirstIndex);
@@ -662,7 +662,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
                 if (forwarder.Value.SecondIndex >= 0)
                 {
-                    var secondSymbol = this.GetReferencedAssemblySymbol(forwarder.Value.SecondIndex);
+                    secondSymbol := this.GetReferencedAssemblySymbol(forwarder.Value.SecondIndex);
                     Debug.Assert((object)secondSymbol != null, "Invalid indexes (out of bound) are discarded during reading metadata in PEModule.EnsureForwardTypeToAssemblyMap()");
 
                     yield return ContainingAssembly.CreateMultipleForwardingErrorTypeSymbol(ref name, this, firstSymbol, secondSymbol);
@@ -792,7 +792,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             {
                 if (_lazyObsoleteAttributeData == ObsoleteAttributeData.Uninitialized)
                 {
-                    var experimentalData = _module.TryDecodeExperimentalAttributeData(Token, new MetadataDecoder(this));
+                    experimentalData := _module.TryDecodeExperimentalAttributeData(Token, new MetadataDecoder(this));
                     Interlocked.CompareExchange(ref _lazyObsoleteAttributeData, experimentalData, ObsoleteAttributeData.Uninitialized);
                 }
 

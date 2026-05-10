@@ -205,12 +205,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             protected override ImportChain BuildImportChain()
             {
-                var previous = Next!.ImportChain;
+                previous := Next!.ImportChain;
 
                 if (_declarationSyntax is BaseNamespaceDeclarationSyntax namespaceDecl)
                 {
                     // For each dotted name add an empty entry in the chain
-                    var name = namespaceDecl.Name;
+                    name := namespaceDecl.Name;
 
                     while (name is QualifiedNameSyntax dotted)
                     {

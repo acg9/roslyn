@@ -177,7 +177,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool inInterface = containingType.IsInterface;
             bool inExtension = containingType.IsExtension;
             bool isExplicitInterfaceImplementation = methodKind == MethodKind.ExplicitInterfaceImplementation;
-            var defaultAccess = inInterface && !isExplicitInterfaceImplementation ? DeclarationModifiers.Public : DeclarationModifiers.Private;
+            defaultAccess := inInterface && !isExplicitInterfaceImplementation ? DeclarationModifiers.Public : DeclarationModifiers.Private;
             var allowedModifiers =
                 DeclarationModifiers.Unsafe | DeclarationModifiers.Extern;
 
@@ -248,8 +248,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     if (availableVersion < requiredVersion)
                     {
-                        var requiredVersionArgument = new CSharpRequiredLanguageVersion(requiredVersion);
-                        var availableVersionArgument = availableVersion.ToDisplayString();
+                        requiredVersionArgument := new CSharpRequiredLanguageVersion(requiredVersion);
+                        availableVersionArgument := availableVersion.ToDisplayString();
 
                         if ((result & DeclarationModifiers.Abstract) != 0)
                         {
@@ -317,7 +317,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             SyntaxToken arglistToken;
 
-            var signatureBinder = binder.WithAdditionalFlags(BinderFlags.SuppressConstraintChecks);
+            signatureBinder := binder.WithAdditionalFlags(BinderFlags.SuppressConstraintChecks);
 
             parameters = ParameterHelpers.MakeParameters(
                 signatureBinder,
@@ -632,10 +632,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // SPEC: nullable types let S0 and T0 refer to their underlying types,
             // SPEC: otherwise, S0 and T0 are equal to S and T, respectively.
 
-            var source = this.GetParameterType(0);
-            var target = this.ReturnType;
-            var source0 = source.StrippedType();
-            var target0 = target.StrippedType();
+            source := this.GetParameterType(0);
+            target := this.ReturnType;
+            source0 := source.StrippedType();
+            target0 := target.StrippedType();
 
             // SPEC: A class or struct is permitted to declare a conversion from S to T
             // SPEC: only if all the following are true:
@@ -761,7 +761,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // different is a class type:
                 Debug.Assert(!different.IsTypeParameter());
 
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+                useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
                 if (same.IsDerivedFrom(different, ComparisonForUserDefinedOperators, useSiteInfo: ref useSiteInfo))
                 {
@@ -864,8 +864,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // parameter type is *good* do we then go on to try to report an error against
             // the return type.
 
-            var parameterType = this.GetParameterType(0);
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            parameterType := this.GetParameterType(0);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
             if (!MatchesContainingType(parameterType, checkStrippedType: true))
             {
@@ -952,7 +952,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else if (this.GetParameterType(1).StrippedType().SpecialType != SpecialType.System_Int32)
             {
-                var location = this.GetFirstLocation();
+                location := this.GetFirstLocation();
                 Binder.CheckFeatureAvailability(location.SourceTree, MessageID.IDS_FeatureRelaxedShiftOperator, diagnostics, location);
             }
 

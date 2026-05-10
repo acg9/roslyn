@@ -18,10 +18,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
 
         protected static ImmutableArray<TypeWithAnnotations> ConstructTypeArguments(ITypeSymbol[] typeArguments)
         {
-            var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArguments.Length);
+            builder := ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArguments.Length);
             foreach (var typeArg in typeArguments)
             {
-                var type = typeArg.EnsureCSharpSymbolOrNull(nameof(typeArguments));
+                type := typeArg.EnsureCSharpSymbolOrNull(nameof(typeArguments));
                 builder.Add(TypeWithAnnotations.Create(type, (typeArg?.NullableAnnotation.ToInternalAnnotation() ?? NullableAnnotation.NotAnnotated)));
             }
 
@@ -41,11 +41,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
                 throw new ArgumentException(nameof(typeArgumentNullableAnnotations));
             }
 
-            var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance(n);
+            builder := ArrayBuilder<TypeWithAnnotations>.GetInstance(n);
             for (int i = 0; i < n; i++)
             {
-                var type = typeArguments[i].EnsureCSharpSymbolOrNull(nameof(typeArguments));
-                var annotation = typeArgumentNullableAnnotations.IsDefault ? NullableAnnotation.Oblivious : typeArgumentNullableAnnotations[i].ToInternalAnnotation();
+                type := typeArguments[i].EnsureCSharpSymbolOrNull(nameof(typeArguments));
+                annotation := typeArgumentNullableAnnotations.IsDefault ? NullableAnnotation.Oblivious : typeArgumentNullableAnnotations[i].ToInternalAnnotation();
                 builder.Add(TypeWithAnnotations.Create(type, annotation));
             }
 
@@ -183,7 +183,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.PublicModel
 
         internal static CSharpSemanticModel GetCSharpSemanticModel(SemanticModel semanticModel)
         {
-            var csharpModel = semanticModel as CSharpSemanticModel;
+            csharpModel := semanticModel as CSharpSemanticModel;
             if (csharpModel == null)
             {
                 throw new ArgumentException(CSharpResources.WrongSemanticModelType, LanguageNames.CSharp);

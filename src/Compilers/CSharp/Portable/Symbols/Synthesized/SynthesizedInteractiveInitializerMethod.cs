@@ -247,7 +247,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Return true if nullable is not disabled in compilation options or if enabled
                 // in any syntax tree. This could be refined to ignore top-level methods and
                 // type declarations but this simple approach matches C#8 behavior.
-                var compilation = DeclaringCompilation;
+                compilation := DeclaringCompilation;
                 bool value = (compilation.Options.NullableContextOptions != NullableContextOptions.Disable) ||
                     compilation.SyntaxTrees.Any(static tree => ((CSharpSyntaxTree)tree).IsNullableAnalysisEnabled(new TextSpan(0, tree.Length)) == true);
                 _lazyIsNullableAnalysisEnabled = value.ToThreeState();
@@ -262,8 +262,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             out TypeSymbol returnType)
         {
             CSharpCompilation compilation = containingType.DeclaringCompilation;
-            var submissionReturnTypeOpt = compilation.ScriptCompilationInfo?.ReturnTypeOpt;
-            var taskT = compilation.GetWellKnownType(WellKnownType.System_Threading_Tasks_Task_T);
+            submissionReturnTypeOpt := compilation.ScriptCompilationInfo?.ReturnTypeOpt;
+            taskT := compilation.GetWellKnownType(WellKnownType.System_Threading_Tasks_Task_T);
             diagnostics.ReportUseSite(taskT, NoLocation.Singleton);
 
             // If no explicit return type is set on ScriptCompilationInfo, default to

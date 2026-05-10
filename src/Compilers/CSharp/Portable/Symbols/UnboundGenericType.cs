@@ -24,7 +24,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 throw new InvalidOperationException();
             }
 
-            var original = type.OriginalDefinition;
+            original := type.OriginalDefinition;
             int n = original.Arity;
             NamedTypeSymbol originalContainingType = original.ContainingType;
 
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
     {
         public static ImmutableArray<TypeWithAnnotations> CreateTypeArguments(ImmutableArray<TypeParameterSymbol> typeParameters, int n, DiagnosticInfo errorInfo)
         {
-            var result = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            result := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             for (int i = 0; i < n; i++)
             {
                 string name = (i < typeParameters.Length) ? typeParameters[i].Name : string.Empty;

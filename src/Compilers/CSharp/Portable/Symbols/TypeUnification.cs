@@ -27,8 +27,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
             if (result && ((object)t1 != null && (object)t2 != null))
             {
-                var substituted1 = SubstituteAllTypeParameters(substitution, TypeWithAnnotations.Create(t1));
-                var substituted2 = SubstituteAllTypeParameters(substitution, TypeWithAnnotations.Create(t2));
+                substituted1 := SubstituteAllTypeParameters(substitution, TypeWithAnnotations.Create(t1));
+                substituted2 := SubstituteAllTypeParameters(substitution, TypeWithAnnotations.Create(t2));
 
                 Debug.Assert(substituted1.Type.Equals(substituted2.Type, TypeCompareKind.CLRSignatureCompareOptions));
                 Debug.Assert(substituted1.CustomModifiers.SequenceEqual(substituted2.CustomModifiers));
@@ -162,8 +162,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                             return false;
                         }
 
-                        var nt1Arguments = nt1.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
-                        var nt2Arguments = nt2.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                        nt1Arguments := nt1.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                        nt2Arguments := nt2.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
                         for (int i = 0; i < arity; i++)
                         {
@@ -219,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         if (t2.Type.IsTypeParameter())
                         {
-                            var tp2 = (TypeParameterSymbol)t2.Type;
+                            tp2 := (TypeParameterSymbol)t2.Type;
 
                             if (t2.CustomModifiers.IsDefaultOrEmpty)
                             {
@@ -276,7 +276,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         NamedTypeSymbol namedType = (NamedTypeSymbol)type;
                         while ((object)namedType != null)
                         {
-                            var typeParts = namedType.IsTupleType ? namedType.TupleElementTypesWithAnnotations : namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+                            typeParts := namedType.IsTupleType ? namedType.TupleElementTypesWithAnnotations : namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
                             foreach (TypeWithAnnotations typePart in typeParts)
                             {
                                 if (Contains(typePart.Type, typeParam))

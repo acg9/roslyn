@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(parameterIndex >= 0);
             Debug.Assert(parameterIndex < this.AttributeConstructor.ParameterCount);
 
-            var attributeSyntax = (AttributeSyntax)_applicationNode.GetSyntax();
+            attributeSyntax := (AttributeSyntax)_applicationNode.GetSyntax();
 
             if (_constructorArgumentsSourceIndices.IsDefault)
             {
@@ -228,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return -1;
             }
 
-            var ctor = attributeConstructor;
+            ctor := attributeConstructor;
 
             // Ensure that the attribute data really has a constructor before comparing the signature.
             if (ctor is null)
@@ -292,7 +292,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                             return false;
                         }
 
-                        var namedType = (NamedTypeSymbol)parameterType;
+                        namedType := (NamedTypeSymbol)parameterType;
                         AttributeDescription.TypeHandleTargetInfo targetInfo = AttributeDescription.TypeHandleTargets[targetSignature[signatureByteIndex]];
 
                         // Compare name and containing symbol name. Uses HasNameQualifier

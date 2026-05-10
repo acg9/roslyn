@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
             Debug.Assert(arguments.Diagnostics is BindingDiagnosticBag);
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
 
@@ -133,8 +133,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void AfterAddingTypeMembersChecks(ConversionsBase conversions, BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ErrorLocation;
+            compilation := DeclaringCompilation;
+            location := ErrorLocation;
 
             if (RefKind == RefKind.RefReadOnly)
             {
@@ -236,7 +236,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override ConstantValue GetConstantValue(ConstantFieldsInProgress inProgress, bool earlyDecodingWellKnownAttributes)
         {
-            var value = this.GetLazyConstantValue(earlyDecodingWellKnownAttributes);
+            value := this.GetLazyConstantValue(earlyDecodingWellKnownAttributes);
             if (value != Microsoft.CodeAnalysis.ConstantValue.Unset)
             {
                 return value;
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // Order dependencies.
-            var order = ArrayBuilder<ConstantEvaluationHelpers.FieldInfo>.GetInstance();
+            order := ArrayBuilder<ConstantEvaluationHelpers.FieldInfo>.GetInstance();
             this.OrderAllDependencies(order, earlyDecodingWellKnownAttributes);
 
             // Evaluate fields in order.
@@ -261,7 +261,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Bind the field value regardless of whether the field represents
                 // the start of a cycle. In the cycle case, there will be unevaluated
                 // dependencies and the result will be ConstantValue.Bad plus cycle error.
-                var field = info.Field;
+                field := info.Field;
                 field.BindConstantValueIfNecessary(earlyDecodingWellKnownAttributes, startsCycle: info.StartsCycle);
             }
 
@@ -279,7 +279,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         internal ImmutableHashSet<SourceFieldSymbolWithSyntaxReference> GetConstantValueDependencies(bool earlyDecodingWellKnownAttributes)
         {
-            var value = this.GetLazyConstantValue(earlyDecodingWellKnownAttributes);
+            value := this.GetLazyConstantValue(earlyDecodingWellKnownAttributes);
             if (value != Microsoft.CodeAnalysis.ConstantValue.Unset)
             {
                 // Constant value already determined. No need to
@@ -289,8 +289,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             ImmutableHashSet<SourceFieldSymbolWithSyntaxReference> dependencies;
-            var builder = PooledHashSet<SourceFieldSymbolWithSyntaxReference>.GetInstance();
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            builder := PooledHashSet<SourceFieldSymbolWithSyntaxReference>.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             value = MakeConstantValue(builder, earlyDecodingWellKnownAttributes, diagnostics);
 
             // Only persist if there are no dependencies and the calculation
@@ -326,14 +326,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var builder = PooledHashSet<SourceFieldSymbolWithSyntaxReference>.GetInstance();
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            builder := PooledHashSet<SourceFieldSymbolWithSyntaxReference>.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             if (startsCycle)
             {
                 diagnostics.Add(ErrorCode.ERR_CircConstValue, GetFirstLocation(), this);
             }
 
-            var value = MakeConstantValue(builder, earlyDecodingWellKnownAttributes, diagnostics);
+            value := MakeConstantValue(builder, earlyDecodingWellKnownAttributes, diagnostics);
             this.SetLazyConstantValue(
                 value,
                 earlyDecodingWellKnownAttributes,
@@ -372,7 +372,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     this.AddDeclarationDiagnostics(diagnostics);
                     // CompletionPart.ConstantValue is the last part for a field
                     DeclaringCompilation.SymbolDeclaredEvent(this);
-                    var wasSetThisThread = this.state.NotePartComplete(CompletionPart.ConstantValue);
+                    wasSetThisThread := this.state.NotePartComplete(CompletionPart.ConstantValue);
                     Debug.Assert(wasSetThisThread);
                 }
             }

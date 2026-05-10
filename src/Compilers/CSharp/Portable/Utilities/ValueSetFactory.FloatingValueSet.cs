@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (!_numbers.IsEmpty)
                     {
-                        var sample = _numbers.Sample;
+                        sample := _numbers.Sample;
                         Debug.Assert(sample is { });
                         return sample;
                     }
@@ -99,7 +99,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (this == o)
                     return this;
-                var other = (FloatingValueSet<TFloating>)o;
+                other := (FloatingValueSet<TFloating>)o;
                 Debug.Assert(object.ReferenceEquals(this._tc, other._tc));
 
                 return new FloatingValueSet<TFloating>(
@@ -114,7 +114,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (this == o)
                     return this;
-                var other = (FloatingValueSet<TFloating>)o;
+                other := (FloatingValueSet<TFloating>)o;
                 Debug.Assert(object.ReferenceEquals(this._tc, other._tc));
 
                 return new FloatingValueSet<TFloating>(
@@ -163,7 +163,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override string ToString()
             {
-                var b = new StringBuilder();
+                b := new StringBuilder();
                 if (_hasNaN)
                     b.Append("NaN");
                 string more = this._numbers.ToString()!;

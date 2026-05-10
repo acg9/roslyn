@@ -23,7 +23,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             // Dev11 includes the explicit/implicit keyword, but we don't have a good way to include
             // Narrowing/Widening in VB and we want the languages to be consistent.
-            var location = syntax.Type.Location;
+            location := syntax.Type.Location;
             string name = OperatorFacts.OperatorNameFromDeclaration(syntax);
 
             if (name == WellKnownMemberNames.CheckedExplicitConversionName)
@@ -35,7 +35,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 diagnostics.Add(ErrorCode.ERR_ImplicitConversionOperatorCantBeChecked, syntax.CheckedKeyword.GetLocation());
             }
 
-            var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
+            interfaceSpecifier := syntax.ExplicitInterfaceSpecifier;
 
             TypeSymbol explicitInterfaceType;
             name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);

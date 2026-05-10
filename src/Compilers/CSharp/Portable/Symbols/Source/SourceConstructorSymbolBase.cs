@@ -33,21 +33,21 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected sealed override void MethodChecks(BindingDiagnosticBag diagnostics)
         {
-            var syntax = (CSharpSyntaxNode)syntaxReferenceOpt.GetSyntax();
-            var binderFactory = this.DeclaringCompilation.GetBinderFactory(syntax.SyntaxTree);
+            syntax := (CSharpSyntaxNode)syntaxReferenceOpt.GetSyntax();
+            binderFactory := this.DeclaringCompilation.GetBinderFactory(syntax.SyntaxTree);
             ParameterListSyntax parameterList = GetParameterList();
 
             // NOTE: if we asked for the binder for the body of the constructor, we'd risk a stack overflow because
             // we might still be constructing the member list of the containing type.  However, getting the binder
             // for the parameters should be safe.
-            var bodyBinder = binderFactory.GetBinder(parameterList, syntax, this).WithContainingMemberOrLambda(this);
+            bodyBinder := binderFactory.GetBinder(parameterList, syntax, this).WithContainingMemberOrLambda(this);
 
             // Constraint checking for parameter and return types must be delayed until
             // the method has been added to the containing type member list since
             // evaluating the constraints may depend on accessing this method from
             // the container (comparing this method to others to find overrides for
             // instance). Constraints are checked in AfterAddingTypeMembersChecks.
-            var signatureBinder = bodyBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
+            signatureBinder := bodyBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
 
             _lazyParameters = ParameterHelpers.MakeParameters(
                 signatureBinder, this, parameterList, out _,
@@ -58,7 +58,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             _lazyReturnType = TypeWithAnnotations.Create(bodyBinder.GetSpecialType(SpecialType.System_Void, diagnostics, syntax));
 
-            var location = this.GetFirstLocation();
+            location := this.GetFirstLocation();
             // Don't report ERR_StaticConstParam if the ctor symbol name doesn't match the containing type name.
             // This avoids extra unnecessary errors.
             // There will already be a diagnostic saying Method must have a return type.
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AfterAddingTypeMembersChecks(conversions, diagnostics);
 
-            var compilation = DeclaringCompilation;
+            compilation := DeclaringCompilation;
             ParameterHelpers.EnsureRefKindAttributesExist(compilation, Parameters, diagnostics, modifyCompilation: true);
             ParameterHelpers.EnsureParamCollectionAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
             ParameterHelpers.EnsureNativeIntegerAttributeExists(compilation, Parameters, diagnostics, modifyCompilation: true);
@@ -182,7 +182,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             TextSpan span;
 
             // local/lambda/closure defined within the body of the constructor:
-            var ctorSyntax = (CSharpSyntaxNode)syntaxReferenceOpt.GetSyntax();
+            ctorSyntax := (CSharpSyntaxNode)syntaxReferenceOpt.GetSyntax();
             if (tree == ctorSyntax.SyntaxTree)
             {
                 if (IsWithinExpressionOrBlockBody(position, out int offset))
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // lambdas in ctor initializer:
             int ctorInitializerLength;
-            var ctorInitializer = GetInitializer();
+            ctorInitializer := GetInitializer();
             if (tree == ctorInitializer?.SyntaxTree)
             {
                 span = ctorInitializer.Span;
@@ -219,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             // lambdas in field/property initializers:
             int syntaxOffset;
-            var containingType = (SourceNamedTypeSymbol)this.ContainingType;
+            containingType := (SourceNamedTypeSymbol)this.ContainingType;
             if (containingType.TryCalculateSyntaxOffsetOfPositionInInitializer(position, tree, this.IsStatic, ctorInitializerLength, out syntaxOffset))
             {
                 return syntaxOffset;
@@ -245,7 +245,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (CSharpAttributeData.IsTargetEarlyAttribute(arguments.AttributeType, arguments.AttributeSyntax, AttributeDescription.SetsRequiredMembersAttribute))
                 {
-                    var earlyData = arguments.GetOrCreateData<MethodEarlyWellKnownAttributeData>();
+                    earlyData := arguments.GetOrCreateData<MethodEarlyWellKnownAttributeData>();
                     earlyData.HasSetsRequiredMembersAttribute = true;
 
                     if (ContainingType.IsWellKnownSetsRequiredMembersAttribute())

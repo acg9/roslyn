@@ -149,8 +149,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // in order to facilitate debugging.  In the case the necessary attributes are missing 
             // this is a no-op.  Emitting an error here, or when the original parameter was bound, would
             // adversely effect the compilation or potentially change overload resolution.  
-            var compilation = this.DeclaringCompilation;
-            var type = this.TypeWithAnnotations;
+            compilation := this.DeclaringCompilation;
+            type := this.TypeWithAnnotations;
             if (type.Type.ContainsDynamic() && compilation.HasDynamicEmitAttributes(BindingDiagnosticBag.Discarded, Location.None) && compilation.CanEmitBoolean())
             {
                 AddSynthesizedAttribute(ref attributes, compilation.SynthesizeDynamicAttribute(type.Type, type.CustomModifiers.Length + this.RefCustomModifiers.Length, this.RefKind));
@@ -203,7 +203,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, moduleBuilder.SynthesizeParamCollectionAttribute(this));
             }
 
-            var defaultValue = this.ExplicitDefaultConstantValue;
+            defaultValue := this.ExplicitDefaultConstantValue;
             if (defaultValue != ConstantValue.NotAvailable &&
                 DefaultValueFromAttributes == ConstantValue.NotAvailable &&
                 this.ContainingSymbol is SynthesizedDelegateInvokeMethod or SynthesizedClosureMethod)

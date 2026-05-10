@@ -109,9 +109,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             ImmutableArray<TypeParameterSymbol> typeParameters;
 
             // We're creating a new unconstructed Method from another; alpha-rename type parameters.
-            var newMap = _inputMap.WithAlphaRename(OriginalDefinition, this, out typeParameters);
+            newMap := _inputMap.WithAlphaRename(OriginalDefinition, this, out typeParameters);
 
-            var prevMap = Interlocked.CompareExchange(ref _lazyMap, newMap, null);
+            prevMap := Interlocked.CompareExchange(ref _lazyMap, newMap, null);
             if (prevMap != null)
             {
                 // There is a race with another thread who has already set the map
@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (ReferenceEquals(_lazyBaseType, ErrorTypeSymbol.UnknownResultType))
                 {
-                    var baseType = Map.SubstituteNamedType(OriginalDefinition.BaseTypeNoUseSiteDiagnostics);
+                    baseType := Map.SubstituteNamedType(OriginalDefinition.BaseTypeNoUseSiteDiagnostics);
                     Interlocked.CompareExchange(ref _lazyBaseType, baseType, ErrorTypeSymbol.UnknownResultType);
                 }
 
@@ -240,7 +240,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return _lazyMembers;
             }
 
-            var builder = ArrayBuilder<Symbol>.GetInstance();
+            builder := ArrayBuilder<Symbol>.GetInstance();
 
             if (_unbound)
             {
@@ -263,7 +263,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             builder = AddOrWrapTupleMembersIfNecessary(builder);
 
-            var result = builder.ToImmutableAndFree();
+            result := builder.ToImmutableAndFree();
             ImmutableInterlocked.InterlockedInitialize(ref _lazyMembers, result);
             return _lazyMembers;
         }
@@ -272,8 +272,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (IsTupleType)
             {
-                var existingMembers = builder.ToImmutableAndFree();
-                var replacedFields = new HashSet<Symbol>(ReferenceEqualityComparer.Instance);
+                existingMembers := builder.ToImmutableAndFree();
+                replacedFields := new HashSet<Symbol>(ReferenceEqualityComparer.Instance);
                 builder = MakeSynthesizedTupleMembers(existingMembers, replacedFields);
                 foreach (var existingMember in existingMembers)
                 {
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal sealed override ImmutableArray<Symbol> GetMembersUnordered()
         {
-            var builder = ArrayBuilder<Symbol>.GetInstance();
+            builder := ArrayBuilder<Symbol>.GetInstance();
 
             if (_unbound)
             {
@@ -321,7 +321,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             if (_unbound) return StaticCast<Symbol>.From(GetTypeMembers(name));
 
             ImmutableArray<Symbol> result;
-            var cache = _lazyMembersByNameCache;
+            cache := _lazyMembersByNameCache;
             if (cache != null && cache.TryGetValue(name, out result))
             {
                 return result;
@@ -334,24 +334,24 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (IsTupleType)
             {
-                var result = GetMembers().WhereAsArray((m, name) => m.Name == name, name);
+                result := GetMembers().WhereAsArray((m, name) => m.Name == name, name);
                 cacheResult(result);
                 return result;
             }
 
-            var originalMembers = OriginalDefinition.GetMembers(name);
+            originalMembers := OriginalDefinition.GetMembers(name);
             if (originalMembers.IsDefaultOrEmpty)
             {
                 return originalMembers;
             }
 
-            var builder = ArrayBuilder<Symbol>.GetInstance(originalMembers.Length);
+            builder := ArrayBuilder<Symbol>.GetInstance(originalMembers.Length);
             foreach (var t in originalMembers)
             {
                 builder.Add(t.SymbolAsMember(this));
             }
 
-            var substitutedMembers = builder.ToImmutableAndFree();
+            substitutedMembers := builder.ToImmutableAndFree();
             cacheResult(substitutedMembers);
             return substitutedMembers;
 
@@ -377,8 +377,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             foreach ((MethodSymbol body, MethodSymbol implemented) in OriginalDefinition.SynthesizedInterfaceMethodImpls())
             {
-                var newBody = ExplicitInterfaceHelpers.SubstituteExplicitInterfaceImplementation(body, this.TypeSubstitution);
-                var newImplemented = ExplicitInterfaceHelpers.SubstituteExplicitInterfaceImplementation(implemented, this.TypeSubstitution);
+                newBody := ExplicitInterfaceHelpers.SubstituteExplicitInterfaceImplementation(body, this.TypeSubstitution);
+                newImplemented := ExplicitInterfaceHelpers.SubstituteExplicitInterfaceImplementation(implemented, this.TypeSubstitution);
                 yield return (newBody, newImplemented);
             }
         }
@@ -400,7 +400,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_unbound) return GetMembers(name);
 
-            var builder = ArrayBuilder<Symbol>.GetInstance();
+            builder := ArrayBuilder<Symbol>.GetInstance();
             foreach (var t in OriginalDefinition.GetEarlyAttributeDecodingMembers(name))
             {
                 builder.Add(t.SymbolAsMember(this));
@@ -513,7 +513,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         return null;
                     }
 
-                    var unsubstitutedParameter = OriginalDefinition.ExtensionParameter;
+                    unsubstitutedParameter := OriginalDefinition.ExtensionParameter;
                     if (unsubstitutedParameter is null)
                     {
                         return null;

@@ -60,7 +60,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> ForType(NamedTypeSymbol containingType)
         {
-            var substituted = containingType as SubstitutedNamedTypeSymbol;
+            substituted := containingType as SubstitutedNamedTypeSymbol;
             return (object)substituted != null ?
                 new SmallDictionary<TypeParameterSymbol, TypeWithAnnotations>(substituted.TypeSubstitution.Mapping, ReferenceEqualityComparer.Instance) :
                 new SmallDictionary<TypeParameterSymbol, TypeWithAnnotations>(ReferenceEqualityComparer.Instance);
@@ -165,10 +165,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // However, if stopAt is M1, then the type parameters would be <T2, T3, T4>
             // That is, stopAt's type parameters are excluded - the parameters are in the range (stopAt, oldOwner]
             // A null stopAt means "include everything"
-            var parameters = ArrayBuilder<TypeParameterSymbol>.GetInstance();
+            parameters := ArrayBuilder<TypeParameterSymbol>.GetInstance();
             while (oldOwner != null && oldOwner != stopAt)
             {
-                var currentParameters = oldOwner.OriginalDefinition.TypeParameters;
+                currentParameters := oldOwner.OriginalDefinition.TypeParameters;
 
                 for (int i = currentParameters.Length - 1; i >= 0; i--)
                 {
@@ -193,7 +193,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static SmallDictionary<TypeParameterSymbol, TypeWithAnnotations> ConstructMapping(ImmutableArray<TypeParameterSymbol> from, ImmutableArray<TypeWithAnnotations> to)
         {
-            var mapping = new SmallDictionary<TypeParameterSymbol, TypeWithAnnotations>(ReferenceEqualityComparer.Instance);
+            mapping := new SmallDictionary<TypeParameterSymbol, TypeWithAnnotations>(ReferenceEqualityComparer.Instance);
 
             Debug.Assert(from.Length == to.Length);
 

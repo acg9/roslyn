@@ -23,12 +23,12 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         internal static IEnumerable<LabeledStatementSyntax> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion, out bool? succeeded)
         {
-            var walker = new EntryPointsWalker(compilation, member, node, firstInRegion, lastInRegion);
+            walker := new EntryPointsWalker(compilation, member, node, firstInRegion, lastInRegion);
             bool badRegion = false;
             try
             {
                 walker.Analyze(ref badRegion);
-                var result = walker._entryPoints;
+                result := walker._entryPoints;
                 succeeded = !badRegion;
                 return badRegion ? SpecializedCollections.EmptyEnumerable<LabeledStatementSyntax>() : result;
             }

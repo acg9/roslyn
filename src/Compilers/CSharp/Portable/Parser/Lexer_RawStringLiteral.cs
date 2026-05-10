@@ -11,7 +11,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// <returns>The number of quotes that were consumed</returns>
         private int ConsumeCharSequence(char ch)
         {
-            var start = TextWindow.Position;
+            start := TextWindow.Position;
             while (TextWindow.PeekChar() == ch)
                 TextWindow.AdvanceChar();
 
@@ -37,7 +37,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             while (true)
             {
-                var ch = TextWindow.PeekChar();
+                ch := TextWindow.PeekChar();
                 if (!SyntaxFacts.IsWhitespace(ch))
                     break;
 
@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             _builder.Length = 0;
 
-            var startingQuoteCount = ConsumeQuoteSequence();
+            startingQuoteCount := ConsumeQuoteSequence();
 
             Debug.Assert(startingQuoteCount >= 3);
 
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             while (true)
             {
-                var currentChar = TextWindow.PeekChar();
+                currentChar := TextWindow.PeekChar();
 
                 // See if we reached the end of the line or file before hitting the end. Errors about this will be
                 // reported by the parser.
@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     continue;
                 }
 
-                var currentQuoteCount = ConsumeQuoteSequence();
+                currentQuoteCount := ConsumeQuoteSequence();
 
                 // A raw string literal starting with some number of quotes can contain a quote sequence with fewer quotes.
                 if (currentQuoteCount < startingQuoteCount)
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 // case of errors).
                 while (true)
                 {
-                    var currentChar = TextWindow.PeekChar();
+                    currentChar := TextWindow.PeekChar();
 
                     // Check if we have an unterminated raw string. Errors about this will be reported by the parser.
                     if (IsAtEndOfText(currentChar))

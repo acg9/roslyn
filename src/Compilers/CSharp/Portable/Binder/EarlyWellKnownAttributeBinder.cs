@@ -29,8 +29,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Action<AttributeSyntax> afterAttributePartBound,
             out bool generatedDiagnostics)
         {
-            var dummyDiagnosticBag = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
-            var result = base.GetAttribute(node, boundAttributeType, beforeAttributePartBound, afterAttributePartBound, dummyDiagnosticBag);
+            dummyDiagnosticBag := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
+            result := base.GetAttribute(node, boundAttributeType, beforeAttributePartBound, afterAttributePartBound, dummyDiagnosticBag);
             generatedDiagnostics = !dummyDiagnosticBag.DiagnosticBag.IsEmptyWithoutResolution;
             dummyDiagnosticBag.Free();
             return result;
@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.ObjectCreationExpression:
                 case SyntaxKind.ImplicitObjectCreationExpression:
                     {
-                        var objectCreation = (BaseObjectCreationExpressionSyntax)node;
+                        objectCreation := (BaseObjectCreationExpressionSyntax)node;
                         return objectCreation.Initializer == null && (objectCreation.ArgumentList?.Arguments.Count ?? 0) == 0;
                     }
 

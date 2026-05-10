@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             bool IConstantValueSetFactory.Related(BinaryOperatorKind relation, ConstantValue left, ConstantValue right)
             {
-                var tc = IntTC.DefaultInstance;
+                tc := IntTC.DefaultInstance;
                 return tc.Related(relation, tc.FromConstantValue(left), tc.FromConstantValue(right));
             }
         }

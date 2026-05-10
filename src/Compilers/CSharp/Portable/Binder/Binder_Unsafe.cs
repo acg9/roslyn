@@ -51,14 +51,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case MethodSymbol methodSymbol:
                         {
-                            var arity = methodSymbol.GetMemberArityIncludingExtension();
+                            arity := methodSymbol.GetMemberArityIncludingExtension();
                             if (arity != 0)
                             {
-                                var typeParameters = methodSymbol.GetTypeParametersIncludingExtension();
-                                var typeArguments = methodSymbol.ContainingType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Concat(methodSymbol.TypeArgumentsWithAnnotations);
+                                typeParameters := methodSymbol.GetTypeParametersIncludingExtension();
+                                typeArguments := methodSymbol.ContainingType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Concat(methodSymbol.TypeArgumentsWithAnnotations);
                                 for (int i = 0; i < arity; i++)
                                 {
-                                    var typeParameter = typeParameters[i];
+                                    typeParameter := typeParameters[i];
                                     if (typeParameter.HasConstructorConstraint &&
                                         typeArguments[i].Type is NamedTypeSymbol typeArgument)
                                     {
@@ -71,10 +71,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case NamedTypeSymbol typeSymbol:
                         {
-                            var arity = typeSymbol.TypeParameters.Length;
+                            arity := typeSymbol.TypeParameters.Length;
                             for (int i = 0; i < arity; i++)
                             {
-                                var typeParameter = typeSymbol.TypeParameters[i];
+                                typeParameter := typeSymbol.TypeParameters[i];
                                 if (typeParameter.HasConstructorConstraint &&
                                     typeSymbol.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics[i].Type is NamedTypeSymbol typeArgument)
                                 {
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(this.Compilation.SourceModule.UseUpdatedMemorySafetyRules);
 
-            var callerUnsafeMode = symbol.CallerUnsafeMode;
+            callerUnsafeMode := symbol.CallerUnsafeMode;
             if (callerUnsafeMode != CallerUnsafeMode.None)
             {
                 Debug.Assert(callerUnsafeMode == CallerUnsafeMode.Explicit || !forConstructorConstraint);
@@ -224,7 +224,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ErrorCode? customErrorCode = null,
             object[]? customArgs = null)
         {
-            var diagnosticInfo = GetUnsafeDiagnosticInfo(disallowedUnder, sizeOfTypeOpt, customErrorCode, customArgs);
+            diagnosticInfo := GetUnsafeDiagnosticInfo(disallowedUnder, sizeOfTypeOpt, customErrorCode, customArgs);
             if (diagnosticInfo == null)
             {
                 return false;
@@ -248,7 +248,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else if (!this.InUnsafeRegion)
             {
-                var featureDiag = MessageID.IDS_FeatureUnsafeEvolution.GetFeatureAvailabilityDiagnosticInfo(this.Compilation);
+                featureDiag := MessageID.IDS_FeatureUnsafeEvolution.GetFeatureAvailabilityDiagnosticInfo(this.Compilation);
 
                 if (disallowedUnder is MemorySafetyRules.Legacy)
                 {

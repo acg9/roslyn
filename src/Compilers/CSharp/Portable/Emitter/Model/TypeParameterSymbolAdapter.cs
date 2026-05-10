@@ -234,9 +234,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         IEnumerable<Cci.TypeReferenceWithAttributes> Cci.IGenericParameter.GetConstraints(EmitContext context)
         {
-            var moduleBeingBuilt = (PEModuleBuilder)context.Module;
+            moduleBeingBuilt := (PEModuleBuilder)context.Module;
 
-            var seenValueType = false;
+            seenValueType := false;
             if (AdaptedTypeParameterSymbol.HasUnmanagedTypeConstraint)
             {
                 var typeRef = moduleBeingBuilt.GetSpecialType(

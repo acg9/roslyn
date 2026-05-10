@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case SyntaxKind.CasePatternSwitchLabel:
                         {
-                            var switchLabel = (CasePatternSwitchLabelSyntax)label;
+                            switchLabel := (CasePatternSwitchLabelSyntax)label;
                             SyntaxNode previousNodeToBind = _nodeToBind;
                             _nodeToBind = switchLabel;
                             Visit(switchLabel.Pattern);
@@ -156,7 +156,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case SyntaxKind.CaseSwitchLabel:
                         {
-                            var switchlabel = (CaseSwitchLabelSyntax)label;
+                            switchlabel := (CaseSwitchLabelSyntax)label;
                             VisitNodeToBind(switchlabel.Value);
                             break;
                         }
@@ -320,11 +320,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             // creating a deep-on-the-left syntax tree no problem, and then we promptly blow the stack during
             // semantic analysis. Here we build an explicit stack to handle left recursion.
 
-            var operands = ArrayBuilder<ExpressionSyntax>.GetInstance();
+            operands := ArrayBuilder<ExpressionSyntax>.GetInstance();
             ExpressionSyntax current = node;
             do
             {
-                var binOp = (BinaryExpressionSyntax)current;
+                binOp := (BinaryExpressionSyntax)current;
                 operands.Push(binOp.Right);
                 current = binOp.Left;
             }
@@ -345,7 +345,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Handle this with manual recursion.
             PatternSyntax currentPattern = node;
 
-            var rightPatternStack = ArrayBuilder<PatternSyntax>.GetInstance();
+            rightPatternStack := ArrayBuilder<PatternSyntax>.GetInstance();
 
             while (currentPattern is BinaryPatternSyntax binaryPattern)
             {
@@ -365,7 +365,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (receiverIsInvocation(node, out InvocationExpressionSyntax nested))
             {
-                var invocations = ArrayBuilder<InvocationExpressionSyntax>.GetInstance();
+                invocations := ArrayBuilder<InvocationExpressionSyntax>.GetInstance();
 
                 invocations.Push(node);
 
@@ -471,7 +471,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.TupleExpression:
                     {
-                        var tuple = (TupleExpressionSyntax)possibleTupleDeclaration;
+                        tuple := (TupleExpressionSyntax)possibleTupleDeclaration;
                         foreach (ArgumentSyntax arg in tuple.Arguments)
                         {
                             CollectVariablesFromDeconstruction(arg.Expression, deconstruction);
@@ -480,7 +480,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.DeclarationExpression:
                     {
-                        var declarationExpression = (DeclarationExpressionSyntax)possibleTupleDeclaration;
+                        declarationExpression := (DeclarationExpressionSyntax)possibleTupleDeclaration;
                         CollectVariablesFromDeconstruction(declarationExpression.Designation, declarationExpression.Type, deconstruction);
                         break;
                     }
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.SingleVariableDesignation:
                     {
-                        var single = (SingleVariableDesignationSyntax)designation;
+                        single := (SingleVariableDesignationSyntax)designation;
                         TFieldOrLocalSymbol variable = MakeDeconstructionVariable(closestTypeSyntax, single, deconstruction);
                         if ((object)variable != null)
                         {
@@ -511,7 +511,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                 case SyntaxKind.ParenthesizedVariableDesignation:
                     {
-                        var tuple = (ParenthesizedVariableDesignationSyntax)designation;
+                        tuple := (ParenthesizedVariableDesignationSyntax)designation;
                         foreach (VariableDesignationSyntax d in tuple.Variables)
                         {
                             CollectVariablesFromDeconstruction(d, closestTypeSyntax, deconstruction);

@@ -184,7 +184,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static SingleLookupResult NotInvocable(Symbol unwrappedSymbol, Symbol symbol, bool diagnose)
         {
-            var diagInfo = diagnose ? new CSDiagnosticInfo(ErrorCode.ERR_NonInvocableMemberCalled, unwrappedSymbol) : null;
+            diagInfo := diagnose ? new CSDiagnosticInfo(ErrorCode.ERR_NonInvocableMemberCalled, unwrappedSymbol) : null;
             return new SingleLookupResult(LookupResultKind.NotInvocable, symbol, diagInfo);
         }
 
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static SingleLookupResult NotTypeOrNamespace(Symbol unwrappedSymbol, Symbol symbol, bool diagnose)
         {
             // TODO: determine correct diagnosis 
-            var diagInfo = diagnose ? new CSDiagnosticInfo(ErrorCode.ERR_BadSKknown, unwrappedSymbol.Name, unwrappedSymbol.GetKindText(), MessageID.IDS_SK_TYPE.Localize()) : null;
+            diagInfo := diagnose ? new CSDiagnosticInfo(ErrorCode.ERR_BadSKknown, unwrappedSymbol.Name, unwrappedSymbol.GetKindText(), MessageID.IDS_SK_TYPE.Localize()) : null;
             return new SingleLookupResult(LookupResultKind.NotATypeOrNamespace, symbol, diagInfo);
         }
 
@@ -332,7 +332,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static LookupResult GetInstance()
         {
-            var instance = s_poolInstance.Allocate();
+            instance := s_poolInstance.Allocate();
             Debug.Assert(instance.IsClear);
             return instance;
         }

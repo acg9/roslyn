@@ -61,8 +61,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             // we are working with PE symbols
             Debug.Assert(stateMachineType.ContainingAssembly is PEAssemblySymbol);
 
-            var hoistedLocals = new Dictionary<EncHoistedLocalInfo, int>();
-            var awaiters = new Dictionary<Cci.ITypeReference, int>(Cci.SymbolEquivalentEqualityComparer.Instance);
+            hoistedLocals := new Dictionary<EncHoistedLocalInfo, int>();
+            awaiters := new Dictionary<Cci.ITypeReference, int>(Cci.SymbolEquivalentEqualityComparer.Instance);
             int maxAwaiterSlotIndex = -1;
 
             foreach (var member in ((TypeSymbol)stateMachineType).GetMembers())
@@ -77,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                         case GeneratedNameKind.AwaiterField:
                             if (GeneratedNameParser.TryParseSlotIndex(name, out slotIndex))
                             {
-                                var field = (FieldSymbol)member;
+                                field := (FieldSymbol)member;
 
                                 // correct metadata won't contain duplicates, but malformed might, ignore the duplicate:
                                 awaiters[(Cci.ITypeReference)field.Type.GetCciAdapter()] = slotIndex;
@@ -95,14 +95,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
                         case GeneratedNameKind.DisplayClassLocalOrField:
                             if (GeneratedNameParser.TryParseSlotIndex(name, out slotIndex))
                             {
-                                var field = (FieldSymbol)member;
+                                field := (FieldSymbol)member;
                                 if (slotIndex >= localSlotDebugInfo.Length)
                                 {
                                     // invalid or missing metadata
                                     continue;
                                 }
 
-                                var key = new EncHoistedLocalInfo(localSlotDebugInfo[slotIndex], (Cci.ITypeReference)field.Type.GetCciAdapter());
+                                key := new EncHoistedLocalInfo(localSlotDebugInfo[slotIndex], (Cci.ITypeReference)field.Type.GetCciAdapter());
 
                                 // correct metadata won't contain duplicate ids, but malformed might, ignore the duplicate:
                                 hoistedLocals[key] = slotIndex;
@@ -122,8 +122,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         {
             Debug.Assert(!handle.IsNil);
 
-            var localInfos = _metadataDecoder.GetLocalsOrThrow(handle);
-            var result = CreateLocalSlotMap(debugInfo, localInfos);
+            localInfos := _metadataDecoder.GetLocalsOrThrow(handle);
+            result := CreateLocalSlotMap(debugInfo, localInfos);
             Debug.Assert(result.Length == localInfos.Length);
             return result;
         }
@@ -143,29 +143,29 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
             EditAndContinueMethodDebugInformation methodEncInfo,
             ImmutableArray<LocalInfo<TypeSymbol>> slotMetadata)
         {
-            var result = new EncLocalInfo[slotMetadata.Length];
+            result := new EncLocalInfo[slotMetadata.Length];
 
-            var localSlots = methodEncInfo.LocalSlots;
+            localSlots := methodEncInfo.LocalSlots;
             if (!localSlots.IsDefault)
             {
                 // In case of corrupted PDB or metadata, these lengths might not match.
                 // Let's guard against such case.
                 int slotCount = Math.Min(localSlots.Length, slotMetadata.Length);
 
-                var map = new Dictionary<EncLocalInfo, int>();
+                map := new Dictionary<EncLocalInfo, int>();
 
                 for (int slotIndex = 0; slotIndex < slotCount; slotIndex++)
                 {
-                    var slot = localSlots[slotIndex];
+                    slot := localSlots[slotIndex];
                     if (slot.SynthesizedKind.IsLongLived())
                     {
-                        var metadata = slotMetadata[slotIndex];
+                        metadata := slotMetadata[slotIndex];
 
                         // We do not emit custom modifiers on locals so ignore the
                         // previous version of the local if it had custom modifiers.
                         if (metadata.CustomModifiers.IsDefaultOrEmpty)
                         {
-                            var local = new EncLocalInfo(slot, (Cci.ITypeReference)metadata.Type.GetCciAdapter(), metadata.Constraints, metadata.SignatureOpt);
+                            local := new EncLocalInfo(slot, (Cci.ITypeReference)metadata.Type.GetCciAdapter(), metadata.Constraints, metadata.SignatureOpt);
                             map.Add(local, slotIndex);
                         }
                     }

@@ -34,16 +34,16 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override void DefaultVisit(SyntaxNode node)
         {
-            var childCnt = node.ChildNodesAndTokens().Count;
+            childCnt := node.ChildNodesAndTokens().Count;
             int i = 0;
-            var slotData = new ChildSyntaxList.SlotData(node);
+            slotData := new ChildSyntaxList.SlotData(node);
 
             do
             {
-                var child = ChildSyntaxList.ItemInternal((CSharpSyntaxNode)node, i, ref slotData);
+                child := ChildSyntaxList.ItemInternal((CSharpSyntaxNode)node, i, ref slotData);
                 i++;
 
-                var asNode = child.AsNode();
+                asNode := child.AsNode();
                 if (asNode != null)
                 {
                     if (this.Depth >= SyntaxWalkerDepth.Node)

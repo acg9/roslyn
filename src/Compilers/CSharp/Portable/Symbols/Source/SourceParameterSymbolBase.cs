@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return nps.Equals(this, compareKind);
             }
 
-            var symbol = obj as SourceParameterSymbolBase;
+            symbol := obj as SourceParameterSymbolBase;
             return symbol is not null
                 && symbol.Ordinal == this.Ordinal
                 && symbol._containingSymbol.Equals(_containingSymbol, compareKind);
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static void AddSynthesizedAttributes(ParameterSymbol parameter, PEModuleBuilder moduleBuilder, ref ArrayBuilder<CSharpAttributeData> attributes)
         {
-            var compilation = parameter.DeclaringCompilation;
+            compilation := parameter.DeclaringCompilation;
 
             if (parameter.IsParamsArray)
             {
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // Synthesize DecimalConstantAttribute if we don't have an explicit custom attribute already:
-            var defaultValue = parameter.ExplicitDefaultConstantValue;
+            defaultValue := parameter.ExplicitDefaultConstantValue;
             if (defaultValue != ConstantValue.NotAvailable &&
                 defaultValue.SpecialType == SpecialType.System_Decimal &&
                 parameter is SourceParameterSymbolBase sourceParameter &&
@@ -93,7 +93,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 AddSynthesizedAttribute(ref attributes, compilation.SynthesizeDecimalConstantAttribute(defaultValue.DecimalValue));
             }
 
-            var type = parameter.TypeWithAnnotations;
+            type := parameter.TypeWithAnnotations;
 
             if (type.Type.ContainsDynamic())
             {

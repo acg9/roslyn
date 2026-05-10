@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binderFlags |= CSharpBinderFlags.ConvertArrayIndex;
             }
 
-            var loweredArguments = ImmutableArray.Create(loweredOperand);
+            loweredArguments := ImmutableArray.Create(loweredOperand);
 
             var binderConstruction = MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__Convert, new[]
             {
@@ -127,7 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binderFlags |= CSharpBinderFlags.CheckedContext;
             }
 
-            var loweredArguments = ImmutableArray.Create(loweredOperand);
+            loweredArguments := ImmutableArray.Create(loweredOperand);
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__UnaryOperation, new[]
@@ -170,7 +170,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binderFlags |= CSharpBinderFlags.BinaryOperationLogical;
             }
 
-            var loweredArguments = ImmutableArray.Create<BoundExpression>(loweredLeft, loweredRight);
+            loweredArguments := ImmutableArray.Create<BoundExpression>(loweredLeft, loweredRight);
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__BinaryOperation, new[]
@@ -268,8 +268,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             CSharpBinderFlags binderFlags = CSharpBinderFlags.InvokeSpecialName | CSharpBinderFlags.ResultDiscarded;
 
-            var loweredArguments = ImmutableArray<BoundExpression>.Empty;
-            var resultType = AssemblySymbol.DynamicType;
+            loweredArguments := ImmutableArray<BoundExpression>.Empty;
+            resultType := AssemblySymbol.DynamicType;
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__InvokeMember, new[]
@@ -339,7 +339,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _factory.Syntax = syntax;
 
-            var loweredReceiver = _factory.Typeof(type, _factory.WellKnownType(WellKnownType.System_Type));
+            loweredReceiver := _factory.Typeof(type, _factory.WellKnownType(WellKnownType.System_Type));
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__InvokeConstructor, new[]
@@ -370,8 +370,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binderFlags |= CSharpBinderFlags.ResultIndexed;
             }
 
-            var loweredArguments = ImmutableArray<BoundExpression>.Empty;
-            var resultType = DynamicTypeSymbol.Instance;
+            loweredArguments := ImmutableArray<BoundExpression>.Empty;
+            resultType := DynamicTypeSymbol.Instance;
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__GetMember, new[]
@@ -412,7 +412,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var loweredArguments = ImmutableArray<BoundExpression>.Empty;
+            loweredArguments := ImmutableArray<BoundExpression>.Empty;
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__SetMember, new[]
@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _factory.Syntax = loweredReceiver.Syntax;
 
-            var resultType = DynamicTypeSymbol.Instance;
+            resultType := DynamicTypeSymbol.Instance;
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__GetIndex, new[]
@@ -479,8 +479,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var loweredReceiverRefKind = GetReceiverRefKind(loweredReceiver);
-            var resultType = DynamicTypeSymbol.Instance;
+            loweredReceiverRefKind := GetReceiverRefKind(loweredReceiver);
+            resultType := DynamicTypeSymbol.Instance;
 
             MethodSymbol argumentInfoFactory = GetArgumentInfoFactory();
             var binderConstruction = ((object)argumentInfoFactory != null) ? MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__SetIndex, new[]
@@ -501,7 +501,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal LoweredDynamicOperation MakeDynamicIsEventTest(string name, BoundExpression loweredReceiver)
         {
             _factory.Syntax = loweredReceiver.Syntax;
-            var resultType = _factory.SpecialType(SpecialType.System_Boolean);
+            resultType := _factory.SpecialType(SpecialType.System_Boolean);
             var binderConstruction = MakeBinderConstruction(WellKnownMember.Microsoft_CSharp_RuntimeBinder_Binder__IsEvent, new[]
             {
                 // flags (unused):
@@ -524,7 +524,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private BoundExpression? MakeBinderConstruction(WellKnownMember factoryMethod, BoundExpression[] args)
         {
-            var binderFactory = _factory.WellKnownMember(factoryMethod);
+            binderFactory := _factory.WellKnownMember(factoryMethod);
             if (binderFactory is null)
             {
                 return null;
@@ -571,7 +571,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(refKinds.IsDefault || loweredArguments.Length == refKinds.Length);
             Debug.Assert(!receiverIsStaticType || receiverRefKind == RefKind.None);
 
-            var infos = new BoundExpression[(loweredReceiver != null ? 1 : 0) + loweredArguments.Length + (loweredRight != null ? 1 : 0)];
+            infos := new BoundExpression[(loweredReceiver != null ? 1 : 0) + loweredArguments.Length + (loweredRight != null ? 1 : 0)];
             int j = 0;
             if (loweredReceiver != null)
             {
@@ -635,19 +635,19 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _currentDynamicCallSiteContainer = CreateCallSiteContainer(_factory, _methodOrdinal, _localFunctionOrdinal);
             }
 
-            var containerDef = (SynthesizedContainer)_currentDynamicCallSiteContainer.OriginalDefinition;
-            var methodToContainerTypeParametersMap = containerDef.TypeMap;
+            containerDef := (SynthesizedContainer)_currentDynamicCallSiteContainer.OriginalDefinition;
+            methodToContainerTypeParametersMap := containerDef.TypeMap;
 
             ImmutableArray<LocalSymbol> temps = MakeTempsForDiscardArguments(ref loweredArguments);
 
-            var callSiteType = callSiteTypeGeneric.Construct(new[] { delegateTypeOverMethodTypeParameters });
-            var callSiteFactoryMethod = callSiteFactoryGeneric.AsMember(callSiteType);
-            var callSiteTargetField = callSiteTargetFieldGeneric.AsMember(callSiteType);
-            var callSiteField = DefineCallSiteStorageSymbol(containerDef, delegateTypeOverMethodTypeParameters, methodToContainerTypeParametersMap);
-            var callSiteFieldAccess = _factory.Field(null, callSiteField);
-            var callSiteArguments = GetCallSiteArguments(callSiteFieldAccess, loweredReceiver, loweredArguments, loweredRight);
+            callSiteType := callSiteTypeGeneric.Construct(new[] { delegateTypeOverMethodTypeParameters });
+            callSiteFactoryMethod := callSiteFactoryGeneric.AsMember(callSiteType);
+            callSiteTargetField := callSiteTargetFieldGeneric.AsMember(callSiteType);
+            callSiteField := DefineCallSiteStorageSymbol(containerDef, delegateTypeOverMethodTypeParameters, methodToContainerTypeParametersMap);
+            callSiteFieldAccess := _factory.Field(null, callSiteField);
+            callSiteArguments := GetCallSiteArguments(callSiteFieldAccess, loweredReceiver, loweredArguments, loweredRight);
 
-            var nullCallSite = _factory.Null(callSiteField.Type);
+            nullCallSite := _factory.Null(callSiteField.Type);
 
             var siteInitialization = _factory.Conditional(
                 _factory.ObjectEqual(callSiteFieldAccess, nullCallSite),
@@ -690,9 +690,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // We don't reuse call-sites during EnC. Each edit creates a new container and sites.
             int generation = factory.CompilationState.ModuleBuilderOpt.CurrentGenerationOrdinal;
-            var containerName = GeneratedNames.MakeDynamicCallSiteContainerName(methodOrdinal, localFunctionOrdinal, generation);
+            containerName := GeneratedNames.MakeDynamicCallSiteContainerName(methodOrdinal, localFunctionOrdinal, generation);
 
-            var synthesizedContainer = new DynamicSiteContainer(containerName, factory.TopLevelMethod, factory.CurrentFunction);
+            synthesizedContainer := new DynamicSiteContainer(containerName, factory.TopLevelMethod, factory.CurrentFunction);
             factory.AddNestedType(synthesizedContainer);
 
             if (!synthesizedContainer.TypeParameters.IsEmpty)
@@ -705,12 +705,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal FieldSymbol DefineCallSiteStorageSymbol(NamedTypeSymbol containerDefinition, NamedTypeSymbol delegateTypeOverMethodTypeParameters, TypeMap methodToContainerTypeParametersMap)
         {
-            var fieldName = GeneratedNames.MakeDynamicCallSiteFieldName(_callSiteIdDispenser++);
-            var delegateTypeOverContainerTypeParameters = methodToContainerTypeParametersMap.SubstituteNamedType(delegateTypeOverMethodTypeParameters);
-            var callSiteType = _factory.Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_CallSite_T);
+            fieldName := GeneratedNames.MakeDynamicCallSiteFieldName(_callSiteIdDispenser++);
+            delegateTypeOverContainerTypeParameters := methodToContainerTypeParametersMap.SubstituteNamedType(delegateTypeOverMethodTypeParameters);
+            callSiteType := _factory.Compilation.GetWellKnownType(WellKnownType.System_Runtime_CompilerServices_CallSite_T);
             _factory.Diagnostics.ReportUseSite(callSiteType, _factory.Syntax);
             callSiteType = callSiteType.Construct(new[] { delegateTypeOverContainerTypeParameters });
-            var field = new SynthesizedFieldSymbol(containerDefinition, callSiteType, fieldName, DeclarationModifiers.Public, isStatic: true);
+            field := new SynthesizedFieldSymbol(containerDefinition, callSiteType, fieldName, DeclarationModifiers.Public, isStatic: true);
             _factory.AddField(containerDefinition, field);
             Debug.Assert(_currentDynamicCallSiteContainer is { });
             return _currentDynamicCallSiteContainer.IsGenericType ? field.AsMember(_currentDynamicCallSiteContainer) : field;
@@ -726,13 +726,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(refKinds.IsDefaultOrEmpty || refKinds.Length == loweredArguments.Length);
 
-            var callSiteType = _factory.WellKnownType(WellKnownType.System_Runtime_CompilerServices_CallSite);
+            callSiteType := _factory.WellKnownType(WellKnownType.System_Runtime_CompilerServices_CallSite);
             if (callSiteType.IsErrorType())
             {
                 return null;
             }
 
-            var delegateSignature = MakeCallSiteDelegateSignature(callSiteType, loweredReceiver, loweredArguments, loweredRight, resultType);
+            delegateSignature := MakeCallSiteDelegateSignature(callSiteType, loweredReceiver, loweredArguments, loweredRight, resultType);
             bool returnsVoid = resultType.IsVoidType();
             bool hasByRefs = receiverRefKind != RefKind.None || !refKinds.IsDefaultOrEmpty;
 
@@ -744,7 +744,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (wkDelegateType != WellKnownType.Unknown)
                 {
-                    var delegateType = _factory.Compilation.GetWellKnownType(wkDelegateType);
+                    delegateType := _factory.Compilation.GetWellKnownType(wkDelegateType);
                     if (!delegateType.HasUseSiteError)
                     {
                         _factory.Diagnostics.AddDependencies(delegateType);
@@ -785,7 +785,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             int parameterCount = delegateSignature.Length - (returnsVoid ? 0 : 1);
             Debug.Assert(_factory.CompilationState.ModuleBuilderOpt is { });
             int generation = _factory.CompilationState.ModuleBuilderOpt.CurrentGenerationOrdinal;
-            var synthesizedType = _factory.Compilation.AnonymousTypeManager.SynthesizeDelegate(parameterCount, byRefs, returnsVoid, generation);
+            synthesizedType := _factory.Compilation.AnonymousTypeManager.SynthesizeDelegate(parameterCount, byRefs, returnsVoid, generation);
             return synthesizedType.Construct(delegateSignature);
 
             // The distinction between by-ref kinds is ignored for dynamic call-sites.
@@ -827,7 +827,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 flags |= CSharpArgumentInfoFlags.IsRef | CSharpArgumentInfoFlags.UseCompileTimeType;
             }
 
-            var argType = boundArgument.Type;
+            argType := boundArgument.Type;
 
             // Check "literal" constant.
 
@@ -873,7 +873,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static ImmutableArray<BoundExpression> GetCallSiteArguments(BoundExpression callSiteFieldAccess, BoundExpression? receiver, ImmutableArray<BoundExpression> arguments, BoundExpression? right)
         {
-            var result = new BoundExpression[1 + (receiver != null ? 1 : 0) + arguments.Length + (right != null ? 1 : 0)];
+            result := new BoundExpression[1 + (receiver != null ? 1 : 0) + arguments.Length + (right != null ? 1 : 0)];
             int j = 0;
 
             result[j++] = callSiteFieldAccess;
@@ -896,8 +896,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private TypeSymbol[] MakeCallSiteDelegateSignature(TypeSymbol callSiteType, BoundExpression? receiver, ImmutableArray<BoundExpression> arguments, BoundExpression? right, TypeSymbol resultType)
         {
-            var systemObjectType = _factory.SpecialType(SpecialType.System_Object);
-            var result = new TypeSymbol[1 + (receiver != null ? 1 : 0) + arguments.Length + (right != null ? 1 : 0) + (resultType.IsVoidType() ? 0 : 1)];
+            systemObjectType := _factory.SpecialType(SpecialType.System_Object);
+            result := new TypeSymbol[1 + (receiver != null ? 1 : 0) + arguments.Length + (right != null ? 1 : 0) + (resultType.IsVoidType() ? 0 : 1)];
             int j = 0;
 
             // CallSite:

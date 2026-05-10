@@ -499,8 +499,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     // can explicitly implement more than one interface method, in which case it doesn't really
                     // make sense to pretend that all of them are part of the signature.
 
-                    var explicitInterfaceImplementations1 = member1.GetExplicitInterfaceImplementations();
-                    var explicitInterfaceImplementations2 = member2.GetExplicitInterfaceImplementations();
+                    explicitInterfaceImplementations1 := member1.GetExplicitInterfaceImplementations();
+                    explicitInterfaceImplementations2 := member2.GetExplicitInterfaceImplementations();
 
                     if (!explicitInterfaceImplementations1.SetEquals(explicitInterfaceImplementations2, SymbolEqualityComparer.ConsiderEverything))
                     {
@@ -566,8 +566,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var isVoid1 = unsubstitutedReturnType1.IsVoidType();
-            var isVoid2 = unsubstitutedReturnType2.IsVoidType();
+            isVoid1 := unsubstitutedReturnType1.IsVoidType();
+            isVoid2 := unsubstitutedReturnType2.IsVoidType();
 
             if (isVoid1 != isVoid2)
             {
@@ -583,8 +583,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
             }
 
-            var returnType1 = SubstituteType(typeMap1, unsubstitutedReturnType1);
-            var returnType2 = SubstituteType(typeMap2, unsubstitutedReturnType2);
+            returnType1 := SubstituteType(typeMap1, unsubstitutedReturnType1);
+            returnType2 := SubstituteType(typeMap2, unsubstitutedReturnType2);
             if (!returnType1.Equals(returnType2, typeComparison))
             {
                 return false;
@@ -601,7 +601,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static TypeMap? GetTypeMap(Symbol member)
         {
-            var typeParameters = member.GetMemberTypeParameters();
+            typeParameters := member.GetMemberTypeParameters();
             return typeParameters.IsEmpty ?
                 null :
                 new TypeMap(
@@ -649,8 +649,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // also that constraintTypes2 is a subset of constraintTypes1
             // (see SymbolPreparer::CheckImplicitImplConstraints).
 
-            var constraintTypes1 = typeParameter1.ConstraintTypesNoUseSiteDiagnostics;
-            var constraintTypes2 = typeParameter2.ConstraintTypesNoUseSiteDiagnostics;
+            constraintTypes1 := typeParameter1.ConstraintTypesNoUseSiteDiagnostics;
+            constraintTypes2 := typeParameter2.ConstraintTypesNoUseSiteDiagnostics;
 
             // The two sets of constraints may differ in size but still be considered
             // the same (duplicated constraints, ignored "object" constraints), but
@@ -660,8 +660,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            var substitutedTypes1 = new HashSet<TypeSymbol>(comparer);
-            var substitutedTypes2 = new HashSet<TypeSymbol>(comparer);
+            substitutedTypes1 := new HashSet<TypeSymbol>(comparer);
+            substitutedTypes2 := new HashSet<TypeSymbol>(comparer);
 
             SubstituteConstraintTypes(constraintTypes1, typeMap1, substitutedTypes1);
             SubstituteConstraintTypes(constraintTypes2, typeMap2, substitutedTypes2);
@@ -739,7 +739,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(params1.Length == params2.Length);
 
-            var numParams = params1.Length;
+            numParams := params1.Length;
 
             for (int i = 0; i < numParams; i++)
             {
@@ -761,8 +761,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             bool considerDefaultValues,
             TypeCompareKind typeComparison)
         {
-            var type1 = SubstituteType(typeMap1, param1.TypeWithAnnotations);
-            var type2 = SubstituteType(typeMap2, param2.TypeWithAnnotations);
+            type1 := SubstituteType(typeMap1, param1.TypeWithAnnotations);
+            type2 := SubstituteType(typeMap2, param2.TypeWithAnnotations);
 
             if (!type1.Equals(type2, typeComparison))
             {
@@ -780,8 +780,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return false;
             }
 
-            var refKind1 = param1.RefKind;
-            var refKind2 = param2.RefKind;
+            refKind1 := param1.RefKind;
+            refKind2 := param2.RefKind;
 
             // Metadata signatures don't distinguish ref/out, but C# does - even when comparing metadata method signatures.
             if (refKindCompareMode != RefKindCompareMode.IgnoreRefKind)

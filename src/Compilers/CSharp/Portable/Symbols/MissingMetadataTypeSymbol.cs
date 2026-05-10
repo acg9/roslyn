@@ -243,7 +243,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                         if (_namespaceName.Length > 0)
                         {
-                            var namespaces = MetadataHelpers.SplitQualifiedName(_namespaceName);
+                            namespaces := MetadataHelpers.SplitQualifiedName(_namespaceName);
                             int i;
 
                             for (i = 0; i < namespaces.Length; i++)
@@ -351,7 +351,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return this;
                 }
 
-                var other = new TopLevel(_containingModule, _namespaceName, name, arity, mangleName, isNativeInt: asNativeInt, _lazyErrorInfo, _lazyContainingNamespace, _lazyTypeId, TupleData);
+                other := new TopLevel(_containingModule, _namespaceName, name, arity, mangleName, isNativeInt: asNativeInt, _lazyErrorInfo, _lazyContainingNamespace, _lazyTypeId, TupleData);
 
                 NativeIntegerTypeSymbol.VerifyEquality(this, other);
                 Debug.Assert(other.SpecialType == this.SpecialType);
@@ -379,7 +379,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = t2 as TopLevel;
+                other := t2 as TopLevel;
                 if (other is null)
                 {
                     return false;
@@ -459,7 +459,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = t2 as Nested;
+                other := t2 as Nested;
                 return (object?)other != null && string.Equals(MetadataName, other.MetadataName, StringComparison.Ordinal) &&
                     arity == other.arity &&
                     _containingType.Equals(other._containingType, comparison);

@@ -63,7 +63,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private string GetDebuggerDisplay()
             {
-                var symbol = (object?)Symbol ?? "<null>";
+                symbol := (object?)Symbol ?? "<null>";
                 return $"Id={Id}, Symbol={symbol}, Count={VariableSlot.Length}";
             }
         }
@@ -144,8 +144,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal static Variables Create(VariablesSnapshot snapshot)
             {
-                var container = snapshot.Container is null ? null : Create(snapshot.Container);
-                var variables = new Variables(snapshot.Id, container, snapshot.Symbol);
+                container := snapshot.Container is null ? null : Create(snapshot.Container);
+                variables := new Variables(snapshot.Id, container, snapshot.Symbol);
                 variables.Populate(snapshot);
                 return variables;
             }
@@ -168,8 +168,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _variableBySlot.AddMany(default, snapshot.VariableSlot.Length);
                 foreach (var pair in snapshot.VariableSlot)
                 {
-                    var identifier = pair.Key;
-                    var index = pair.Value;
+                    identifier := pair.Key;
+                    index := pair.Value;
                     _variableSlot.Add(identifier, index);
                     _variableBySlot[index] = identifier;
                 }
@@ -239,7 +239,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal bool TryGetValue(VariableIdentifier identifier, out int slot)
             {
-                var variables = GetVariablesForVariable(identifier);
+                variables := GetVariablesForVariable(identifier);
                 return variables.TryGetValueInternal(identifier, out slot);
             }
 
@@ -256,7 +256,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal int Add(VariableIdentifier identifier)
             {
-                var variables = GetVariablesForVariable(identifier);
+                variables := GetVariablesForVariable(identifier);
                 int slot = variables.AddInternal(identifier);
                 // ContainingSlot must be from the same Variables collection.
                 Debug.Assert(slot <= 0 ||
@@ -296,13 +296,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal bool TryGetType(Symbol symbol, out TypeWithAnnotations type)
             {
-                var variables = GetVariablesContainingSymbol(symbol);
+                variables := GetVariablesContainingSymbol(symbol);
                 return variables._variableTypes.TryGetValue(symbol, out type);
             }
 
             internal void SetType(Symbol symbol, TypeWithAnnotations type)
             {
-                var variables = GetVariablesContainingSymbol(symbol);
+                variables := GetVariablesContainingSymbol(symbol);
                 Debug.Assert((object)variables == this);
                 variables._variableTypes[symbol] = type;
             }
@@ -312,7 +312,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 get
                 {
                     (int id, int index) = DeconstructSlot(slot);
-                    var variables = GetVariablesForId(id);
+                    variables := GetVariablesForId(id);
                     return variables!._variableBySlot[index];
                 }
             }
@@ -328,11 +328,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             internal void GetMembers(ArrayBuilder<(VariableIdentifier, int)> builder, int containingSlot)
             {
                 (int id, int index) = DeconstructSlot(containingSlot);
-                var variables = GetVariablesForId(id)!;
-                var variableBySlot = variables._variableBySlot;
+                variables := GetVariablesForId(id)!;
+                variableBySlot := variables._variableBySlot;
                 for (index++; index < variableBySlot.Count; index++)
                 {
-                    var variable = variableBySlot[index];
+                    variable := variableBySlot[index];
                     if (variable.ContainingSlot == containingSlot)
                     {
                         builder.Add((variable, ConstructSlot(id, index)));
@@ -371,7 +371,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal Variables GetRootScope()
             {
-                var variables = this;
+                variables := this;
                 while (variables.Container is { } container)
                 {
                     variables = container;
@@ -381,7 +381,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private Variables? GetVariablesForId(int id)
             {
-                var variables = this;
+                variables := this;
                 do
                 {
                     if (variables.Id == id)
@@ -396,7 +396,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             internal Variables? GetVariablesForMethodScope(MethodSymbol method)
             {
-                var variables = this;
+                variables := this;
                 while (true)
                 {
                     if ((object)method == variables.Symbol)
@@ -429,7 +429,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             private string GetDebuggerDisplay()
             {
-                var symbol = (object?)Symbol ?? "<null>";
+                symbol := (object?)Symbol ?? "<null>";
                 return $"Id={Id}, Symbol={symbol}, Count={_variableSlot.Count}";
             }
         }

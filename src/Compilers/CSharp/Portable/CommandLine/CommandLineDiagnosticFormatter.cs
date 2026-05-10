@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override string FormatSourcePath(string path, string basePath, IFormatProvider formatter)
         {
-            var normalizedPath = FileUtilities.NormalizeRelativePath(path, basePath, _baseDirectory);
+            normalizedPath := FileUtilities.NormalizeRelativePath(path, basePath, _baseDirectory);
             if (normalizedPath == null)
             {
                 return path;
@@ -61,13 +61,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal string RelativizeNormalizedPath(string normalizedPath)
         {
-            var normalizedBaseDirectory = _lazyNormalizedBaseDirectory.Value;
+            normalizedBaseDirectory := _lazyNormalizedBaseDirectory.Value;
             if (normalizedBaseDirectory == null)
             {
                 return normalizedPath;
             }
 
-            var normalizedDirectory = PathUtilities.GetDirectoryName(normalizedPath);
+            normalizedDirectory := PathUtilities.GetDirectoryName(normalizedPath);
             if (PathUtilities.IsSameDirectoryOrChildOf(normalizedDirectory, normalizedBaseDirectory))
             {
                 return normalizedPath.Substring(

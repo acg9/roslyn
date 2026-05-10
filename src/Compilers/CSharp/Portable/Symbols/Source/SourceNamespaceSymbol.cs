@@ -134,11 +134,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override ImmutableArray<Symbol> GetMembersUnordered()
         {
-            var result = _lazyAllMembers;
+            result := _lazyAllMembers;
 
             if (result.IsDefault)
             {
-                var members = StaticCast<Symbol>.From(this.GetNameToMembersMap().Flatten(null));  // don't sort.
+                members := StaticCast<Symbol>.From(this.GetNameToMembersMap().Flatten(null));  // don't sort.
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyAllMembers, members);
                 result = _lazyAllMembers;
             }
@@ -154,7 +154,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var allMembers = this.GetMembersUnordered();
+                allMembers := this.GetMembersUnordered();
 
                 if (allMembers.Length >= 2)
                 {
@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_lazyTypeMembersUnordered.IsDefault)
             {
-                var members = this.GetNameToTypeMembersMap().Flatten();
+                members := this.GetNameToTypeMembersMap().Flatten();
                 ImmutableInterlocked.InterlockedInitialize(ref _lazyTypeMembersUnordered, members);
             }
 
@@ -225,7 +225,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (_nameToMembersMap == null)
             {
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                diagnostics := BindingDiagnosticBag.GetInstance();
                 if (Interlocked.CompareExchange(ref _nameToMembersMap, MakeNameToMembersMap(diagnostics), null) == null)
                 {
                     // NOTE: the following is not cancellable.  Once we've set the
@@ -235,7 +235,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     // We may produce a SymbolDeclaredEvent for the enclosing namespace before events for its contained members
                     DeclaringCompilation.SymbolDeclaredEvent(this);
-                    var wasSetThisThread = _state.NotePartComplete(CompletionPart.NameToMembersMap);
+                    wasSetThisThread := _state.NotePartComplete(CompletionPart.NameToMembersMap);
                     Debug.Assert(wasSetThisThread);
                 }
 
@@ -272,14 +272,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // NOTE: a name maps into values collection containing types only instead of allocating another
             // NOTE: array of NamedTypeSymbol[] we downcast the array to ImmutableArray<NamedTypeSymbol>
 
-            var builder = s_nameToObjectPool.Allocate();
+            builder := s_nameToObjectPool.Allocate();
             foreach (var declaration in _mergedDeclaration.Children)
             {
                 NamespaceOrTypeSymbol symbol = BuildSymbol(declaration, diagnostics);
                 ImmutableArrayExtensions.AddToMultiValueDictionaryBuilder(builder, symbol.Name.AsMemory(), symbol);
             }
 
-            var result = new Dictionary<ReadOnlyMemory<char>, ImmutableArray<NamespaceOrTypeSymbol>>(builder.Count, ReadOnlyMemoryOfCharComparer.Instance);
+            result := new Dictionary<ReadOnlyMemory<char>, ImmutableArray<NamespaceOrTypeSymbol>>(builder.Count, ReadOnlyMemoryOfCharComparer.Instance);
             ImmutableArrayExtensions.CreateNameToMembersMap<ReadOnlyMemory<char>, NamespaceOrTypeSymbol, NamedTypeSymbol, NamespaceSymbol>(builder, result);
             builder.Free();
 
@@ -290,7 +290,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static void CheckMembers(NamespaceSymbol @namespace, Dictionary<ReadOnlyMemory<char>, ImmutableArray<NamespaceOrTypeSymbol>> result, BindingDiagnosticBag diagnostics)
         {
-            var memberOfArity = new Symbol[10];
+            memberOfArity := new Symbol[10];
             MergedNamespaceSymbol mergedAssemblyNamespace = null;
 
             if (@namespace.ContainingAssembly.Modules.Length > 1)
@@ -303,11 +303,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Array.Clear(memberOfArity, 0, memberOfArity.Length);
                 foreach (var symbol in result[name])
                 {
-                    var nts = symbol as SourceMemberContainerTypeSymbol;
+                    nts := symbol as SourceMemberContainerTypeSymbol;
                     // It should be impossible to have a type member of a source namespace symbol which is not a SourceMemberContainerTypeSymbol
                     Debug.Assert((object)nts != null || symbol is not TypeSymbol);
 
-                    var arity = ((object)nts != null) ? nts.Arity : 0;
+                    arity := ((object)nts != null) ? nts.Arity : 0;
                     if (arity >= memberOfArity.Length)
                     {
                         Array.Resize(ref memberOfArity, arity + 1);
@@ -315,7 +315,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     if (nts?.IsExtension == true) continue;
 
-                    var other = memberOfArity[arity];
+                    other := memberOfArity[arity];
 
                     if ((object)other == null && (object)mergedAssemblyNamespace != null)
                     {
@@ -328,7 +328,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                                 // It doesn't complain when source declares a type with the same name as
                                 // a namespace in added module, but complains when source declares a namespace
                                 // with the same name as a type in added module.
-                                var types = constituent.GetTypeMembers(symbol.Name, arity);
+                                types := constituent.GetTypeMembers(symbol.Name, arity);
 
                                 if (types.Length > 0)
                                 {
@@ -385,7 +385,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return false;
                 }
 
-                var leftTree = possibleFileLocalType.MergedDeclaration.Declarations[0].Location.SourceTree;
+                leftTree := possibleFileLocalType.MergedDeclaration.Declarations[0].Location.SourceTree;
                 if (otherSymbol is SourceNamedTypeSymbol { MergedDeclaration.NameLocations: var typeNameLocations })
                 {
                     return !typeNameLocations.Any(static (loc, leftTree) => (object)loc.SourceTree == leftTree, leftTree);
@@ -441,7 +441,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     foreach (var member in array)
                     {
-                        var type = member as NamedTypeSymbol;
+                        type := member as NamedTypeSymbol;
 
                         if ((object)type != null && type.SpecialType != SpecialType.None)
                         {
@@ -469,7 +469,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var declarationSyntaxRef = declaration.SyntaxReference;
+                declarationSyntaxRef := declaration.SyntaxReference;
                 if (declarationSyntaxRef.SyntaxTree != tree)
                 {
                     continue;
@@ -480,7 +480,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var syntax = NamespaceDeclarationSyntaxReference.GetSyntax(declarationSyntaxRef, cancellationToken);
+                syntax := NamespaceDeclarationSyntaxReference.GetSyntax(declarationSyntaxRef, cancellationToken);
                 if (syntax.FullSpan.IntersectsWith(definedWithinSpan.Value))
                 {
                     return true;

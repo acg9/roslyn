@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool forLowering = false)
         {
-            var builder = new DecisionDagBuilder(compilation, defaultLabel, forLowering, diagnostics);
+            builder := new DecisionDagBuilder(compilation, defaultLabel, forLowering, diagnostics);
             return builder.CreateDecisionDagForSwitchStatement(syntax, switchGoverningExpression, switchSections);
         }
 
@@ -103,7 +103,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool forLowering = false)
         {
-            var builder = new DecisionDagBuilder(compilation, defaultLabel, forLowering, diagnostics);
+            builder := new DecisionDagBuilder(compilation, defaultLabel, forLowering, diagnostics);
             return builder.CreateDecisionDagForSwitchExpression(syntax, switchExpressionInput, switchArms);
         }
 
@@ -121,7 +121,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BindingDiagnosticBag diagnostics,
             bool forLowering = false)
         {
-            var builder = new DecisionDagBuilder(compilation, defaultLabel: whenFalseLabel, forLowering, diagnostics);
+            builder := new DecisionDagBuilder(compilation, defaultLabel: whenFalseLabel, forLowering, diagnostics);
             return builder.CreateDecisionDagForIsPattern(syntax, inputExpression, pattern, hasUnionMatching, whenTrueLabel);
         }
 
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool hasUnionMatching,
             LabelSymbol whenTrueLabel)
         {
-            var rootIdentifier = BoundDagTemp.ForOriginalInput(inputExpression);
+            rootIdentifier := BoundDagTemp.ForOriginalInput(inputExpression);
 
             using var builder = TemporaryArray<StateForCase>.Empty;
             builder.Add(MakeTestsForPattern(index: 1, pattern.Syntax, rootIdentifier, pattern, hasUnionMatching, whenClause: null, whenTrueLabel));
@@ -145,7 +145,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression switchGoverningExpression,
             ImmutableArray<BoundSwitchSection> switchSections)
         {
-            var rootIdentifier = BoundDagTemp.ForOriginalInput(switchGoverningExpression);
+            rootIdentifier := BoundDagTemp.ForOriginalInput(switchGoverningExpression);
             int i = 0;
             using var builder = TemporaryArray<StateForCase>.GetInstance(switchSections.Length);
             foreach (BoundSwitchSection section in switchSections)
@@ -170,7 +170,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression switchExpressionInput,
             ImmutableArray<BoundSwitchExpressionArm> switchArms)
         {
-            var rootIdentifier = BoundDagTemp.ForOriginalInput(switchExpressionInput);
+            rootIdentifier := BoundDagTemp.ForOriginalInput(switchExpressionInput);
             int i = 0;
             using var builder = TemporaryArray<StateForCase>.GetInstance(switchArms.Length);
             foreach (BoundSwitchExpressionArm arm in switchArms)
@@ -205,7 +205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundPattern pattern,
             out ImmutableArray<BoundPatternBinding> bindings)
         {
-            var bindingsBuilder = ArrayBuilder<BoundPatternBinding>.GetInstance();
+            bindingsBuilder := ArrayBuilder<BoundPatternBinding>.GetInstance();
             Tests tests = MakeTestsAndBindings(input, pattern, bindingsBuilder);
             tests = SimplifyTestsAndBindings(tests, bindingsBuilder);
             bindings = bindingsBuilder.ToImmutableAndFree();
@@ -219,7 +219,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Now simplify the tests and bindings. We don't need anything in tests that does not
             // contribute to the result. This will, for example, permit us to match `(2, 3) is (2, _)` without
             // fetching `Item2` from the input.
-            var usedValues = PooledHashSet<BoundDagEvaluation>.GetInstance();
+            usedValues := PooledHashSet<BoundDagEvaluation>.GetInstance();
             foreach (BoundPatternBinding binding in bindingsBuilder)
             {
                 BoundDagTemp temp = binding.TempContainingValue;
@@ -229,15 +229,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var testsToSimplify = ArrayBuilder<Tests?>.GetInstance();
-            var testsToAssemble = ArrayBuilder<Tests>.GetInstance();
-            var testsSimplified = ArrayBuilder<Tests>.GetInstance();
+            testsToSimplify := ArrayBuilder<Tests?>.GetInstance();
+            testsToAssemble := ArrayBuilder<Tests>.GetInstance();
+            testsSimplified := ArrayBuilder<Tests>.GetInstance();
 
             testsToSimplify.Push(tests);
 
             do
             {
-                var current = testsToSimplify.Pop();
+                current := testsToSimplify.Pop();
 
                 switch (current)
                 {
@@ -276,12 +276,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                         break;
 
                     case null:
-                        var toAssemble = testsToAssemble.Pop();
+                        toAssemble := testsToAssemble.Pop();
                         switch (toAssemble)
                         {
                             case Tests.SequenceTests seq:
-                                var length = seq.RemainingTests.Length;
-                                var newSequence = ArrayBuilder<Tests>.GetInstance(length);
+                                length := seq.RemainingTests.Length;
+                                newSequence := ArrayBuilder<Tests>.GetInstance(length);
                                 for (int i = 0; i < length; i++)
                                 {
                                     newSequence.Add(testsSimplified.Pop());
@@ -304,7 +304,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             while (testsToSimplify.Count != 0);
 
-            var result = testsSimplified.Pop();
+            result := testsSimplified.Pop();
 
             if (!testsSimplified.IsEmpty || !testsToAssemble.IsEmpty)
             {
@@ -425,9 +425,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundDagTemp MakeUnionValue(BoundDagTemp input, BoundPropertySubpatternMember unionValue, out BoundDagEvaluation valueEvaluation)
         {
             Debug.Assert(unionValue.Symbol is PropertySymbol);
-            var property = (PropertySymbol)unionValue.Symbol;
+            property := (PropertySymbol)unionValue.Symbol;
             valueEvaluation = new BoundDagPropertyEvaluation(unionValue.Syntax, property, isLengthOrCount: false, OriginalInput(input, property));
-            var result = valueEvaluation.MakeResultTemp();
+            result := valueEvaluation.MakeResultTemp();
 
             Debug.Assert(IsUnionValue(result, out _));
             return result;
@@ -493,30 +493,30 @@ namespace Microsoft.CodeAnalysis.CSharp
             out TestInputOutputInfo outputInfo,
             ArrayBuilder<BoundPatternBinding> bindings)
         {
-            var syntax = pattern.Syntax;
-            var patternLength = pattern.Subpatterns.Length;
-            var getLengthProperty = (PropertySymbol)pattern.GetLengthMethod.AssociatedSymbol;
+            syntax := pattern.Syntax;
+            patternLength := pattern.Subpatterns.Length;
+            getLengthProperty := (PropertySymbol)pattern.GetLengthMethod.AssociatedSymbol;
             RoslynDebug.Assert(getLengthProperty.Type.SpecialType == SpecialType.System_Int32);
-            var getItemProperty = (PropertySymbol)pattern.GetItemMethod.AssociatedSymbol;
-            var iTupleType = getLengthProperty.ContainingType;
+            getItemProperty := (PropertySymbol)pattern.GetItemMethod.AssociatedSymbol;
+            iTupleType := getLengthProperty.ContainingType;
             RoslynDebug.Assert(iTupleType.Name == "ITuple");
-            var tests = ArrayBuilder<Tests>.GetInstance(4 + patternLength * 2);
+            tests := ArrayBuilder<Tests>.GetInstance(4 + patternLength * 2);
 
             inputInfo = MakeConvertToType(inputInfo, syntax, iTupleType, isExplicitTest: false, tests);
-            var valueAsITuple = PrepareForUnionValuePropertyMatching(ref inputInfo, tests);
+            valueAsITuple := PrepareForUnionValuePropertyMatching(ref inputInfo, tests);
             outputInfo = inputInfo;
 
-            var lengthEvaluation = new BoundDagPropertyEvaluation(syntax, getLengthProperty, isLengthOrCount: true, OriginalInput(valueAsITuple, getLengthProperty));
+            lengthEvaluation := new BoundDagPropertyEvaluation(syntax, getLengthProperty, isLengthOrCount: true, OriginalInput(valueAsITuple, getLengthProperty));
             tests.Add(new Tests.One(lengthEvaluation));
-            var lengthTemp = lengthEvaluation.MakeResultTemp();
+            lengthTemp := lengthEvaluation.MakeResultTemp();
             tests.Add(new Tests.One(new BoundDagValueTest(syntax, ConstantValue.Create(patternLength), lengthTemp)));
 
-            var getItemPropertyInput = OriginalInput(valueAsITuple, getItemProperty);
+            getItemPropertyInput := OriginalInput(valueAsITuple, getItemProperty);
             for (int i = 0; i < patternLength; i++)
             {
-                var indexEvaluation = new BoundDagIndexEvaluation(syntax, getItemProperty, i, getItemPropertyInput);
+                indexEvaluation := new BoundDagIndexEvaluation(syntax, getItemProperty, i, getItemPropertyInput);
                 tests.Add(new Tests.One(indexEvaluation));
-                var indexTemp = indexEvaluation.MakeResultTemp();
+                indexTemp := indexEvaluation.MakeResultTemp();
                 tests.Add(MakeTestsAndBindings(indexTemp, pattern.Subpatterns[i].Pattern, bindings));
             }
 
@@ -548,7 +548,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             bool isDerivedType(TypeSymbol possibleDerived, TypeSymbol possibleBase)
             {
-                var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                 return this._conversions.HasIdentityOrImplicitReferenceConversion(possibleDerived, possibleBase, ref discardedUseSiteInfo);
             }
         }
@@ -581,7 +581,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ArrayBuilder<BoundPatternBinding> bindings)
         {
             TypeSymbol? type = declaration.DeclaredType?.Type;
-            var tests = ArrayBuilder<Tests>.GetInstance(1);
+            tests := ArrayBuilder<Tests>.GetInstance(1);
 
             // Add a null and type test if needed.
             if (!declaration.IsVar)
@@ -609,7 +609,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             out TestInputOutputInfo output)
         {
             TypeSymbol type = typePattern.DeclaredType.Type;
-            var tests = ArrayBuilder<Tests>.GetInstance(4);
+            tests := ArrayBuilder<Tests>.GetInstance(4);
             output = MakeConvertToType(inputInfo: input, syntax: typePattern.Syntax, type: type, isExplicitTest: typePattern.IsExplicitNotNullTest, tests: tests);
             return Tests.AndSequence.Create(tests);
         }
@@ -752,7 +752,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (_forLowering)
                 {
                     BoundDagEvaluation hasValueEvaluation = new BoundDagPropertyEvaluation(unionValue.Syntax, hasValue, isLengthOrCount: false, OriginalInput(inputInfo.DagTemp, hasValue));
-                    var temp = hasValueEvaluation.MakeResultTemp();
+                    temp := hasValueEvaluation.MakeResultTemp();
                     Debug.Assert(IsUnionHasValue(temp, out _));
 
                     Tests test = MakeConstantTest(syntax, temp, sense ? ConstantValue.True : ConstantValue.False);
@@ -794,10 +794,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (_forLowering)
                     {
-                        var deconstructEvaluation = new BoundDagDeconstructEvaluation(syntax, tryGetValue, OriginalInput(inputInfo.DagTemp, tryGetValue));
+                        deconstructEvaluation := new BoundDagDeconstructEvaluation(syntax, tryGetValue, OriginalInput(inputInfo.DagTemp, tryGetValue));
                         tests.Add(new Tests.One(deconstructEvaluation));
 
-                        var boolResult = deconstructEvaluation.MakeReturnValueTemp();
+                        boolResult := deconstructEvaluation.MakeReturnValueTemp();
                         Debug.Assert(IsUnionTryGetValueReturn(boolResult, out _, out _, out _));
 
                         Tests test = MakeConstantTest(syntax, boolResult, ConstantValue.True);
@@ -805,12 +805,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         tests.Add(test);
 
-                        var outParameterTemp = deconstructEvaluation.MakeFirstOutParameterTemp();
+                        outParameterTemp := deconstructEvaluation.MakeFirstOutParameterTemp();
 
                         // Add type evaluation after return value test to separate result value from deconstruct evaluation
                         // This helps us unify the same value accessed through different Union APIs.
                         // See IsSameEntity/IsEqualEvaluation helpers.
-                        var typeEvaluation = new BoundDagTypeEvaluation(syntax, outParameterTemp.Type, outParameterTemp);
+                        typeEvaluation := new BoundDagTypeEvaluation(syntax, outParameterTemp.Type, outParameterTemp);
                         tests.Add(new Tests.One(typeEvaluation));
 
                         return (TestInputOutputInfo)typeEvaluation.MakeResultTemp();
@@ -828,7 +828,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!input.Type.Equals(type, TypeCompareKind.AllIgnoreOptions))
             {
                 TypeSymbol inputType = input.Type.StrippedType(); // since a null check has already been done
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
+                useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
                 Conversion conversion = _conversions.ClassifyBuiltInConversion(inputType, type, isChecked: false, ref useSiteInfo);
                 Debug.Assert(!conversion.IsUserDefined);
                 Debug.Assert(!conversion.IsUnion);
@@ -844,7 +844,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     tests.Add(new Tests.One(new BoundDagTypeTest(syntax, type, input)));
                 }
 
-                var evaluation = new BoundDagTypeEvaluation(syntax, type, input);
+                evaluation := new BoundDagTypeEvaluation(syntax, type, input);
                 inputInfo = (TestInputOutputInfo)evaluation.MakeResultTemp();
                 tests.Add(new Tests.One(evaluation));
             }
@@ -865,7 +865,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return tests;
                 }
 
-                var builder = ArrayBuilder<Tests>.GetInstance(2);
+                builder := ArrayBuilder<Tests>.GetInstance(2);
                 BoundDagTemp input = PrepareForUnionValuePropertyMatching(ref inputInfo, builder);
                 outputInfo = inputInfo;
                 builder.Add(new Tests.One(new BoundDagExplicitNullTest(constant.Syntax, input)));
@@ -881,7 +881,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 ConstantValue constantValue = constant.ConstantValue;
                 if (constantValue.IsString && (inputInfo.UnionValue?.Type ?? inputInfo.DagTemp.Type).IsSpanOrReadOnlySpanChar())
                 {
-                    var tests = ArrayBuilder<Tests>.GetInstance(2);
+                    tests := ArrayBuilder<Tests>.GetInstance(2);
                     BoundDagTemp input = PrepareForUnionValuePropertyMatching(ref inputInfo, tests);
                     output = inputInfo;
                     tests.Add(new Tests.One(new BoundDagValueTest(constant.Syntax, constantValue, input)));
@@ -889,7 +889,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var tests = ArrayBuilder<Tests>.GetInstance(2);
+                    tests := ArrayBuilder<Tests>.GetInstance(2);
                     Debug.Assert(constant.Value.Type is not null || constant.HasErrors);
                     if (constant.Value.Type is { } type)
                     {
@@ -926,8 +926,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             TypeSymbol inputTempType = inputInfo.GetInputType();
             RoslynDebug.Assert(inputTempType.IsErrorType() || recursive.HasErrors || recursive.InputType.IsErrorType() || inputTempType.Equals(recursive.InputType, TypeCompareKind.AllIgnoreOptions));
-            var inputType = recursive.DeclaredType?.Type ?? inputTempType.StrippedType();
-            var tests = ArrayBuilder<Tests>.GetInstance(5);
+            inputType := recursive.DeclaredType?.Type ?? inputTempType.StrippedType();
+            tests := ArrayBuilder<Tests>.GetInstance(5);
             inputInfo = MakeConvertToType(inputInfo, recursive.Syntax, inputType, isExplicitTest: recursive.IsExplicitNotNullTest, tests);
 
             if (!recursive.Deconstruction.IsDefault)
@@ -937,7 +937,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     BoundDagTemp input = PrepareForUnionValuePropertyMatching(ref inputInfo, tests);
                     MethodSymbol method = recursive.DeconstructMethod;
-                    var evaluation = new BoundDagDeconstructEvaluation(recursive.Syntax, method, OriginalInput(input, method));
+                    evaluation := new BoundDagDeconstructEvaluation(recursive.Syntax, method, OriginalInput(input, method));
                     tests.Add(new Tests.One(evaluation));
 
                     ArrayBuilder<BoundDagTemp> outParamTemps = evaluation.MakeOutParameterTemps();
@@ -968,9 +968,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                         BoundPattern pattern = recursive.Deconstruction[i].Pattern;
                         SyntaxNode syntax = pattern.Syntax;
                         FieldSymbol field = elements[i];
-                        var evaluation = new BoundDagFieldEvaluation(syntax, field, OriginalInput(input, field)); // fetch the ItemN field
+                        evaluation := new BoundDagFieldEvaluation(syntax, field, OriginalInput(input, field)); // fetch the ItemN field
                         tests.Add(new Tests.One(evaluation));
-                        var element = evaluation.MakeResultTemp();
+                        element := evaluation.MakeResultTemp();
                         tests.Add(MakeTestsAndBindings(element, pattern, bindings));
                     }
                 }
@@ -1047,14 +1047,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case PropertySymbol property:
                         {
-                            var eval = new BoundDagPropertyEvaluation(member.Syntax, property, isLengthOrCount, OriginalInput(input, property));
+                            eval := new BoundDagPropertyEvaluation(member.Syntax, property, isLengthOrCount, OriginalInput(input, property));
                             input = eval.MakeResultTemp();
                             evaluation = eval;
                             break;
                         }
                     case FieldSymbol field:
                         {
-                            var eval = new BoundDagFieldEvaluation(member.Syntax, field, OriginalInput(input, field));
+                            eval := new BoundDagFieldEvaluation(member.Syntax, field, OriginalInput(input, field));
                             input = eval.MakeResultTemp();
                             evaluation = eval;
                             break;
@@ -1070,7 +1070,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private Tests MakeTestsAndBindingsForNegatedPattern(TestInputOutputInfo input, BoundNegatedPattern neg, ArrayBuilder<BoundPatternBinding> bindings)
         {
-            var tests = MakeTestsAndBindings(input, neg.Negated, output: out _, bindings);
+            tests := MakeTestsAndBindings(input, neg.Negated, output: out _, bindings);
             return Tests.Not.Create(tests);
         }
 
@@ -1082,8 +1082,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             // Users (such as ourselves) can have many, many nested binary patterns. To avoid crashing, do left recursion manually.
 
-            var binaryPatternStack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
-            var currentNode = bin;
+            binaryPatternStack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
+            currentNode := bin;
 
             do
             {
@@ -1105,12 +1105,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Tests makeTestsAndBindingsForBinaryPattern(DecisionDagBuilder @this, Tests leftTests, TestInputOutputInfo leftOutputInfo, TestInputOutputInfo inputInfo, BoundBinaryPattern bin, out TestInputOutputInfo outputInfo, ArrayBuilder<BoundPatternBinding> bindings)
             {
-                var builder = ArrayBuilder<Tests>.GetInstance(2);
+                builder := ArrayBuilder<Tests>.GetInstance(2);
                 if (bin.Disjunction)
                 {
                     builder.Add(leftTests);
                     builder.Add(@this.MakeTestsAndBindings(inputInfo, bin.Right, output: out _, bindings));
-                    var result = Tests.OrSequence.Create(builder);
+                    result := Tests.OrSequence.Create(builder);
                     if (bin.InputType.Equals(bin.NarrowedType))
                     {
                         outputInfo = inputInfo;
@@ -1123,7 +1123,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         // https://github.com/dotnet/roslyn/issues/82636: Is there an advantage to use TryGetValue here? 
                         BoundDagTemp input = PrepareForUnionValuePropertyMatching(ref inputInfo, builder);
-                        var evaluation = new BoundDagTypeEvaluation(bin.Syntax, bin.NarrowedType, input);
+                        evaluation := new BoundDagTypeEvaluation(bin.Syntax, bin.NarrowedType, input);
                         outputInfo = (TestInputOutputInfo)evaluation.MakeResultTemp();
                         builder.Add(new Tests.One(evaluation));
                         return Tests.AndSequence.Create(builder);
@@ -1148,13 +1148,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundRelationalPattern rel,
             out TestInputOutputInfo outputInfo)
         {
-            var type = rel.Value.Type ?? inputInfo.GetInputType();
+            type := rel.Value.Type ?? inputInfo.GetInputType();
             Debug.Assert(type is { });
             // check if the test is always true or always false
-            var tests = ArrayBuilder<Tests>.GetInstance(2);
+            tests := ArrayBuilder<Tests>.GetInstance(2);
             outputInfo = MakeConvertToType(inputInfo, rel.Syntax, type, isExplicitTest: false, tests);
             BoundDagTemp output = PrepareForUnionValuePropertyMatching(ref outputInfo, tests);
-            var fac = ValueSetFactory.ForInput(output);
+            fac := ValueSetFactory.ForInput(output);
             IConstantValueSet? values = fac?.Related(rel.Relation.Operator(), rel.ConstantValue);
             if (values?.IsEmpty == true)
             {
@@ -1192,13 +1192,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // Compute the bound decision dag corresponding to each node of decisionDag, and store
             // it in node.Dag.
-            var defaultDecision = new BoundLeafDecisionDagNode(syntax, _defaultLabel);
+            defaultDecision := new BoundLeafDecisionDagNode(syntax, _defaultLabel);
             ComputeBoundDecisionDagNodes(decisionDag, defaultDecision);
 
-            var rootDecisionDagNode = decisionDag.RootNode.Dag;
+            rootDecisionDagNode := decisionDag.RootNode.Dag;
             RoslynDebug.Assert(rootDecisionDagNode != null);
             Debug.Assert(_suitableForLowering || !_forLowering);
-            var boundDecisionDag = new BoundDecisionDag(rootDecisionDagNode.Syntax, rootDecisionDagNode, _suitableForLowering);
+            boundDecisionDag := new BoundDecisionDag(rootDecisionDagNode.Syntax, rootDecisionDagNode, _suitableForLowering);
 
             // Now go and clean up all the dag states we created
             foreach (var kvp in uniqueState)
@@ -1212,13 +1212,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
             // Note that this uses the custom equality in `BoundDagEvaluation`
             // to make "equivalent" evaluation nodes share the same ID.
-            var nextTempNumber = 0;
-            var tempIdentifierMap = PooledDictionary<BoundDagEvaluation, int>.GetInstance();
+            nextTempNumber := 0;
+            tempIdentifierMap := PooledDictionary<BoundDagEvaluation, int>.GetInstance();
 
-            var sortedBoundDagNodes = boundDecisionDag.TopologicallySortedNodes;
+            sortedBoundDagNodes := boundDecisionDag.TopologicallySortedNodes;
             for (int i = 0; i < sortedBoundDagNodes.Length; i++)
             {
-                var node = sortedBoundDagNodes[i];
+                node := sortedBoundDagNodes[i];
                 node.Id = i;
                 switch (node)
                 {
@@ -1272,7 +1272,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // for each one. That is why we have to use an equivalence relation in the dictionary `uniqueState`.
             DagState uniquifyState(FrozenArrayBuilder<StateForCase> cases, ImmutableDictionary<BoundDagTemp, IValueSet> remainingValues)
             {
-                var state = DagState.GetInstance(cases, remainingValues);
+                state := DagState.GetInstance(cases, remainingValues);
                 if (uniqueState.TryGetValue(state, out DagState? existingState))
                 {
                     // We found an existing state that matches. Return the state we just created back to the pool and
@@ -1283,14 +1283,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     // Update its set of possible remaining values of each temp by taking the union of the sets on each
                     // incoming edge.
-                    var newRemainingValues = ImmutableDictionary.CreateBuilder<BoundDagTemp, IValueSet>();
+                    newRemainingValues := ImmutableDictionary.CreateBuilder<BoundDagTemp, IValueSet>();
                     foreach (var (dagTemp, valuesForTemp) in remainingValues)
                     {
                         // If one incoming edge does not have a set of possible values for the temp,
                         // that means the temp can take on any value of its type.
                         if (existingState.RemainingValues.TryGetValue(dagTemp, out var existingValuesForTemp))
                         {
-                            var newExistingValuesForTemp = existingValuesForTemp.Union(valuesForTemp);
+                            newExistingValuesForTemp := existingValuesForTemp.Union(valuesForTemp);
                             newRemainingValues.Add(dagTemp, newExistingValuesForTemp);
                         }
                     }
@@ -1316,10 +1316,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             // Simplify the initial state based on impossible or earlier matched cases
-            var rewrittenCases = ArrayBuilder<StateForCase>.GetInstance(casesForRootNode.Count);
+            rewrittenCases := ArrayBuilder<StateForCase>.GetInstance(casesForRootNode.Count);
             foreach (var state in casesForRootNode)
             {
-                var rewrittenCase = state.RewriteNestedLengthTests();
+                rewrittenCase := state.RewriteNestedLengthTests();
                 if (rewrittenCase.IsImpossible)
                     continue;
                 rewrittenCases.Add(rewrittenCase);
@@ -1363,7 +1363,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     {
                         // There is a when clause to evaluate.
                         // In case the when clause fails, we prepare for the remaining cases.
-                        var stateWhenFails = state.Cases.RemoveAt(0);
+                        stateWhenFails := state.Cases.RemoveAt(0);
                         state.FalseBranch = uniquifyState(stateWhenFails, state.RemainingValues);
                     }
                 }
@@ -1406,10 +1406,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (result.TryGetTopologicallySortedReachableStates(out ImmutableArray<DagState> states))
                 {
-                    var tempToIndex = PooledDictionary<BoundDagTemp, int>.GetInstance();
+                    tempToIndex := PooledDictionary<BoundDagTemp, int>.GetInstance();
                     int nextTempIndex = 0;
-                    var stateToIndex = PooledDictionary<DagState, int>.GetInstance();
-                    var usedTempsPerState = ArrayBuilder<BitVector>.GetInstance(states.Length, BitVector.Empty);
+                    stateToIndex := PooledDictionary<DagState, int>.GetInstance();
+                    usedTempsPerState := ArrayBuilder<BitVector>.GetInstance(states.Length, BitVector.Empty);
                     BitVector unnecessaryStates = BitVector.Empty;
 
                     bool changedStates = false;
@@ -1420,7 +1420,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         DagState? trueBranch = state.TrueBranch;
                         DagState? falseBranch = state.FalseBranch;
 
-                        var usedTemps = BitVector.Empty;
+                        usedTemps := BitVector.Empty;
 
                         if (state.Cases is [{ PatternIsSatisfied: true } stateForCase, ..])
                         {
@@ -1595,14 +1595,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             // We "intern" the dag nodes, so that we only have a single object representing one
             // semantic node. We do this because different states may end up mapping to the same
             // set of successor states. In this case we merge them when producing the bound state machine.
-            var uniqueNodes = PooledDictionary<BoundDecisionDagNode, BoundDecisionDagNode>.GetInstance();
+            uniqueNodes := PooledDictionary<BoundDecisionDagNode, BoundDecisionDagNode>.GetInstance();
             BoundDecisionDagNode uniqifyDagNode(BoundDecisionDagNode node) => uniqueNodes.GetOrAdd(node, node);
 
             _ = uniqifyDagNode(defaultDecision);
 
             for (int i = sortedStates.Length - 1; i >= 0; i--)
             {
-                var state = sortedStates[i];
+                state := sortedStates[i];
                 if (state.Cases.Count == 0)
                 {
                     state.Dag = defaultDecision;
@@ -1691,9 +1691,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             out ImmutableDictionary<BoundDagTemp, IValueSet> whenFalseValues,
             ref bool foundExplicitNullTest)
         {
-            var cases = state.Cases;
-            var whenTrueBuilder = ArrayBuilder<StateForCase>.GetInstance(cases.Count);
-            var whenFalseBuilder = ArrayBuilder<StateForCase>.GetInstance(cases.Count);
+            cases := state.Cases;
+            whenTrueBuilder := ArrayBuilder<StateForCase>.GetInstance(cases.Count);
+            whenFalseBuilder := ArrayBuilder<StateForCase>.GetInstance(cases.Count);
             (whenTrueValues, whenFalseValues, bool whenTruePossible, bool whenFalsePossible) = SplitValues(state.RemainingValues, test);
             // whenTruePossible means the test could possibly have succeeded.  whenFalsePossible means it could possibly have failed.
             // Tests that are either impossible or tautological (i.e. either of these false) given
@@ -1756,14 +1756,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool falsePossible)
             resultForRelation(BinaryOperatorKind relation, ConstantValue value)
             {
-                var input = test.Input;
+                input := test.Input;
                 IConstantValueSetFactory? valueFac = ValueSetFactory.ForInput(input);
                 if (valueFac == null || value.IsBad)
                 {
                     // If it is a type we don't track yet, assume all values are possible
                     return (values, values, true, true);
                 }
-                var fromTestPassing = valueFac.Related(relation.Operator(), value);
+                fromTestPassing := valueFac.Related(relation.Operator(), value);
                 (var whenTrueValues, var whenFalseValues, fromTestPassing, var fromTestFailing) = splitValues(values, input, fromTestPassing);
                 return (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty, !fromTestFailing.IsEmpty);
             }
@@ -1775,14 +1775,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             TValueSet fromTestFailing)
             splitValues<TValueSet>(ImmutableDictionary<BoundDagTemp, IValueSet> values, BoundDagTemp input, TValueSet fromTestPassing) where TValueSet : IValueSet
             {
-                var fromTestFailing = (TValueSet)fromTestPassing.Complement();
+                fromTestFailing := (TValueSet)fromTestPassing.Complement();
                 if (values.TryGetValue(input, out IValueSet? tempValuesBeforeTest))
                 {
                     fromTestPassing = (TValueSet)fromTestPassing.Intersect(tempValuesBeforeTest);
                     fromTestFailing = (TValueSet)fromTestFailing.Intersect(tempValuesBeforeTest);
                 }
-                var whenTrueValues = values.SetItem(input, fromTestPassing);
-                var whenFalseValues = values.SetItem(input, fromTestFailing);
+                whenTrueValues := values.SetItem(input, fromTestPassing);
+                whenFalseValues := values.SetItem(input, fromTestFailing);
                 return (whenTrueValues, whenFalseValues, fromTestPassing, fromTestFailing);
             }
 
@@ -1795,12 +1795,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!_forLowering && ValueSetFactory.TypeUnionValueSetFactoryForInput(typeTest.Input) is { } factory)
                 {
-                    var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
-                    var fromTestPassing = factory.FromTypeMatch(typeTest.Type, _conversions, ref useSiteInfo);
+                    useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
+                    fromTestPassing := factory.FromTypeMatch(typeTest.Type, _conversions, ref useSiteInfo);
                     if (!fromTestPassing.IsEmpty(ref useSiteInfo)) // Otherwise we must have reported ERR_PatternWrongType during binding, let's avoid cascading errors
                     {
                         (var whenTrueValues, var whenFalseValues, fromTestPassing, var fromTestFailing) = splitValues(values, typeTest.Input, fromTestPassing);
-                        var result = (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
+                        result := (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
                         _diagnostics.Add(typeTest.Syntax, useSiteInfo);
                         _suitableForLowering = false;
                         return result;
@@ -1821,10 +1821,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!_forLowering && ValueSetFactory.TypeUnionValueSetFactoryForInput(nonNullTest.Input) is { } factory)
                 {
-                    var fromTestPassing = factory.FromNonNullMatch(_conversions);
-                    var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
+                    fromTestPassing := factory.FromNonNullMatch(_conversions);
+                    useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
                     (var whenTrueValues, var whenFalseValues, fromTestPassing, var fromTestFailing) = splitValues(values, nonNullTest.Input, fromTestPassing);
-                    var result = (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
+                    result := (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
                     _diagnostics.Add(nonNullTest.Syntax, useSiteInfo);
                     _suitableForLowering = false;
                     return result;
@@ -1842,10 +1842,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (!_forLowering && ValueSetFactory.TypeUnionValueSetFactoryForInput(nullTest.Input) is { } factory)
                 {
-                    var fromTestPassing = factory.FromNullMatch(_conversions);
-                    var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
+                    fromTestPassing := factory.FromNullMatch(_conversions);
+                    useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
                     (var whenTrueValues, var whenFalseValues, fromTestPassing, var fromTestFailing) = splitValues(values, nullTest.Input, fromTestPassing);
-                    var result = (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
+                    result := (whenTrueValues, whenFalseValues, !fromTestPassing.IsEmpty(ref useSiteInfo), !fromTestFailing.IsEmpty(ref useSiteInfo));
                     _diagnostics.Add(nullTest.Syntax, useSiteInfo);
                     _suitableForLowering = false;
                     return result;
@@ -1889,10 +1889,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         private FrozenArrayBuilder<StateForCase> RemoveEvaluation(DagState state, BoundDagEvaluation e)
         {
             FrozenArrayBuilder<StateForCase> cases = state.Cases;
-            var builder = ArrayBuilder<StateForCase>.GetInstance(cases.Count);
+            builder := ArrayBuilder<StateForCase>.GetInstance(cases.Count);
             foreach (var stateForCase in cases)
             {
-                var remainingTests = stateForCase.RemainingTests.RemoveEvaluation(this, state, stateForCase.Bindings, e);
+                remainingTests := stateForCase.RemainingTests.RemoveEvaluation(this, state, stateForCase.Bindings, e);
                 if (remainingTests is Tests.False)
                 {
                     // This can occur in error cases like `e is not int x` where there is a trailing evaluation
@@ -2026,10 +2026,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                             {
                                 // We check test.Equals(other) to handle "bad" constant values
                                 bool sameTest = test.Equals(other);
-                                var whenTrueConstantValueSet = whenTrueValues as IConstantValueSet;
+                                whenTrueConstantValueSet := whenTrueValues as IConstantValueSet;
                                 trueTestPermitsTrueOther = whenTrueConstantValueSet?.Any(relation, value) ?? true;
                                 trueTestImpliesTrueOther = sameTest || trueTestPermitsTrueOther && (whenTrueConstantValueSet?.All(relation, value) ?? false);
-                                var whenFalseConstantValueSet = whenFalseValues as IConstantValueSet;
+                                whenFalseConstantValueSet := whenFalseValues as IConstantValueSet;
                                 falseTestPermitsTrueOther = !sameTest && (whenFalseConstantValueSet?.Any(relation, value) ?? true);
                                 falseTestImpliesTrueOther = falseTestPermitsTrueOther && (whenFalseConstantValueSet?.All(relation, value) ?? false);
                             }
@@ -2077,7 +2077,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol t1Type,
             TypeSymbol t2Type)
         {
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(_diagnostics, _compilation.Assembly);
             ConstantValue? matches = ExpressionOfTypeMatchesPatternTypeForLearningFromSuccessfulTypeTest(_conversions, t1Type, t2Type, ref useSiteInfo);
             if (matches == ConstantValue.False)
             {
@@ -2761,7 +2761,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return "(the dag contains a cycle!)";
                 }
 
-                var stateIdentifierMap = PooledDictionary<DagState, int>.GetInstance();
+                stateIdentifierMap := PooledDictionary<DagState, int>.GetInstance();
                 for (int i = 0; i < allStates.Length; i++)
                 {
                     stateIdentifierMap.Add(allStates[i], i);
@@ -2795,15 +2795,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return name;
                 }
 
-                var resultBuilder = PooledStringBuilder.GetInstance();
-                var result = resultBuilder.Builder;
+                resultBuilder := PooledStringBuilder.GetInstance();
+                result := resultBuilder.Builder;
 
                 foreach (DagState state in allStates)
                 {
                     bool isFail = state.Cases.Count == 0;
                     bool starred = isFail || state.Cases.First().PatternIsSatisfied;
                     result.Append($"{(starred ? "*" : "")}State " + stateIdentifierMap[state] + (isFail ? " FAIL" : ""));
-                    var remainingValues = state.RemainingValues.Select(kvp => $"{tempName(kvp.Key)}:{kvp.Value}");
+                    remainingValues := state.RemainingValues.Select(kvp => $"{tempName(kvp.Key)}:{kvp.Value}");
                     result.AppendLine($"{(remainingValues.Any() ? " REMAINING " + string.Join(" ", remainingValues) : "")}");
 
                     foreach (StateForCase cd in state.Cases)
@@ -2833,10 +2833,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 string dumpStateForCase(StateForCase cd)
                 {
-                    var instance = PooledStringBuilder.GetInstance();
+                    instance := PooledStringBuilder.GetInstance();
                     StringBuilder builder = instance.Builder;
                     builder.Append($"{cd.Index}. [{cd.Syntax}] {(cd.PatternIsSatisfied ? "MATCH" : cd.RemainingTests.Dump(dumpDagTest))}");
-                    var bindings = cd.Bindings.Select(bpb => $"{(bpb.VariableAccess is BoundLocal l ? l.LocalSymbol.Name : "<var>")}={tempName(bpb.TempContainingValue)}");
+                    bindings := cd.Bindings.Select(bpb => $"{(bpb.VariableAccess is BoundLocal l ? l.LocalSymbol.Name : "<var>")}={tempName(bpb.TempContainingValue)}");
                     if (bindings.Any())
                     {
                         builder.Append(" BIND[");
@@ -2944,7 +2944,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public FrozenArrayBuilder<T> RemoveAt(int index)
             {
-                var builder = ArrayBuilder<T>.GetInstance(this.Count - 1);
+                builder := ArrayBuilder<T>.GetInstance(this.Count - 1);
 
                 for (int i = 0; i < index; i++)
                     builder.Add(this[i]);
@@ -3005,7 +3005,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             /// </summary>
             public static DagState GetInstance(FrozenArrayBuilder<StateForCase> cases, ImmutableDictionary<BoundDagTemp, IValueSet> remainingValues)
             {
-                var dagState = s_dagStatePool.Allocate();
+                dagState := s_dagStatePool.Allocate();
 
 #if DEBUG
 
@@ -3088,7 +3088,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public int GetHashCode(DagState x)
             {
-                var hashCode = 0;
+                hashCode := 0;
                 foreach (var value in x.Cases)
                     hashCode = Hash.Combine(value.GetHashCode(), hashCode);
 
@@ -3243,7 +3243,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return rewriteResult.FinalResult;
                 }
 
-                var finalResult = ArrayBuilder<Tests>.GetInstance(2);
+                finalResult := ArrayBuilder<Tests>.GetInstance(2);
 
                 finalResult.Add(rewriteResult.FinalResult);
                 AddBindingsPatchingAssignments(bindings, tempMap, rewriteResult.FinalTempMap, finalResult);
@@ -3493,7 +3493,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     static Tests? knownResult(BinaryOperatorKind relation, ConstantValue constant, int offset)
                     {
-                        var fac = ValueSetFactory.ForLength;
+                        fac := ValueSetFactory.ForLength;
                         IConstantValueSet possibleValues = fac.Related(BinaryOperatorKind.LessThanOrEqual, int.MaxValue - offset);
                         IConstantValueSet lengthValues = fac.Related(relation, constant);
                         if (((IConstantValueSet)lengthValues.Intersect(possibleValues)).IsEmpty)
@@ -3531,15 +3531,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                         return new RemoveEvaluationAndUpdateTempReferencesResult(this, tempMap, conditionToUseFinalResult: null, tempsUpdatedResult: null);
                     }
 
-                    var savedTempMap = tempMap;
-                    var updatedTest = UpdateDagTempReferences(Test, ref tempMap);
+                    savedTempMap := tempMap;
+                    updatedTest := UpdateDagTempReferences(Test, ref tempMap);
                     if (e.Equals(updatedTest))
                     {
                         return new RemoveEvaluationAndUpdateTempReferencesResult(Tests.True.Instance, tempMap, conditionToUseFinalResult: null, tempsUpdatedResult: null);
                     }
 
-                    var tempsUpdatedResultTempMap = tempMap;
-                    var tempsUpdatedResult = this;
+                    tempsUpdatedResultTempMap := tempMap;
+                    tempsUpdatedResult := this;
 
                     if (!Test.Equals(updatedTest))
                     {
@@ -3668,7 +3668,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 private static void AddTempReplacement(ref ImmutableDictionary<BoundDagTemp, BoundDagTemp> tempMap, BoundDagTemp oldTemp, BoundDagTemp newTemp)
                 {
-                    var current = newTemp;
+                    current := newTemp;
 
                     do
                     {
@@ -3760,7 +3760,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         if (trueTestImpliesTrueOther) // Only then there is a guarantee that the type check won't be necessary and the second TryGetValue call can be and will be completely omitted
                         {
                             // Change typeEval to use input of e1 instead, this will allow us to avoid calling a different Union API to get this value
-                            var newTypeEval = typeEval.Update(e1.Input);
+                            newTypeEval := typeEval.Update(e1.Input);
 
                             BoundDagTemp oldTemp = typeEval.MakeResultTemp();
                             BoundDagTemp newTemp = newTypeEval.MakeResultTemp();
@@ -3810,7 +3810,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             if (s1Index < 0 != s2Index < 0)
                             {
                                 Debug.Assert(state.RemainingValues.ContainsKey(s1LengthTemp));
-                                var lengthValues = (IConstantValueSet<int>)state.RemainingValues[s1LengthTemp];
+                                lengthValues := (IConstantValueSet<int>)state.RemainingValues[s1LengthTemp];
                                 // We do not expect an empty set here because an indexer evaluation is always preceded by
                                 // a length test of which an impossible match would have made the rest of the tests unreachable.
                                 Debug.Assert(!lengthValues.IsEmpty);
@@ -3865,7 +3865,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                 return eval;
                                             }
 
-                                            var updated = eval.Update(replacement);
+                                            updated := eval.Update(replacement);
                                             AddResultTempReplacement(ref tempMap, eval, updated);
                                             return updated;
                                         }
@@ -3882,7 +3882,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                 lengthReplacement = indexer.LengthTemp;
                                             }
 
-                                            var indexerEvaluation = indexer.Update(lengthReplacement, inputReplacement);
+                                            indexerEvaluation := indexer.Update(lengthReplacement, inputReplacement);
                                             AddResultTempReplacement(ref tempMap, indexer, indexerEvaluation);
                                             return indexerEvaluation;
                                         }
@@ -3898,7 +3898,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                 lengthReplacement = slice.LengthTemp;
                                             }
 
-                                            var sliceEvaluation = slice.Update(lengthReplacement, inputReplacement);
+                                            sliceEvaluation := slice.Update(lengthReplacement, inputReplacement);
                                             AddResultTempReplacement(ref tempMap, slice, sliceEvaluation);
                                             return sliceEvaluation;
                                         }
@@ -3909,7 +3909,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                 return test;
                                             }
 
-                                            var assignmentEvaluation = assignment.Update(inputReplacement);
+                                            assignmentEvaluation := assignment.Update(inputReplacement);
                                             return assignmentEvaluation;
                                         }
                                     case BoundDagDeconstructEvaluation deconstruct:
@@ -3919,7 +3919,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                                 return test;
                                             }
 
-                                            var deconstructEvaluation = deconstruct.Update(replacement);
+                                            deconstructEvaluation := deconstruct.Update(replacement);
                                             AddOutParameterTempsReplacement(ref tempMap, deconstruct, deconstructEvaluation);
                                             return deconstructEvaluation;
                                         }
@@ -3967,7 +3967,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 };
                 private static ArrayBuilder<Tests> NegateSequenceElements(ImmutableArray<Tests> seq)
                 {
-                    var builder = ArrayBuilder<Tests>.GetInstance(seq.Length);
+                    builder := ArrayBuilder<Tests>.GetInstance(seq.Length);
                     foreach (var t in seq)
                         builder.Add(Not.Create(t));
 
@@ -4022,16 +4022,16 @@ namespace Microsoft.CodeAnalysis.CSharp
                     out Tests whenFalse,
                     ref bool foundExplicitNullTest)
                 {
-                    var testsToFilter = ArrayBuilder<Tests?>.GetInstance();
-                    var testsToAssemble = ArrayBuilder<SequenceTests>.GetInstance();
-                    var trueTests = ArrayBuilder<Tests>.GetInstance();
-                    var falseTests = ArrayBuilder<Tests>.GetInstance();
+                    testsToFilter := ArrayBuilder<Tests?>.GetInstance();
+                    testsToAssemble := ArrayBuilder<SequenceTests>.GetInstance();
+                    trueTests := ArrayBuilder<Tests>.GetInstance();
+                    falseTests := ArrayBuilder<Tests>.GetInstance();
 
                     testsToFilter.Push(this);
 
                     do
                     {
-                        var current = testsToFilter.Pop();
+                        current := testsToFilter.Pop();
 
                         switch (current)
                         {
@@ -4046,7 +4046,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 break;
 
                             case null:
-                                var toAssemble = testsToAssemble.Pop();
+                                toAssemble := testsToAssemble.Pop();
                                 assemble(toAssemble, trueTests);
                                 assemble(toAssemble, falseTests);
                                 break;
@@ -4077,8 +4077,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     static void assemble(SequenceTests toAssemble, ArrayBuilder<Tests> tests)
                     {
-                        var length = toAssemble.RemainingTests.Length;
-                        var newSequence = ArrayBuilder<Tests>.GetInstance(length, null!);
+                        length := toAssemble.RemainingTests.Length;
+                        newSequence := ArrayBuilder<Tests>.GetInstance(length, null!);
                         for (int i = length - 1; i >= 0; i--)
                         {
                             newSequence[i] = tests.Pop();
@@ -4096,13 +4096,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 protected sealed override RemoveEvaluationAndUpdateTempReferencesResult RemoveEvaluationAndUpdateTempReferencesCore(DecisionDagBuilder dagBuilder, DagState state, ImmutableArray<BoundPatternBinding> bindings, ImmutableDictionary<BoundDagTemp, BoundDagTemp> tempMap, BoundDagEvaluation e)
                 {
-                    var testsToRewrite = ArrayBuilder<(Tests? Tests, bool SkipRewrite)>.GetInstance();
+                    testsToRewrite := ArrayBuilder<(Tests? Tests, bool SkipRewrite)>.GetInstance();
                     var testsToAssemble = ArrayBuilder<(
                                                         ReassembleKind Kind,
                                                         int ChildCount,
                                                         ImmutableDictionary<BoundDagTemp, BoundDagTemp> TempMapToRestore
                                                        )>.GetInstance();
-                    var testsRewritten = ArrayBuilder<Tests>.GetInstance();
+                    testsRewritten := ArrayBuilder<Tests>.GetInstance();
 
                     testsToRewrite.Push((this, SkipRewrite: false));
 
@@ -4127,7 +4127,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             case null:
                                 {
                                     var (kind, childCount, tempMapToRestore) = testsToAssemble.Pop();
-                                    var newSequence = ArrayBuilder<Tests>.GetInstance(childCount);
+                                    newSequence := ArrayBuilder<Tests>.GetInstance(childCount);
                                     newSequence.Count = childCount;
                                     for (int i = childCount - 1; i >= 0; i--)
                                     {
@@ -4181,7 +4181,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     while (testsToRewrite.Count != 0);
 
-                    var result = testsRewritten.Pop();
+                    result := testsRewritten.Pop();
 
                     if (!testsRewritten.IsEmpty || !testsToAssemble.IsEmpty)
                     {
@@ -4210,7 +4210,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                         var (_, childCount, tempMapToRestore) = testsToAssemble.Peek();
 
-                        var leftToRewriteBuilder = ArrayBuilder<Tests>.GetInstance();
+                        leftToRewriteBuilder := ArrayBuilder<Tests>.GetInstance();
                         popAndAddChildrenLeftToRewrite(leftToRewriteBuilder);
                         Debug.Assert(leftToRewriteBuilder.Count < childCount);
 
@@ -4321,15 +4321,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 public sealed override Tests RewriteNestedLengthTests()
                 {
-                    var testsToRewrite = ArrayBuilder<Tests?>.GetInstance();
-                    var testsToAssemble = ArrayBuilder<SequenceTests>.GetInstance();
-                    var testsRewritten = ArrayBuilder<Tests>.GetInstance();
+                    testsToRewrite := ArrayBuilder<Tests?>.GetInstance();
+                    testsToAssemble := ArrayBuilder<SequenceTests>.GetInstance();
+                    testsRewritten := ArrayBuilder<Tests>.GetInstance();
 
                     testsToRewrite.Push(this);
 
                     do
                     {
-                        var current = testsToRewrite.Pop();
+                        current := testsToRewrite.Pop();
 
                         switch (current)
                         {
@@ -4340,9 +4340,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 break;
 
                             case null:
-                                var toAssemble = testsToAssemble.Pop();
-                                var length = toAssemble.RemainingTests.Length;
-                                var newSequence = ArrayBuilder<Tests>.GetInstance(length);
+                                toAssemble := testsToAssemble.Pop();
+                                length := toAssemble.RemainingTests.Length;
+                                newSequence := ArrayBuilder<Tests>.GetInstance(length);
                                 for (int i = 0; i < length; i++)
                                 {
                                     newSequence.Add(testsRewritten.Pop());
@@ -4358,7 +4358,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     while (testsToRewrite.Count != 0);
 
-                    var result = testsRewritten.Pop();
+                    result := testsRewritten.Pop();
 
                     if (!testsRewritten.IsEmpty || !testsToAssemble.IsEmpty)
                     {
@@ -4382,16 +4382,16 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     Debug.Assert(obj is SequenceTests);
 
-                    var tests1 = ArrayBuilder<Tests>.GetInstance();
-                    var tests2 = ArrayBuilder<Tests>.GetInstance();
+                    tests1 := ArrayBuilder<Tests>.GetInstance();
+                    tests2 := ArrayBuilder<Tests>.GetInstance();
 
                     tests1.AddRange(this.RemainingTests);
                     tests2.AddRange(((SequenceTests)obj).RemainingTests);
 
                     do
                     {
-                        var t1 = tests1.Pop();
-                        var t2 = tests2.Pop();
+                        t1 := tests1.Pop();
+                        t2 := tests2.Pop();
 
                         if (t1 is SequenceTests sequence)
                         {
@@ -4458,12 +4458,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
 
                     int value = Hash.Combine(this.RemainingTests.Length, this.GetType().GetHashCode());
-                    var tests = ArrayBuilder<Tests>.GetInstance();
+                    tests := ArrayBuilder<Tests>.GetInstance();
                     tests.AddRange(this.RemainingTests);
 
                     do
                     {
-                        var t = tests.Pop();
+                        t := tests.Pop();
 
                         if (t is SequenceTests sequence)
                         {
@@ -4505,7 +4505,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 public sealed override BoundDagTest ComputeSelectedTest(bool forLowering, ref bool suitableForLowering)
                 {
                     Tests firstTest;
-                    var current = this;
+                    current := this;
 
                     while (true)
                     {
@@ -4546,7 +4546,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (t1 is True) return t2;
                     if (t1 is False) return t1;
                     Debug.Assert(t2 is not (True or False));
-                    var builder = ArrayBuilder<Tests>.GetInstance(2);
+                    builder := ArrayBuilder<Tests>.GetInstance(2);
                     builder.Add(t1);
                     builder.Add(t2);
                     return Create(builder);
@@ -4564,7 +4564,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 remainingTests.Free();
                                 return f;
                             case AndSequence seq:
-                                var testsToInsert = seq.RemainingTests;
+                                testsToInsert := seq.RemainingTests;
                                 remainingTests.RemoveAt(i);
                                 for (int j = 0, n = testsToInsert.Length; j < n; j++)
                                     remainingTests.Insert(i + j, testsToInsert[j]);
@@ -4652,7 +4652,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (t1 is True) return t1;
                     if (t1 is False) return t2;
                     Debug.Assert(t2 is not (True or False));
-                    var builder = ArrayBuilder<Tests>.GetInstance(2);
+                    builder := ArrayBuilder<Tests>.GetInstance(2);
                     builder.Add(t1);
                     builder.Add(t2);
                     return Create(builder);
@@ -4671,7 +4671,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 return t;
                             case OrSequence seq:
                                 remainingTests.RemoveAt(i);
-                                var testsToInsert = seq.RemainingTests;
+                                testsToInsert := seq.RemainingTests;
                                 for (int j = 0, n = testsToInsert.Length; j < n; j++)
                                     remainingTests.Insert(i + j, testsToInsert[j]);
                                 break;

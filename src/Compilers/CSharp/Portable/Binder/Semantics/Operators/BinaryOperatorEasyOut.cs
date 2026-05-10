@@ -265,7 +265,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return BinaryOperatorKind.Error;
                 }
 
-                var result = BinaryOperatorKind.Error;
+                result := BinaryOperatorKind.Error;
 
                 // kind.OperatorIndex() collapses '&' and '&&' (and '|' and '||').  To correct
                 // this problem, we handle kinds satisfying IsLogical() separately.  Fortunately,
@@ -285,13 +285,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void BinaryOperatorEasyOut(BinaryOperatorKind kind, BoundExpression left, BoundExpression right, BinaryOperatorOverloadResolutionResult result)
         {
-            var leftType = left.Type;
+            leftType := left.Type;
             if (leftType is null)
             {
                 return;
             }
 
-            var rightType = right.Type;
+            rightType := right.Type;
             if (rightType is null)
             {
                 return;
@@ -302,7 +302,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var easyOut = BinopEasyOut.OpKind(kind, leftType, rightType);
+            easyOut := BinopEasyOut.OpKind(kind, leftType, rightType);
 
             if (easyOut == BinaryOperatorKind.Error)
             {

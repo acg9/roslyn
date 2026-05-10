@@ -20,7 +20,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// </summary>
         private CSharpSyntaxNode ParseTypeOrPatternForIsOperator()
         {
-            var pattern = ParsePattern(GetPrecedence(SyntaxKind.IsPatternExpression), afterIs: true);
+            pattern := ParsePattern(GetPrecedence(SyntaxKind.IsPatternExpression), afterIs: true);
             return pattern switch
             {
                 ConstantPatternSyntax cp when ConvertExpressionToType(cp.Expression, out NameSyntax? type) => type,
@@ -75,7 +75,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         /// </summary>
         private bool LooksLikeTypeOfPattern()
         {
-            var tk = CurrentToken.Kind;
+            tk := CurrentToken.Kind;
             if (SyntaxFacts.IsPredefinedType(tk))
             {
                 return true;
@@ -187,7 +187,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         private PatternSyntax ParsePrimaryPattern(Precedence precedence, bool afterIs, bool inSwitchArmPattern)
         {
             // handle common error recovery situations during typing
-            var tk = this.CurrentToken.Kind;
+            tk := this.CurrentToken.Kind;
             switch (tk)
             {
                 case SyntaxKind.CommaToken:
@@ -242,12 +242,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                 }
             }
 
-            var pattern = ParsePatternContinued(type, precedence, inSwitchArmPattern);
+            pattern := ParsePatternContinued(type, precedence, inSwitchArmPattern);
             if (pattern != null)
                 return pattern;
 
             resetPoint.Reset();
-            var value = this.ParseSubExpression(precedence);
+            value := this.ParseSubExpression(precedence);
             return _syntaxFactory.ConstantPattern(value);
         }
 
@@ -285,14 +285,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
         {
             if (type?.Kind == SyntaxKind.IdentifierName)
             {
-                var typeIdentifier = (IdentifierNameSyntax)type;
-                var typeIdentifierToken = typeIdentifier.Identifier;
+                typeIdentifier := (IdentifierNameSyntax)type;
+                typeIdentifierToken := typeIdentifier.Identifier;
                 if (typeIdentifierToken.ContextualKind == SyntaxKind.VarKeyword &&
                     (this.CurrentToken.Kind == SyntaxKind.OpenParenToken || this.IsValidPatternDesignation(inSwitchArmPattern)))
                 {
                     // we have a "var" pattern; "var" is not permitted to be a stand-in for a type (or a constant) in a pattern.
-                    var varToken = ConvertToKeyword(typeIdentifierToken);
-                    var varDesignation = ParseDesignation(forPattern: true);
+                    varToken := ConvertToKeyword(typeIdentifierToken);
+                    varDesignation := ParseDesignation(forPattern: true);
                     return _syntaxFactory.VarPattern(varToken, varDesignation);
                 }
             }
@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             {
                 // It is possible this is a parenthesized (constant) expression.
                 // We normalize later.
-                var openParenToken = this.EatToken(SyntaxKind.OpenParenToken);
+                openParenToken := this.EatToken(SyntaxKind.OpenParenToken);
                 var subPatterns = this.ParseCommaSeparatedSyntaxList(
                     ref openParenToken,
                     SyntaxKind.CloseParenToken,
@@ -311,10 +311,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     allowTrailingSeparator: false,
                     requireOneElement: false,
                     allowSemicolonAsSeparator: false);
-                var closeParenToken = this.EatToken(SyntaxKind.CloseParenToken);
+                closeParenToken := this.EatToken(SyntaxKind.CloseParenToken);
 
                 parsePropertyPatternClause(out PropertyPatternClauseSyntax? propertyPatternClause0);
-                var designation0 = TryParseSimpleDesignation(inSwitchArmPattern);
+                designation0 := TryParseSimpleDesignation(inSwitchArmPattern);
 
                 if (type == null &&
                     propertyPatternClause0 == null &&
@@ -322,12 +322,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     subPatterns.Count == 1 &&
                     subPatterns.SeparatorCount == 0)
                 {
-                    var firstSubPattern = subPatterns[0];
+                    firstSubPattern := subPatterns[0];
                     RoslynDebug.AssertNotNull(firstSubPattern);
 
                     if (firstSubPattern.ExpressionColon == null)
                     {
-                        var subpattern = firstSubPattern.Pattern;
+                        subpattern := firstSubPattern.Pattern;
                         switch (subpattern)
                         {
                             case ConstantPatternSyntax cp:
@@ -343,8 +343,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     }
                 }
 
-                var positionalPatternClause = _syntaxFactory.PositionalPatternClause(openParenToken, subPatterns, closeParenToken);
-                var result = _syntaxFactory.RecursivePattern(type, positionalPatternClause, propertyPatternClause0, designation0);
+                positionalPatternClause := _syntaxFactory.PositionalPatternClause(openParenToken, subPatterns, closeParenToken);
+                result := _syntaxFactory.RecursivePattern(type, positionalPatternClause, propertyPatternClause0, designation0);
                 return result;
             }
 
@@ -357,7 +357,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             if (type != null)
             {
-                var designation = TryParseSimpleDesignation(inSwitchArmPattern);
+                designation := TryParseSimpleDesignation(inSwitchArmPattern);
                 if (designation != null)
                     return _syntaxFactory.DeclarationPattern(type, designation);
 
@@ -416,7 +416,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         return !inSwitchArmPattern;
                     case SyntaxKind.AndKeyword:
                     case SyntaxKind.OrKeyword:
-                        var tk = PeekToken(1).Kind;
+                        tk := PeekToken(1).Kind;
                         switch (tk)
                         {
                             case SyntaxKind.CloseBraceToken:
@@ -458,9 +458,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private CSharpSyntaxNode ParseExpressionOrPatternForSwitchStatement()
         {
-            var savedState = _termState;
+            savedState := _termState;
             _termState |= TerminatorState.IsExpressionOrPatternInCaseLabelOfSwitchStatement;
-            var pattern = ParsePattern(Precedence.Conditional, inSwitchArmPattern: true);
+            pattern := ParsePattern(Precedence.Conditional, inSwitchArmPattern: true);
             _termState = savedState;
             return ConvertPatternToExpressionIfPossible(pattern);
         }
@@ -488,7 +488,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                     return true;
                 case QualifiedNameSyntax { Left: var left, dotToken: var dotToken, Right: var right }
                             when (permitTypeArguments || right is not GenericNameSyntax):
-                    var newLeft = ConvertTypeToExpression(left, out var leftExpr, permitTypeArguments: true) ? leftExpr : left;
+                    newLeft := ConvertTypeToExpression(left, out var leftExpr, permitTypeArguments: true) ? leftExpr : left;
                     expr = _syntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, newLeft, dotToken, right);
                     return true;
                 default:
@@ -508,7 +508,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private PropertyPatternClauseSyntax ParsePropertyPatternClause()
         {
-            var openBraceToken = this.EatToken(SyntaxKind.OpenBraceToken);
+            openBraceToken := this.EatToken(SyntaxKind.OpenBraceToken);
             var subPatterns = this.ParseCommaSeparatedSyntaxList(
                 ref openBraceToken,
                 SyntaxKind.CloseBraceToken,
@@ -533,7 +533,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             // If there is a colon but it's not preceded by a valid expression, leave it out to parse it as a missing comma, preserving C# 9.0 behavior.
             if (this.CurrentToken.Kind == SyntaxKind.ColonToken && ConvertPatternToExpressionIfPossible(pattern, permitTypeArguments: true) is ExpressionSyntax expr)
             {
-                var colon = EatToken();
+                colon := EatToken();
                 exprColon = expr is IdentifierNameSyntax identifierName
                     ? _syntaxFactory.NameColon(identifierName, colon)
                     : _syntaxFactory.ExpressionColon(expr, colon);
@@ -604,7 +604,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
             SeparatedSyntaxList<SwitchExpressionArmSyntax> parseSwitchExpressionArms()
             {
-                var arms = _pool.AllocateSeparated<SwitchExpressionArmSyntax>();
+                arms := _pool.AllocateSeparated<SwitchExpressionArmSyntax>();
 
                 while (this.CurrentToken.Kind != SyntaxKind.CloseBraceToken)
                 {
@@ -616,9 +616,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                         ? AddError(this.EatToken(), ErrorCode.ERR_BadCaseInSwitchArm)
                         : null;
 
-                    var savedState = _termState;
+                    savedState := _termState;
                     _termState |= TerminatorState.IsPatternInSwitchExpressionArm;
-                    var pattern = ParsePattern(Precedence.Coalescing, inSwitchArmPattern: true);
+                    pattern := ParsePattern(Precedence.Coalescing, inSwitchArmPattern: true);
                     _termState = savedState;
 
                     // We use a precedence that excludes lambdas, assignments, and a conditional which could have a
@@ -659,7 +659,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private ListPatternSyntax ParseListPattern(bool inSwitchArmPattern)
         {
-            var openBracket = this.EatToken(SyntaxKind.OpenBracketToken);
+            openBracket := this.EatToken(SyntaxKind.OpenBracketToken);
             var list = this.ParseCommaSeparatedSyntaxList(
                 ref openBracket,
                 SyntaxKind.CloseBracketToken,

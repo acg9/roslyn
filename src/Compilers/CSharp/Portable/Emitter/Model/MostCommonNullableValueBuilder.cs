@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal void AddValue(TypeWithAnnotations type)
         {
-            var builder = ArrayBuilder<byte>.GetInstance();
+            builder := ArrayBuilder<byte>.GetInstance();
             type.AddNullableTransforms(builder);
             AddValue(GetCommonValue(builder));
             builder.Free();

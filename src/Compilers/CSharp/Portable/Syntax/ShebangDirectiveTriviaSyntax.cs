@@ -12,7 +12,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax
         {
             get
             {
-                var token = InternalSyntax.SyntaxToken.StringLiteral(this.EndOfDirectiveToken.LeadingTrivia.ToString());
+                token := InternalSyntax.SyntaxToken.StringLiteral(this.EndOfDirectiveToken.LeadingTrivia.ToString());
                 return token != null ? new SyntaxToken(this, token, GetChildPosition(2), GetChildIndex(2)) : default;
             }
         }

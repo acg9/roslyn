@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // Compare fields
                 if (anonymousType.Properties.Length > 0)
                 {
-                    var fields = ArrayBuilder<FieldSymbol>.GetInstance(anonymousType.Properties.Length);
+                    fields := ArrayBuilder<FieldSymbol>.GetInstance(anonymousType.Properties.Length);
                     foreach (var prop in anonymousType.Properties)
                     {
                         fields.Add(prop.BackingField);
@@ -283,7 +283,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     //  Generate expression for return statement
                     //      retExpression <= System.String.Format(args)
-                    var formatMethod = manager.System_String__Format_IFormatProvider;
+                    formatMethod := manager.System_String__Format_IFormatProvider;
                     retExpression = F.StaticCall(manager.System_String, formatMethod, F.Null(formatMethod.Parameters[0].Type), format, F.ArrayOrEmpty(manager.System_Object, arguments));
                 }
                 else

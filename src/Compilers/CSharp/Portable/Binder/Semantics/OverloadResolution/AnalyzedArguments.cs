@@ -51,7 +51,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            var nameAndLocation = Names[i];
+            nameAndLocation := Names[i];
             return nameAndLocation?.Name;
         }
 
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return default;
             }
 
-            var builder = ArrayBuilder<string?>.GetInstance(this.Names.Count);
+            builder := ArrayBuilder<string?>.GetInstance(this.Names.Count);
             for (int i = 0; i < this.Names.Count; ++i)
             {
                 builder.Add(Name(i));
@@ -95,7 +95,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 bool hasRefKinds = RefKinds.Count > 0;
                 for (int i = 0; i < Arguments.Count; i++)
                 {
-                    var argument = Arguments[i];
+                    argument := Arguments[i];
 
                     // By-ref dynamic arguments don't make the invocation dynamic.
                     if ((object?)argument.Type != null && argument.Type.IsDynamic() && (!hasRefKinds || RefKinds[i] == Microsoft.CodeAnalysis.RefKind.None))
@@ -135,7 +135,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public static AnalyzedArguments GetInstance(AnalyzedArguments original)
         {
-            var instance = GetInstance();
+            instance := GetInstance();
             instance.Arguments.AddRange(original.Arguments);
             instance.Names.AddRange(original.Names);
             instance.RefKinds.AddRange(original.RefKinds);
@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             ImmutableArray<RefKind> argumentRefKindsOpt,
             ImmutableArray<(string, Location)?> argumentNamesOpt)
         {
-            var instance = GetInstance();
+            instance := GetInstance();
             instance.Arguments.AddRange(arguments);
             if (!argumentRefKindsOpt.IsDefault)
             {

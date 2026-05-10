@@ -60,10 +60,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (_switchGoverningExpression == null)
             {
-                var switchGoverningDiagnostics = BindingDiagnosticBag.GetInstance();
-                var boundSwitchExpression = BindSwitchGoverningExpression(switchGoverningDiagnostics);
+                switchGoverningDiagnostics := BindingDiagnosticBag.GetInstance();
+                boundSwitchExpression := BindSwitchGoverningExpression(switchGoverningDiagnostics);
 
-                var immutableSwitchGoverningDiagnostics = switchGoverningDiagnostics.ToReadOnlyAndFree();
+                immutableSwitchGoverningDiagnostics := switchGoverningDiagnostics.ToReadOnlyAndFree();
                 ImmutableInterlocked.InterlockedInitialize(ref _switchGoverningDiagnostics, immutableSwitchGoverningDiagnostics.Diagnostics);
                 ImmutableInterlocked.InterlockedInitialize(ref _switchGoverningDependencies, immutableSwitchGoverningDiagnostics.Dependencies);
                 Interlocked.CompareExchange(ref _switchGoverningExpression, boundSwitchExpression, null);
@@ -94,7 +94,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(labels.Length > 0);
 
-            var map = new Dictionary<object, SourceLabelSymbol>(labels.Length, new SwitchConstantValueHelper.SwitchLabelsComparer());
+            map := new Dictionary<object, SourceLabelSymbol>(labels.Length, new SwitchConstantValueHelper.SwitchLabelsComparer());
             foreach (SourceLabelSymbol label in labels)
             {
                 SyntaxKind labelKind = label.IdentifierNodeOrToken.Kind();
@@ -104,7 +104,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 object key;
-                var constantValue = label.SwitchCaseLabelConstant;
+                constantValue := label.SwitchCaseLabelConstant;
                 if ((object)constantValue != null && !constantValue.IsBad)
                 {
                     // Case labels with a non-null constant value are indexed on their ConstantValue.
@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override ImmutableArray<LocalSymbol> BuildLocals()
         {
-            var builder = ArrayBuilder<LocalSymbol>.GetInstance();
+            builder := ArrayBuilder<LocalSymbol>.GetInstance();
 
             foreach (var section in SwitchSyntax.Sections)
             {
@@ -145,7 +145,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override ImmutableArray<LocalFunctionSymbol> BuildLocalFunctions()
         {
-            var builder = ArrayBuilder<LocalFunctionSymbol>.GetInstance();
+            builder := ArrayBuilder<LocalFunctionSymbol>.GetInstance();
 
             foreach (var section in SwitchSyntax.Sections)
             {
@@ -207,9 +207,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     case SyntaxKind.CaseSwitchLabel:
                         // compute the constant value to place in the label symbol
-                        var caseLabel = (CaseSwitchLabelSyntax)labelSyntax;
+                        caseLabel := (CaseSwitchLabelSyntax)labelSyntax;
                         Debug.Assert(caseLabel.Value != null);
-                        var boundLabelExpression = sectionBinder.BindTypeOrRValue(caseLabel.Value, tempDiagnosticBag);
+                        boundLabelExpression := sectionBinder.BindTypeOrRValue(caseLabel.Value, tempDiagnosticBag);
                         if (boundLabelExpression is BoundTypeExpression type)
                         {
                             // Nothing to do at this point.  The label will be bound later.
@@ -222,7 +222,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     case SyntaxKind.CasePatternSwitchLabel:
                         // bind the pattern, to cause its pattern variables to be inferred if necessary
-                        var matchLabel = (CasePatternSwitchLabelSyntax)labelSyntax;
+                        matchLabel := (CasePatternSwitchLabelSyntax)labelSyntax;
                         NamedTypeSymbol unionType = null;
                         _ = sectionBinder.BindPattern(
                             matchLabel.Pattern, ref unionType, SwitchGoverningType, permitDesignations: true, labelSyntax.HasErrors, tempDiagnosticBag, hasUnionMatching: out _);
@@ -274,7 +274,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var inputType = SwitchGoverningType;
+            inputType := SwitchGoverningType;
             NamedTypeSymbol unionType = null;
             PrepareForUnionMatchingIfAppropriateAndReturnUnionMatchingInputType(node, ref inputType, ref unionType, diagnostics);
             return ConvertPatternExpression(unionType, inputType, node, caseExpression, out constantValueOpt, hasErrors, diagnostics, out _);
@@ -333,7 +333,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(key != null);
 
-            var labelsMap = LabelsByValue;
+            labelsMap := LabelsByValue;
             if (labelsMap != null)
             {
                 SourceLabelSymbol label;
@@ -395,11 +395,11 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Debug.Assert(ScopeDesignator == SwitchSyntax);
             ExpressionSyntax node = SwitchSyntax.Expression;
-            var binder = this.GetBinder(node);
+            binder := this.GetBinder(node);
             Debug.Assert(binder != null);
 
-            var switchGoverningExpression = binder.BindRValueWithoutTargetType(node, diagnostics);
-            var switchGoverningType = switchGoverningExpression.Type;
+            switchGoverningExpression := binder.BindRValueWithoutTargetType(node, diagnostics);
+            switchGoverningType := switchGoverningExpression.Type;
 
             if ((object)switchGoverningType != null && !switchGoverningType.IsErrorType())
             {
@@ -475,10 +475,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_labelsByNode == null)
                 {
-                    var result = new Dictionary<SyntaxNode, LabelSymbol>();
+                    result := new Dictionary<SyntaxNode, LabelSymbol>();
                     foreach (var label in Labels)
                     {
-                        var node = ((SourceLabelSymbol)label).IdentifierNodeOrToken.AsNode();
+                        node := ((SourceLabelSymbol)label).IdentifierNodeOrToken.AsNode();
                         if (node != null)
                         {
                             result.Add(node, label);
@@ -547,7 +547,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     if (!hasErrors)
                     {
                         // No matching case label/default label found
-                        var labelName = SyntaxFacts.GetText(node.CaseOrDefaultKeyword.Kind());
+                        labelName := SyntaxFacts.GetText(node.CaseOrDefaultKeyword.Kind());
                         if (node.Kind() == SyntaxKind.GotoCaseStatement)
                         {
                             labelName += " " + gotoCaseExpressionConstant.Value?.ToString();

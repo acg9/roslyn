@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
             internal override TreeDumperNode DumpCore()
             {
-                var sub = new List<TreeDumperNode>();
+                sub := new List<TreeDumperNode>();
                 if (MethodSymbolOpt is { })
                 {
                     sub.Add(new TreeDumperNode("methodSymbolOpt", MethodSymbolOpt.ToDisplayString(), null));
@@ -122,7 +122,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
             internal override TreeDumperNode DumpCore()
             {
-                var sub = new List<TreeDumperNode>();
+                sub := new List<TreeDumperNode>();
                 sub.Add(new TreeDumperNode($"nestedOperators[{Operators.Length}]", null,
                     Operators.SelectAsArray(c => c.DumpCore())));
 

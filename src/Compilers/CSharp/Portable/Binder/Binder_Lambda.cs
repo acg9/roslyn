@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeWithAnnotations returnType = default;
             ImmutableArray<SyntaxList<AttributeListSyntax>> parameterAttributes = default;
 
-            var namesBuilder = ArrayBuilder<string>.GetInstance();
+            namesBuilder := ArrayBuilder<string>.GetInstance();
             ImmutableArray<bool> discardsOpt = default;
             SeparatedSyntaxList<ParameterSyntax>? parameterSyntaxListOpt = null;
             bool hasSignature;
@@ -71,7 +71,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.SimpleLambdaExpression:
                     // x => ...
                     hasSignature = true;
-                    var simple = (SimpleLambdaExpressionSyntax)syntax;
+                    simple := (SimpleLambdaExpressionSyntax)syntax;
                     ReportFieldContextualKeywordConflictIfAny(simple.Parameter, diagnostics);
                     namesBuilder.Add(simple.Parameter.Identifier.ValueText);
                     break;
@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // (T x, U y) => ...
                     // (x, y) => ...
                     hasSignature = true;
-                    var paren = (ParenthesizedLambdaExpressionSyntax)syntax;
+                    paren := (ParenthesizedLambdaExpressionSyntax)syntax;
                     if (paren.ReturnType is { } returnTypeSyntax)
                     {
                         (returnRefKind, refCustomModifiers, returnType) = BindExplicitLambdaReturnType(returnTypeSyntax, diagnostics);
@@ -91,7 +91,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 case SyntaxKind.AnonymousMethodExpression:
                     // delegate (int x) { }
                     // delegate { }
-                    var anon = (AnonymousMethodExpressionSyntax)syntax;
+                    anon := (AnonymousMethodExpressionSyntax)syntax;
                     MessageID.IDS_FeatureAnonDelegates.CheckFeatureAvailability(diagnostics, anon.DelegateKeyword);
 
                     hasSignature = anon.ParameterList != null;
@@ -122,14 +122,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (parameterSyntaxListOpt is { } parameterSyntaxList)
             {
-                var isAnonymousMethod = syntax.IsKind(SyntaxKind.AnonymousMethodExpression);
-                var hasExplicitlyTypedParameterList = parameterSyntaxList.All(static p => p.Type != null);
+                isAnonymousMethod := syntax.IsKind(SyntaxKind.AnonymousMethodExpression);
+                hasExplicitlyTypedParameterList := parameterSyntaxList.All(static p => p.Type != null);
 
-                var typesBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
-                var refKindsBuilder = ArrayBuilder<RefKind>.GetInstance();
-                var scopesBuilder = ArrayBuilder<ScopedKind>.GetInstance();
-                var attributesBuilder = ArrayBuilder<SyntaxList<AttributeListSyntax>>.GetInstance();
-                var defaultValueBuilder = ArrayBuilder<EqualsValueClauseSyntax?>.GetInstance();
+                typesBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
+                refKindsBuilder := ArrayBuilder<RefKind>.GetInstance();
+                scopesBuilder := ArrayBuilder<ScopedKind>.GetInstance();
+                attributesBuilder := ArrayBuilder<SyntaxList<AttributeListSyntax>>.GetInstance();
+                defaultValueBuilder := ArrayBuilder<EqualsValueClauseSyntax?>.GetInstance();
 
                 // In the batch compiler case we probably should have given a syntax error if the
                 // user did something like (int x, y)=>x+y -- but in the IDE scenario we might be in
@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     parameterCount++;
 
-                    var p = parameterSyntaxList[i];
+                    p := parameterSyntaxList[i];
                     if (p.Identifier.IsUnderscoreToken())
                     {
                         underscoresCount++;
@@ -177,10 +177,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
-                    var typeOpt = p.Type is not null ? BindType(p.Type, diagnostics) : default;
+                    typeOpt := p.Type is not null ? BindType(p.Type, diagnostics) : default;
 
-                    var refKind = ParameterHelpers.GetModifiers(p.Modifiers, ignoreParams: false, out _, out var paramsKeyword, out _, out var scope);
-                    var isParams = paramsKeyword.Kind() != SyntaxKind.None;
+                    refKind := ParameterHelpers.GetModifiers(p.Modifiers, ignoreParams: false, out _, out var paramsKeyword, out _, out var scope);
+                    isParams := paramsKeyword.Kind() != SyntaxKind.None;
 
                     ParameterHelpers.CheckParameterModifiers(p, diagnostics, isAnonymousMethod ? ParameterContext.AnonymousMethod : ParameterContext.Lambda);
 
@@ -263,7 +263,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 // When there are two or more underscores, they are discards
-                var discardsBuilder = ArrayBuilder<bool>.GetInstance(parameters.Count);
+                discardsBuilder := ArrayBuilder<bool>.GetInstance(parameters.Count);
                 foreach (var p in parameters)
                 {
                     discardsBuilder.Add(p.Identifier.IsUnderscoreToken());
@@ -300,8 +300,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 diagnostics.Add(ErrorCode.ERR_LambdaExplicitReturnTypeVar, syntax.Location);
             }
 
-            var returnType = BindType(syntax, diagnostics);
-            var type = returnType.Type;
+            returnType := BindType(syntax, diagnostics);
+            type := returnType.Type;
 
             if (returnType.IsStatic)
             {
@@ -327,7 +327,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (parameterSyntaxList.Count > 0)
             {
                 // If one parameter has a type, then all parameters must have a type.
-                var requiresTypes = parameterSyntaxList.Any(static p => p.Type != null);
+                requiresTypes := parameterSyntaxList.Any(static p => p.Type != null);
 
                 foreach (var parameter in parameterSyntaxList)
                 {
@@ -367,8 +367,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(syntax != null);
             Debug.Assert(syntax.IsAnonymousFunction());
 
-            var lambda = AnalyzeAnonymousFunction(syntax, diagnostics);
-            var data = lambda.Data;
+            lambda := AnalyzeAnonymousFunction(syntax, diagnostics);
+            data := lambda.Data;
 
             // Parser will only have accepted static/async as allowed modifiers on this construct.
             // However, it may have accepted duplicates of those modifiers.  Ensure that any dupes
@@ -377,14 +377,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (data.HasSignature)
             {
-                var binder = new LocalScopeBinder(this);
+                binder := new LocalScopeBinder(this);
                 bool allowShadowingNames = binder.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureNameShadowingInNestedFunctions);
-                var pNames = PooledHashSet<string>.GetInstance();
+                pNames := PooledHashSet<string>.GetInstance();
                 bool seenDiscard = false;
 
                 for (int i = 0; i < lambda.ParameterCount; i++)
                 {
-                    var name = lambda.ParameterName(i);
+                    name := lambda.ParameterName(i);
 
                     if (string.IsNullOrEmpty(name))
                     {
@@ -434,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             where TResult : BoundNode
         {
             Debug.Assert(s_lambdaBindings is null);
-            var bindings = PooledDictionary<SyntaxNode, int>.GetInstance();
+            bindings := PooledDictionary<SyntaxNode, int>.GetInstance();
             s_lambdaBindings = bindings;
 
             try
@@ -467,7 +467,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal static void RecordLambdaBinding(SyntaxNode syntax)
         {
-            var bindings = s_lambdaBindings;
+            bindings := s_lambdaBindings;
             if (bindings is null)
             {
                 return;

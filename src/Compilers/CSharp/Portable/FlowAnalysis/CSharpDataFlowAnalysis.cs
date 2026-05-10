@@ -129,8 +129,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // them.
             if (_definitelyAssignedOnExit.IsDefault)
             {
-                var entryResult = ImmutableArray<ISymbol>.Empty;
-                var exitResult = ImmutableArray<ISymbol>.Empty;
+                entryResult := ImmutableArray<ISymbol>.Empty;
+                exitResult := ImmutableArray<ISymbol>.Empty;
                 if (Succeeded)
                 {
                     var (entry, exit) = DefinitelyAssignedWalker.Analyze(_context.Compilation, _context.Member, _context.BoundNode, _context.FirstInRegion, _context.LastInRegion);
@@ -153,7 +153,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var discarded = DataFlowsIn; // force DataFlowsIn to be computed
+                discarded := DataFlowsIn; // force DataFlowsIn to be computed
                 if (_dataFlowsOut.IsDefault)
                 {
                     var result = Succeeded
@@ -380,7 +380,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_succeeded == null)
                 {
-                    var discarded = DataFlowsIn;
+                    discarded := DataFlowsIn;
                 }
 
                 return _succeeded.Value;

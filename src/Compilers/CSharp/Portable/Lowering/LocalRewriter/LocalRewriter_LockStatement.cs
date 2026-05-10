@@ -50,7 +50,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // lock (x) { body } -> using (x.EnterScope()) { body }
 
-                var tryBlock = rewrittenBody is BoundBlock block ? block : BoundBlock.SynthesizedNoLocals(lockSyntax, rewrittenBody);
+                tryBlock := rewrittenBody is BoundBlock block ? block : BoundBlock.SynthesizedNoLocals(lockSyntax, rewrittenBody);
 
                 var enterScopeCall = BoundCall.Synthesized(
                     rewrittenArgument.Syntax,
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     syntaxOpt: lockSyntax,
                     kind: SynthesizedLocalKind.Using);
 
-                var expressionStatement = new BoundExpressionStatement(rewrittenArgument.Syntax, tempAssignment);
+                expressionStatement := new BoundExpressionStatement(rewrittenArgument.Syntax, tempAssignment);
 
                 BoundStatement tryFinally = RewriteUsingStatementTryFinally(
                     rewrittenArgument.Syntax,

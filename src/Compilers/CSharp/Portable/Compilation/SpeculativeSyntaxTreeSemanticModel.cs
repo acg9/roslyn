@@ -42,7 +42,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(rootBinder != null);
             Debug.Assert(rootBinder.IsSemanticModelBinder);
 
-            var speculativeModel = new SpeculativeSyntaxTreeSemanticModel(parentSemanticModel, root, rootBinder, position, bindingOption);
+            speculativeModel := new SpeculativeSyntaxTreeSemanticModel(parentSemanticModel, root, rootBinder, position, bindingOption);
             return speculativeModel;
         }
 
@@ -110,17 +110,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override SymbolInfo GetSymbolInfoWorker(CSharpSyntaxNode node, SymbolInfoOptions options, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var cref = node as CrefSyntax;
+            cref := node as CrefSyntax;
             if (cref != null)
             {
                 return _parentSemanticModel.GetSpeculativeSymbolInfo(_position, cref, options);
             }
 
-            var expression = (ExpressionSyntax)node;
+            expression := (ExpressionSyntax)node;
 
             if ((options & SymbolInfoOptions.PreserveAliases) != 0)
             {
-                var aliasSymbol = _parentSemanticModel.GetSpeculativeAliasInfo(_position, expression, this.GetSpeculativeBindingOption(expression));
+                aliasSymbol := _parentSemanticModel.GetSpeculativeAliasInfo(_position, expression, this.GetSpeculativeBindingOption(expression));
                 return new SymbolInfo(aliasSymbol);
             }
 
@@ -129,7 +129,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal override CSharpTypeInfo GetTypeInfoWorker(CSharpSyntaxNode node, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var expression = (ExpressionSyntax)node;
+            expression := (ExpressionSyntax)node;
             return _parentSemanticModel.GetSpeculativeTypeInfoWorker(_position, expression, this.GetSpeculativeBindingOption(expression));
         }
     }

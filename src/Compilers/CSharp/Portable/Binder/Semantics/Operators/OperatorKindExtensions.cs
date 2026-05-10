@@ -403,25 +403,25 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
         public static string Dump(this BinaryOperatorKind kind)
         {
-            var b = new StringBuilder();
+            b := new StringBuilder();
             if ((kind & BinaryOperatorKind.Lifted) != 0) b.Append("Lifted");
             if ((kind & BinaryOperatorKind.Logical) != 0) b.Append("Logical");
             if ((kind & BinaryOperatorKind.Checked) != 0) b.Append("Checked");
-            var type = kind & BinaryOperatorKind.TypeMask;
+            type := kind & BinaryOperatorKind.TypeMask;
             if (type != 0) b.Append(type.ToString());
-            var op = kind & BinaryOperatorKind.OpMask;
+            op := kind & BinaryOperatorKind.OpMask;
             if (op != 0) b.Append(op.ToString());
             return b.ToString();
         }
 
         public static string Dump(this UnaryOperatorKind kind)
         {
-            var b = new StringBuilder();
+            b := new StringBuilder();
             if ((kind & UnaryOperatorKind.Lifted) != 0) b.Append("Lifted");
             if ((kind & UnaryOperatorKind.Checked) != 0) b.Append("Checked");
-            var type = kind & UnaryOperatorKind.TypeMask;
+            type := kind & UnaryOperatorKind.TypeMask;
             if (type != 0) b.Append(type.ToString());
-            var op = kind & UnaryOperatorKind.OpMask;
+            op := kind & UnaryOperatorKind.OpMask;
             if (op != 0) b.Append(op.ToString());
             return b.ToString();
         }

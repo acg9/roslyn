@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private string GetDebuggerDisplay()
         {
-            var result = new StringBuilder("[");
+            result := new StringBuilder("[");
             result.Append(this.GetType().Name);
             foreach (var kv in Mapping)
             {

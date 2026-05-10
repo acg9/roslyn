@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return true;
             }
 
-            var typeArguments = this.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            typeArguments := this.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
             foreach (var typeArg in typeArguments)
             {
                 if (GetUnificationUseSiteDiagnosticRecursive(ref result, typeArg.CustomModifiers, owner, ref checkedTypes))

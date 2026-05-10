@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<int> Intersect(IConstantValueSet<int> o)
             {
-                var other = (NintValueSet)o;
+                other := (NintValueSet)o;
                 return new NintValueSet(
                     hasSmall: this._hasSmall && other._hasSmall,
                     values: this._values.Intersect(other._values),
@@ -109,7 +109,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<int> Union(IConstantValueSet<int> o)
             {
-                var other = (NintValueSet)o;
+                other := (NintValueSet)o;
                 return new NintValueSet(
                     hasSmall: this._hasSmall || other._hasSmall,
                     values: this._values.Union(other._values),
@@ -129,8 +129,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override string ToString()
             {
-                var psb = PooledStringBuilder.GetInstance();
-                var builder = psb.Builder;
+                psb := PooledStringBuilder.GetInstance();
+                builder := psb.Builder;
                 if (_hasSmall)
                     builder.Append("Small");
                 if (_hasSmall && !_values.IsEmpty)

@@ -83,18 +83,18 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                      });
 #pragma warning restore format
 
-        var sideEffects = ArrayBuilder<BoundExpression>.GetInstance();
+        sideEffects := ArrayBuilder<BoundExpression>.GetInstance();
         bool needsSacrificialEvaluation = false;
-        var hoistedSymbols = ArrayBuilder<THoistedSymbol>.GetInstance();
+        hoistedSymbols := ArrayBuilder<THoistedSymbol>.GetInstance();
 
-        var replacement = HoistExpression(visitedRight, local, local.RefKind, sideEffects, hoistedSymbols, ref needsSacrificialEvaluation, createHoistedSymbol, createHoistedAccess, arg, isRuntimeAsync, isFieldAccessOfStruct: false);
+        replacement := HoistExpression(visitedRight, local, local.RefKind, sideEffects, hoistedSymbols, ref needsSacrificialEvaluation, createHoistedSymbol, createHoistedAccess, arg, isRuntimeAsync, isFieldAccessOfStruct: false);
 
         proxies.Add(local, new CapturedToExpressionSymbolReplacement<THoistedSymbol>(replacement, hoistedSymbols.ToImmutableAndFree(), isReusable: true));
 
         if (needsSacrificialEvaluation)
         {
-            var type = _typeMap.SubstituteType(local.Type).Type;
-            var sacrificialTemp = _factory.SynthesizedLocal(type, refKind: RefKind.Ref);
+            type := _typeMap.SubstituteType(local.Type).Type;
+            sacrificialTemp := _factory.SynthesizedLocal(type, refKind: RefKind.Ref);
             Debug.Assert(TypeSymbol.Equals(type, replacement.Type, TypeCompareKind.ConsiderEverything2));
             return _factory.Sequence(ImmutableArray.Create(sacrificialTemp), sideEffects.ToImmutableAndFree(), _factory.AssignmentExpression(_factory.Local(sacrificialTemp), replacement, isRef: true));
         }
@@ -105,7 +105,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
             return null;
         }
 
-        var last = sideEffects.Last();
+        last := sideEffects.Last();
         sideEffects.RemoveLast();
         return _factory.Sequence(ImmutableArray<LocalSymbol>.Empty, sideEffects.ToImmutableAndFree(), last);
     }
@@ -148,7 +148,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
         {
             case BoundKind.ArrayAccess:
                 {
-                    var array = (BoundArrayAccess)expr;
+                    array := (BoundArrayAccess)expr;
                     BoundExpression expression = HoistExpression(
                         array.Expression,
                         assignedLocal,
@@ -162,7 +162,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                         isRuntimeAsync,
                         isFieldAccessOfStruct: false);
 
-                    var indices = ArrayBuilder<BoundExpression>.GetInstance();
+                    indices := ArrayBuilder<BoundExpression>.GetInstance();
                     foreach (var index in array.Indices)
                     {
                         indices.Add(HoistExpression(
@@ -185,7 +185,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
 
             case BoundKind.FieldAccess:
                 {
-                    var field = (BoundFieldAccess)expr;
+                    field := (BoundFieldAccess)expr;
                     if (field.FieldSymbol.IsStatic)
                     {
                         // the address of a static field, and the value of a readonly static field, is stable
@@ -199,7 +199,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                         goto default;
                     }
 
-                    var isFieldOfStruct = !field.FieldSymbol.ContainingType.IsReferenceType;
+                    isFieldOfStruct := !field.FieldSymbol.ContainingType.IsReferenceType;
 
                     var receiver = HoistExpression(
                         field.ReceiverOpt,
@@ -228,7 +228,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                 return expr;
 
             case BoundKind.Call:
-                var call = (BoundCall)expr;
+                call := (BoundCall)expr;
                 // NOTE: There are two kinds of 'In' arguments that we may see at this point:
                 //       - `RefKindExtensions.StrictIn`     (originally specified with 'in' modifier)
                 //       - `RefKind.In`                     (specified with no modifiers and matched an 'in' or 'ref readonly' parameter)
@@ -249,7 +249,7 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                 goto default;
 
             case BoundKind.ConditionalOperator:
-                var conditional = (BoundConditionalOperator)expr;
+                conditional := (BoundConditionalOperator)expr;
                 // NOTE: There are two kinds of 'In' arguments that we may see at this point:
                 //       - `RefKindExtensions.StrictIn`     (originally specified with 'in' modifier)
                 //       - `RefKind.In`                     (specified with no modifiers and matched an 'in' or 'ref readonly' parameter)
@@ -301,10 +301,10 @@ internal class RefInitializationHoister<THoistedSymbol, THoistedAccess>(Syntheti
                 }
 
                 Debug.Assert(expr.Type is not null);
-                var hoistedSymbol = createHoistedSymbol(expr.Type, arg, assignedLocal);
+                hoistedSymbol := createHoistedSymbol(expr.Type, arg, assignedLocal);
                 hoistedSymbols.Add(hoistedSymbol);
 
-                var replacement = createHoistedAccess(hoistedSymbol, arg);
+                replacement := createHoistedAccess(hoistedSymbol, arg);
                 sideEffects.Add(_factory.AssignmentExpression(replacement, expr));
                 return replacement;
         }

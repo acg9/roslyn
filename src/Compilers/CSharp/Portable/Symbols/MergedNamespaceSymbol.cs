@@ -133,7 +133,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private ImmutableArray<Symbol> SlowGetChildrenOfName(ReadOnlyMemory<char> name)
         {
             ArrayBuilder<NamespaceSymbol> namespaceSymbols = null;
-            var otherSymbols = ArrayBuilder<Symbol>.GetInstance();
+            otherSymbols := ArrayBuilder<Symbol>.GetInstance();
 
             // Accumulate all the child namespaces and types.
             foreach (NamespaceSymbol namespaceSymbol in _namespacesToMerge)
@@ -174,7 +174,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 childCount += ns.GetMembersUnordered().Length;
             }
 
-            var childNames = new SegmentedHashSet<ReadOnlyMemory<char>>(childCount, comparer);
+            childNames := new SegmentedHashSet<ReadOnlyMemory<char>>(childCount, comparer);
 
             foreach (var ns in _namespacesToMerge)
             {
@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Return all the elements from every IGrouping in the ILookup.
             if (_allMembers.IsDefault)
             {
-                var builder = ArrayBuilder<Symbol>.GetInstance();
+                builder := ArrayBuilder<Symbol>.GetInstance();
                 _cachedLookup.AddValues(builder);
                 _allMembers = builder.ToImmutableAndFree();
             }

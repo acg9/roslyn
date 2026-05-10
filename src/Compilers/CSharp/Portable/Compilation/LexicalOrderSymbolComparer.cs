@@ -31,8 +31,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return 0;
             }
 
-            var xSortKey = x.GetLexicalSortKey();
-            var ySortKey = y.GetLexicalSortKey();
+            xSortKey := x.GetLexicalSortKey();
+            ySortKey := y.GetLexicalSortKey();
             Debug.Assert((object)x.DeclaringCompilation == y.DeclaringCompilation);
 
             comparison = LexicalSortKey.Compare(xSortKey, ySortKey);

@@ -45,7 +45,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(moduleBeingBuilt != null);
 
-            var compiler = new SynthesizedMetadataCompiler(moduleBeingBuilt, cancellationToken);
+            compiler := new SynthesizedMetadataCompiler(moduleBeingBuilt, cancellationToken);
             compiler.Visit(compilation.SourceModule.GlobalNamespace);
         }
 
@@ -63,12 +63,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _cancellationToken.ThrowIfCancellationRequested();
 
-            var sourceTypeSymbol = symbol as SourceMemberContainerTypeSymbol;
+            sourceTypeSymbol := symbol as SourceMemberContainerTypeSymbol;
             if ((object)sourceTypeSymbol != null)
             {
                 if (_moduleBeingBuilt != null)
                 {
-                    var interfaces = sourceTypeSymbol.GetInterfacesToEmit();
+                    interfaces := sourceTypeSymbol.GetInterfacesToEmit();
 
                     // In some circumstances (e.g. implicit implementation of an interface method by a non-virtual method in a
                     // base type from another assembly) it is necessary for the compiler to generate explicit implementations for
@@ -102,10 +102,10 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override void VisitProperty(PropertySymbol symbol)
         {
-            var sourceProperty = symbol as SourcePropertySymbolBase;
+            sourceProperty := symbol as SourcePropertySymbolBase;
             if ((object)sourceProperty != null && sourceProperty.IsSealed)
             {
-                var synthesizedAccessor = sourceProperty.SynthesizedSealedAccessorOpt;
+                synthesizedAccessor := sourceProperty.SynthesizedSealedAccessorOpt;
                 if ((object)synthesizedAccessor != null)
                 {
                     _moduleBeingBuilt.AddSynthesizedDefinition(sourceProperty.ContainingType, synthesizedAccessor.GetCciAdapter());

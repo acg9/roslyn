@@ -115,14 +115,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = this.DeclaringCompilation;
-            var value = this.GetConstantValue(ConstantFieldsInProgress.Empty, earlyDecodingWellKnownAttributes: false);
+            compilation := this.DeclaringCompilation;
+            value := this.GetConstantValue(ConstantFieldsInProgress.Empty, earlyDecodingWellKnownAttributes: false);
 
             // Synthesize DecimalConstantAttribute when the default value is of type decimal
             if (this.IsConst && value != null
                 && this.Type.SpecialType == SpecialType.System_Decimal)
             {
-                var data = GetDecodedWellKnownAttributeData();
+                data := GetDecodedWellKnownAttributeData();
 
                 if (data == null || data.ConstValue == CodeAnalysis.ConstantValue.Unset)
                 {
@@ -191,7 +191,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 DeclarationModifiers.Abstract |
                 DeclarationModifiers.Required; // Some of these are filtered out later, when illegal, for better error messages.
 
-            var errorLocation = new SourceLocation(firstIdentifier);
+            errorLocation := new SourceLocation(firstIdentifier);
             DeclarationModifiers result = ModifierUtils.MakeAndCheckNonTypeMemberModifiers(
                 isOrdinaryMethod: false, isForInterfaceMember: isInterface,
                 modifiers, defaultAccess, allowedModifiers, errorLocation, diagnostics, out modifierErrors, out _);
@@ -288,7 +288,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var incompletePart = state.NextIncompletePart;
+                incompletePart := state.NextIncompletePart;
                 switch (incompletePart)
                 {
                     case CompletionPart.Attributes:
@@ -453,12 +453,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return _lazyTypeAndRefKind;
             }
 
-            var declarator = VariableDeclaratorNode;
-            var fieldSyntax = GetFieldDeclaration(declarator);
-            var typeSyntax = fieldSyntax.Declaration.Type;
-            var compilation = this.DeclaringCompilation;
+            declarator := VariableDeclaratorNode;
+            fieldSyntax := GetFieldDeclaration(declarator);
+            typeSyntax := fieldSyntax.Declaration.Type;
+            compilation := this.DeclaringCompilation;
 
-            var diagnostics = BindingDiagnosticBag.GetInstance();
+            diagnostics := BindingDiagnosticBag.GetInstance();
             RefKind refKind = RefKind.None;
             TypeWithAnnotations type;
 
@@ -468,7 +468,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // When we have multiple declarators, we report the type diagnostics on only the first.
-            var diagnosticsForFirstDeclarator = BindingDiagnosticBag.GetInstance();
+            diagnosticsForFirstDeclarator := BindingDiagnosticBag.GetInstance();
 
             Symbol associatedPropertyOrEvent = this.AssociatedSymbol;
             if ((object)associatedPropertyOrEvent != null && associatedPropertyOrEvent.Kind == SymbolKind.Event)
@@ -490,13 +490,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var binderFactory = compilation.GetBinderFactory(SyntaxTree);
-                var binder = binderFactory.GetBinder(typeSyntax);
+                binderFactory := compilation.GetBinderFactory(SyntaxTree);
+                binder := binderFactory.GetBinder(typeSyntax);
 
                 binder = binder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
                 if (!ContainingType.IsScriptClass)
                 {
-                    var typeOnly = typeSyntax.SkipScoped(out _).SkipRefInField(out refKind);
+                    typeOnly := typeSyntax.SkipScoped(out _).SkipRefInField(out refKind);
                     Debug.Assert(refKind is RefKind.None or RefKind.Ref or RefKind.RefReadOnly);
                     type = binder.BindType(typeOnly, diagnosticsForFirstDeclarator);
                     if (refKind != RefKind.None)
@@ -543,11 +543,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         else
                         {
                             fieldsBeingBound = new ConsList<FieldSymbol>(this, fieldsBeingBound);
-                            var syntaxNode = (EqualsValueClauseSyntax)declarator.Initializer;
+                            syntaxNode := (EqualsValueClauseSyntax)declarator.Initializer;
 
-                            var initializerBinder = new ImplicitlyTypedFieldBinder(binder, fieldsBeingBound);
-                            var executableBinder = new ExecutableCodeBinder(syntaxNode, this, initializerBinder);
-                            var initializerOpt = executableBinder.BindInferredVariableInitializer(diagnostics, RefKind.None, syntaxNode, declarator);
+                            initializerBinder := new ImplicitlyTypedFieldBinder(binder, fieldsBeingBound);
+                            executableBinder := new ExecutableCodeBinder(syntaxNode, this, initializerBinder);
+                            initializerOpt := executableBinder.BindInferredVariableInitializer(diagnostics, RefKind.None, syntaxNode, declarator);
 
                             if (initializerOpt != null)
                             {
@@ -581,11 +581,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         diagnostics.Add(ErrorCode.ERR_FixedFieldMustNotBeRef, ErrorLocation);
                     }
 
-                    var elementType = ((PointerTypeSymbol)type.Type).PointedAtType;
+                    elementType := ((PointerTypeSymbol)type.Type).PointedAtType;
                     int elementSize = elementType.FixedBufferElementSizeInBytes();
                     if (elementSize == 0)
                     {
-                        var loc = typeSyntax.Location;
+                        loc := typeSyntax.Location;
                         diagnostics.Add(ErrorCode.ERR_IllegalFixedType, loc);
                     }
 
@@ -647,7 +647,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var fieldDeclaration = GetFieldDeclaration(this.SyntaxNode);
+                fieldDeclaration := GetFieldDeclaration(this.SyntaxNode);
                 return fieldDeclaration.SyntaxTree.HasCompilationUnitRoot && fieldDeclaration.Span.IntersectsWith(definedWithinSpan.Value);
             }
 

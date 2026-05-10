@@ -94,9 +94,9 @@ internal sealed class SynthesizedCollectionBuilderProjectedMethodSymbol(
             if (_lazyParameters.IsDefault)
             {
                 // Grab all but the last parameter from the underlying method.
-                var parameters = this.UnderlyingMethod.Parameters;
-                var parameterCount = parameters.Length - 1;
-                var builder = ArrayBuilder<ParameterSymbol>.GetInstance(parameterCount);
+                parameters := this.UnderlyingMethod.Parameters;
+                parameterCount := parameters.Length - 1;
+                builder := ArrayBuilder<ParameterSymbol>.GetInstance(parameterCount);
                 for (int i = 0; i < parameterCount; i++)
                     builder.Add(new SynthesizedCollectionBuilderProjectedParameterSymbol(this, parameters[i]));
 

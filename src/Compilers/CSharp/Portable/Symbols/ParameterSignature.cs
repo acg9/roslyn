@@ -35,15 +35,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return NoParams;
             }
 
-            var types = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            types := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             ArrayBuilder<RefKind> refs = null;
 
             for (int parm = 0; parm < parameters.Length; ++parm)
             {
-                var parameter = parameters[parm];
+                parameter := parameters[parm];
                 types.Add(parameter.TypeWithAnnotations);
 
-                var refKind = parameter.RefKind;
+                refKind := parameter.RefKind;
                 if (refs == null)
                 {
                     if (refKind != RefKind.None)

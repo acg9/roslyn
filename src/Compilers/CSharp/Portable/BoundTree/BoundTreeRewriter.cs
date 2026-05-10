@@ -34,10 +34,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             ArrayBuilder<T>? newList = null;
             for (int i = 0; i < list.Length; i++)
             {
-                var item = list[i];
+                item := list[i];
                 System.Diagnostics.Debug.Assert(item != null);
 
-                var visited = this.Visit(item);
+                visited := this.Visit(item);
                 if (newList == null && item != visited)
                 {
                     newList = ArrayBuilder<T>.GetInstance();
@@ -171,7 +171,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 T symbol = symbols[i];
 
-                var newSymbol = (T?)VisitSymbol(symbol);
+                newSymbol := (T?)VisitSymbol(symbol);
                 if (newSymbol != (object?)symbol)
                 {
                     Debug.Assert(newSymbol is not null);
@@ -252,7 +252,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return node.Update(node.OperatorKind, VisitBinaryOperatorData(node), node.ResultKind, (BoundExpression)this.Visit(node.Left), (BoundExpression)this.Visit(node.Right), this.VisitType(node.Type));
             }
 
-            var stack = ArrayBuilder<BoundBinaryOperator>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryOperator>.GetInstance();
             stack.Push(node);
 
             BoundBinaryOperator binary = (BoundBinaryOperator)child;
@@ -270,15 +270,15 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binary = (BoundBinaryOperator)child;
             }
 
-            var left = (BoundExpression?)this.Visit(child);
+            left := (BoundExpression?)this.Visit(child);
             Debug.Assert(left is { });
 
             do
             {
                 binary = stack.Pop();
-                var right = (BoundExpression?)this.Visit(binary.Right);
+                right := (BoundExpression?)this.Visit(binary.Right);
                 Debug.Assert(right is { });
-                var type = this.VisitType(binary.Type);
+                type := this.VisitType(binary.Type);
                 left = binary.Update(binary.OperatorKind, VisitBinaryOperatorData(binary), binary.ResultKind, left, right, type);
             }
             while (stack.Count > 0);
@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return base.VisitIfStatement(node);
             }
 
-            var stack = ArrayBuilder<BoundIfStatement>.GetInstance();
+            stack := ArrayBuilder<BoundIfStatement>.GetInstance();
             stack.Push(node);
 
             BoundStatement? alternative;
@@ -346,7 +346,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return base.VisitBinaryPattern(node);
             }
 
-            var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
             stack.Push(node);
 
             BoundBinaryPattern binary = (BoundBinaryPattern)child;
@@ -364,13 +364,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                 binary = (BoundBinaryPattern)child;
             }
 
-            var left = (BoundPattern?)this.Visit(child);
+            left := (BoundPattern?)this.Visit(child);
             Debug.Assert(left is { });
 
             do
             {
                 binary = stack.Pop();
-                var right = (BoundPattern?)this.Visit(binary.Right);
+                right := (BoundPattern?)this.Visit(binary.Right);
                 Debug.Assert(right is { });
                 left = binary.Update(binary.Disjunction, left, right, VisitType(binary.InputType), VisitType(binary.NarrowedType));
             }

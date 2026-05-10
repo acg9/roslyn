@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         internal static IEnumerable<Symbol> Analyze(CSharpCompilation compilation, Symbol member, BoundNode node, BoundNode firstInRegion, BoundNode lastInRegion)
         {
-            var walker = new VariablesDeclaredWalker(compilation, member, node, firstInRegion, lastInRegion);
+            walker := new VariablesDeclaredWalker(compilation, member, node, firstInRegion, lastInRegion);
             try
             {
                 bool badRegion = false;
@@ -123,7 +123,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case BoundBinaryPattern:
                     {
-                        var binaryPattern = (BoundBinaryPattern)pattern;
+                        binaryPattern := (BoundBinaryPattern)pattern;
                         if (binaryPattern.Left is not BoundBinaryPattern)
                         {
                             NoteDeclaredPatternVariables(binaryPattern.Left);
@@ -137,7 +137,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         // 1) Push the binary patterns onto stack from outermost to innermost.
                         // 2) Pop the innermost binary off the stack, and visit its left and right (corresponding to A and B in above example).
                         // 3) Continue popping binaries off the stack, visiting each right operand (corresponding to C, D, E, ...).
-                        var stack = ArrayBuilder<BoundBinaryPattern>.GetInstance();
+                        stack := ArrayBuilder<BoundBinaryPattern>.GetInstance();
                         do
                         {
                             stack.Push(binaryPattern);
@@ -210,7 +210,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (IsInside)
             {
-                var deconstructionAssignment = node.DeconstructionOpt?.DeconstructionAssignment;
+                deconstructionAssignment := node.DeconstructionOpt?.DeconstructionAssignment;
 
                 if (deconstructionAssignment == null)
                 {
@@ -228,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (IsInside)
             {
-                var local = catchBlock.Locals.FirstOrDefault();
+                local := catchBlock.Locals.FirstOrDefault();
 
                 if (local?.DeclarationKind == LocalDeclarationKind.CatchVariable)
                 {

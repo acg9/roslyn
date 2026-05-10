@@ -159,7 +159,7 @@ namespace Microsoft.CodeAnalysis.Operations
             }
             else
             {
-                var boundDelegateCreationExpression = (BoundDelegateCreationExpression)delegateNode;
+                boundDelegateCreationExpression := (BoundDelegateCreationExpression)delegateNode;
                 if (boundDelegateCreationExpression.Argument.Kind == BoundKind.MethodGroup &&
                     boundDelegateCreationExpression.MethodOpt != null)
                 {
@@ -197,8 +197,8 @@ namespace Microsoft.CodeAnalysis.Operations
             {
                 case BoundKind.ObjectInitializerMember:
                     {
-                        var boundObjectInitializerMember = (BoundObjectInitializerMember)containingExpression;
-                        var property = (PropertySymbol?)boundObjectInitializerMember.MemberSymbol;
+                        boundObjectInitializerMember := (BoundObjectInitializerMember)containingExpression;
+                        property := (PropertySymbol?)boundObjectInitializerMember.MemberSymbol;
                         Debug.Assert(property is not null);
                         return DeriveArguments(
                                     property,
@@ -208,7 +208,7 @@ namespace Microsoft.CodeAnalysis.Operations
                     }
                 case BoundKind.IndexerAccess:
                     {
-                        var boundIndexer = (BoundIndexerAccess)containingExpression;
+                        boundIndexer := (BoundIndexerAccess)containingExpression;
                         return DeriveArguments(boundIndexer.Indexer,
                                                boundIndexer.Arguments,
                                                boundIndexer.ArgsToParamsOpt,
@@ -216,14 +216,14 @@ namespace Microsoft.CodeAnalysis.Operations
                     }
                 case BoundKind.ObjectCreationExpression:
                     {
-                        var objectCreation = (BoundObjectCreationExpression)containingExpression;
+                        objectCreation := (BoundObjectCreationExpression)containingExpression;
                         return DeriveArguments(objectCreation.Constructor,
                                                objectCreation.Arguments,
                                                objectCreation.ArgsToParamsOpt,
                                                objectCreation.DefaultArguments);
                     }
                 case BoundKind.Attribute:
-                    var attribute = (BoundAttribute)containingExpression;
+                    attribute := (BoundAttribute)containingExpression;
                     Debug.Assert(attribute.Constructor is not null);
                     return DeriveArguments(attribute.Constructor,
                                            attribute.ConstructorArguments,
@@ -231,7 +231,7 @@ namespace Microsoft.CodeAnalysis.Operations
                                            attribute.ConstructorDefaultArguments);
                 case BoundKind.Call:
                     {
-                        var boundCall = (BoundCall)containingExpression;
+                        boundCall := (BoundCall)containingExpression;
                         return DeriveArguments(boundCall.Method,
                                                boundCall.Arguments,
                                                boundCall.ArgsToParamsOpt,
@@ -240,7 +240,7 @@ namespace Microsoft.CodeAnalysis.Operations
                     }
                 case BoundKind.CollectionElementInitializer:
                     {
-                        var boundCollectionElementInitializer = (BoundCollectionElementInitializer)containingExpression;
+                        boundCollectionElementInitializer := (BoundCollectionElementInitializer)containingExpression;
                         return DeriveArguments(boundCollectionElementInitializer.AddMethod,
                                                boundCollectionElementInitializer.Arguments,
                                                boundCollectionElementInitializer.ArgsToParamsOpt,
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.Operations
                     }
                 case BoundKind.FunctionPointerInvocation:
                     {
-                        var boundFunctionPointerInvocation = (BoundFunctionPointerInvocation)containingExpression;
+                        boundFunctionPointerInvocation := (BoundFunctionPointerInvocation)containingExpression;
                         return DeriveArguments(boundFunctionPointerInvocation.FunctionPointer.Signature,
                                                boundFunctionPointerInvocation.Arguments,
                                                default,
@@ -310,7 +310,7 @@ namespace Microsoft.CodeAnalysis.Operations
                 int i = 0;
                 for (; i < parameters.Length; ++i)
                 {
-                    var argumentKind = GetArgumentKind(arguments[i], ref defaultArguments, i);
+                    argumentKind := GetArgumentKind(arguments[i], ref defaultArguments, i);
                     argumentsBuilder.Add(operationFactory.CreateArgumentOperation(argumentKind, parameters[i].GetPublicSymbol(), arguments[i]));
                 }
 
@@ -319,7 +319,7 @@ namespace Microsoft.CodeAnalysis.Operations
                 //       https://github.com/dotnet/roslyn/issues/19673
                 for (; i < arguments.Length; ++i)
                 {
-                    var argumentKind = defaultArguments[i] ? ArgumentKind.DefaultValue : ArgumentKind.Explicit;
+                    argumentKind := defaultArguments[i] ? ArgumentKind.DefaultValue : ArgumentKind.Explicit;
                     argumentsBuilder.Add(operationFactory.CreateArgumentOperation(argumentKind, null, arguments[i]));
                 }
 
@@ -373,7 +373,7 @@ namespace Microsoft.CodeAnalysis.Operations
                 BoundExpression argument = arguments[a];
 
                 int p = (!argsToParamsOpt.IsDefault) ? argsToParamsOpt[a] : a;
-                var parameter = parameters[p];
+                parameter := parameters[p];
 
                 ArgumentKind kind = GetArgumentKind(argument, ref defaultArguments, a);
 
@@ -386,7 +386,7 @@ namespace Microsoft.CodeAnalysis.Operations
 
         internal static ImmutableArray<BoundNode> CreateInvalidChildrenFromArgumentsExpression(BoundNode? receiverOpt, ImmutableArray<BoundExpression> arguments, BoundExpression? additionalNodeOpt = null)
         {
-            var builder = ArrayBuilder<BoundNode>.GetInstance();
+            builder := ArrayBuilder<BoundNode>.GetInstance();
 
             if (receiverOpt != null
                && (!receiverOpt.WasCompilerGenerated
@@ -414,8 +414,8 @@ namespace Microsoft.CodeAnalysis.Operations
             // For error cases and non-assignment initializers, the binder generates only the argument.
             Debug.Assert(arguments.Length >= declarations.Length);
 
-            var builder = ArrayBuilder<IOperation>.GetInstance(arguments.Length);
-            var currentDeclarationIndex = 0;
+            builder := ArrayBuilder<IOperation>.GetInstance(arguments.Length);
+            currentDeclarationIndex := 0;
             for (int i = 0; i < arguments.Length; i++)
             {
                 IOperation value = Create(arguments[i]);
@@ -461,10 +461,10 @@ namespace Microsoft.CodeAnalysis.Operations
                     isImplicitAssignment = isImplicit;
                 }
 
-                var assignmentSyntax = value.Syntax?.Parent ?? syntax;
+                assignmentSyntax := value.Syntax?.Parent ?? syntax;
                 ITypeSymbol? assignmentType = target.Type;
                 bool isRef = false;
-                var assignment = new SimpleAssignmentOperation(isRef, target, value, _semanticModel, assignmentSyntax, assignmentType, value.GetConstantValue(), isImplicitAssignment);
+                assignment := new SimpleAssignmentOperation(isRef, target, value, _semanticModel, assignmentSyntax, assignmentType, value.GetConstantValue(), isImplicitAssignment);
                 builder.Add(assignment);
             }
 
@@ -478,7 +478,7 @@ namespace Microsoft.CodeAnalysis.Operations
                     return null;
                 }
 
-                var currentDeclaration = declarations[currentDeclarationIndex];
+                currentDeclaration := declarations[currentDeclarationIndex];
 
                 if (currentProperty.MemberIndexOpt == currentDeclaration.Property.MemberIndexOpt)
                 {

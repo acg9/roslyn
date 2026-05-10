@@ -30,12 +30,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 case SymbolKind.ArrayType:
                     {
-                        var array = (ArrayTypeSymbol)type;
+                        array := (ArrayTypeSymbol)type;
                         return customModifierCountForTypeWithAnnotations(array.ElementTypeWithAnnotations);
                     }
                 case SymbolKind.PointerType:
                     {
-                        var pointer = (PointerTypeSymbol)type;
+                        pointer := (PointerTypeSymbol)type;
                         return customModifierCountForTypeWithAnnotations(pointer.PointedAtTypeWithAnnotations);
                     }
                 case SymbolKind.FunctionPointerType:
@@ -49,7 +49,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                         if (!isDefinition)
                         {
-                            var namedType = (NamedTypeSymbol)type;
+                            namedType := (NamedTypeSymbol)type;
                             int count = 0;
 
                             while ((object)namedType != null)
@@ -96,20 +96,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 case SymbolKind.ArrayType:
                     {
-                        var array = (ArrayTypeSymbol)type;
+                        array := (ArrayTypeSymbol)type;
                         TypeWithAnnotations elementType = array.ElementTypeWithAnnotations;
                         return checkTypeWithAnnotations(elementType, flagNonDefaultArraySizesOrLowerBounds)
                                || (flagNonDefaultArraySizesOrLowerBounds && !array.HasDefaultSizesAndLowerBounds);
                     }
                 case SymbolKind.PointerType:
                     {
-                        var pointer = (PointerTypeSymbol)type;
+                        pointer := (PointerTypeSymbol)type;
                         TypeWithAnnotations pointedAtType = pointer.PointedAtTypeWithAnnotations;
                         return checkTypeWithAnnotations(pointedAtType, flagNonDefaultArraySizesOrLowerBounds);
                     }
                 case SymbolKind.FunctionPointerType:
                     {
-                        var funcPtr = (FunctionPointerTypeSymbol)type;
+                        funcPtr := (FunctionPointerTypeSymbol)type;
                         if (!funcPtr.Signature.RefCustomModifiers.IsEmpty || checkTypeWithAnnotations(funcPtr.Signature.ReturnTypeWithAnnotations, flagNonDefaultArraySizesOrLowerBounds))
                         {
                             return true;
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                         if (!isDefinition)
                         {
-                            var namedType = (NamedTypeSymbol)type;
+                            namedType := (NamedTypeSymbol)type;
                             while ((object)namedType != null)
                             {
                                 ImmutableArray<TypeWithAnnotations> typeArgs = namedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
@@ -223,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return null;
             }
 
-            var nextType = type.GetDeclaredBaseType(basesBeingResolved);
+            nextType := type.GetDeclaredBaseType(basesBeingResolved);
 
             // types with no declared bases inherit object's members
             if ((object)nextType == null)
@@ -232,7 +232,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return GetDefaultBaseOrNull(type, compilation);
             }
 
-            var origType = type.OriginalDefinition;
+            origType := type.OriginalDefinition;
             if (nextType.KnownToHaveNoDeclaredBaseCycles)
             {
                 origType.SetKnownToHaveNoDeclaredBaseCycles();

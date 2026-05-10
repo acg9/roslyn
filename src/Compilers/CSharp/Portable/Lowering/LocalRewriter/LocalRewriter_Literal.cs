@@ -53,13 +53,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(constantValue != null);
             Debug.Assert(constantValue.IsDecimal);
 
-            var value = constantValue.DecimalValue;
+            value := constantValue.DecimalValue;
             bool isNegative;
             byte scale;
             uint low, mid, high;
             value.GetBits(out isNegative, out scale, out low, out mid, out high);
 
-            var arguments = new ArrayBuilder<BoundExpression>();
+            arguments := new ArrayBuilder<BoundExpression>();
             SpecialMember member;
 
             // check if we can call a simpler constructor, or use a predefined constant
@@ -67,7 +67,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // If we are building static constructor of System.Decimal, accessing static fields 
                 // would be bad.
-                var curMethod = _factory.CurrentFunction;
+                curMethod := _factory.CurrentFunction;
                 Debug.Assert(curMethod is { });
                 if ((curMethod.MethodKind != MethodKind.SharedConstructor ||
                    curMethod.ContainingType.SpecialType != SpecialType.System_Decimal) &&
@@ -90,7 +90,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (useField is { HasUseSiteError: false, ContainingType: { HasUseSiteError: false } })
                     {
-                        var fieldSymbol = (FieldSymbol)useField;
+                        fieldSymbol := (FieldSymbol)useField;
                         return new BoundFieldAccess(syntax, null, fieldSymbol, constantValue);
                     }
                 }
@@ -128,7 +128,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 arguments.Add(new BoundLiteral(syntax, ConstantValue.Create(scale), _compilation.GetSpecialType(SpecialType.System_Byte)));
             }
 
-            var ctor = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
+            ctor := (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
             Debug.Assert((object)ctor != null);
             Debug.Assert(ctor.ContainingType.SpecialType == SpecialType.System_Decimal);
 
@@ -144,10 +144,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(constantValue != null);
             Debug.Assert(constantValue.IsDateTime);
 
-            var arguments = new ArrayBuilder<BoundExpression>();
+            arguments := new ArrayBuilder<BoundExpression>();
             arguments.Add(new BoundLiteral(syntax, ConstantValue.Create(constantValue.DateTimeValue.Ticks), _compilation.GetSpecialType(SpecialType.System_Int64)));
 
-            var ctor = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(SpecialMember.System_DateTime__CtorInt64);
+            ctor := (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(SpecialMember.System_DateTime__CtorInt64);
             Debug.Assert((object)ctor != null);
             Debug.Assert(ctor.ContainingType.SpecialType == SpecialType.System_DateTime);
 

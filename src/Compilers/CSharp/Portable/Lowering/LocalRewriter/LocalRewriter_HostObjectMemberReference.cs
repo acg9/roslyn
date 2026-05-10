@@ -14,9 +14,9 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(_factory.TopLevelMethod is { IsStatic: false });
             Debug.Assert(_factory.CurrentType is { });
 
-            var syntax = node.Syntax;
-            var hostObjectReference = _previousSubmissionFields.GetHostObjectField();
-            var thisReference = new BoundThisReference(syntax, _factory.CurrentType);
+            syntax := node.Syntax;
+            hostObjectReference := _previousSubmissionFields.GetHostObjectField();
+            thisReference := new BoundThisReference(syntax, _factory.CurrentType);
             return new BoundFieldAccess(syntax, thisReference, hostObjectReference, constantValueOpt: null);
         }
     }

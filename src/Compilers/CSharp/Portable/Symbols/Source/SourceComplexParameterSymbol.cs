@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 _parameterSyntaxKind |= ParameterFlags.ExtensionThisParameter;
             }
 
-            var parameterSyntax = this.ParameterSyntax;
+            parameterSyntax := this.ParameterSyntax;
             if (parameterSyntax != null && parameterSyntax.Default != null)
             {
                 _parameterSyntaxKind |= ParameterFlags.DefaultParameter;
@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var scope = CalculateEffectiveScopeIgnoringAttributes();
+                scope := CalculateEffectiveScopeIgnoringAttributes();
                 if (scope != ScopedKind.None &&
                     HasUnscopedRefAttribute &&
                     UseUpdatedEscapeRules)
@@ -250,7 +250,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (state.NotePartComplete(CompletionPart.StartDefaultSyntaxValue))
                 {
-                    var diagnostics = BindingDiagnosticBag.GetInstance();
+                    diagnostics := BindingDiagnosticBag.GetInstance();
                     Debug.Assert(diagnostics.DiagnosticBag != null);
                     var previousValue = Interlocked.CompareExchange(
                         ref _lazyDefaultSyntaxValue,
@@ -258,7 +258,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         ConstantValue.Unset);
                     Debug.Assert(previousValue == ConstantValue.Unset);
 
-                    var completedOnThisThread = state.NotePartComplete(CompletionPart.EndDefaultSyntaxValue);
+                    completedOnThisThread := state.NotePartComplete(CompletionPart.EndDefaultSyntaxValue);
                     Debug.Assert(completedOnThisThread);
 
                     if (parameterEqualsValue is not null)
@@ -300,15 +300,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private Binder GetDefaultParameterValueBinder(SyntaxNode syntax)
         {
-            var binder = WithTypeParametersBinderOpt;
+            binder := WithTypeParametersBinderOpt;
 
             // If binder is null, then get it from the compilation. Otherwise use the provided binder.
             // Don't always get it from the compilation because we might be in a speculative context (local function parameter),
             // in which case the declaring compilation is the wrong one.
             if (binder == null)
             {
-                var compilation = this.DeclaringCompilation;
-                var binderFactory = compilation.GetBinderFactory(syntax.SyntaxTree);
+                compilation := this.DeclaringCompilation;
+                binderFactory := compilation.GetBinderFactory(syntax.SyntaxTree);
                 binder = binderFactory.GetBinder(syntax);
             }
             Debug.Assert(binder.GetBinder(syntax) == null);
@@ -317,7 +317,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void NullableAnalyzeParameterDefaultValueFromAttributes()
         {
-            var parameterSyntax = this.ParameterSyntax;
+            parameterSyntax := this.ParameterSyntax;
             if (parameterSyntax == null)
             {
                 // If there is no syntax at all for the parameter, it means we are in a situation like
@@ -329,19 +329,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // The syntax span used to determine whether the attribute value is in a nullable-enabled
             // context is larger than necessary - it includes the entire attribute list rather than the specific
             // default value attribute which is used in AttributeSemanticModel.IsNullableAnalysisEnabled().
-            var attributes = parameterSyntax.AttributeLists.Node;
+            attributes := parameterSyntax.AttributeLists.Node;
             if (attributes is null || !NullableWalker.NeedsAnalysis(DeclaringCompilation, attributes))
             {
                 return;
             }
 
-            var defaultValue = DefaultValueFromAttributes;
+            defaultValue := DefaultValueFromAttributes;
             if (defaultValue == null || defaultValue.IsBad)
             {
                 return;
             }
 
-            var binder = GetDefaultParameterValueBinder(parameterSyntax);
+            binder := GetDefaultParameterValueBinder(parameterSyntax);
 
             // Nullable warnings *within* the attribute argument (such as a W-warning for `(string)null`)
             // are reported when we nullable-analyze attribute arguments separately from here.
@@ -355,7 +355,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 // we will just get a bad constant value above and return early.
                 new BoundLiteral(parameterSyntax, defaultValue, Type));
 
-            var diagnostics = BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
+            diagnostics := BindingDiagnosticBag.GetInstance(withDiagnostics: true, withDependencies: false);
             Debug.Assert(diagnostics.DiagnosticBag != null);
             NullableWalker.AnalyzeIfNeeded(binder, parameterEqualsValue, parameterSyntax, diagnostics.DiagnosticBag);
             AddDeclarationDiagnostics(diagnostics);
@@ -369,13 +369,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             binder = null;
             parameterEqualsValue = null;
 
-            var parameterSyntax = this.ParameterSyntax;
+            parameterSyntax := this.ParameterSyntax;
             if (parameterSyntax == null)
             {
                 return null;
             }
 
-            var defaultSyntax = parameterSyntax.Default;
+            defaultSyntax := parameterSyntax.Default;
             if (defaultSyntax == null)
             {
                 return null;
@@ -415,7 +415,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
 
             // represent default(struct) by a Null constant:
-            var value = convertedExpression.ConstantValueOpt ?? ConstantValue.Null;
+            value := convertedExpression.ConstantValueOpt ?? ConstantValue.Null;
             return value;
         }
 
@@ -427,13 +427,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 // The metadata parameter name should be the name used in the partial definition.
 
-                var sourceMethod = this.ContainingSymbol as SourceOrdinaryMethodSymbol;
+                sourceMethod := this.ContainingSymbol as SourceOrdinaryMethodSymbol;
                 if ((object)sourceMethod == null)
                 {
                     return base.MetadataName;
                 }
 
-                var definition = sourceMethod.SourcePartialDefinition;
+                definition := sourceMethod.SourcePartialDefinition;
                 if ((object)definition == null)
                 {
                     return base.MetadataName;
@@ -510,7 +510,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var syntax = this.ParameterSyntax;
+                syntax := this.ParameterSyntax;
                 return (syntax != null) ? syntax.AttributeLists : default(SyntaxList<AttributeListSyntax>);
             }
         }
@@ -545,7 +545,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         internal ParameterWellKnownAttributeData GetDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -562,7 +562,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </remarks>
         internal ParameterEarlyWellKnownAttributeData GetEarlyDecodedWellKnownAttributeData()
         {
-            var attributesBag = _lazyCustomAttributesBag;
+            attributesBag := _lazyCustomAttributesBag;
             if (attributesBag == null || !attributesBag.IsEarlyDecodedWellKnownAttributeDataComputed)
             {
                 attributesBag = this.GetAttributesBag();
@@ -589,12 +589,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 bool bagCreatedOnThisThread;
                 if ((object)copyFrom != null)
                 {
-                    var attributesBag = copyFrom.GetAttributesBag();
+                    attributesBag := copyFrom.GetAttributesBag();
                     bagCreatedOnThisThread = Interlocked.CompareExchange(ref _lazyCustomAttributesBag, attributesBag, null) == null;
                 }
                 else
                 {
-                    var attributeSyntax = this.GetAttributeDeclarations();
+                    attributeSyntax := this.GetAttributeDeclarations();
                     bagCreatedOnThisThread = LoadAndValidateAttributes(attributeSyntax, ref _lazyCustomAttributesBag, binderOpt: WithTypeParametersBinderOpt);
                 }
 
@@ -676,11 +676,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
                 else if (CSharpAttributeData.IsTargetEarlyAttribute(arguments.AttributeType, arguments.AttributeSyntax, AttributeDescription.CallerArgumentExpressionAttribute))
                 {
-                    var index = -1;
+                    index := -1;
                     var (attributeData, _) = arguments.Binder.GetAttribute(arguments.AttributeSyntax, arguments.AttributeType, beforeAttributePartBound: null, afterAttributePartBound: null, out _);
                     if (!attributeData.HasErrors)
                     {
-                        var constructorArguments = attributeData.CommonConstructorArguments;
+                        constructorArguments := attributeData.CommonConstructorArguments;
                         Debug.Assert(constructorArguments.Length == 1);
                         if (constructorArguments[0].TryDecodeValue(SpecialType.System_String, out string? parameterName)
                             && parameterName is not null)
@@ -716,7 +716,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 offset = 1;
             }
 
-            var parameters = containingSymbol.GetParameters();
+            parameters := containingSymbol.GetParameters();
             for (int i = 0; i < parameters.Length; i++)
             {
                 if (parameters[i].Name.Equals(parameterName, StringComparison.Ordinal))
@@ -747,7 +747,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 value = DecodeDefaultParameterValueAttribute(description, attributeData, arguments.AttributeSyntax, diagnose: false, diagnosticsOpt: null);
             }
 
-            var paramData = arguments.GetOrCreateData<ParameterEarlyWellKnownAttributeData>();
+            paramData := arguments.GetOrCreateData<ParameterEarlyWellKnownAttributeData>();
             if (paramData.DefaultParameterValue == ConstantValue.Unset)
             {
                 paramData.DefaultParameterValue = value;
@@ -761,11 +761,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert((object)arguments.AttributeSyntaxOpt != null);
 
-            var attribute = arguments.Attribute;
+            attribute := arguments.Attribute;
             Debug.Assert(!attribute.HasErrors);
             Debug.Assert(arguments.SymbolPart == AttributeLocation.None);
             Debug.Assert(AttributeDescription.InterpolatedStringHandlerArgumentAttribute.Signatures.Length == 2);
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
             if (attribute.IsTargetAttribute(AttributeDescription.DefaultParameterValueAttribute))
             {
@@ -912,7 +912,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static bool? DecodeMaybeNullWhenOrNotNullWhenOrDoesNotReturnIfAttribute(CSharpAttributeData attribute)
         {
-            var arguments = attribute.CommonConstructorArguments;
+            arguments := attribute.CommonConstructorArguments;
             return arguments.Length == 1 && arguments[0].TryDecodeValue(SpecialType.System_Boolean, out bool value) ?
                 (bool?)value :
                 null;
@@ -920,14 +920,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private void DecodeDefaultParameterValueAttribute(AttributeDescription description, ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
         {
-            var attribute = arguments.Attribute;
-            var syntax = arguments.AttributeSyntaxOpt;
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            attribute := arguments.Attribute;
+            syntax := arguments.AttributeSyntaxOpt;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
             Debug.Assert(syntax != null);
             Debug.Assert(diagnostics != null);
 
-            var value = DecodeDefaultParameterValueAttribute(description, attribute, syntax, diagnose: true, diagnosticsOpt: diagnostics);
+            value := DecodeDefaultParameterValueAttribute(description, attribute, syntax, diagnose: true, diagnosticsOpt: diagnostics);
             if (!value.IsBad)
             {
                 VerifyParamDefaultValueMatchesAttributeIfAny(value, syntax, diagnostics);
@@ -947,10 +947,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// </summary>
         private void VerifyParamDefaultValueMatchesAttributeIfAny(ConstantValue value, SyntaxNode syntax, BindingDiagnosticBag diagnostics)
         {
-            var data = GetEarlyDecodedWellKnownAttributeData();
+            data := GetEarlyDecodedWellKnownAttributeData();
             if (data != null)
             {
-                var attrValue = data.DefaultParameterValue;
+                attrValue := data.DefaultParameterValue;
                 if ((attrValue != ConstantValue.Unset) &&
                     (value != attrValue))
                 {
@@ -1004,15 +1004,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(attribute.CommonConstructorArguments.Length == 1);
 
             // the type of the value is the type of the expression in the attribute:
-            var arg = attribute.CommonConstructorArguments[0];
+            arg := attribute.CommonConstructorArguments[0];
 
             SpecialType specialType = arg.Kind == TypedConstantKind.Enum ?
                 ((NamedTypeSymbol)arg.TypeInternal).EnumUnderlyingType.SpecialType :
                 arg.TypeInternal.SpecialType;
 
-            var compilation = this.DeclaringCompilation;
-            var constantValueDiscriminator = ConstantValue.GetDiscriminator(specialType);
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnosticsOpt, ContainingAssembly);
+            compilation := this.DeclaringCompilation;
+            constantValueDiscriminator := ConstantValue.GetDiscriminator(specialType);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnosticsOpt, ContainingAssembly);
             if (constantValueDiscriminator == ConstantValueTypeDiscriminator.Bad)
             {
                 if (arg.Kind != TypedConstantKind.Array && arg.ValueInternal == null)
@@ -1075,7 +1075,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // If we are asking this, the candidate attribute had better be contained in *some* attribute associated with this parameter syntactically
             Debug.Assert(this.GetAttributeDeclarations().Any(attrLists => attrLists.Any(attrList => attrList.Contains(node))));
 
-            var implParameter = this.ContainingSymbol.IsPartialImplementation() ? this : PartialImplementationPart;
+            implParameter := this.ContainingSymbol.IsPartialImplementation() ? this : PartialImplementationPart;
             if (implParameter?.AttributeDeclarationList is not { } implParameterAttributeList)
             {
                 return false;
@@ -1088,7 +1088,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private void ValidateCallerLineNumberAttribute(AttributeSyntax node, BindingDiagnosticBag diagnostics)
         {
             CSharpCompilation compilation = this.DeclaringCompilation;
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
             if (!IsValidCallerInfoContext(node))
             {
@@ -1116,7 +1116,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private void ValidateCallerFilePathAttribute(AttributeSyntax node, BindingDiagnosticBag diagnostics)
         {
             CSharpCompilation compilation = this.DeclaringCompilation;
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
             if (!IsValidCallerInfoContext(node))
             {
@@ -1149,7 +1149,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         private void ValidateCallerMemberNameAttribute(AttributeSyntax node, BindingDiagnosticBag diagnostics)
         {
             CSharpCompilation compilation = this.DeclaringCompilation;
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
             if (!IsValidCallerInfoContext(node))
             {
@@ -1190,7 +1190,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // before the feature was developed. The error is only reported when the binder supplies a value
             // based on the attribute.
             CSharpCompilation compilation = this.DeclaringCompilation;
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(diagnostics, ContainingAssembly);
 
             if (!IsValidCallerInfoContext(node))
             {
@@ -1339,7 +1339,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 bool hadError = false;
-                var ordinalsBuilder = ArrayBuilder<int>.GetInstance(constructorArgument.Values.Length);
+                ordinalsBuilder := ArrayBuilder<int>.GetInstance(constructorArgument.Values.Length);
                 foreach (var nestedArgument in constructorArgument.Values)
                 {
                     if (decodeName(nestedArgument, ref arguments) is int ordinal && !hadError)
@@ -1366,7 +1366,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 throw ExceptionUtilities.Unreachable();
             }
 
-            var parameterWellKnownAttributeData = arguments.GetOrCreateData<ParameterWellKnownAttributeData>();
+            parameterWellKnownAttributeData := arguments.GetOrCreateData<ParameterWellKnownAttributeData>();
             parameterWellKnownAttributeData.InterpolatedStringHandlerArguments = parameterOrdinals;
 
             int? decodeName(TypedConstant constant, ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
@@ -1385,7 +1385,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return null;
                 }
 
-                var name = constant.DecodeValue<string>(SpecialType.System_String);
+                name := constant.DecodeValue<string>(SpecialType.System_String);
                 Debug.Assert(name != null);
                 if (name == "")
                 {
@@ -1414,7 +1414,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return BoundInterpolatedStringArgumentPlaceholder.ExtensionReceiver;
                 }
 
-                var parameter = containingSymbolParameters.FirstOrDefault(static (param, name) => string.Equals(param.Name, name, StringComparison.Ordinal), name);
+                parameter := containingSymbolParameters.FirstOrDefault(static (param, name) => string.Equals(param.Name, name, StringComparison.Ordinal), name);
                 if (parameter is null)
                 {
                     // '{0}' is not a valid parameter name from '{1}'.
@@ -1456,7 +1456,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(_lazyCustomAttributesBag.IsDecodedWellKnownAttributeDataComputed);
             Debug.Assert(symbolPart == AttributeLocation.None);
 
-            var data = (ParameterWellKnownAttributeData)decodedData;
+            data := (ParameterWellKnownAttributeData)decodedData;
             if (data != null)
             {
                 switch (RefKind)
@@ -1531,7 +1531,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         // lazyHasOptionalAttribute is decoded early, hence we cannot reach here when binding attributes for this symbol.
                         // So it is fine to force complete attributes here.
 
-                        var attributes = GetAttributes();
+                        attributes := GetAttributes();
 
                         if (!attributes.Any())
                         {
@@ -1591,7 +1591,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (state.NotePartComplete(CompletionPart.StartMiscValidation))
             {
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                diagnostics := BindingDiagnosticBag.GetInstance();
 
                 if (IsParams && ParameterSyntax?.Modifiers.Any(SyntaxKind.ParamsKeyword) == true)
                 {
@@ -1615,9 +1615,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             void validateParamsType(BindingDiagnosticBag diagnostics)
             {
-                var collectionTypeKind = ConversionsBase.GetCollectionExpressionTypeKind(DeclaringCompilation, Type, out TypeWithAnnotations elementTypeWithAnnotations);
+                collectionTypeKind := ConversionsBase.GetCollectionExpressionTypeKind(DeclaringCompilation, Type, out TypeWithAnnotations elementTypeWithAnnotations);
 
-                var elementType = elementTypeWithAnnotations.Type;
+                elementType := elementTypeWithAnnotations.Type;
                 switch (collectionTypeKind)
                 {
                     case CollectionExpressionTypeKind.None:
@@ -1626,8 +1626,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     case CollectionExpressionTypeKind.ImplementsIEnumerable:
                         {
-                            var syntax = ParameterSyntax;
-                            var binder = GetDefaultParameterValueBinder(syntax).WithContainingMemberOrLambda(ContainingSymbol); // this binder is good for our purpose
+                            syntax := ParameterSyntax;
+                            binder := GetDefaultParameterValueBinder(syntax).WithContainingMemberOrLambda(ContainingSymbol); // this binder is good for our purpose
 
                             binder.TryGetCollectionIterationType(syntax, Type, out elementTypeWithAnnotations);
                             elementType = elementTypeWithAnnotations.Type;
@@ -1685,8 +1685,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                     case CollectionExpressionTypeKind.CollectionBuilder:
                         {
-                            var syntax = ParameterSyntax;
-                            var binder = GetDefaultParameterValueBinder(syntax).WithContainingMemberOrLambda(ContainingSymbol); // this binder is good for our purpose
+                            syntax := ParameterSyntax;
+                            binder := GetDefaultParameterValueBinder(syntax).WithContainingMemberOrLambda(ContainingSymbol); // this binder is good for our purpose
 
                             binder.TryGetCollectionIterationType(syntax, Type, out elementTypeWithAnnotations);
                             elementType = elementTypeWithAnnotations.Type;
@@ -1726,7 +1726,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             bool isAtLeastAsVisible(ParameterSyntax syntax, Binder binder, MethodSymbol method, BindingDiagnosticBag diagnostics)
             {
-                var useSiteInfo = binder.GetNewCompoundUseSiteInfo(diagnostics);
+                useSiteInfo := binder.GetNewCompoundUseSiteInfo(diagnostics);
 
                 bool result = method.IsAsRestrictive(ContainingSymbol, ref useSiteInfo) &&
                               method.ContainingType.IsAtLeastAsVisibleAs(ContainingSymbol, ref useSiteInfo);

@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             static ImmutableArray<ISymbol> getPublicSymbols(OneOrMany<Symbol> symbols)
             {
-                var result = ArrayBuilder<ISymbol>.GetInstance(symbols.Count);
+                result := ArrayBuilder<ISymbol>.GetInstance(symbols.Count);
                 foreach (var symbol in symbols)
                     result.Add(symbol.GetPublicSymbol());
 

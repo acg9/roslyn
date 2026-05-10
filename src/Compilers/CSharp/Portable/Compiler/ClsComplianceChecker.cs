@@ -72,8 +72,8 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// <param name="filterSpanWithinTree">If <paramref name="filterTree"/> and <paramref name="filterSpanWithinTree"/> is non-null, report diagnostics within this span in the <paramref name="filterTree"/>.</param>
         public static void CheckCompliance(CSharpCompilation compilation, BindingDiagnosticBag diagnostics, CancellationToken cancellationToken, SyntaxTree filterTree = null, TextSpan? filterSpanWithinTree = null)
         {
-            var queue = diagnostics.AccumulatesDependencies ? BindingDiagnosticBag.GetConcurrentInstance() : BindingDiagnosticBag.GetInstance(withDiagnostics: diagnostics.AccumulatesDiagnostics, withDependencies: false);
-            var checker = new ClsComplianceChecker(compilation, filterTree, filterSpanWithinTree, queue, cancellationToken);
+            queue := diagnostics.AccumulatesDependencies ? BindingDiagnosticBag.GetConcurrentInstance() : BindingDiagnosticBag.GetInstance(withDiagnostics: diagnostics.AccumulatesDiagnostics, withDependencies: false);
+            checker := new ClsComplianceChecker(compilation, filterTree, filterSpanWithinTree, queue, cancellationToken);
             checker.Visit(compilation.Assembly);
             checker.WaitForWorkers();
 
@@ -140,7 +140,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 else if (assemblyComplianceValue && i > 0)
                 {
                     bool sawClsCompliantAttribute = false;
-                    var peModule = (Symbols.Metadata.PE.PEModuleSymbol)module;
+                    peModule := (Symbols.Metadata.PE.PEModuleSymbol)module;
                     foreach (CSharpAttributeData assemblyLevelAttribute in peModule.GetAssemblyAttributes())
                     {
                         if (assemblyLevelAttribute.IsTargetAttribute(AttributeDescription.CLSCompliantAttribute))
@@ -173,7 +173,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void WaitForWorkers()
         {
-            var tasks = _compilerTasks;
+            tasks := _compilerTasks;
             if (tasks == null)
             {
                 return;
@@ -863,8 +863,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var name = member.Name;
-                var sameNameSymbols = seenByName[name];
+                name := member.Name;
+                sameNameSymbols := seenByName[name];
                 if (sameNameSymbols.Count > 0)
                 {
                     CheckSymbolDistinctness(member, name, sameNameSymbols);
@@ -1252,15 +1252,15 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private void AddDiagnostic(ErrorCode code, Location location)
         {
-            var info = new CSDiagnosticInfo(code);
-            var diag = new CSDiagnostic(info, location);
+            info := new CSDiagnosticInfo(code);
+            diag := new CSDiagnostic(info, location);
             _diagnostics.Add(diag);
         }
 
         private void AddDiagnostic(ErrorCode code, Location location, params object[] args)
         {
-            var info = new CSDiagnosticInfo(code, args);
-            var diag = new CSDiagnostic(info, location);
+            info := new CSDiagnosticInfo(code, args);
+            diag := new CSDiagnostic(info, location);
             _diagnostics.Add(diag);
         }
 
@@ -1329,20 +1329,20 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (x.Kind)
             {
                 case SymbolKind.Method:
-                    var mX = (MethodSymbol)x;
+                    mX := (MethodSymbol)x;
                     xParameterTypes = mX.ParameterTypesWithAnnotations;
                     xRefKinds = mX.ParameterRefKinds;
 
-                    var mY = (MethodSymbol)y;
+                    mY := (MethodSymbol)y;
                     yParameterTypes = mY.ParameterTypesWithAnnotations;
                     yRefKinds = mY.ParameterRefKinds;
                     break;
                 case SymbolKind.Property:
-                    var pX = (PropertySymbol)x;
+                    pX := (PropertySymbol)x;
                     xParameterTypes = pX.ParameterTypesWithAnnotations;
                     xRefKinds = pX.ParameterRefKinds;
 
-                    var pY = (PropertySymbol)y;
+                    pY := (PropertySymbol)y;
                     yParameterTypes = pY.ParameterTypesWithAnnotations;
                     yRefKinds = pY.ParameterRefKinds;
                     break;

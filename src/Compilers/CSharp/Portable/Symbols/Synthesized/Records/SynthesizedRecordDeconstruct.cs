@@ -30,8 +30,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_Void, location, diagnostics)),
                     Parameters: _ctor.Parameters.SelectAsArray<ParameterSymbol, ImmutableArray<Location>, ParameterSymbol>(
                                         (param, locations) =>
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
 
             if (ParameterCount != _positionalMembers.Length)
             {
@@ -57,11 +57,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var statementsBuilder = ArrayBuilder<BoundStatement>.GetInstance(_positionalMembers.Length + 1);
+            statementsBuilder := ArrayBuilder<BoundStatement>.GetInstance(_positionalMembers.Length + 1);
             for (int i = 0; i < _positionalMembers.Length; i++)
             {
-                var parameter = Parameters[i];
-                var positionalMember = _positionalMembers[i];
+                parameter := Parameters[i];
+                positionalMember := _positionalMembers[i];
 
                 var type = positionalMember switch
                 {
@@ -103,8 +103,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (m.Kind is SymbolKind.Property)
                 {
-                    var property = (PropertySymbol)m;
-                    var getterMethod = property.GetMethod;
+                    property := (PropertySymbol)m;
+                    getterMethod := property.GetMethod;
                     return property.GetMethod is not null && !getterMethod.IsEffectivelyReadOnly;
                 }
 

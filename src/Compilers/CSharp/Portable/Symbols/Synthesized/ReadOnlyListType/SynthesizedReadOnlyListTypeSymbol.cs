@@ -127,7 +127,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static NamedTypeSymbol Create(SourceModuleSymbol containingModule, string name, SynthesizedReadOnlyListKind kind)
         {
-            var compilation = containingModule.DeclaringCompilation;
+            compilation := containingModule.DeclaringCompilation;
             DiagnosticInfo? diagnosticInfo = null;
 
             var hasReadOnlyInterfaces =
@@ -232,23 +232,23 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static DiagnosticInfo? getSpecialTypeMemberDiagnosticInfo(CSharpCompilation compilation, SpecialMember member)
             {
-                var symbol = compilation.GetSpecialTypeMember(member);
+                symbol := compilation.GetSpecialTypeMember(member);
                 if (symbol is { })
                 {
                     return null;
                 }
-                var memberDescriptor = SpecialMembers.GetDescriptor(member);
+                memberDescriptor := SpecialMembers.GetDescriptor(member);
                 return new CSDiagnosticInfo(ErrorCode.ERR_MissingPredefinedMember, memberDescriptor.DeclaringTypeMetadataName, memberDescriptor.Name);
             }
 
             static DiagnosticInfo? getWellKnownTypeMemberDiagnosticInfo(CSharpCompilation compilation, WellKnownMember member)
             {
-                var symbol = Binder.GetWellKnownTypeMember(compilation, member, out var useSiteInfo);
+                symbol := Binder.GetWellKnownTypeMember(compilation, member, out var useSiteInfo);
                 if (symbol is { })
                 {
                     return null;
                 }
-                var diagnosticInfo = useSiteInfo.DiagnosticInfo;
+                diagnosticInfo := useSiteInfo.DiagnosticInfo;
                 Debug.Assert(diagnosticInfo is { });
                 return diagnosticInfo;
             }
@@ -265,13 +265,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private SynthesizedReadOnlyListTypeSymbol(SourceModuleSymbol containingModule, string name, SynthesizedReadOnlyListKind kind, bool hasReadOnlyInterfaces)
         {
-            var compilation = containingModule.DeclaringCompilation;
+            compilation := containingModule.DeclaringCompilation;
 
             _containingModule = containingModule;
             Name = name;
-            var typeParameter = new SynthesizedReadOnlyListTypeParameterSymbol(this);
+            typeParameter := new SynthesizedReadOnlyListTypeParameterSymbol(this);
             TypeParameters = ImmutableArray.Create<TypeParameterSymbol>(typeParameter);
-            var typeArgs = TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
+            typeArgs := TypeArgumentsWithAnnotationsNoUseSiteDiagnostics;
 
             TypeSymbol fieldType = kind switch
             {
@@ -284,14 +284,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             _enumeratorType = kind == SynthesizedReadOnlyListKind.SingleElement ? new SynthesizedReadOnlyListEnumeratorTypeSymbol(this, typeParameter) : null;
             _field = new SynthesizedFieldSymbol(this, fieldType, kind == SynthesizedReadOnlyListKind.SingleElement ? "_item" : "_items", isReadOnly: true);
 
-            var iEnumerable = compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
-            var iCollection = compilation.GetWellKnownType(WellKnownType.System_Collections_ICollection);
-            var iList = compilation.GetWellKnownType(WellKnownType.System_Collections_IList);
-            var iEnumerableT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerable_T).Construct(typeArgs);
-            var iReadOnlyCollectionT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyCollection_T).Construct(typeArgs);
-            var iReadOnlyListT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyList_T).Construct(typeArgs);
-            var iCollectionT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_ICollection_T).Construct(typeArgs);
-            var iListT = compilation.GetSpecialType(SpecialType.System_Collections_Generic_IList_T).Construct(typeArgs);
+            iEnumerable := compilation.GetSpecialType(SpecialType.System_Collections_IEnumerable);
+            iCollection := compilation.GetWellKnownType(WellKnownType.System_Collections_ICollection);
+            iList := compilation.GetWellKnownType(WellKnownType.System_Collections_IList);
+            iEnumerableT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_IEnumerable_T).Construct(typeArgs);
+            iReadOnlyCollectionT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyCollection_T).Construct(typeArgs);
+            iReadOnlyListT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyList_T).Construct(typeArgs);
+            iCollectionT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_ICollection_T).Construct(typeArgs);
+            iListT := compilation.GetSpecialType(SpecialType.System_Collections_Generic_IList_T).Construct(typeArgs);
 
             _interfaces = hasReadOnlyInterfaces
                 ? ImmutableArray.Create(
@@ -311,7 +311,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     iCollectionT,
                     iListT);
 
-            var membersBuilder = ArrayBuilder<Symbol>.GetInstance();
+            membersBuilder := ArrayBuilder<Symbol>.GetInstance();
             membersBuilder.Add(_field);
             membersBuilder.AddIfNotNull(_enumeratorType);
             membersBuilder.Add(
@@ -471,12 +471,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // IEnumerable.GetEnumerator(), IEnumerable<T>.GetEnumerator()
             static BoundStatement generateGetEnumerator(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
                 if (containingType.IsSingleElement)
                 {
-                    var enumeratorType = containingType._enumeratorType;
+                    enumeratorType := containingType._enumeratorType;
                     Debug.Assert(enumeratorType is not null);
                     // return new Enumerator(_item);
                     return f.Return(f.New(enumeratorType, fieldReference));
@@ -503,7 +503,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // ICollection.Count, IReadOnlyCollection<T>.Count, ICollection<T>.Count
             static BoundStatement generateCount(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
                 if (containingType.IsSingleElement)
                 {
                     // return 1;
@@ -511,8 +511,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                         f.Literal(1));
                 }
 
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
                 if (containingType.IsArray)
                 {
                     // return _items.Length;
@@ -522,7 +522,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     // return _items.Count;
-                    var listMember = (PropertySymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__Count);
+                    listMember := (PropertySymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__Count);
                     return f.Return(
                         f.Property(fieldReference, listMember));
                 }
@@ -570,10 +570,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // IList.Contains(object), ICollection<T>.Contains(T)
             static BoundStatement generateContains(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
-                var parameterReference = f.Parameter(method.Parameters[0]);
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
+                parameterReference := f.Parameter(method.Parameters[0]);
                 if (containingType.IsSingleElement)
                 {
                     // return EqualityComparer<T>.Default.Equals(_item, param0);
@@ -601,7 +601,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     // return _items.Contains(param0);
-                    var listMember = (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__Contains);
+                    listMember := (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__Contains);
                     return f.Return(
                         f.Call(
                             fieldReference,
@@ -613,17 +613,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // ICollection.CopyTo(Array, int), ICollection<T>.CopyTo(T[], int)
             static BoundStatement generateCopyTo(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
-                var parameterReference0 = f.Parameter(method.Parameters[0]);
-                var parameterReference1 = f.Parameter(method.Parameters[1]);
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
+                parameterReference0 := f.Parameter(method.Parameters[0]);
+                parameterReference1 := f.Parameter(method.Parameters[1]);
                 BoundStatement statement;
                 if (containingType.IsSingleElement)
                 {
                     if (!interfaceMethod.ContainingType.IsGenericType)
                     {
-                        var arraySetValueMethod = (MethodSymbol)method.DeclaringCompilation.GetSpecialTypeMember(SpecialMember.System_Array__SetValue)!;
+                        arraySetValueMethod := (MethodSymbol)method.DeclaringCompilation.GetSpecialTypeMember(SpecialMember.System_Array__SetValue)!;
 
                         // param0.SetValue((object)_item, param1)
                         NamedTypeSymbol objectType = f.SpecialType(SpecialType.System_Object);
@@ -668,7 +668,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     // _items.CopyTo(param0, param1);
-                    var listMember = (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__CopyTo);
+                    listMember := (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__CopyTo);
                     statement = f.ExpressionStatement(
                         f.Call(
                             fieldReference,
@@ -682,16 +682,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // IList.this[int], IReadOnlyList<T>.this[int], IList<T>.this[int]
             static BoundStatement generateIndexer(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
-                var parameterReference = f.Parameter(method.Parameters[0]);
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
+                parameterReference := f.Parameter(method.Parameters[0]);
                 if (containingType.IsSingleElement)
                 {
                     // if (param0 != 0)
                     //      throw new IndexOutOfRangeException();
                     // return _item;
-                    var constructor = (MethodSymbol)method.DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_IndexOutOfRangeException__ctor)!;
+                    constructor := (MethodSymbol)method.DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_IndexOutOfRangeException__ctor)!;
                     return f.Block(
                         f.If(
                             f.IntNotEqual(parameterReference, f.Literal(0)),
@@ -707,7 +707,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     // return _items[param0];
-                    var listMember = (PropertySymbol)((MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__get_Item)).AssociatedSymbol;
+                    listMember := (PropertySymbol)((MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__get_Item)).AssociatedSymbol;
                     return f.Return(
                         f.Indexer(fieldReference, listMember, parameterReference));
                 }
@@ -716,10 +716,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // IList.IndexOf(object), IList<T>.IndexOf(T)
             static BoundStatement generateIndexOf(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var containingType = (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
-                var field = containingType._field;
-                var fieldReference = f.Field(f.This(), field);
-                var parameterReference = f.Parameter(method.Parameters[0]);
+                containingType := (SynthesizedReadOnlyListTypeSymbol)method.ContainingType;
+                field := containingType._field;
+                fieldReference := f.Field(f.This(), field);
+                parameterReference := f.Parameter(method.Parameters[0]);
                 if (containingType.IsSingleElement)
                 {
                     // return EqualityComparer<T>.Default.Equals(_item, param0) ? 0 : -1;
@@ -751,7 +751,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 else
                 {
                     // return _items.IndexOf(param0);
-                    var listMember = (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__IndexOf);
+                    listMember := (MethodSymbol)containingType.GetFieldTypeMember(WellKnownMember.System_Collections_Generic_List_T__IndexOf);
                     return f.Return(
                         f.Call(
                             fieldReference,
@@ -762,7 +762,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static BoundStatement generateNotSupportedException(SyntheticBoundNodeFactory f, MethodSymbol method, MethodSymbol interfaceMethod)
             {
-                var constructor = (MethodSymbol)method.DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_NotSupportedException__ctor)!;
+                constructor := (MethodSymbol)method.DeclaringCompilation.GetWellKnownTypeMember(WellKnownMember.System_NotSupportedException__ctor)!;
                 // throw new System.NotSupportedException();
                 return f.Throw(f.New(constructor));
             }
@@ -786,8 +786,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     WellKnownMember.System_Collections_Generic_EqualityComparer_T__get_Default);
                 var equalityComparer_Equals = f.WellKnownMethod(
                     WellKnownMember.System_Collections_Generic_EqualityComparer_T__Equals);
-                var equalityComparerType = equalityComparer_Equals.ContainingType;
-                var constructedEqualityComparer = equalityComparerType.Construct(fieldType);
+                equalityComparerType := equalityComparer_Equals.ContainingType;
+                constructedEqualityComparer := equalityComparerType.Construct(fieldType);
 
                 Conversion c = f.ClassifyEmitConversion(parameterReference, fieldType);
                 Debug.Assert(c.IsUnboxing || c.IsIdentity);
@@ -812,7 +812,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private Symbol GetFieldTypeMember(WellKnownMember member)
         {
-            var symbol = DeclaringCompilation.GetWellKnownTypeMember(member);
+            symbol := DeclaringCompilation.GetWellKnownTypeMember(member);
 
             Debug.Assert(symbol is { });
             Debug.Assert(_field.Type.OriginalDefinition.Equals(symbol.ContainingType, TypeCompareKind.AllIgnoreOptions));

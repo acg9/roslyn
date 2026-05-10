@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Emit
         ImmutableArray<Cci.ITypeReference> Cci.IGenericTypeInstanceReference.GetGenericArguments(EmitContext context)
         {
             PEModuleBuilder moduleBeingBuilt = (PEModuleBuilder)context.Module;
-            var builder = ArrayBuilder<Cci.ITypeReference>.GetInstance();
+            builder := ArrayBuilder<Cci.ITypeReference>.GetInstance();
             foreach (TypeWithAnnotations type in UnderlyingNamedType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics)
             {
                 builder.Add(moduleBeingBuilt.Translate(type.Type, syntaxNodeOpt: (CSharpSyntaxNode)context.SyntaxNode, diagnostics: context.Diagnostics));

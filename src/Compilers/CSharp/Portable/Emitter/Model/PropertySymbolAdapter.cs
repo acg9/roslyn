@@ -32,19 +32,19 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             CheckDefinitionInvariant();
 
-            var getMethod = AdaptedPropertySymbol.GetMethod?.GetCciAdapter();
+            getMethod := AdaptedPropertySymbol.GetMethod?.GetCciAdapter();
             if (getMethod != null && getMethod.ShouldInclude(context))
             {
                 yield return getMethod;
             }
 
-            var setMethod = AdaptedPropertySymbol.SetMethod?.GetCciAdapter();
+            setMethod := AdaptedPropertySymbol.SetMethod?.GetCciAdapter();
             if (setMethod != null && setMethod.ShouldInclude(context))
             {
                 yield return setMethod;
             }
 
-            var sourceProperty = AdaptedPropertySymbol as SourcePropertySymbolBase;
+            sourceProperty := AdaptedPropertySymbol as SourcePropertySymbolBase;
             if ((object)sourceProperty != null && this.ShouldInclude(context))
             {
                 SynthesizedSealedPropertyAccessor synthesizedAccessor = sourceProperty.SynthesizedSealedAccessorOpt;
@@ -223,7 +223,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 if (AdaptedPropertySymbol.IsExtensionBlockMember())
                 {
-                    var containingType = AdaptedPropertySymbol.ContainingType;
+                    containingType := AdaptedPropertySymbol.ContainingType;
                     return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
                 }
 
@@ -250,7 +250,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (AdaptedPropertySymbol.IsExtensionBlockMember())
             {
-                var containingType = AdaptedPropertySymbol.ContainingType;
+                containingType := AdaptedPropertySymbol.ContainingType;
                 return ((SourceMemberContainerTypeSymbol)containingType.ContainingType).GetExtensionGroupingInfo().GetCorrespondingGroupingType((SourceNamedTypeSymbol)containingType);
             }
 
@@ -290,7 +290,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private IMethodReference GetSynthesizedSealedAccessor(MethodKind targetMethodKind)
         {
-            var sourceProperty = AdaptedPropertySymbol as SourcePropertySymbolBase;
+            sourceProperty := AdaptedPropertySymbol as SourcePropertySymbolBase;
             if ((object)sourceProperty != null)
             {
                 SynthesizedSealedPropertyAccessor synthesized = sourceProperty.SynthesizedSealedAccessorOpt;

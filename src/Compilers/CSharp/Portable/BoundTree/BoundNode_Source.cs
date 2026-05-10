@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal string DumpSource()
         {
             int indentSize = 4;
-            var builder = new StringBuilder();
+            builder := new StringBuilder();
             appendSourceCore(this, indent: 0, tempIdentifiers: new Dictionary<SynthesizedLocal, int>());
             return builder.ToString();
 
@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                             appendLine("try");
                             appendSource(tryStatement.TryBlock);
 
-                            var catchBlocks = tryStatement.CatchBlocks;
+                            catchBlocks := tryStatement.CatchBlocks;
                             if (catchBlocks != null)
                             {
                                 foreach (var catchBlock in catchBlocks)
@@ -64,7 +64,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                                 }
                             }
 
-                            var finallyBlock = tryStatement.FinallyBlockOpt;
+                            finallyBlock := tryStatement.FinallyBlockOpt;
                             if (finallyBlock != null)
                             {
                                 appendLine("finally");
@@ -84,7 +84,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundBlock block:
                         {
-                            var statements = block.Statements;
+                            statements := block.Statements;
                             if (statements.Length == 1 && block.Locals.IsEmpty)
                             {
                                 appendSource(statements[0]);
@@ -117,7 +117,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundSequencePoint seqPoint:
                         {
-                            var statement = seqPoint.StatementOpt;
+                            statement := seqPoint.StatementOpt;
                             if (statement != null)
                             {
                                 appendSource(statement);
@@ -126,13 +126,13 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundSequencePointExpression seqPoint:
                         {
-                            var expression = seqPoint.Expression;
+                            expression := seqPoint.Expression;
                             appendSource(expression);
                             break;
                         }
                     case BoundSequencePointWithSpan seqPoint:
                         {
-                            var statement = seqPoint.StatementOpt;
+                            statement := seqPoint.StatementOpt;
                             if (statement != null)
                             {
                                 appendSource(statement);
@@ -149,7 +149,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     case BoundReturnStatement returnStatement:
                         {
                             append("return");
-                            var value = returnStatement.ExpressionOpt;
+                            value := returnStatement.ExpressionOpt;
                             if (value != null)
                             {
                                 append(" ");
@@ -190,7 +190,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundLocal local:
                         {
-                            var symbol = local.LocalSymbol;
+                            symbol := local.LocalSymbol;
                             appendLocal(symbol);
                             break;
                         }
@@ -212,7 +212,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundCall call:
                         {
-                            var receiver = call.ReceiverOpt;
+                            receiver := call.ReceiverOpt;
                             if (receiver != null)
                             {
                                 appendSource(receiver);
@@ -254,7 +254,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         }
                     case BoundFieldAccess fieldAccess:
                         {
-                            var receiver = fieldAccess.ReceiverOpt;
+                            receiver := fieldAccess.ReceiverOpt;
                             if (receiver != null)
                             {
                                 appendSource(receiver);
@@ -554,7 +554,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 void appendConstantValue(ConstantValue? constantValueOpt)
                 {
-                    var value = constantValueOpt?.Value?.ToString();
+                    value := constantValueOpt?.Value?.ToString();
                     if (value is null)
                     {
                         append("null");

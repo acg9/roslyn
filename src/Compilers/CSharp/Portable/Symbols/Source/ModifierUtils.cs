@@ -23,10 +23,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             out bool modifierErrors,
             out bool hasExplicitAccessModifier)
         {
-            var result = modifiers.ToDeclarationModifiers(isForTypeDeclaration: false, diagnostics.DiagnosticBag ?? new DiagnosticBag(), isOrdinaryMethod: isOrdinaryMethod);
+            result := modifiers.ToDeclarationModifiers(isForTypeDeclaration: false, diagnostics.DiagnosticBag ?? new DiagnosticBag(), isOrdinaryMethod: isOrdinaryMethod);
             result = CheckModifiers(isForTypeDeclaration: false, isForInterfaceMember, result, allowedModifiers, errorLocation, diagnostics, modifiers, out modifierErrors);
 
-            var readonlyToken = modifiers.FirstOrDefault(SyntaxKind.ReadOnlyKeyword);
+            readonlyToken := modifiers.FirstOrDefault(SyntaxKind.ReadOnlyKeyword);
             if (readonlyToken.Parent is MethodDeclarationSyntax or AccessorDeclarationSyntax or BasePropertyDeclarationSyntax or EventDeclarationSyntax)
                 modifierErrors |= !MessageID.IDS_FeatureReadOnlyMembers.CheckFeatureAvailability(diagnostics, readonlyToken);
 
@@ -132,7 +132,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // If we can find the 'partial' token, report it on that.
             if (modifierTokens != null)
             {
-                var partialToken = modifierTokens.Value.FirstOrDefault(SyntaxKind.PartialKeyword);
+                partialToken := modifierTokens.Value.FirstOrDefault(SyntaxKind.PartialKeyword);
                 if (partialToken != default)
                 {
                     diagnostics.Add(ErrorCode.ERR_PartialMisplaced, partialToken.GetLocation());
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 if ((modifiers & defaultInterfaceImplementationModifiers & DeclarationModifiers.Static) != 0 &&
                     (modifiers & defaultInterfaceImplementationModifiers & (DeclarationModifiers.Sealed | DeclarationModifiers.Abstract | DeclarationModifiers.Virtual)) != 0)
                 {
-                    var reportModifiers = DeclarationModifiers.Sealed | DeclarationModifiers.Abstract | DeclarationModifiers.Virtual;
+                    reportModifiers := DeclarationModifiers.Sealed | DeclarationModifiers.Abstract | DeclarationModifiers.Virtual;
                     if ((modifiers & defaultInterfaceImplementationModifiers & DeclarationModifiers.Sealed) != 0 &&
                         (modifiers & defaultInterfaceImplementationModifiers & (DeclarationModifiers.Abstract | DeclarationModifiers.Virtual)) != 0)
                     {
@@ -196,8 +196,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static void ReportUnsupportedModifiersForLanguageVersion(DeclarationModifiers modifiers, DeclarationModifiers unsupportedModifiers, Location errorLocation, BindingDiagnosticBag diagnostics, LanguageVersion availableVersion, LanguageVersion requiredVersion)
         {
             DeclarationModifiers errorModifiers = modifiers & unsupportedModifiers;
-            var requiredVersionArgument = new CSharpRequiredLanguageVersion(requiredVersion);
-            var availableVersionArgument = availableVersion.ToDisplayString();
+            requiredVersionArgument := new CSharpRequiredLanguageVersion(requiredVersion);
+            availableVersionArgument := availableVersion.ToDisplayString();
             while (errorModifiers != DeclarationModifiers.None)
             {
                 DeclarationModifiers oneError = errorModifiers & ~(errorModifiers - 1);
@@ -419,12 +419,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             SyntaxTokenList modifiers,
             DiagnosticBag diagnostics)
         {
-            var allModifiers = DeclarationModifiers.None;
+            allModifiers := DeclarationModifiers.None;
 
-            var seenNoDuplicates = true;
+            seenNoDuplicates := true;
             foreach (var modifierToken in modifiers)
             {
-                var thisModifier = ToDeclarationModifier(modifierToken.ContextualKind());
+                thisModifier := ToDeclarationModifier(modifierToken.ContextualKind());
                 ReportDuplicateModifiers(
                     modifierToken,
                     thisModifier,
@@ -441,20 +441,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public static DeclarationModifiers ToDeclarationModifiers(
             this SyntaxTokenList modifiers, bool isForTypeDeclaration, DiagnosticBag diagnostics, bool isOrdinaryMethod = false)
         {
-            var result = GetDeclarationModifiersAndCheckForDuplicateModifiers(modifiers, diagnostics);
+            result := GetDeclarationModifiersAndCheckForDuplicateModifiers(modifiers, diagnostics);
             if ((result & DeclarationModifiers.Partial) == DeclarationModifiers.Partial)
             {
-                var i = modifiers.IndexOf(SyntaxKind.PartialKeyword);
-                var modifier = modifiers[i];
+                i := modifiers.IndexOf(SyntaxKind.PartialKeyword);
+                modifier := modifiers[i];
 
-                var messageId = isForTypeDeclaration ? MessageID.IDS_FeaturePartialTypes : MessageID.IDS_FeaturePartialMethod;
+                messageId := isForTypeDeclaration ? MessageID.IDS_FeaturePartialTypes : MessageID.IDS_FeaturePartialMethod;
                 messageId.CheckFeatureAvailability(diagnostics, modifier);
 
                 // `partial` must always be the last modifier according to the language.  However, there was a bug
                 // where we allowed `partial async` at the end of modifiers on methods. We keep this behavior for
                 // backcompat.
-                var isLast = i == modifiers.Count - 1;
-                var isPartialAsyncMethod = isOrdinaryMethod && i == modifiers.Count - 2 && modifiers[i + 1].ContextualKind() is SyntaxKind.AsyncKeyword;
+                isLast := i == modifiers.Count - 1;
+                isPartialAsyncMethod := isOrdinaryMethod && i == modifiers.Count - 2 && modifiers[i + 1].ContextualKind() is SyntaxKind.AsyncKeyword;
                 if (!isLast && !isPartialAsyncMethod)
                 {
                     diagnostics.Add(
@@ -531,7 +531,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if ((modifiers & DeclarationModifiers.Required) != 0)
             {
-                var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(futureDestination: diagnostics, assemblyBeingBuilt: symbol.ContainingAssembly);
+                useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(futureDestination: diagnostics, assemblyBeingBuilt: symbol.ContainingAssembly);
                 bool reportedError = false;
 
                 switch (symbol)

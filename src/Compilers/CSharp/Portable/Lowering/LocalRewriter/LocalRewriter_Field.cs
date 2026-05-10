@@ -52,7 +52,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             FieldSymbol tupleField,
             BoundExpression? rewrittenReceiver)
         {
-            var tupleType = tupleField.ContainingType;
+            tupleType := tupleField.ContainingType;
 
             NamedTypeSymbol currentLinkType = tupleType;
             FieldSymbol underlyingField = tupleField.TupleUnderlyingField;
@@ -72,7 +72,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (!TypeSymbol.Equals(underlyingField.ContainingType, currentLinkType, TypeCompareKind.ConsiderEverything2))
             {
                 WellKnownMember wellKnownTupleRest = NamedTypeSymbol.GetTupleTypeMember(NamedTypeSymbol.ValueTupleRestPosition, NamedTypeSymbol.ValueTupleRestPosition);
-                var tupleRestField = (FieldSymbol?)NamedTypeSymbol.GetWellKnownMemberInType(currentLinkType.OriginalDefinition, wellKnownTupleRest, _diagnostics, syntax);
+                tupleRestField := (FieldSymbol?)NamedTypeSymbol.GetWellKnownMemberInType(currentLinkType.OriginalDefinition, wellKnownTupleRest, _diagnostics, syntax);
 
                 if (tupleRestField is null)
                 {

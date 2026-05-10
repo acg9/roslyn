@@ -118,7 +118,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return new UnsupportedMetadataTypeSymbol();
             }
 
-            var decoder = new DynamicTypeDecoder(dynamicTransformFlags, haveCustomModifierFlags, checkLength, containingAssembly);
+            decoder := new DynamicTypeDecoder(dynamicTransformFlags, haveCustomModifierFlags, checkLength, containingAssembly);
 
             // Native compiler encodes bools (always false) for custom modifiers and parameter ref-kinds, if ref-kind is ref or out.
             if (decoder.HandleCustomModifiers(targetSymbolCustomModifierCount) && decoder.HandleRefKind(targetSymbolRefKind))
@@ -217,7 +217,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
             // Native compiler encodes a bool for the given namedType, but none for its containing types.
             if (!isContaining)
             {
-                var flag = ConsumeFlag();
+                flag := ConsumeFlag();
                 Debug.Assert(!flag);
             }
 
@@ -274,7 +274,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return typeArguments;
             }
 
-            var transformedTypeArgsBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            transformedTypeArgsBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             bool anyTransformed = false;
             foreach (var typeArg in typeArguments)
             {
@@ -301,7 +301,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private ArrayTypeSymbol TransformArrayType(ArrayTypeSymbol arrayType)
         {
-            var flag = ConsumeFlag();
+            flag := ConsumeFlag();
             Debug.Assert(!flag);
 
             if (!HandleCustomModifiers(arrayType.ElementTypeWithAnnotations.CustomModifiers.Length))
@@ -324,7 +324,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private PointerTypeSymbol TransformPointerType(PointerTypeSymbol pointerType)
         {
-            var flag = ConsumeFlag();
+            flag := ConsumeFlag();
             Debug.Assert(!flag);
 
             if (!HandleCustomModifiers(pointerType.PointedAtTypeWithAnnotations.CustomModifiers.Length))
@@ -346,10 +346,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 #nullable enable
         private FunctionPointerTypeSymbol? TransformFunctionPointerType(FunctionPointerTypeSymbol type)
         {
-            var flag = ConsumeFlag();
+            flag := ConsumeFlag();
             Debug.Assert(!flag);
 
-            var sig = type.Signature;
+            sig := type.Signature;
 
             var (transformedReturnWithAnnotations, madeChanges) = handle(ref this, sig.RefKind, sig.RefCustomModifiers, sig.ReturnTypeWithAnnotations);
             if (transformedReturnWithAnnotations.IsDefault)
@@ -357,11 +357,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return null;
             }
 
-            var transformedParameters = ImmutableArray<TypeWithAnnotations>.Empty;
+            transformedParameters := ImmutableArray<TypeWithAnnotations>.Empty;
             if (sig.ParameterCount > 0)
             {
-                var paramsTransformed = false;
-                var paramsBuilder = ArrayBuilder<TypeWithAnnotations>.GetInstance(sig.ParameterCount);
+                paramsTransformed := false;
+                paramsBuilder := ArrayBuilder<TypeWithAnnotations>.GetInstance(sig.ParameterCount);
                 try
                 {
                     foreach (var param in sig.Parameters)
@@ -404,7 +404,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                     return (default, false);
                 }
 
-                var transformedType = decoder.TransformType(typeWithAnnotations.Type);
+                transformedType := decoder.TransformType(typeWithAnnotations.Type);
                 if (transformedType is null)
                 {
                     return (default, false);
@@ -426,7 +426,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         private bool ConsumeFlag()
         {
-            var result = PeekFlag();
+            result := PeekFlag();
             _index++;
             return result;
         }

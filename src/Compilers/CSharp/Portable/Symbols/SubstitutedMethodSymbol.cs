@@ -110,9 +110,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(ReferenceEquals(_constructedFrom, this));
 
             // We're creating a new unconstructed Method from another; alpha-rename type parameters.
-            var newMap = _inputMap.WithAlphaRename(this.OriginalDefinition, this, propagateAttributes: false, out typeParameters);
+            newMap := _inputMap.WithAlphaRename(this.OriginalDefinition, this, propagateAttributes: false, out typeParameters);
 
-            var prevMap = Interlocked.CompareExchange(ref _lazyMap, newMap, null);
+            prevMap := Interlocked.CompareExchange(ref _lazyMap, newMap, null);
             if (prevMap != null)
             {
                 // There is a race with another thread who has already set the map
@@ -152,7 +152,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var method = OriginalDefinition.ReducedFrom;
+                method := OriginalDefinition.ReducedFrom;
                 return ((object)method == null) ? null : method.Construct(this.TypeArgumentsWithAnnotations);
             }
         }
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var reduced = this.CallsiteReducedFromMethod;
+                reduced := this.CallsiteReducedFromMethod;
                 if ((object)reduced == null)
                 {
                     return this.ContainingType;
@@ -178,7 +178,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         public override TypeWithAnnotations GetTypeInferredDuringReduction(TypeParameterSymbol reducedFromTypeParameter)
         {
             // This will throw if API shouldn't be supported or there is a problem with the argument.
-            var notUsed = OriginalDefinition.GetTypeInferredDuringReduction(reducedFromTypeParameter);
+            notUsed := OriginalDefinition.GetTypeInferredDuringReduction(reducedFromTypeParameter);
 
             Debug.Assert(notUsed.Type is null && OriginalDefinition.ReducedFrom is not null);
             return this.TypeArgumentsWithAnnotations[reducedFromTypeParameter.Ordinal];
@@ -238,7 +238,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazyReturnType == null)
                 {
-                    var returnType = Map.SubstituteType(OriginalDefinition.ReturnTypeWithAnnotations);
+                    returnType := Map.SubstituteType(OriginalDefinition.ReturnTypeWithAnnotations);
                     Interlocked.CompareExchange(ref _lazyReturnType, new TypeWithAnnotations.Boxed(returnType), null);
                 }
                 return _lazyReturnType.Value;
@@ -345,7 +345,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ImmutableArray<ParameterSymbol> SubstituteParameters()
         {
-            var unsubstitutedParameters = OriginalDefinition.Parameters;
+            unsubstitutedParameters := OriginalDefinition.Parameters;
             int count = unsubstitutedParameters.Length;
 
             if (count == 0)
@@ -354,7 +354,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var substituted = ArrayBuilder<ParameterSymbol>.GetInstance(count);
+                substituted := ArrayBuilder<ParameterSymbol>.GetInstance(count);
                 TypeMap map = Map;
                 foreach (var p in unsubstitutedParameters)
                 {
@@ -420,8 +420,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             static bool wasConstructedForAnnotations(SubstitutedMethodSymbol method)
             {
-                var typeArguments = method.TypeArgumentsWithAnnotations;
-                var typeParameters = method.OriginalDefinition.TypeParameters;
+                typeArguments := method.TypeArgumentsWithAnnotations;
+                typeParameters := method.OriginalDefinition.TypeParameters;
 
                 for (int i = 0; i < typeArguments.Length; i++)
                 {

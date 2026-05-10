@@ -319,7 +319,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // SPEC VIOLATION: expanded form.
 
                 Debug.Assert(arguments.Names[argumentPosition].HasValue);
-                var name = arguments.Names[argumentPosition].GetValueOrDefault().Name;
+                name := arguments.Names[argumentPosition].GetValueOrDefault().Name;
                 for (int p = 0; p < memberParameters.Length; ++p)
                 {
                     // p is initialized to zero; it is ok for a named argument to "correspond" to
@@ -497,7 +497,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return null;
             }
 
-            var alreadyDefined = PooledHashSet<string>.GetInstance();
+            alreadyDefined := PooledHashSet<string>.GetInstance();
             for (int i = 0; i < arguments.Names.Count; ++i)
             {
                 string name = arguments.Name(i);

@@ -34,7 +34,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             else
             {
                 arguments = ArrayBuilder<BoundExpression>.GetInstance();
-                var concatMethods = new WellKnownConcatRelatedMethods(_compilation);
+                concatMethods := new WellKnownConcatRelatedMethods(_compilation);
                 VisitAndAddConcatArgumentInReverseOrder(unvisitedRight, argumentAlreadyVisited: false, arguments, ref concatMethods);
                 VisitAndAddConcatArgumentInReverseOrder(left, argumentAlreadyVisited: true, arguments, ref concatMethods);
                 arguments.ReverseContents();
@@ -100,11 +100,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return _factory.StringLiteral(@char.ToString());
             }
 
-            var concatKind = StringConcatenationRewriteKind.AllStrings;
+            concatKind := StringConcatenationRewriteKind.AllStrings;
 
             foreach (var arg in visitedArguments)
             {
-                var argumentType = arg.Type;
+                argumentType := arg.Type;
                 // Null arguments should have been eliminated before now.
                 Debug.Assert(argumentType is not null);
                 switch (argumentType.SpecialType)
@@ -136,7 +136,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 case (_, 1):
                     // Only 1 argument. We need to make sure that it's not null, but otherwise we don't need to call Concat and can just use ToString.
-                    var arg = ConvertConcatExprToString(visitedArguments[0]);
+                    arg := ConvertConcatExprToString(visitedArguments[0]);
                     visitedArguments.Free();
                     return _factory.Coalesce(arg, _factory.StringLiteral(string.Empty));
 
@@ -151,7 +151,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     };
 
                     bool needsImplicitConversionFromStringToSpan = visitedArguments.Any(arg => arg.Type is { SpecialType: SpecialType.System_String });
-                    var charType = _compilation.GetSpecialType(SpecialType.System_Char);
+                    charType := _compilation.GetSpecialType(SpecialType.System_Char);
 
                     if (!TryGetSpecialTypeMethod(originalSyntax, concatMember, out var spanConcat, isOptional: true)
                         || !TryGetNeededToSpanMembers(this, originalSyntax, needsImplicitConversionFromStringToSpan, charType, out var readOnlySpanCtorRefParamChar, out var stringImplicitConversionToReadOnlySpan))
@@ -183,15 +183,15 @@ fallbackStrings:
                         visitedArguments[i] = ConvertConcatExprToString(visitedArguments[i]);
                     }
 
-                    var finalArguments = visitedArguments.ToImmutableAndFree();
+                    finalArguments := visitedArguments.ToImmutableAndFree();
 
                     if (finalArguments.Length > 4)
                     {
-                        var array = _factory.ArrayOrEmpty(_factory.SpecialType(SpecialType.System_String), finalArguments);
+                        array := _factory.ArrayOrEmpty(_factory.SpecialType(SpecialType.System_String), finalArguments);
                         finalArguments = [array];
                     }
 
-                    var method = UnsafeGetSpecialTypeMethod(originalSyntax, concatMember);
+                    method := UnsafeGetSpecialTypeMethod(originalSyntax, concatMember);
                     Debug.Assert(method is not null);
                     return BoundCall.Synthesized(originalSyntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, method, finalArguments);
 
@@ -209,7 +209,7 @@ fallbackStrings:
         {
             Debug.Assert(!_inExpressionLambda);
             destinationArguments = ArrayBuilder<BoundExpression>.GetInstance();
-            var concatMethods = new WellKnownConcatRelatedMethods(_compilation);
+            concatMethods := new WellKnownConcatRelatedMethods(_compilation);
             pushArguments(this, originalOperator, destinationArguments, ref concatMethods);
             if (visitedCompoundAssignmentLeftRead is not null)
             {
@@ -219,7 +219,7 @@ fallbackStrings:
                 // left read, so if we ever do introduce optimizations here that result in more than one argument being added to destinationArguments, we'll need to adjust
                 // that logic.
 #if DEBUG
-                var followingArgument = destinationArguments.Count > 0 ? destinationArguments[^1] : null;
+                followingArgument := destinationArguments.Count > 0 ? destinationArguments[^1] : null;
                 var (singleConcatArgument, nestedConcatArguments) = SimplifyConcatArgument(visitedCompoundAssignmentLeftRead, ref followingArgument, ref concatMethods);
                 // Simplify should have done no work and just returned the original argument
                 Debug.Assert(ReferenceEquals(singleConcatArgument, visitedCompoundAssignmentLeftRead));
@@ -317,9 +317,9 @@ fallbackStrings:
                     // See if we can merge this argument with the next one
                     if (followingArgument is { ConstantValueOpt: { IsString: true } or { IsChar: true } })
                     {
-                        var constantValue = followingArgument.ConstantValueOpt;
-                        var next = getRope(constantValue);
-                        var current = getRope(argument.ConstantValueOpt);
+                        constantValue := followingArgument.ConstantValueOpt;
+                        next := getRope(constantValue);
+                        current := getRope(argument.ConstantValueOpt);
                         followingArgument = _factory.StringLiteral(ConstantValue.CreateFromRope(Rope.Concat(current, next)));
                         return (null, default);
                     }
@@ -360,7 +360,7 @@ fallbackStrings:
                 argument = VisitExpression(argument);
             }
 
-            var followingArgument = finalArguments.Count > 0 ? finalArguments[^1] : null;
+            followingArgument := finalArguments.Count > 0 ? finalArguments[^1] : null;
             var (singleConcatArgument, nestedConcatArguments) = SimplifyConcatArgument(argument, ref followingArgument, ref wellKnownConcatOptimizationMethods);
 
             // We should only get one result from simplification; either a single argument to add, or multiple nested arguments to add, or the current argument was optimized away
@@ -489,7 +489,7 @@ fallbackStrings:
             if (self.TryGetSpecialTypeMethod(syntax, SpecialMember.System_ReadOnlySpan_T__ctor_Reference, out MethodSymbol? readOnlySpanCtorRefParamGeneric, isOptional: true) &&
                 readOnlySpanCtorRefParamGeneric.Parameters[0].RefKind != RefKind.Out)
             {
-                var readOnlySpanOfChar = readOnlySpanCtorRefParamGeneric.ContainingType.Construct(charType);
+                readOnlySpanOfChar := readOnlySpanCtorRefParamGeneric.ContainingType.Construct(charType);
                 readOnlySpanCtorRefParamChar = readOnlySpanCtorRefParamGeneric.AsMember(readOnlySpanOfChar);
             }
             else
@@ -513,7 +513,7 @@ fallbackStrings:
             MethodSymbol readOnlySpanCtorRefParamChar,
             ArrayBuilder<BoundExpression> args)
         {
-            var localsBuilder = ArrayBuilder<LocalSymbol>.GetInstance();
+            localsBuilder := ArrayBuilder<LocalSymbol>.GetInstance();
 
             for (int i = 0; i < args.Count; i++)
             {
@@ -522,7 +522,7 @@ fallbackStrings:
 
                 if (arg.Type.SpecialType == SpecialType.System_Char)
                 {
-                    var temp = factory.StoreToTemp(arg, out var tempAssignment);
+                    temp := factory.StoreToTemp(arg, out var tempAssignment);
                     localsBuilder.Add(temp.LocalSymbol);
 
                     Debug.Assert(readOnlySpanCtorRefParamChar.Parameters[0].RefKind != RefKind.Out);
@@ -555,9 +555,9 @@ fallbackStrings:
                 }
             }
 
-            var concatCall = BoundCall.Synthesized(syntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, spanConcat, args.ToImmutableAndFree());
+            concatCall := BoundCall.Synthesized(syntax, receiverOpt: null, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, spanConcat, args.ToImmutableAndFree());
 
-            var oldSyntax = factory.Syntax;
+            oldSyntax := factory.Syntax;
             factory.Syntax = syntax;
 
             var sequence = factory.Sequence(
@@ -577,7 +577,7 @@ fallbackStrings:
         {
             BoundBinaryOperator? current = original;
             Debug.Assert(IsBinaryStringConcatenation(current));
-            var stack = ArrayBuilder<BoundBinaryOperator>.GetInstance();
+            stack := ArrayBuilder<BoundBinaryOperator>.GetInstance();
 
             while (true)
             {
@@ -598,13 +598,13 @@ fallbackStrings:
 
             while (stack.TryPop(out current))
             {
-                var right = VisitExpression(current.Right);
+                right := VisitExpression(current.Right);
 
                 SpecialMember member = (current.OperatorKind == BinaryOperatorKind.StringConcatenation) ?
                     SpecialMember.System_String__ConcatStringString :
                     SpecialMember.System_String__ConcatObjectObject;
 
-                var method = UnsafeGetSpecialTypeMethod(current.Syntax, member);
+                method := UnsafeGetSpecialTypeMethod(current.Syntax, member);
                 Debug.Assert(method is not null);
 
                 currentResult = new BoundBinaryOperator(current.Syntax, current.OperatorKind, constantValueOpt: null, method, constrainedToTypeOpt: null, default(LookupResultKind), currentResult, right, current.Type);
@@ -620,7 +620,7 @@ fallbackStrings:
         /// </summary>
         private BoundExpression ConvertConcatExprToString(BoundExpression expr)
         {
-            var syntax = expr.Syntax;
+            syntax := expr.Syntax;
 
             // If it's a value type, it'll have been boxed by the +(string, object) or +(object, string)
             // operator. Undo that.
@@ -659,15 +659,15 @@ fallbackStrings:
 
             // Evaluate toString at the last possible moment, to avoid spurious diagnostics if it's missing.
             // All code paths below here use it.
-            var objectToStringMethod = UnsafeGetSpecialTypeMethod(syntax, SpecialMember.System_Object__ToString);
+            objectToStringMethod := UnsafeGetSpecialTypeMethod(syntax, SpecialMember.System_Object__ToString);
 
             // If it's a struct which has overridden ToString, find that method. Note that we might fail to
             // find it, e.g. if object.ToString is missing
             MethodSymbol? structToStringMethod = null;
             if (expr.Type.IsValueType && !expr.Type.IsTypeParameter())
             {
-                var type = (NamedTypeSymbol)expr.Type;
-                var typeToStringMembers = type.GetMembers(objectToStringMethod.Name);
+                type := (NamedTypeSymbol)expr.Type;
+                typeToStringMembers := type.GetMembers(objectToStringMethod.Name);
                 foreach (var member in typeToStringMembers)
                 {
                     if (member is MethodSymbol toStringMethod &&
@@ -728,7 +728,7 @@ fallbackStrings:
                 // BoundPassByCopy (as it's accessed multiple times). If we don't do this, and the
                 // receiver is an unconstrained generic parameter, BoundLoweredConditionalAccess has
                 // to generate a lot of code to ensure it only accesses the copy once (which is pointless).
-                var temp = _factory.StoreToTemp(expr, out var store);
+                temp := _factory.StoreToTemp(expr, out var store);
                 return _factory.Sequence(
                     ImmutableArray.Create(temp.LocalSymbol),
                     ImmutableArray.Create<BoundExpression>(store),

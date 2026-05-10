@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_lazyTypeParameterMap == null)
                 {
-                    var result = new MultiDictionary<string, TypeParameterSymbol>();
+                    result := new MultiDictionary<string, TypeParameterSymbol>();
                     foreach (var typeParameter in _methodSymbol.TypeParameters)
                     {
                         result.Add(typeParameter.Name, typeParameter);

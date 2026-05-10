@@ -16,10 +16,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(node != null);
 
-            var rewrittenInitializer = VisitStatement(node.Initializer);
-            var rewrittenCondition = VisitExpression(node.Condition);
-            var rewrittenIncrement = VisitStatement(node.Increment);
-            var rewrittenBody = VisitStatement(node.Body);
+            rewrittenInitializer := VisitStatement(node.Initializer);
+            rewrittenCondition := VisitExpression(node.Condition);
+            rewrittenIncrement := VisitStatement(node.Increment);
+            rewrittenBody := VisitStatement(node.Body);
             Debug.Assert(rewrittenBody is { });
 
             // EnC: We need to insert a hidden sequence point to handle function remapping in case 
@@ -71,13 +71,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             // and the incrementors.
 
             SyntaxNode syntax = original.Syntax;
-            var statementBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            statementBuilder := ArrayBuilder<BoundStatement>.GetInstance();
             if (rewrittenInitializer != null)
             {
                 statementBuilder.Add(rewrittenInitializer);
             }
 
-            var startLabel = new GeneratedLabelSymbol("start");
+            startLabel := new GeneratedLabelSymbol("start");
 
             // for (initializer; condition; increment)
             //   body;
@@ -96,7 +96,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // break:
             // }
 
-            var endLabel = new GeneratedLabelSymbol("end");
+            endLabel := new GeneratedLabelSymbol("end");
 
             //  initializer;
             //  goto end;
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // break:
             statementBuilder.Add(new BoundLabelStatement(syntax, breakLabel));
 
-            var statements = statementBuilder.ToImmutableAndFree();
+            statements := statementBuilder.ToImmutableAndFree();
             return new BoundBlock(syntax, outerLocals, statements, hasErrors);
         }
 
@@ -213,7 +213,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(rewrittenBody != null);
 
             SyntaxNode syntax = node.Syntax;
-            var statementBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            statementBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             //  initializer;
             if (rewrittenInitializer != null)
@@ -221,7 +221,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 statementBuilder.Add(rewrittenInitializer);
             }
 
-            var startLabel = new GeneratedLabelSymbol("start");
+            startLabel := new GeneratedLabelSymbol("start");
 
             // start:
             BoundStatement startLabelStatement = new BoundLabelStatement(syntax, startLabel);
@@ -233,7 +233,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             statementBuilder.Add(startLabelStatement);
 
-            var blockBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            blockBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // GotoIfFalse condition break;
             if (rewrittenCondition != null)
@@ -267,7 +267,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // break:
             statementBuilder.Add(new BoundLabelStatement(syntax, node.BreakLabel));
 
-            var statements = statementBuilder.ToImmutableAndFree();
+            statements := statementBuilder.ToImmutableAndFree();
             return new BoundBlock(syntax, node.OuterLocals, statements, node.HasErrors);
         }
     }

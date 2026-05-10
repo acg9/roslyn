@@ -216,7 +216,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = obj as AnonymousTypePropertySymbol;
+                other := obj as AnonymousTypePropertySymbol;
                 if ((object)other == null)
                 {
                     return false;

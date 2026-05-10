@@ -26,12 +26,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal static SynthesizedEntryPointSymbol Create(SynthesizedInteractiveInitializerMethod initializerMethod, BindingDiagnosticBag diagnostics)
         {
-            var containingType = initializerMethod.ContainingType;
-            var compilation = containingType.DeclaringCompilation;
+            containingType := initializerMethod.ContainingType;
+            compilation := containingType.DeclaringCompilation;
             if (compilation.IsSubmission)
             {
-                var systemObject = Binder.GetSpecialType(compilation, SpecialType.System_Object, DummySyntax(), diagnostics);
-                var submissionArrayType = compilation.CreateArrayTypeSymbol(systemObject);
+                systemObject := Binder.GetSpecialType(compilation, SpecialType.System_Object, DummySyntax(), diagnostics);
+                submissionArrayType := compilation.CreateArrayTypeSymbol(systemObject);
                 diagnostics.ReportUseSite(submissionArrayType, NoLocation.Singleton);
                 return new SubmissionEntryPoint(
                     containingType,
@@ -40,7 +40,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var systemVoid = Binder.GetSpecialType(compilation, SpecialType.System_Void, DummySyntax(), diagnostics);
+                systemVoid := Binder.GetSpecialType(compilation, SpecialType.System_Void, DummySyntax(), diagnostics);
                 return new ScriptEntryPoint(containingType, TypeWithAnnotations.Create(systemVoid));
             }
         }
@@ -288,7 +288,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private static CSharpSyntaxNode DummySyntax()
         {
-            var syntaxTree = CSharpSyntaxTree.Dummy;
+            syntaxTree := CSharpSyntaxTree.Dummy;
             return (CSharpSyntaxNode)syntaxTree.GetRoot();
         }
 
@@ -356,10 +356,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 UserMain = userMain;
                 _userMainReturnTypeSyntax = userMain.ExtractReturnTypeSyntax();
-                var binder = compilation.GetBinder(_userMainReturnTypeSyntax);
+                binder := compilation.GetBinder(_userMainReturnTypeSyntax);
                 _parameters = SynthesizedParameterSymbol.DeriveParameters(userMain, this);
 
-                var arguments = Parameters.SelectAsArray((p, s) => (BoundExpression)new BoundParameter(s, p, p.Type), _userMainReturnTypeSyntax);
+                arguments := Parameters.SelectAsArray((p, s) => (BoundExpression)new BoundParameter(s, p, p.Type), _userMainReturnTypeSyntax);
 
                 // Main(args) or Main()
                 BoundCall userMainInvocation = new BoundCall(
@@ -409,7 +409,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     // Fall back to the old GetAwaiter().GetResult() pattern
                     // The diagnostics that would be produced here will already have been captured and returned.
-                    var success = binder.GetAwaitableExpressionInfo(userMainInvocation, out _userEntryPointInvocation, runtimeAsyncAwaitCall: out _, _userMainReturnTypeSyntax, BindingDiagnosticBag.Discarded);
+                    success := binder.GetAwaitableExpressionInfo(userMainInvocation, out _userEntryPointInvocation, runtimeAsyncAwaitCall: out _, _userMainReturnTypeSyntax, BindingDiagnosticBag.Discarded);
                 }
 
                 Debug.Assert(
@@ -433,7 +433,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal override BoundBlock CreateBody(BindingDiagnosticBag diagnostics)
             {
-                var syntax = _userMainReturnTypeSyntax;
+                syntax := _userMainReturnTypeSyntax;
 
                 if (ReturnsVoid)
                 {
@@ -504,8 +504,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // }
             internal override BoundBlock CreateBody(BindingDiagnosticBag diagnostics)
             {
-                var syntax = DummySyntax();
-                var compilation = _containingType.DeclaringCompilation;
+                syntax := DummySyntax();
+                compilation := _containingType.DeclaringCompilation;
 
                 // Creates a new top-level binder that just contains the global imports for the compilation.
                 // The imports are required if a consumer of the scripting API is using a Task implementation 
@@ -513,10 +513,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 Binder binder = WithUsingNamespacesAndTypesBinder.Create(compilation.GlobalImports, next: new BuckStopsHereBinder(compilation, null), withImportChainEntry: true);
                 binder = new InContainerBinder(compilation.GlobalNamespace, binder);
 
-                var ctor = _containingType.GetScriptConstructor();
+                ctor := _containingType.GetScriptConstructor();
                 Debug.Assert(ctor.ParameterCount == 0);
 
-                var initializer = _containingType.GetScriptInitializer();
+                initializer := _containingType.GetScriptInitializer();
                 Debug.Assert(initializer.ParameterCount == 0);
 
                 var scriptLocal = new BoundLocal(
@@ -527,7 +527,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 { WasCompilerGenerated = true };
 
                 Debug.Assert(!initializer.ReturnType.IsDynamic());
-                var initializeCall = CreateParameterlessCall(syntax, scriptLocal, receiverIsSubjectToCloning: ThreeState.False, initializer);
+                initializeCall := CreateParameterlessCall(syntax, scriptLocal, receiverIsSubjectToCloning: ThreeState.False, initializer);
                 BoundExpression getAwaiterGetResultCall;
                 Debug.Assert(!compilation.IsRuntimeAsyncEnabledIn(this));
                 if (!binder.GetAwaitableExpressionInfo(initializeCall, out getAwaiterGetResultCall, runtimeAsyncAwaitCall: out _, syntax, diagnostics))
@@ -603,15 +603,15 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // }
             internal override BoundBlock CreateBody(BindingDiagnosticBag diagnostics)
             {
-                var syntax = DummySyntax();
+                syntax := DummySyntax();
 
-                var ctor = _containingType.GetScriptConstructor();
+                ctor := _containingType.GetScriptConstructor();
                 Debug.Assert(ctor.ParameterCount == 1);
 
-                var initializer = _containingType.GetScriptInitializer();
+                initializer := _containingType.GetScriptInitializer();
                 Debug.Assert(initializer.ParameterCount == 0);
 
-                var submissionArrayParameter = new BoundParameter(syntax, _parameters[0]) { WasCompilerGenerated = true };
+                submissionArrayParameter := new BoundParameter(syntax, _parameters[0]) { WasCompilerGenerated = true };
                 var submissionLocal = new BoundLocal(
                     syntax,
                     new SynthesizedLocal(this, TypeWithAnnotations.Create(_containingType), SynthesizedLocalKind.LoweringTemp),

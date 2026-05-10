@@ -70,8 +70,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                             Debug.Assert(ctorDecl.Body != null);
 
                             // [SomeAttribute] static MyCtorName(...) [|{|] ... }
-                            var start = ctorDecl.Body.OpenBraceToken.SpanStart;
-                            var end = ctorDecl.Body.OpenBraceToken.Span.End;
+                            start := ctorDecl.Body.OpenBraceToken.SpanStart;
+                            end := ctorDecl.Body.OpenBraceToken.Span.End;
                             span = TextSpan.FromBounds(start, end);
                         }
                         else
@@ -122,7 +122,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (rewritten.Kind == BoundKind.Block)
             {
-                var block = (BoundBlock)rewritten;
+                block := (BoundBlock)rewritten;
                 return block.Update(block.Locals, block.LocalFunctions, block.HasUnsafeModifier, block.Instrumentation, ImmutableArray.Create(InstrumentFieldOrPropertyInitializer(block.Statements.Single(), syntax)));
             }
 
@@ -139,15 +139,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             Debug.Assert(syntax is { Parent: { Parent: { } } });
-            var grandparent = syntax.Parent.Parent;
+            grandparent := syntax.Parent.Parent;
             switch (grandparent.Kind())
             {
                 case SyntaxKind.VariableDeclarator:
-                    var declaratorSyntax = (VariableDeclaratorSyntax)grandparent;
+                    declaratorSyntax := (VariableDeclaratorSyntax)grandparent;
                     return AddSequencePoint(declaratorSyntax, rewritten);
 
                 case SyntaxKind.PropertyDeclaration:
-                    var declaration = (PropertyDeclarationSyntax)grandparent;
+                    declaration := (PropertyDeclarationSyntax)grandparent;
                     return AddSequencePoint(declaration, rewritten);
 
                 default:
@@ -240,7 +240,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundStatement InstrumentDoStatementConditionalGotoStart(BoundDoStatement original, BoundStatement ifConditionGotoStart)
         {
-            var doSyntax = (DoStatementSyntax)original.Syntax;
+            doSyntax := (DoStatementSyntax)original.Syntax;
             var span = TextSpan.FromBounds(
                 doSyntax.WhileKeyword.SpanStart,
                 doSyntax.SemicolonToken.Span.End);
@@ -268,14 +268,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         public override BoundStatement InstrumentForEachStatementCollectionVarDeclaration(BoundForEachStatement original, BoundStatement? collectionVarDecl)
         {
-            var forEachSyntax = (CommonForEachStatementSyntax)original.Syntax;
+            forEachSyntax := (CommonForEachStatementSyntax)original.Syntax;
             return new BoundSequencePoint(forEachSyntax.Expression,
                                           base.InstrumentForEachStatementCollectionVarDeclaration(original, collectionVarDecl));
         }
 
         public override BoundStatement InstrumentForEachStatementDeconstructionVariablesDeclaration(BoundForEachStatement original, BoundStatement iterationVarDecl)
         {
-            var forEachSyntax = (ForEachVariableStatementSyntax)original.Syntax;
+            forEachSyntax := (ForEachVariableStatementSyntax)original.Syntax;
             return new BoundSequencePointWithSpan(forEachSyntax, base.InstrumentForEachStatementDeconstructionVariablesDeclaration(original, iterationVarDecl), forEachSyntax.Variable.Span);
         }
 
@@ -289,12 +289,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </remarks>
         public override BoundStatement InstrumentForEachStatement(BoundForEachStatement original, BoundStatement rewritten)
         {
-            var forEachSyntax = (CommonForEachStatementSyntax)original.Syntax;
+            forEachSyntax := (CommonForEachStatementSyntax)original.Syntax;
             var span = forEachSyntax.AwaitKeyword != default
                 ? TextSpan.FromBounds(forEachSyntax.AwaitKeyword.Span.Start, forEachSyntax.ForEachKeyword.Span.End)
                 : forEachSyntax.ForEachKeyword.Span;
 
-            var foreachKeywordSequencePoint = new BoundSequencePointWithSpan(forEachSyntax, null, span);
+            foreachKeywordSequencePoint := new BoundSequencePointWithSpan(forEachSyntax, null, span);
             return new BoundStatementList(forEachSyntax,
                                             ImmutableArray.Create<BoundStatement>(foreachKeywordSequencePoint,
                                                                                 base.InstrumentForEachStatement(original, rewritten)));
@@ -315,13 +315,13 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 case SyntaxKind.ForEachStatement:
                     {
-                        var forEachSyntax = (ForEachStatementSyntax)original.Syntax;
+                        forEachSyntax := (ForEachStatementSyntax)original.Syntax;
                         iterationVarDeclSpan = TextSpan.FromBounds(forEachSyntax.Type.SpanStart, forEachSyntax.Identifier.Span.End);
                         break;
                     }
                 case SyntaxKind.ForEachVariableStatement:
                     {
-                        var forEachSyntax = (ForEachVariableStatementSyntax)original.Syntax;
+                        forEachSyntax := (ForEachVariableStatementSyntax)original.Syntax;
                         iterationVarDeclSpan = forEachSyntax.Variable.Span;
                         break;
                     }
@@ -342,7 +342,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundStatement InstrumentForEachStatementConditionalGotoStart(BoundForEachStatement original, BoundStatement branchBack)
         {
-            var syntax = (CommonForEachStatementSyntax)original.Syntax;
+            syntax := (CommonForEachStatementSyntax)original.Syntax;
             return new BoundSequencePointWithSpan(syntax,
                                                   base.InstrumentForEachStatementConditionalGotoStart(original, branchBack),
                                                   syntax.InKeyword.Span);
@@ -357,7 +357,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundStatement InstrumentIfStatementConditionalGoto(BoundIfStatement original, BoundStatement rewritten)
         {
-            var syntax = (IfStatementSyntax)original.Syntax;
+            syntax := (IfStatementSyntax)original.Syntax;
             return new BoundSequencePointWithSpan(
                 syntax,
                 base.InstrumentIfStatementConditionalGoto(original, rewritten),
@@ -376,8 +376,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundStatement InstrumentLabelStatement(BoundLabeledStatement original, BoundStatement rewritten)
         {
-            var labeledSyntax = (LabeledStatementSyntax)original.Syntax;
-            var span = TextSpan.FromBounds(labeledSyntax.Identifier.SpanStart, labeledSyntax.ColonToken.Span.End);
+            labeledSyntax := (LabeledStatementSyntax)original.Syntax;
+            span := TextSpan.FromBounds(labeledSyntax.Identifier.SpanStart, labeledSyntax.ColonToken.Span.End);
             return new BoundSequencePointWithSpan(labeledSyntax,
                                                   base.InstrumentLabelStatement(original, rewritten),
                                                   span);
@@ -477,7 +477,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // EnC: We need to insert a hidden sequence point to handle function remapping in case 
             // the containing method is edited while methods invoked in the condition are being executed.
 
-            var filterClause = ((CatchClauseSyntax)original.Syntax).Filter;
+            filterClause := ((CatchClauseSyntax)original.Syntax).Filter;
             Debug.Assert(filterClause is not null);
 
             rewrittenFilter = AddConditionSequencePoint(new BoundSequencePointExpression(filterClause, rewrittenFilter, rewrittenFilter.Type), filterClause, factory);

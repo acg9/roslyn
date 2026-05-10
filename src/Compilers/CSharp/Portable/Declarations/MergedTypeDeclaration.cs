@@ -55,7 +55,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public ImmutableArray<SyntaxList<AttributeListSyntax>> GetAttributeDeclarations(QuickAttributes? quickAttributes)
         {
-            var attributeSyntaxListBuilder = ArrayBuilder<SyntaxList<AttributeListSyntax>>.GetInstance();
+            attributeSyntaxListBuilder := ArrayBuilder<SyntaxList<AttributeListSyntax>>.GetInstance();
 
             foreach (var decl in _declarations)
             {
@@ -69,8 +69,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var syntaxRef = decl.SyntaxReference;
-                var typeDecl = syntaxRef.GetSyntax();
+                syntaxRef := decl.SyntaxReference;
+                typeDecl := syntaxRef.GetSyntax();
                 SyntaxList<AttributeListSyntax> attributesSyntaxList;
                 switch (typeDecl.Kind())
                 {
@@ -192,7 +192,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (Declarations.Length == 1)
                     return OneOrMany.Create(Declarations[0].NameLocation);
 
-                var builder = ArrayBuilder<SourceLocation>.GetInstance(Declarations.Length);
+                builder := ArrayBuilder<SourceLocation>.GetInstance(Declarations.Length);
                 foreach (var decl in Declarations)
                     builder.AddIfNotNull(decl.NameLocation);
 
@@ -208,7 +208,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 foreach (var child in decl.Children)
                 {
-                    var asType = child as SingleTypeDeclaration;
+                    asType := child as SingleTypeDeclaration;
                     if (asType != null)
                     {
                         if (nestedTypes == null)
@@ -220,11 +220,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
             }
 
-            var children = ArrayBuilder<MergedTypeDeclaration>.GetInstance();
+            children := ArrayBuilder<MergedTypeDeclaration>.GetInstance();
 
             if (nestedTypes != null)
             {
-                var typesGrouped = nestedTypes.ToDictionary(t => t.Identity);
+                typesGrouped := nestedTypes.ToDictionary(t => t.Identity);
                 nestedTypes.Free();
 
                 foreach (var typeGroup in typesGrouped.Values)
@@ -260,7 +260,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (_lazyMemberNames == null)
                 {
-                    var names = UnionCollection<string>.Create(this.Declarations, d => d.MemberNames.Value);
+                    names := UnionCollection<string>.Create(this.Declarations, d => d.MemberNames.Value);
                     Interlocked.CompareExchange(ref _lazyMemberNames, names, null);
                 }
 

@@ -113,7 +113,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             if (method.IsIterator)
             {
-                var builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncIteratorMethodBuilder);
+                builderType := F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncIteratorMethodBuilder);
                 Debug.Assert((object)builderType != null);
 
                 TryGetBuilderMember<MethodSymbol>(
@@ -147,7 +147,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (method.IsAsyncReturningVoid())
             {
-                var builderType = F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncVoidMethodBuilder);
+                builderType := F.WellKnownType(WellKnownType.System_Runtime_CompilerServices_AsyncVoidMethodBuilder);
                 Debug.Assert((object)builderType != null);
                 MethodSymbol createBuilderMethod;
                 bool customBuilder = false;
@@ -181,7 +181,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             TypeSymbol methodLevelBuilder = null;
             if (method.IsAsyncEffectivelyReturningTask(F.Compilation))
             {
-                var returnType = (NamedTypeSymbol)method.ReturnType;
+                returnType := (NamedTypeSymbol)method.ReturnType;
                 NamedTypeSymbol builderType;
                 MethodSymbol createBuilderMethod = null;
                 PropertySymbol taskProperty = null;
@@ -252,8 +252,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (method.IsAsyncEffectivelyReturningGenericTask(F.Compilation))
             {
-                var returnType = (NamedTypeSymbol)method.ReturnType;
-                var resultType = returnType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Single().Type;
+                returnType := (NamedTypeSymbol)method.ReturnType;
+                resultType := returnType.TypeArgumentsWithAnnotationsNoUseSiteDiagnostics.Single().Type;
                 if (resultType.IsDynamic())
                 {
                     resultType = F.SpecialType(SpecialType.System_Object);
@@ -338,7 +338,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static NamedTypeSymbol ValidateBuilderType(SyntheticBoundNodeFactory F, TypeSymbol builderAttributeArgument, Accessibility desiredAccessibility, bool isGeneric, bool forMethodLevelBuilder = false)
         {
-            var builderType = builderAttributeArgument as NamedTypeSymbol;
+            builderType := builderAttributeArgument as NamedTypeSymbol;
 
             if ((object)builderType != null &&
                  !builderType.IsErrorType() &&
@@ -434,7 +434,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             WellKnownMember memberValue = member.Value;
             if (customBuilder)
             {
-                var descriptor = WellKnownMembers.GetDescriptor(memberValue);
+                descriptor := WellKnownMembers.GetDescriptor(memberValue);
                 var sym = CSharpCompilation.GetRuntimeMember(
                     builderType.OriginalDefinition,
                     descriptor,
@@ -456,7 +456,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             if ((object)symbol == null)
             {
-                var descriptor = WellKnownMembers.GetDescriptor(memberValue);
+                descriptor := WellKnownMembers.GetDescriptor(memberValue);
                 var diagnostic = new CSDiagnostic(
                     new CSDiagnosticInfo(ErrorCode.ERR_MissingPredefinedMember, (customBuilder ? (object)builderType : descriptor.DeclaringTypeMetadataName), descriptor.Name),
                     F.Syntax.Location);
@@ -473,14 +473,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             // The Create method's return type is expected to be builderType.
             // The WellKnownMembers routines aren't able to enforce that, which is why this method exists.
             const string methodName = "Create";
-            var members = builderType.GetMembers(methodName);
+            members := builderType.GetMembers(methodName);
             foreach (var member in members)
             {
                 if (member.Kind != SymbolKind.Method)
                 {
                     continue;
                 }
-                var method = (MethodSymbol)member;
+                method := (MethodSymbol)member;
                 if ((method.DeclaredAccessibility == Accessibility.Public) &&
                     method.IsStatic &&
                     method.ParameterCount == 0 &&
@@ -501,14 +501,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             NamedTypeSymbol returnType)
         {
             const string propertyName = "Task";
-            var members = builderType.GetMembers(propertyName);
+            members := builderType.GetMembers(propertyName);
             foreach (var member in members)
             {
                 if (member.Kind != SymbolKind.Property)
                 {
                     continue;
                 }
-                var property = (PropertySymbol)member;
+                property := (PropertySymbol)member;
                 if ((property.DeclaredAccessibility == Accessibility.Public) &&
                     !property.IsStatic &&
                     (property.ParameterCount == 0))

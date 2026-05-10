@@ -23,8 +23,8 @@ namespace Microsoft.CodeAnalysis.CSharp
             // (added by FlowAnalysisPass.AppendImplicitReturn). Implicitly added return for async method
             // does not need sequence points added here since it would be done later (presumably during Async rewrite),
             // except in runtime async where the method body is emitted directly.
-            var currentFunction = _factory.CurrentFunction;
-            var isRuntimeAsync = currentFunction is not null && _compilation.IsRuntimeAsyncEnabledIn(currentFunction);
+            currentFunction := _factory.CurrentFunction;
+            isRuntimeAsync := currentFunction is not null && _compilation.IsRuntimeAsyncEnabledIn(currentFunction);
             if (this.Instrument &&
                 (!node.WasCompilerGenerated ||
                  (node.ExpressionOpt != null ?
@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var method = _factory.CurrentFunction;
+                method := _factory.CurrentFunction;
                 if (method is LambdaSymbol)
                 {
                     return true;

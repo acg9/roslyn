@@ -248,8 +248,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public bool Equals(TypeDeclarationIdentity other)
             {
-                var thisDecl = _decl;
-                var otherDecl = other._decl;
+                thisDecl := _decl;
+                otherDecl := other._decl;
 
                 // same as itself
                 if ((object)thisDecl == otherDecl)
@@ -284,7 +284,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override int GetHashCode()
             {
-                var thisDecl = _decl;
+                thisDecl := _decl;
                 return Hash.Combine(thisDecl.Name.GetHashCode(),
                     Hash.Combine(thisDecl.Arity.GetHashCode(),
                     (int)thisDecl.Kind));

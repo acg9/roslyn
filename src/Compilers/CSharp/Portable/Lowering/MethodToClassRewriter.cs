@@ -88,17 +88,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override BoundNode VisitPropertyAccess(BoundPropertyAccess node)
         {
-            var rewrittenPropertySymbol = VisitPropertySymbol(node.PropertySymbol);
-            var rewrittenReceiver = (BoundExpression?)Visit(node.ReceiverOpt);
+            rewrittenPropertySymbol := VisitPropertySymbol(node.PropertySymbol);
+            rewrittenReceiver := (BoundExpression?)Visit(node.ReceiverOpt);
             return node.Update(rewrittenReceiver, initialBindingReceiverIsSubjectToCloning: ThreeState.Unknown, rewrittenPropertySymbol, node.AutoPropertyAccessorKind, node.ResultKind, VisitType(node.Type));
         }
 
         public override BoundNode VisitCall(BoundCall node)
         {
-            var rewrittenMethodSymbol = VisitMethodSymbol(node.Method);
-            var rewrittenReceiver = (BoundExpression?)this.Visit(node.ReceiverOpt);
-            var rewrittenArguments = (ImmutableArray<BoundExpression>)this.VisitList(node.Arguments);
-            var rewrittenType = this.VisitType(node.Type);
+            rewrittenMethodSymbol := VisitMethodSymbol(node.Method);
+            rewrittenReceiver := (BoundExpression?)this.Visit(node.ReceiverOpt);
+            rewrittenArguments := (ImmutableArray<BoundExpression>)this.VisitList(node.Arguments);
+            rewrittenType := this.VisitType(node.Type);
 
 #if DEBUG
             // Calling IsMetadataVirtual with intent of getting a fully accurate result requires the symbol to be fully completed first
@@ -131,7 +131,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private MethodSymbol GetMethodWrapperForBaseNonVirtualCall(MethodSymbol methodBeingCalled, SyntaxNode syntax)
         {
-            var newMethod = GetOrCreateBaseFunctionWrapper(methodBeingCalled, syntax);
+            newMethod := GetOrCreateBaseFunctionWrapper(methodBeingCalled, syntax);
             if (!newMethod.IsGenericMethod)
             {
                 return newMethod;
@@ -139,10 +139,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             //  for generic methods we need to construct the method to be actually called
             Debug.Assert(methodBeingCalled.IsGenericMethod);
-            var typeArgs = methodBeingCalled.TypeArgumentsWithAnnotations;
+            typeArgs := methodBeingCalled.TypeArgumentsWithAnnotations;
             Debug.Assert(typeArgs.Length == newMethod.Arity);
 
-            var visitedTypeArgs = ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArgs.Length);
+            visitedTypeArgs := ArrayBuilder<TypeWithAnnotations>.GetInstance(typeArgs.Length);
             foreach (var typeArg in typeArgs)
             {
                 visitedTypeArgs.Add(typeArg.WithTypeAndModifiers(VisitType(typeArg.Type), typeArg.CustomModifiers));
@@ -161,7 +161,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return wrapper;
             }
 
-            var containingType = this.ContainingType;
+            containingType := this.ContainingType;
 
             //  create a method symbol
             string methodName = GeneratedNames.MakeBaseMethodWrapperName(this.CompilationState.NextWrapperMethodIndex);
@@ -261,7 +261,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return base.VisitAssignmentOperator(node)!;
             }
 
-            var leftLocal = (BoundLocal)originalLeft;
+            leftLocal := (BoundLocal)originalLeft;
 
             BoundExpression originalRight = node.Right;
 
@@ -326,7 +326,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         public override BoundNode VisitFieldAccess(BoundFieldAccess node)
         {
-            var receiverOpt = (BoundExpression?)this.Visit(node.ReceiverOpt);
+            receiverOpt := (BoundExpression?)this.Visit(node.ReceiverOpt);
             TypeSymbol type = this.VisitType(node.Type);
             var fieldSymbol = ((FieldSymbol)node.FieldSymbol.OriginalDefinition)
                 .AsMember((NamedTypeSymbol)this.VisitType(node.FieldSymbol.ContainingType));
@@ -356,7 +356,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             TypeSymbol type = this.VisitType(node.Type);
             TypeSymbol receiverType = this.VisitType(node.ReceiverType);
 
-            var member = node.MemberSymbol;
+            member := node.MemberSymbol;
             Debug.Assert(member is not null);
 
             switch (member.Kind)

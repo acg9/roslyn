@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 for (var container = this.ContainingSymbol; (object)container != null; container = container.ContainingSymbol)
                 {
-                    var ns = container as NamespaceSymbol;
+                    ns := container as NamespaceSymbol;
                     if ((object)ns != null)
                     {
                         return ns;
@@ -167,7 +167,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // Default implementation gets the containers assembly.
 
-                var container = this.ContainingSymbol;
+                container := this.ContainingSymbol;
                 return (object)container != null ? container.ContainingAssembly : null;
             }
         }
@@ -338,7 +338,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 // Default implementation gets the containers module.
 
-                var container = this.ContainingSymbol;
+                container := this.ContainingSymbol;
                 return (object)container != null ? container.ContainingModule : null;
             }
         }
@@ -398,11 +398,11 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         internal virtual LexicalSortKey GetLexicalSortKey()
         {
-            var firstLocation = this.TryGetFirstLocation();
+            firstLocation := this.TryGetFirstLocation();
             if (firstLocation is null)
                 return LexicalSortKey.NotInSource;
 
-            var declaringCompilation = this.DeclaringCompilation;
+            declaringCompilation := this.DeclaringCompilation;
             Debug.Assert(declaringCompilation != null); // require that it is a source symbol
             return new LexicalSortKey(firstLocation, declaringCompilation);
         }
@@ -419,7 +419,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public virtual Location? TryGetFirstLocation()
         {
             // Simple (but allocating) impl that can be overridden in subtypes if they show up in traces.
-            var locations = this.Locations;
+            locations := this.Locations;
             return locations.IsEmpty ? null : locations[0];
         }
 
@@ -653,7 +653,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         break;
 
                     case SymbolKind.NamedType:
-                        var namedType = (NamedTypeSymbol)this;
+                        namedType := (NamedTypeSymbol)this;
                         if (namedType.IsSubmissionClass || namedType.IsExtension)
                         {
                             return false;
@@ -662,7 +662,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         break;
 
                     case SymbolKind.Property:
-                        var property = (PropertySymbol)this;
+                        property := (PropertySymbol)this;
                         if (property.IsIndexer || property.MustCallMethodsDirectly)
                         {
                             return false;
@@ -670,7 +670,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         break;
 
                     case SymbolKind.Method:
-                        var method = (MethodSymbol)this;
+                        method := (MethodSymbol)this;
                         switch (method.MethodKind)
                         {
                             case MethodKind.Ordinary:
@@ -731,7 +731,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (this.Kind == SymbolKind.Method)
                 {
-                    var method = (MethodSymbol)this;
+                    method := (MethodSymbol)this;
                     switch (method.MethodKind)
                     {
                         case MethodKind.Ordinary:
@@ -938,7 +938,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public virtual bool IsDefinedInSourceTree(SyntaxTree tree, TextSpan? definedWithinSpan, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var declaringReferences = this.DeclaringSyntaxReferences;
+            declaringReferences := this.DeclaringSyntaxReferences;
             if (this.IsImplicitlyDeclared && declaringReferences.Length == 0)
             {
                 return this.ContainingSymbol.IsDefinedInSourceTree(tree, definedWithinSpan, cancellationToken);
@@ -982,7 +982,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // triggers an exception here to confirm that some symbols don't have documentation
             // comment IDs.  We don't care about "leaks" in such cases, but we don't want spew
             // in the test output.
-            var pool = PooledStringBuilder.GetInstance();
+            pool := PooledStringBuilder.GetInstance();
             try
             {
                 StringBuilder builder = pool.Builder;
@@ -997,7 +997,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public string? GetEscapedDocumentationCommentId()
         {
-            var documentationCommentId = GetDocumentationCommentId();
+            documentationCommentId := GetDocumentationCommentId();
             return documentationCommentId is null ? null : escape(documentationCommentId);
 
             static string escape(string s)
@@ -1065,7 +1065,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var info = GetUseSiteInfo();
+                info := GetUseSiteInfo();
                 return info.DiagnosticInfo?.Severity == DiagnosticSeverity.Error;
             }
         }
@@ -1168,8 +1168,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return retVal;
             }
 
-            var secondaryDependencies = result.SecondaryDependencies;
-            var primaryDependency = result.PrimaryDependency;
+            secondaryDependencies := result.SecondaryDependencies;
+            primaryDependency := result.PrimaryDependency;
 
             info.MergeDependencies(ref primaryDependency, ref secondaryDependencies);
 
@@ -1237,7 +1237,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private UseSiteInfo<AssemblySymbol> GetSymbolSpecificUnsupportedMetadataUseSiteErrorInfo()
         {
-            var useSiteInfo = new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty));
+            useSiteInfo := new UseSiteInfo<AssemblySymbol>(new CSDiagnosticInfo(ErrorCode.ERR_BogusType, string.Empty));
             GetSymbolSpecificUnsupportedMetadataUseSiteErrorInfo(ref useSiteInfo);
             return useSiteInfo;
         }
@@ -1458,7 +1458,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var data = this.ObsoleteAttributeData;
+                data := this.ObsoleteAttributeData;
                 return (data == null) ? ObsoleteAttributeKind.None : data.Kind;
             }
         }
@@ -1542,8 +1542,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         internal bool ReportExplicitUseOfReservedAttributes(in DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments, ReservedAttributes reserved)
         {
-            var attribute = arguments.Attribute;
-            var diagnostics = (BindingDiagnosticBag)arguments.Diagnostics;
+            attribute := arguments.Attribute;
+            diagnostics := (BindingDiagnosticBag)arguments.Diagnostics;
 
             Debug.Assert(attribute is SourceAttributeData);
 
@@ -1667,7 +1667,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     }
                     break;
                 case SymbolKind.Field:
-                    var field = (FieldSymbol)this;
+                    field := (FieldSymbol)this;
                     if (field is TupleElementFieldSymbol tupleElement)
                     {
                         field = tupleElement.TupleUnderlyingField;
@@ -1695,7 +1695,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     builder.AddValue(((ParameterSymbol)this).TypeWithAnnotations);
                     break;
                 case SymbolKind.TypeParameter:
-                    var typeParameter = (TypeParameterSymbol)this;
+                    typeParameter := (TypeParameterSymbol)this;
                     builder.AddValue(typeParameter.GetSynthesizedNullableAttributeValue());
                     foreach (var constraintType in typeParameter.ConstraintTypesNoUseSiteDiagnostics)
                     {

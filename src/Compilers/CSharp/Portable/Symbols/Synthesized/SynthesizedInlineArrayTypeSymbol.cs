@@ -32,8 +32,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(arrayLength > 0);
 
-            var typeParameter = new InlineArrayTypeParameterSymbol(this);
-            var field = new SynthesizedFieldSymbol(this, typeParameter, "_element0");
+            typeParameter := new InlineArrayTypeParameterSymbol(this);
+            field := new SynthesizedFieldSymbol(this, typeParameter, "_element0");
 
             _containingModule = containingModule;
             _arrayLength = arrayLength;
@@ -200,7 +200,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             base.AddSynthesizedAttributes(moduleBuilder, ref attributes);
 
-            var compilation = _containingModule.DeclaringCompilation;
+            compilation := _containingModule.DeclaringCompilation;
             Debug.Assert(compilation is { });
 
             AddSynthesizedAttribute(

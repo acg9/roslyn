@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             returnType = destinationMethod.ReturnTypeWithAnnotations; // Default value - in case we don't copy the custom modifiers.
             TypeSymbol returnTypeSymbol = returnType.Type;
 
-            var sourceMethodReturnType = constructedSourceMethod.ReturnTypeWithAnnotations;
+            sourceMethodReturnType := constructedSourceMethod.ReturnTypeWithAnnotations;
 
             // We do an extra check before copying the return type to handle the case where the overriding
             // method (incorrectly) has a different return type than the overridden method.  In such cases,
@@ -80,7 +80,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             if (!containingAssembly.RuntimeSupportsNumericIntPtr)
             {
-                var builder = ArrayBuilder<bool>.GetInstance();
+                builder := ArrayBuilder<bool>.GetInstance();
                 CSharpCompilation.NativeIntegerTransformsEncoder.Encode(builder, destinationType);
                 resultType = NativeIntegerTypeDecoder.TransformType(resultType, builder.ToImmutableAndFree());
             }
@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // If the destination had some of those annotations but not all, then clearly the destination
             // was incorrect. Or if the destination is C#7, then the destination will advertise annotations
             // that the author did not write and did not validate.
-            var flagsBuilder = ArrayBuilder<byte>.GetInstance();
+            flagsBuilder := ArrayBuilder<byte>.GetInstance();
             destinationType.AddNullableTransforms(flagsBuilder);
             int position = 0;
             int length = flagsBuilder.Count;

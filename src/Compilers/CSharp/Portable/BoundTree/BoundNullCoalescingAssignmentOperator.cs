@@ -12,13 +12,13 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             get
             {
-                var leftType = LeftOperand.Type;
+                leftType := LeftOperand.Type;
                 if (leftType?.IsNullableType() != true)
                 {
                     return false;
                 }
 
-                var nullableUnderlying = leftType.GetNullableUnderlyingType();
+                nullableUnderlying := leftType.GetNullableUnderlyingType();
                 return nullableUnderlying.Equals(RightOperand.Type);
             }
         }

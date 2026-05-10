@@ -52,8 +52,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override void AddAttributeTargets(SyntaxNode node, ArrayBuilder<SyntaxNode> targets)
         {
-            var attributeList = (AttributeListSyntax)node;
-            var container = attributeList.Parent;
+            attributeList := (AttributeListSyntax)node;
+            container := attributeList.Parent;
             RoslynDebug.AssertNotNull(container);
 
             // For fields/events, the attribute applies to all the variables declared.
@@ -108,8 +108,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (usingDirective.NamespaceOrType is not Syntax.InternalSyntax.NameSyntax name)
                     continue;
 
-                var aliasName = usingDirective.Alias.Name.Identifier.ValueText;
-                var symbolName = GetUnqualifiedName(name).Identifier.ValueText;
+                aliasName := usingDirective.Alias.Name.Identifier.ValueText;
+                symbolName := GetUnqualifiedName(name).Identifier.ValueText;
                 aliases.Add((aliasName, symbolName));
             }
         }
@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Walk down the green tree to avoid unnecessary allocations of red nodes.
             //
             // Global usings can only exist at the compilation-unit level, so no need to dive any deeper than that.
-            var compilationUnit = (Syntax.InternalSyntax.CompilationUnitSyntax)root.Green;
+            compilationUnit := (Syntax.InternalSyntax.CompilationUnitSyntax)root.Green;
 
             foreach (var directive in compilationUnit.Usings)
             {

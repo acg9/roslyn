@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             // Extension block symbols declared in a class are grouped by their corresponding grouping type metadata name (top level key),
             // then grouped by their corresponding extension marker type metadata name (the secondary key used by MultiDictionary).
             // SourceNamedTypeSymbols are the extension blocks.
-            var groupingMap = new Dictionary<string, MultiDictionary<string, SourceNamedTypeSymbol>>(EqualityComparer<string>.Default);
+            groupingMap := new Dictionary<string, MultiDictionary<string, SourceNamedTypeSymbol>>(EqualityComparer<string>.Default);
 
             foreach (var type in container.GetTypeMembers(""))
             {
@@ -37,9 +37,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     continue;
                 }
 
-                var sourceNamedType = (SourceNamedTypeSymbol)type;
+                sourceNamedType := (SourceNamedTypeSymbol)type;
                 Debug.Assert(sourceNamedType.ExtensionGroupingName is not null);
-                var groupingMetadataName = sourceNamedType.ExtensionGroupingName;
+                groupingMetadataName := sourceNamedType.ExtensionGroupingName;
 
                 MultiDictionary<string, SourceNamedTypeSymbol>? markerMap;
 
@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 markerMap.Add(sourceNamedType.ExtensionMarkerName, sourceNamedType);
             }
 
-            var builder = ArrayBuilder<ExtensionGroupingType>.GetInstance(groupingMap.Count);
+            builder := ArrayBuilder<ExtensionGroupingType>.GetInstance(groupingMap.Count);
 
             foreach (KeyValuePair<string, MultiDictionary<string, SourceNamedTypeSymbol>> pair in groupingMap)
             {
@@ -73,7 +73,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             for (int i = 0; i < typeMembers.Length; i++)
             {
-                var type1 = (SourceNamedTypeSymbol)typeMembers[i];
+                type1 := (SourceNamedTypeSymbol)typeMembers[i];
                 if (!type1.IsExtension)
                 {
                     continue;
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
                 for (int j = i + 1; j < typeMembers.Length; j++)
                 {
-                    var type2 = (SourceNamedTypeSymbol)typeMembers[j];
+                    type2 := (SourceNamedTypeSymbol)typeMembers[j];
                     if (!type2.IsExtension)
                     {
                         continue;
@@ -115,8 +115,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(extension.IsExtension);
 
             // Tracked by https://github.com/dotnet/roslyn/issues/78827 : Optimize lookup with side dictionaries?
-            var groupingName = extension.ExtensionGroupingName;
-            var markerName = extension.ExtensionMarkerName;
+            groupingName := extension.ExtensionGroupingName;
+            markerName := extension.ExtensionMarkerName;
 
             foreach (var groupingType in _groupingTypes)
             {
@@ -144,13 +144,13 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(Cci.TypeMemberVisibility.Public > Cci.TypeMemberVisibility.Assembly);
             Debug.Assert(Cci.TypeMemberVisibility.Assembly > Cci.TypeMemberVisibility.Private);
 
-            var result = Cci.TypeMemberVisibility.Private;
+            result := Cci.TypeMemberVisibility.Private;
 
             foreach (var extension in GetCorrespondingMarkerType((SourceNamedTypeSymbol)marker.ContainingType).UnderlyingExtensions)
             {
                 foreach (var symbol in extension.GetMembers())
                 {
-                    var memberVisibility = symbol.MetadataVisibility;
+                    memberVisibility := symbol.MetadataVisibility;
                     Debug.Assert(memberVisibility is Cci.TypeMemberVisibility.Public or Cci.TypeMemberVisibility.Assembly or Cci.TypeMemberVisibility.Private);
 
                     if (memberVisibility == Cci.TypeMemberVisibility.Public)
@@ -175,7 +175,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(extension.IsExtension);
 
             // Tracked by https://github.com/dotnet/roslyn/issues/78827 : Optimize lookup with a side dictionary?
-            var groupingName = extension.ExtensionGroupingName;
+            groupingName := extension.ExtensionGroupingName;
 
             foreach (var groupingType in _groupingTypes)
             {
@@ -326,8 +326,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 // Tracked by https://github.com/dotnet/roslyn/issues/78827 : optimization, consider using a pool
-                var comparer = CommonAttributeDataComparer.InstanceIgnoringNamedArgumentOrder;
-                var counts = new Dictionary<CSharpAttributeData, int>(comparer);
+                comparer := CommonAttributeDataComparer.InstanceIgnoringNamedArgumentOrder;
+                counts := new Dictionary<CSharpAttributeData, int>(comparer);
 
                 foreach (var attribute in attributes1)
                 {
@@ -387,9 +387,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var comparer = TypeWithAnnotations.EqualsComparer.ConsiderEverythingComparer;
-                var substitutedTypes1 = new HashSet<TypeWithAnnotations>(comparer);
-                var substitutedTypes2 = new HashSet<TypeWithAnnotations>(comparer);
+                comparer := TypeWithAnnotations.EqualsComparer.ConsiderEverythingComparer;
+                substitutedTypes1 := new HashSet<TypeWithAnnotations>(comparer);
+                substitutedTypes2 := new HashSet<TypeWithAnnotations>(comparer);
 
                 substituteConstraintTypes(constraintTypes1, typeMap1, substitutedTypes1);
                 substituteConstraintTypes(constraintTypes2, typeMap2, substitutedTypes2);
@@ -689,7 +689,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 _name = name;
 
-                var builder = ArrayBuilder<ExtensionMarkerType>.GetInstance(extensionMarkerTypes.Count);
+                builder := ArrayBuilder<ExtensionMarkerType>.GetInstance(extensionMarkerTypes.Count);
 
                 foreach (var pair in extensionMarkerTypes)
                 {
@@ -852,7 +852,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 GroupingType = groupingType;
                 _name = name;
 
-                var builder = ArrayBuilder<SourceNamedTypeSymbol>.GetInstance(extensions.Count);
+                builder := ArrayBuilder<SourceNamedTypeSymbol>.GetInstance(extensions.Count);
                 builder.AddRange(extensions);
                 builder.Sort(LexicalOrderSymbolComparer.Instance);
                 UnderlyingExtensions = builder.ToImmutableAndFree();
@@ -894,7 +894,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override IEnumerable<IMethodDefinition> GetMethods(EmitContext context)
             {
-                var marker = UnderlyingExtensions[0].TryGetOrCreateExtensionMarker();
+                marker := UnderlyingExtensions[0].TryGetOrCreateExtensionMarker();
 
                 if (marker is { })
                 {

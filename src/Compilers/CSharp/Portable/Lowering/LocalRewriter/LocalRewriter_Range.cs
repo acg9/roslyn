@@ -19,15 +19,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(node != null && node.MethodOpt != null);
 
             bool needLifting = false;
-            var F = _factory;
+            F := _factory;
 
-            var left = node.LeftOperandOpt;
+            left := node.LeftOperandOpt;
             if (left != null)
             {
                 left = tryOptimizeOperand(left);
             }
 
-            var right = node.RightOperandOpt;
+            right := node.RightOperandOpt;
             if (right != null)
             {
                 right = tryOptimizeOperand(right);
@@ -81,14 +81,14 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(!(left is null && right is null));
             Debug.Assert(node.MethodOpt is { });
 
-            var sideeffects = ArrayBuilder<BoundExpression>.GetInstance();
-            var locals = ArrayBuilder<LocalSymbol>.GetInstance();
+            sideeffects := ArrayBuilder<BoundExpression>.GetInstance();
+            locals := ArrayBuilder<LocalSymbol>.GetInstance();
 
             // makeRange(left.GetValueOrDefault(), right.GetValueOrDefault())
             BoundExpression? condition = null;
             left = getIndexFromPossibleNullable(left);
             right = getIndexFromPossibleNullable(right);
-            var rangeExpr = MakeRangeExpression(node.MethodOpt, left, right);
+            rangeExpr := MakeRangeExpression(node.MethodOpt, left, right);
 
             Debug.Assert(condition != null);
 
@@ -158,7 +158,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             BoundExpression? left,
             BoundExpression? right)
         {
-            var F = _factory;
+            F := _factory;
             // The construction method may vary based on what well-known
             // members were available during binding. Depending on which member
             // is chosen we need to change our adjust our calling node.
@@ -182,7 +182,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(constructionMethod.MetadataName == "StartAt" ||
                                  constructionMethod.MetadataName == "EndAt");
                     Debug.Assert(constructionMethod.IsStatic);
-                    var arg = left ?? right;
+                    arg := left ?? right;
                     Debug.Assert(arg is { });
                     return F.StaticCall(constructionMethod, ImmutableArray.Create(arg));
 

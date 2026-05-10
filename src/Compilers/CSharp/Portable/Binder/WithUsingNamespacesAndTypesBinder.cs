@@ -86,7 +86,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (nsOrType.NamespaceOrType is NamespaceSymbol ns)
                 {
-                    var count = members.Count;
+                    count := members.Count;
                     ns.GetAllExtensionMembers(members, name, alternativeName, arity, options, originalBinder.FieldsBeingBound);
                     // If we found any extension declarations, then consider this using as used.
                     if (members.Count != count)
@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else if (nsOrType.NamespaceOrType is NamedTypeSymbol namedType)
                 {
-                    var count = members.Count;
+                    count := members.Count;
                     namedType.GetAllExtensionMembers(members, name, alternativeName, arity, options, originalBinder.FieldsBeingBound);
                     // If we found any extension declarations, then consider this using as used.
                     if (members.Count != count)
@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     // Found a match in our list of normal using directives.  Mark the directive
                     // as being seen so that it won't be reported to the user as something that
                     // can be removed.
-                    var res = originalBinder.CheckViability(symbol, arity, options, null, diagnose, ref useSiteInfo, basesBeingResolved);
+                    res := originalBinder.CheckViability(symbol, arity, options, null, diagnose, ref useSiteInfo, basesBeingResolved);
                     if (res.Kind == LookupResultKind.Viable)
                     {
                         MarkImportDirective(typeOrNamespace.UsingDirectiveReference, callerIsSemanticModel);

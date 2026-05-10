@@ -37,9 +37,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         protected override (TypeWithAnnotations ReturnType, ImmutableArray<ParameterSymbol> Parameters) MakeParametersAndBindReturnType(BindingDiagnosticBag diagnostics)
         {
-            var compilation = DeclaringCompilation;
-            var location = ReturnTypeLocation;
-            var annotation = ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.NotAnnotated;
+            compilation := DeclaringCompilation;
+            location := ReturnTypeLocation;
+            annotation := ContainingType.IsRecordStruct ? NullableAnnotation.Oblivious : NullableAnnotation.NotAnnotated;
             return (ReturnType: TypeWithAnnotations.Create(Binder.GetSpecialType(compilation, SpecialType.System_String, location, diagnostics), annotation),
                     Parameters: ImmutableArray<ParameterSymbol>.Empty);
         }
@@ -48,17 +48,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, this.SyntaxNode, compilationState, diagnostics);
 
             try
             {
                 CSharpCompilation compilation = ContainingType.DeclaringCompilation;
-                var stringBuilder = F.WellKnownType(WellKnownType.System_Text_StringBuilder);
-                var stringBuilderCtor = F.WellKnownMethod(WellKnownMember.System_Text_StringBuilder__ctor);
+                stringBuilder := F.WellKnownType(WellKnownType.System_Text_StringBuilder);
+                stringBuilderCtor := F.WellKnownMethod(WellKnownMember.System_Text_StringBuilder__ctor);
 
-                var builderLocalSymbol = F.SynthesizedLocal(stringBuilder);
+                builderLocalSymbol := F.SynthesizedLocal(stringBuilder);
                 BoundLocal builderLocal = F.Local(builderLocalSymbol);
-                var block = ArrayBuilder<BoundStatement>.GetInstance();
+                block := ArrayBuilder<BoundStatement>.GetInstance();
                 // var builder = new StringBuilder();
                 block.Add(F.Assignment(builderLocal, F.New(stringBuilderCtor)));
 

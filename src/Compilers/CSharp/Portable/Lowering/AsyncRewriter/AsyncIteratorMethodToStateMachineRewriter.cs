@@ -79,9 +79,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override BoundStatement? GenerateMissingStateDispatch()
         {
-            var asyncDispatch = base.GenerateMissingStateDispatch();
+            asyncDispatch := base.GenerateMissingStateDispatch();
 
-            var iteratorDispatch = _iteratorStateAllocator.GenerateThrowMissingStateDispatch(F, F.Local(cachedState), HotReloadExceptionCode.CannotResumeSuspendedIteratorMethod);
+            iteratorDispatch := _iteratorStateAllocator.GenerateThrowMissingStateDispatch(F, F.Local(cachedState), HotReloadExceptionCode.CannotResumeSuspendedIteratorMethod);
             if (iteratorDispatch == null)
             {
                 return asyncDispatch;
@@ -116,7 +116,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // ... _exitLabel: ...
             // ... return; ...
 
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // if (this.combinedTokens != null) { this.combinedTokens.Dispose(); this.combinedTokens = null; } // for enumerables only
             AddDisposeCombinedTokensIfNeeded(builder);
@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private BoundExpressionStatement GenerateClearCurrent()
         {
             // _current = default;
-            var currentField = _asyncIteratorInfo.CurrentField;
+            currentField := _asyncIteratorInfo.CurrentField;
             return F.Assignment(F.InstanceField(currentField), F.Default(currentField.Type));
         }
 
@@ -166,7 +166,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             // if (this.combinedTokens != null) { this.combinedTokens.Dispose(); this.combinedTokens = null; } // for enumerables only
             if (_asyncIteratorInfo.CombinedTokensField is object)
             {
-                var combinedTokens = F.Field(F.This(), _asyncIteratorInfo.CombinedTokensField);
+                combinedTokens := F.Field(F.This(), _asyncIteratorInfo.CombinedTokensField);
                 TypeSymbol combinedTokensType = combinedTokens.Type;
 
                 builder.Add(
@@ -179,7 +179,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override BoundStatement GenerateSetExceptionCall(LocalSymbol exceptionLocal)
         {
-            var builder = ArrayBuilder<BoundStatement>.GetInstance();
+            builder := ArrayBuilder<BoundStatement>.GetInstance();
 
             // if (this.combinedTokens != null) { this.combinedTokens.Dispose(); this.combinedTokens = null; } // for enumerables only
             AddDisposeCombinedTokensIfNeeded(builder);
@@ -249,7 +249,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             AddState(StateMachineState.InitialAsyncIteratorState, out GeneratedLabelSymbol resumeLabel);
 
-            var rewrittenBody = (BoundStatement)Visit(body);
+            rewrittenBody := (BoundStatement)Visit(body);
 
             Debug.Assert(_exprReturnLabel.Equals(_currentDisposalLabel));
             return F.Block(
@@ -276,8 +276,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             AddResumableState(_iteratorStateAllocator, node.Syntax, awaitId: default, out var stateNumber, out GeneratedLabelSymbol resumeLabel);
 
-            var rewrittenExpression = (BoundExpression)Visit(node.Expression);
-            var blockBuilder = ArrayBuilder<BoundStatement>.GetInstance();
+            rewrittenExpression := (BoundExpression)Visit(node.Expression);
+            blockBuilder := ArrayBuilder<BoundStatement>.GetInstance();
 
             blockBuilder.Add(
                 // _current = expression;
@@ -330,8 +330,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         protected override BoundStatement MakeAwaitPreamble()
         {
-            var useSiteInfo = new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
-            var field = _asyncIteratorInfo.CurrentField;
+            useSiteInfo := new CompoundUseSiteInfo<AssemblySymbol>(F.Diagnostics, F.Compilation.Assembly);
+            field := _asyncIteratorInfo.CurrentField;
             bool isManaged = field.Type.IsManagedType(ref useSiteInfo);
             F.Diagnostics.Add(field.GetFirstLocationOrNone(), useSiteInfo);
 
@@ -366,7 +366,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public override BoundNode VisitTryStatement(BoundTryStatement node)
         {
-            var savedDisposalLabel = _currentDisposalLabel;
+            savedDisposalLabel := _currentDisposalLabel;
             LabelSymbol afterFinally = null;
             if (node.FinallyBlockOpt is object)
             {
@@ -378,7 +378,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _currentDisposalLabel = node.FinallyLabelOpt;
             }
 
-            var result = (BoundStatement)base.VisitTryStatement(node);
+            result := (BoundStatement)base.VisitTryStatement(node);
 
             if (afterFinally != null)
             {
@@ -405,9 +405,9 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override BoundBlock VisitFinally(BoundBlock finallyBlock)
         {
             // within a finally, continuing disposal doesn't require any jump
-            var savedDisposalLabel = _currentDisposalLabel;
+            savedDisposalLabel := _currentDisposalLabel;
             _currentDisposalLabel = null;
-            var result = base.VisitFinally(finallyBlock);
+            result := base.VisitFinally(finallyBlock);
             _currentDisposalLabel = savedDisposalLabel;
             return result;
         }

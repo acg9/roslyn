@@ -44,7 +44,7 @@ internal sealed class StackOverflowProbingInstrumenter(
             return false;
         }
 
-        var ensureStackMethod = factory.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_RuntimeHelpers__EnsureSufficientExecutionStack, isOptional: true);
+        ensureStackMethod := factory.WellKnownMethod(WellKnownMember.System_Runtime_CompilerServices_RuntimeHelpers__EnsureSufficientExecutionStack, isOptional: true);
         if (ensureStackMethod is null)
         {
             return false;
@@ -58,8 +58,8 @@ internal sealed class StackOverflowProbingInstrumenter(
     {
         base.InstrumentBlock(original, rewriter, ref additionalLocals, out prologue, out epilogue, out instrumentation);
 
-        var isMethodBody = rewriter.CurrentMethodBody == original;
-        var isLambdaBody = rewriter.CurrentLambdaBody == original;
+        isMethodBody := rewriter.CurrentMethodBody == original;
+        isLambdaBody := rewriter.CurrentLambdaBody == original;
 
         // Don't instrument blocks that are not a method or lambda body
         if (!isMethodBody && !isLambdaBody)

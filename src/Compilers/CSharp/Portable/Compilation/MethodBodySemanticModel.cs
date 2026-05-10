@@ -61,7 +61,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         internal static MethodBodySemanticModel Create(SyntaxTreeSemanticModel containingSemanticModel, MethodSymbol owner, InitialState initialState)
         {
             Debug.Assert(containingSemanticModel != null);
-            var result = new MethodBodySemanticModel(owner, initialState.Binder, initialState.Syntax, containingSemanticModel);
+            result := new MethodBodySemanticModel(owner, initialState.Binder, initialState.Syntax, containingSemanticModel);
 
             if (initialState.Body != null)
             {
@@ -165,7 +165,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             position = CheckAndAdjustPosition(position);
 
-            var methodSymbol = (MethodSymbol)this.MemberSymbol;
+            methodSymbol := (MethodSymbol)this.MemberSymbol;
 
             // Strip off ExecutableCodeBinder (see ctor).
             Binder binder = this.RootBinder;
@@ -186,7 +186,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             Binder executablebinder = new WithNullableContextBinder(SyntaxTree, position, binder ?? this.RootBinder);
             executablebinder = new ExecutableCodeBinder(body, methodSymbol, executablebinder);
-            var blockBinder = executablebinder.GetBinder(body).WithAdditionalFlags(GetSemanticModelBinderFlags());
+            blockBinder := executablebinder.GetBinder(body).WithAdditionalFlags(GetSemanticModelBinderFlags());
             // We don't pass the snapshot manager along here, because we're speculating about an entirely new body and it should not
             // be influenced by any existing code in the body.
             speculativeModel = CreateSpeculative(parentModel, methodSymbol, body, blockBinder, snapshotManagerOpt: null, parentRemappedSymbolsOpt: null, position);
@@ -202,14 +202,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             position = CheckAndAdjustPosition(position);
 
-            var binder = this.GetEnclosingBinder(position);
+            binder := this.GetEnclosingBinder(position);
             if (binder == null)
             {
                 speculativeModel = null;
                 return false;
             }
 
-            var methodSymbol = (MethodSymbol)this.MemberSymbol;
+            methodSymbol := (MethodSymbol)this.MemberSymbol;
             binder = new WithNullableContextBinder(SyntaxTree, position, binder);
             binder = new ExecutableCodeBinder(statement, methodSymbol, binder);
             speculativeModel = CreateSpeculative(parentModel, methodSymbol, statement, binder, GetSnapshotManager(), GetRemappedSymbols(), position);
@@ -220,14 +220,14 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             position = CheckAndAdjustPosition(position);
 
-            var binder = this.GetEnclosingBinder(position);
+            binder := this.GetEnclosingBinder(position);
             if (binder == null)
             {
                 speculativeModel = null;
                 return false;
             }
 
-            var methodSymbol = (MethodSymbol)this.MemberSymbol;
+            methodSymbol := (MethodSymbol)this.MemberSymbol;
             binder = new WithNullableContextBinder(SyntaxTree, position, binder);
             binder = new ExecutableCodeBinder(expressionBody, methodSymbol, binder);
 
@@ -240,7 +240,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (MemberSymbol is MethodSymbol methodSymbol && methodSymbol.MethodKind == MethodKind.Constructor &&
                 Root.FindToken(position).Parent?.AncestorsAndSelf().OfType<ConstructorInitializerSyntax>().FirstOrDefault()?.Parent == Root)
             {
-                var binder = this.GetEnclosingBinder(position);
+                binder := this.GetEnclosingBinder(position);
                 if (binder != null)
                 {
                     binder = new WithNullableContextBinder(SyntaxTree, position, binder);
@@ -262,7 +262,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(typeDecl.Kind() is (SyntaxKind.RecordDeclaration or SyntaxKind.ClassDeclaration));
                 if (Root.FindToken(position).Parent?.AncestorsAndSelf().OfType<PrimaryConstructorBaseTypeSyntax>().FirstOrDefault() == typeDecl.PrimaryConstructorBaseTypeIfClass)
                 {
-                    var binder = this.GetEnclosingBinder(position);
+                    binder := this.GetEnclosingBinder(position);
                     if (binder != null)
                     {
                         binder = new WithNullableContextBinder(SyntaxTree, position, binder);
@@ -291,7 +291,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             out NullableWalker.SnapshotManager snapshotManager,
             ref ImmutableDictionary<Symbol, Symbol> remappedSymbols)
         {
-            var afterInitializersState = NullableWalker.GetAfterInitializersState(Compilation, MemberSymbol, boundRoot);
+            afterInitializersState := NullableWalker.GetAfterInitializersState(Compilation, MemberSymbol, boundRoot);
             return NullableWalker.AnalyzeAndRewrite(Compilation, MemberSymbol, boundRoot, binder, afterInitializersState, diagnostics, createSnapshots, out snapshotManager, ref remappedSymbols);
         }
 

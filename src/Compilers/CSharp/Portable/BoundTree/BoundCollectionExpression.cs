@@ -11,8 +11,8 @@ namespace Microsoft.CodeAnalysis.CSharp
     {
         private partial void Validate()
         {
-            var collectionCreation = this.GetUnconvertedCollectionCreation();
-            var collectionBuilderElementsPlaceholder = this.CollectionBuilderElementsPlaceholder;
+            collectionCreation := this.GetUnconvertedCollectionCreation();
+            collectionBuilderElementsPlaceholder := this.CollectionBuilderElementsPlaceholder;
 
             if (collectionCreation is BoundCall boundCall)
             {
@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         /// </summary>
         public BoundExpression? GetUnconvertedCollectionCreation()
         {
-            var collectionCreation = this.CollectionCreation;
+            collectionCreation := this.CollectionCreation;
             while (collectionCreation is BoundConversion conversion)
                 collectionCreation = conversion.Operand;
 

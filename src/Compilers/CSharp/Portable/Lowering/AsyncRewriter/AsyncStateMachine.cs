@@ -27,12 +27,12 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             _typeKind = typeKind;
             CSharpCompilation compilation = asyncMethod.DeclaringCompilation;
-            var interfaces = ArrayBuilder<NamedTypeSymbol>.GetInstance();
+            interfaces := ArrayBuilder<NamedTypeSymbol>.GetInstance();
 
             bool isIterator = asyncMethod.IsIterator;
             if (isIterator)
             {
-                var elementType = TypeMap.SubstituteType(asyncMethod.IteratorElementTypeWithAnnotations).Type;
+                elementType := TypeMap.SubstituteType(asyncMethod.IteratorElementTypeWithAnnotations).Type;
                 this.IteratorElementType = elementType;
 
                 bool isEnumerable = asyncMethod.IsAsyncReturningIAsyncEnumerable(compilation);

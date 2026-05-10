@@ -26,17 +26,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static UsingsFromOptionsAndDiagnostics FromOptions(CSharpCompilation compilation)
             {
-                var usings = compilation.Options.Usings;
+                usings := compilation.Options.Usings;
 
                 if (usings.Length == 0)
                 {
                     return Empty;
                 }
 
-                var diagnostics = new DiagnosticBag();
-                var usingsBinder = new InContainerBinder(compilation.GlobalNamespace, new BuckStopsHereBinder(compilation, associatedFileIdentifier: null));
-                var boundUsings = ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance();
-                var uniqueUsings = PooledHashSet<NamespaceOrTypeSymbol>.GetInstance();
+                diagnostics := new DiagnosticBag();
+                usingsBinder := new InContainerBinder(compilation.GlobalNamespace, new BuckStopsHereBinder(compilation, associatedFileIdentifier: null));
+                boundUsings := ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance();
+                uniqueUsings := PooledHashSet<NamespaceOrTypeSymbol>.GetInstance();
 
                 foreach (string @using in usings)
                 {
@@ -53,11 +53,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                         qualifiedName = SyntaxFactory.QualifiedName(left: qualifiedName, right: SyntaxFactory.IdentifierName(identifiers[j]));
                     }
 
-                    var directiveDiagnostics = BindingDiagnosticBag.GetInstance();
+                    directiveDiagnostics := BindingDiagnosticBag.GetInstance();
                     Debug.Assert(directiveDiagnostics.DiagnosticBag is object);
                     Debug.Assert(directiveDiagnostics.DependenciesBag is object);
 
-                    var imported = usingsBinder.BindNamespaceOrTypeSymbol(qualifiedName, directiveDiagnostics).NamespaceOrTypeSymbol;
+                    imported := usingsBinder.BindNamespaceOrTypeSymbol(qualifiedName, directiveDiagnostics).NamespaceOrTypeSymbol;
                     if (uniqueUsings.Add(imported))
                     {
                         boundUsings.Add(new NamespaceOrTypeAndUsingDirective(imported, null, dependencies: directiveDiagnostics.DependenciesBag.ToImmutableArray()));
@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    var incompletePart = _state.NextIncompletePart;
+                    incompletePart := _state.NextIncompletePart;
                     switch (incompletePart)
                     {
                         case CompletionPart.StartValidatingImports:
@@ -129,12 +129,12 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
 
                 DiagnosticBag semanticDiagnostics = compilation.DeclarationDiagnostics;
-                var diagnostics = BindingDiagnosticBag.GetInstance();
+                diagnostics := BindingDiagnosticBag.GetInstance();
                 Debug.Assert(diagnostics.DiagnosticBag is object);
                 Debug.Assert(diagnostics.DependenciesBag is object);
 
-                var corLibrary = compilation.SourceAssembly.CorLibrary;
-                var conversions = corLibrary.TypeConversions;
+                corLibrary := compilation.SourceAssembly.CorLibrary;
+                conversions := corLibrary.TypeConversions;
                 foreach (var @using in UsingNamespacesOrTypes)
                 {
                     diagnostics.Clear();
@@ -146,8 +146,8 @@ namespace Microsoft.CodeAnalysis.CSharp
                     Debug.Assert(@using.UsingDirective is null);
                     if (target.IsType)
                     {
-                        var typeSymbol = (TypeSymbol)target;
-                        var location = NoLocation.Singleton;
+                        typeSymbol := (TypeSymbol)target;
+                        location := NoLocation.Singleton;
                         typeSymbol.CheckAllConstraints(compilation, conversions, location, diagnostics);
                     }
 

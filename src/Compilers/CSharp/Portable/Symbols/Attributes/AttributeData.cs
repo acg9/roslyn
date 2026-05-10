@@ -111,8 +111,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 {
                     // Well-known type SecurityAttribute is optional.
                     // Native compiler doesn't generate a use-site error if it is not found, we do the same.
-                    var wellKnownType = compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAttribute);
-                    var discardedUseSiteInfo = CompoundUseSiteInfo<AssemblySymbol>.Discarded;
+                    wellKnownType := compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAttribute);
+                    discardedUseSiteInfo := CompoundUseSiteInfo<AssemblySymbol>.Discarded;
                     _lazyIsSecurityAttribute = AttributeClass.IsDerivedFrom(wellKnownType, TypeCompareKind.ConsiderEverything, useSiteInfo: ref discardedUseSiteInfo).ToThreeState();
                 }
                 else
@@ -141,7 +141,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return className;
                 }
 
-                var pooledStrbuilder = PooledStringBuilder.GetInstance();
+                pooledStrbuilder := PooledStringBuilder.GetInstance();
                 StringBuilder stringBuilder = pooledStrbuilder.Builder;
 
                 stringBuilder.Append(className);
@@ -250,7 +250,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static void DecodeMemberNotNullAttribute<T>(TypeSymbol type, ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
             where T : WellKnownAttributeData, IMemberNotNullAttributeTarget, new()
         {
-            var value = arguments.Attribute.CommonConstructorArguments[0];
+            value := arguments.Attribute.CommonConstructorArguments[0];
             if (value.IsNull)
             {
                 return;
@@ -267,10 +267,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var builder = ArrayBuilder<string>.GetInstance();
+                builder := ArrayBuilder<string>.GetInstance();
                 foreach (var member in value.Values)
                 {
-                    var memberName = member.DecodeValue<string>(SpecialType.System_String);
+                    memberName := member.DecodeValue<string>(SpecialType.System_String);
                     if (memberName is object)
                     {
                         builder.Add(memberName);
@@ -300,16 +300,16 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static void DecodeMemberNotNullWhenAttribute<T>(TypeSymbol type, ref DecodeWellKnownAttributeArguments<AttributeSyntax, CSharpAttributeData, AttributeLocation> arguments)
             where T : WellKnownAttributeData, IMemberNotNullAttributeTarget, new()
         {
-            var value = arguments.Attribute.CommonConstructorArguments[1];
+            value := arguments.Attribute.CommonConstructorArguments[1];
             if (value.IsNull)
             {
                 return;
             }
 
-            var sense = arguments.Attribute.CommonConstructorArguments[0].DecodeValue<bool>(SpecialType.System_Boolean);
+            sense := arguments.Attribute.CommonConstructorArguments[0].DecodeValue<bool>(SpecialType.System_Boolean);
             if (value.Kind != TypedConstantKind.Array)
             {
-                var memberName = value.DecodeValue<string>(SpecialType.System_String);
+                memberName := value.DecodeValue<string>(SpecialType.System_String);
                 if (memberName is object)
                 {
                     arguments.GetOrCreateData<T>().AddNotNullWhenMember(sense, memberName);
@@ -318,10 +318,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             }
             else
             {
-                var builder = ArrayBuilder<string>.GetInstance();
+                builder := ArrayBuilder<string>.GetInstance();
                 foreach (var member in value.Values)
                 {
-                    var memberName = member.DecodeValue<string>(SpecialType.System_String);
+                    memberName := member.DecodeValue<string>(SpecialType.System_String);
                     if (memberName is object)
                     {
                         builder.Add(memberName);
@@ -340,7 +340,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(targetSymbol.Kind == SymbolKind.Assembly || targetSymbol.Kind == SymbolKind.NamedType || targetSymbol.Kind == SymbolKind.Method);
             Debug.Assert(this.IsSecurityAttribute(compilation));
 
-            var ctorArgs = this.CommonConstructorArguments;
+            ctorArgs := this.CommonConstructorArguments;
             if (ctorArgs.IsEmpty)
             {
                 // NOTE:    Security custom attributes must have a valid SecurityAction as its first argument, we have none here.
@@ -364,7 +364,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             else
             {
                 TypedConstant firstArg = ctorArgs[0];
-                var firstArgType = (TypeSymbol?)firstArg.TypeInternal;
+                firstArgType := (TypeSymbol?)firstArg.TypeInternal;
                 if (firstArgType is object && firstArgType.Equals(compilation.GetWellKnownType(WellKnownType.System_Security_Permissions_SecurityAction)))
                 {
                     return DecodeSecurityAction(firstArg, targetSymbol, nodeOpt, diagnostics, out hasErrors);
@@ -473,7 +473,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return NoLocation.Singleton;
             }
 
-            var argList = nodeOpt.ArgumentList;
+            argList := nodeOpt.ArgumentList;
             if (argList == null || argList.Arguments.IsEmpty())
             {
                 // Optional SecurityAction parameter with default value.
@@ -508,11 +508,11 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             Debug.Assert(!this.HasErrors);
 
             string? resolvedFilePath = null;
-            var namedArgs = this.CommonNamedArguments;
+            namedArgs := this.CommonNamedArguments;
 
             if (namedArgs.Length == 1)
             {
-                var namedArg = namedArgs[0];
+                namedArg := namedArgs[0];
                 Debug.Assert(AttributeClass is object);
                 NamedTypeSymbol attrType = this.AttributeClass;
                 string filePropName = PermissionSetAttributeWithFileReference.FilePropertyName;
@@ -522,8 +522,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     PermissionSetAttributeTypeHasRequiredProperty(attrType, filePropName))
                 {
                     // resolve file prop path
-                    var fileName = (string?)namedArg.Value.ValueInternal;
-                    var resolver = compilation.Options.XmlReferenceResolver;
+                    fileName := (string?)namedArg.Value.ValueInternal;
+                    resolver := compilation.Options.XmlReferenceResolver;
 
                     resolvedFilePath = (resolver != null && fileName != null) ? resolver.ResolveReference(fileName, baseFilePath: null) : null;
 
@@ -552,10 +552,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         // This method checks if the given PermissionSetAttribute type has a property member with the given propName which is writable, non-generic, public and of string type.
         private static bool PermissionSetAttributeTypeHasRequiredProperty(NamedTypeSymbol permissionSetType, string propName)
         {
-            var members = permissionSetType.GetMembers(propName);
+            members := permissionSetType.GetMembers(propName);
             if (members.Length == 1 && members[0].Kind == SymbolKind.Property)
             {
-                var property = (PropertySymbol)members[0];
+                property := (PropertySymbol)members[0];
                 if (property.TypeWithAnnotations.HasType && property.Type.SpecialType == SpecialType.System_String &&
                     property.DeclaredAccessibility == Accessibility.Public && property.GetMemberArity() == 0 &&
                     (object)property.SetMethod != null && property.SetMethod.DeclaredAccessibility == Accessibility.Public)
@@ -622,7 +622,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             Debug.Assert(!this.HasErrors);
 
-            var guidString = (string?)this.CommonConstructorArguments[0].ValueInternal;
+            guidString := (string?)this.CommonConstructorArguments[0].ValueInternal;
 
             // Native compiler allows only a specific GUID format: "D" format (32 digits separated by hyphens)
             Guid guid;
@@ -639,8 +639,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal CollectionBuilderAttributeData DecodeCollectionBuilderAttribute()
         {
-            var builderType = (TypeSymbol?)CommonConstructorArguments[0].ValueInternal;
-            var methodName = (string?)CommonConstructorArguments[1].ValueInternal;
+            builderType := (TypeSymbol?)CommonConstructorArguments[0].ValueInternal;
+            methodName := (string?)CommonConstructorArguments[1].ValueInternal;
             return new CollectionBuilderAttributeData(builderType, methodName);
         }
 
@@ -803,7 +803,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         internal static string? DecodeNotNullIfNotNullAttribute(this CSharpAttributeData attribute)
         {
             Debug.Assert(attribute is SourceAttributeData);
-            var arguments = attribute.CommonConstructorArguments;
+            arguments := attribute.CommonConstructorArguments;
             return arguments.Length == 1 && arguments[0].TryDecodeValue(SpecialType.System_String, out string? value) ? value : null;
         }
     }

@@ -41,7 +41,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             if (haveExtraParameter)
             {
                 Debug.Assert(implementationMethod.ParameterCount - 1 == sourceMethod.ParameterCount);
-                var receiverParameter = (WrappedParameterSymbol)implementationMethod.Parameters[0];
+                receiverParameter := (WrappedParameterSymbol)implementationMethod.Parameters[0];
                 _symbolMap = _symbolMap.Add(receiverParameter.UnderlyingParameter, receiverParameter);
             }
             EnterMethod(sourceMethod, implementationMethod, implementationMethod.Parameters.AsSpan()[(haveExtraParameter ? 1 : 0)..]);
@@ -57,7 +57,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!rewrittenParameters.IsEmpty)
             {
-                var builder = _symbolMap.ToBuilder();
+                builder := _symbolMap.ToBuilder();
                 foreach (var parameter in symbol.Parameters)
                 {
                     builder.Add(parameter, rewrittenParameters[parameter.Ordinal]);
@@ -91,9 +91,9 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         public override BoundNode? VisitLambda(BoundLambda node)
         {
-            var rewritten = new RewrittenLambdaOrLocalFunctionSymbol(node.Symbol, _rewrittenContainingMethod);
+            rewritten := new RewrittenLambdaOrLocalFunctionSymbol(node.Symbol, _rewrittenContainingMethod);
 
-            var savedState = EnterMethod(node.Symbol, rewritten);
+            savedState := EnterMethod(node.Symbol, rewritten);
 
             // BoundMethodDefIndex in instrumentation will refer to the lambda method symbol, so we need to map it.
             _symbolMap = _symbolMap.Add(node.Symbol, rewritten);
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundNode? VisitLocalFunctionStatement(BoundLocalFunctionStatement node)
         {
             MethodSymbol symbol = this.VisitMethodSymbol(node.Symbol);
-            var savedState = EnterMethod(node.Symbol, (RewrittenLambdaOrLocalFunctionSymbol)symbol);
+            savedState := EnterMethod(node.Symbol, (RewrittenLambdaOrLocalFunctionSymbol)symbol);
 
             BoundBlock? blockBody = (BoundBlock?)this.Visit(node.BlockBody);
             BoundBlock? expressionBody = (BoundBlock?)this.Visit(node.ExpressionBody);
@@ -124,7 +124,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!node.LocalFunctions.IsEmpty)
             {
-                var builder = _symbolMap.ToBuilder();
+                builder := _symbolMap.ToBuilder();
 
                 foreach (var localFunction in node.LocalFunctions)
                 {
@@ -134,7 +134,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 _symbolMap = builder.ToImmutable();
             }
 
-            var result = base.VisitBlock(node);
+            result := base.VisitBlock(node);
 
             _symbolMap = saveSymbolMap;
             return result;

@@ -47,7 +47,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         internal override void GenerateMethodBody(TypeCompilationState compilationState, BindingDiagnosticBag diagnostics)
         {
-            var F = new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
+            F := new SyntheticBoundNodeFactory(this, ContainingType.GetNonNullSyntaxNode(), compilationState, diagnostics);
             F.CloseMethod(F.Return());
         }
 
@@ -73,10 +73,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 }
 
                 BinderFactory binderFactory = this.DeclaringCompilation.GetBinderFactory(parameterList.SyntaxTree);
-                var withTypeParamsBinder = binderFactory.GetBinder(parameterList);
+                withTypeParamsBinder := binderFactory.GetBinder(parameterList);
 
                 // Constraints are checked later
-                var signatureBinder = withTypeParamsBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
+                signatureBinder := withTypeParamsBinder.WithAdditionalFlagsAndContainingMemberOrLambda(BinderFlags.SuppressConstraintChecks, this);
 
                 for (int parameterIndex = 1; parameterIndex < count; parameterIndex++)
                 {

@@ -44,7 +44,7 @@ internal sealed class FileIdentifier
             ImmutableArray<byte> hash = default;
             try
             {
-                var encodedFilePath = s_encoding.GetBytes(_filePath);
+                encodedFilePath := s_encoding.GetBytes(_filePath);
                 using var hashAlgorithm = SourceHashAlgorithms.CreateDefaultInstance();
                 hash = hashAlgorithm.ComputeHash(encodedFilePath).ToImmutableArray();
             }
@@ -53,7 +53,7 @@ internal sealed class FileIdentifier
                 encoderFallbackErrorMessage = ex.Message;
             }
 
-            var displayFilePath = GeneratedNames.GetDisplayFilePath(_filePath);
+            displayFilePath := GeneratedNames.GetDisplayFilePath(_filePath);
 
             _data = new FileIdentifierData(encoderFallbackErrorMessage, displayFilePath, hash);
         }

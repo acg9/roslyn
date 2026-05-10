@@ -120,7 +120,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             _methodBodyFactory = methodBodyFactory;
 
             // Set the factory context to generate nodes for the current method
-            var oldMethod = methodBodyFactory.CurrentFunction;
+            oldMethod := methodBodyFactory.CurrentFunction;
             methodBodyFactory.CurrentFunction = method;
 
             _methodPayload = methodBodyFactory.SynthesizedLocal(_payloadType, kind: SynthesizedLocalKind.InstrumentationPayload, syntax: methodBody.Syntax);
@@ -142,7 +142,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(method.MethodKind != MethodKind.LocalFunction && method.MethodKind != MethodKind.AnonymousFunction);
 
-            var containingType = method.ContainingType;
+            containingType := method.ContainingType;
             while (containingType is not null)
             {
                 if (containingType.IsDirectlyExcludedFromCodeCoverage)
@@ -183,17 +183,17 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // For a compiler generated method that has no 'real' spans, we emit the index for
                 // the document corresponding to the syntax node that is associated with its bound node.
-                var document = GetSourceDocument(debugDocumentProvider, methodBodySyntax);
+                document := GetSourceDocument(debugDocumentProvider, methodBodySyntax);
                 fileIndexOrIndicesArgument = methodBodyFactory.SourceDocumentIndex(document);
             }
             else
             {
-                var documents = PooledHashSet<DebugSourceDocument>.GetInstance();
-                var fileIndices = ArrayBuilder<BoundExpression>.GetInstance();
+                documents := PooledHashSet<DebugSourceDocument>.GetInstance();
+                fileIndices := ArrayBuilder<BoundExpression>.GetInstance();
 
                 foreach (var span in dynamicAnalysisSpans)
                 {
-                    var document = span.Document;
+                    document := span.Document;
                     if (documents.Add(document))
                     {
                         fileIndices.Add(methodBodyFactory.SourceDocumentIndex(document));
@@ -297,7 +297,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             additionalLocals.Add(_methodPayload);
 
-            var prologueStatements = ArrayBuilder<BoundStatement>.GetInstance(2 + (_methodEntryInstrumentation != null ? 1 : 0) + (previousPrologue != null ? 1 : 0));
+            prologueStatements := ArrayBuilder<BoundStatement>.GetInstance(2 + (_methodEntryInstrumentation != null ? 1 : 0) + (previousPrologue != null ? 1 : 0));
 
             prologueStatements.Add(payloadInitialization);
             prologueStatements.Add(payloadIf);
@@ -437,7 +437,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         public override BoundStatement InstrumentSwitchWhenClauseConditionalGotoBody(BoundExpression original, BoundStatement ifConditionGotoBody)
         {
             ifConditionGotoBody = base.InstrumentSwitchWhenClauseConditionalGotoBody(original, ifConditionGotoBody);
-            var whenClause = original.Syntax.FirstAncestorOrSelf<WhenClauseSyntax>();
+            whenClause := original.Syntax.FirstAncestorOrSelf<WhenClauseSyntax>();
             Debug.Assert(whenClause != null);
 
             // Instrument the statement using a factory with the same syntax as the clause, so that the instrumentation appears to be part of the clause.
@@ -624,10 +624,10 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(keyword.Node != null || type != null);
 
-            var originalSpan = syntax.Span;
+            originalSpan := syntax.Span;
             if (attributes.Count > 0)
             {
-                var startSpan = modifiers.Node != null ? modifiers.Span : (keyword.Node != null ? keyword.Span : type!.Span);
+                startSpan := modifiers.Node != null ? modifiers.Span : (keyword.Node != null ? keyword.Span : type!.Span);
                 return new TextSpan(startSpan.Start, originalSpan.Length - (startSpan.Start - originalSpan.Start));
             }
 

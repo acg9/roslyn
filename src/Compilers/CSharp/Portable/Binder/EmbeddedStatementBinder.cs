@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         protected override ImmutableArray<LabelSymbol> BuildLabels()
         {
             ArrayBuilder<LabelSymbol> labels = null;
-            var containingMethod = (MethodSymbol)this.ContainingMemberOrLambda;
+            containingMethod := (MethodSymbol)this.ContainingMemberOrLambda;
             BuildLabels(containingMethod, _statement, ref labels);
             return labels?.ToImmutableAndFree() ?? ImmutableArray<LabelSymbol>.Empty;
         }

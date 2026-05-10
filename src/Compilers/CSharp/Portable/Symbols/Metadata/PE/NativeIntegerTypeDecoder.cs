@@ -28,10 +28,10 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
 
         internal static TypeSymbol TransformType(TypeSymbol type, ImmutableArray<bool> transformFlags)
         {
-            var decoder = new NativeIntegerTypeDecoder(transformFlags);
+            decoder := new NativeIntegerTypeDecoder(transformFlags);
             try
             {
-                var result = decoder.TransformType(type);
+                result := decoder.TransformType(type);
                 if (decoder._hitErrorType)
                 {
                     // If we failed to decode because there was an error type involved, marking the
@@ -126,7 +126,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 }
             }
 
-            var allTypeArguments = ArrayBuilder<TypeWithAnnotations>.GetInstance();
+            allTypeArguments := ArrayBuilder<TypeWithAnnotations>.GetInstance();
             type.GetAllTypeArgumentsNoUseSiteDiagnostics(allTypeArguments);
 
             bool haveChanges = false;
@@ -177,12 +177,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols.Metadata.PE
                 return null;
             }
 
-            var transformedParameterTypes = ImmutableArray<TypeWithAnnotations>.Empty;
-            var paramsModified = false;
+            transformedParameterTypes := ImmutableArray<TypeWithAnnotations>.Empty;
+            paramsModified := false;
 
             if (type.Signature.ParameterCount > 0)
             {
-                var builder = ArrayBuilder<TypeWithAnnotations>.GetInstance(type.Signature.ParameterCount);
+                builder := ArrayBuilder<TypeWithAnnotations>.GetInstance(type.Signature.ParameterCount);
                 foreach (var param in type.Signature.Parameters)
                 {
                     if (TransformTypeWithAnnotations(param.TypeWithAnnotations) is not { } transformedParam)

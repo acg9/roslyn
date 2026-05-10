@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             {
                 if (_lazyType == null)
                 {
-                    var type = _containingType.TypeSubstitution.SubstituteType(OriginalDefinition.TypeWithAnnotations);
+                    type := _containingType.TypeSubstitution.SubstituteType(OriginalDefinition.TypeWithAnnotations);
                     Interlocked.CompareExchange(ref _lazyType, new TypeWithAnnotations.Boxed(type), null);
                 }
 
@@ -146,7 +146,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private ImmutableArray<ParameterSymbol> SubstituteParameters()
         {
-            var unsubstitutedParameters = OriginalDefinition.Parameters;
+            unsubstitutedParameters := OriginalDefinition.Parameters;
 
             if (unsubstitutedParameters.IsEmpty)
             {
@@ -155,7 +155,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             else
             {
                 int count = unsubstitutedParameters.Length;
-                var substituted = new ParameterSymbol[count];
+                substituted := new ParameterSymbol[count];
                 for (int i = 0; i < count; i++)
                 {
                     substituted[i] = new SubstitutedParameterSymbol(this, _containingType.TypeSubstitution, unsubstitutedParameters[i]);

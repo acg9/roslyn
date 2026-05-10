@@ -82,7 +82,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(isChecked || name2Opt is null);
             Debug.Assert(operand.Type is not null);
 
-            var operators = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+            operators := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
 
             getDeclaredUserDefinedUnaryOperatorsInScope(extensionCandidatesInSingleScope, kind, name1, name2Opt, operators);
 
@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!operators.IsEmpty)
             {
-                var results = result.Results;
+                results := result.Results;
                 results.Clear();
                 if (CandidateOperators(isChecked, operators, operand, results, ref useSiteInfo))
                 {
@@ -118,10 +118,10 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (!operators.IsEmpty)
                     {
-                        var existing = new HashSet<MethodSymbol>(PairedExtensionOperatorSignatureComparer.Instance);
+                        existing := new HashSet<MethodSymbol>(PairedExtensionOperatorSignatureComparer.Instance);
                         existing.AddRange(operators.Select(static (op) => op.Method));
 
-                        var operators2 = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+                        operators2 := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
                         getDeclaredUserDefinedUnaryOperators(extensionCandidatesInSingleScope, kind, name2Opt, operators2);
 
                         foreach (var op in operators2)
@@ -144,7 +144,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             static void getDeclaredUserDefinedUnaryOperators(ArrayBuilder<Symbol> extensionCandidatesInSingleScope, UnaryOperatorKind kind, string name, ArrayBuilder<UnaryOperatorSignature> operators)
             {
                 Debug.Assert(extensionCandidatesInSingleScope.All(static m => m.ContainingType.ExtensionParameter is not null));
-                var typeOperators = ArrayBuilder<MethodSymbol>.GetInstance();
+                typeOperators := ArrayBuilder<MethodSymbol>.GetInstance();
                 NamedTypeSymbol.AddOperators(typeOperators, extensionCandidatesInSingleScope);
                 GetDeclaredUserDefinedUnaryOperators(constrainedToTypeOpt: null, typeOperators, kind, name, operators);
                 typeOperators.Free();
@@ -154,7 +154,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 for (int i = operators.Count - 1; i >= 0; i--)
                 {
-                    var candidate = operators[i];
+                    candidate := operators[i];
                     MethodSymbol method = candidate.Method;
                     NamedTypeSymbol extension = method.ContainingType;
 
@@ -255,11 +255,11 @@ namespace Microsoft.CodeAnalysis.CSharp
                     return false;
                 }
 
-                var xExtension = x.OriginalDefinition.ContainingType;
-                var xGroupingKey = ((SourceNamedTypeSymbol)xExtension).ExtensionGroupingName;
+                xExtension := x.OriginalDefinition.ContainingType;
+                xGroupingKey := ((SourceNamedTypeSymbol)xExtension).ExtensionGroupingName;
                 Debug.Assert(xGroupingKey is not null);
-                var yExtension = y.OriginalDefinition.ContainingType;
-                var yGroupingKey = ((SourceNamedTypeSymbol)yExtension).ExtensionGroupingName;
+                yExtension := y.OriginalDefinition.ContainingType;
+                yGroupingKey := ((SourceNamedTypeSymbol)yExtension).ExtensionGroupingName;
 
                 if (!xGroupingKey.Equals(yGroupingKey))
                 {
@@ -283,12 +283,12 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public int GetHashCode(MethodSymbol op)
             {
-                var typeComparer = Symbols.SymbolEqualityComparer.AllIgnoreOptions;
+                typeComparer := Symbols.SymbolEqualityComparer.AllIgnoreOptions;
 
                 int result = typeComparer.GetHashCode(op.OriginalDefinition.ContainingType.ContainingType);
 
-                var extension = op.OriginalDefinition.ContainingType;
-                var groupingKey = ((SourceNamedTypeSymbol)extension).ExtensionGroupingName;
+                extension := op.OriginalDefinition.ContainingType;
+                groupingKey := ((SourceNamedTypeSymbol)extension).ExtensionGroupingName;
                 Debug.Assert(groupingKey is not null);
                 result = Hash.Combine(result, groupingKey.GetHashCode());
 
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var candidates = result.Results;
+            candidates := result.Results;
             RemoveLowerPriorityMembers<UnaryOperatorAnalysisResult, MethodSymbol>(candidates);
 
             // SPEC: Otherwise, the best function member is the one function member that is better than all other function 
@@ -358,7 +358,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                         continue;
                     }
 
-                    var better = BetterOperator(candidates[i].Signature, candidates[j].Signature, operand, ref useSiteInfo);
+                    better := BetterOperator(candidates[i].Signature, candidates[j].Signature, operand, ref useSiteInfo);
                     if (better == BetterResult.Left)
                     {
                         candidates[j] = candidates[j].Worse();
@@ -391,7 +391,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var better = BetterOperator(candidates[currentBestIndex].Signature, candidates[index].Signature, operand, ref useSiteInfo);
+                    better := BetterOperator(candidates[currentBestIndex].Signature, candidates[index].Signature, operand, ref useSiteInfo);
                     if (better == BetterResult.Right)
                     {
                         // The current best is worse
@@ -413,7 +413,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     continue;
                 }
 
-                var better = BetterOperator(candidates[currentBestIndex].Signature, candidates[index].Signature, operand, ref useSiteInfo);
+                better := BetterOperator(candidates[currentBestIndex].Signature, candidates[index].Signature, operand, ref useSiteInfo);
                 if (better != BetterResult.Left)
                 {
                     // The current best is not better
@@ -510,12 +510,12 @@ namespace Microsoft.CodeAnalysis.CSharp
             // It is onerous to require the actually specified behavior. We should change the
             // specification to match the previous implementation.
 
-            var operators = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+            operators := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
             this.Compilation.BuiltInOperators.GetSimpleBuiltInOperators(kind, operators, skipNativeIntegerOperators: !operand.Type.IsNativeIntegerOrNullableThereof());
 
             GetEnumOperations(kind, operand, operators);
 
-            var pointerOperator = GetPointerOperation(kind, operand);
+            pointerOperator := GetPointerOperation(kind, operand);
             if (pointerOperator != null)
             {
                 operators.Add(pointerOperator.Value);
@@ -531,7 +531,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             bool anyApplicable = false;
             foreach (var op in operators)
             {
-                var conversion = Conversions.ClassifyConversionFromExpression(operand, op.OperandType, isChecked: isChecked, ref useSiteInfo);
+                conversion := Conversions.ClassifyConversionFromExpression(operand, op.OperandType, isChecked: isChecked, ref useSiteInfo);
                 if (conversion.IsImplicit)
                 {
                     anyApplicable = true;
@@ -550,7 +550,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(operand != null);
 
-            var enumType = operand.Type;
+            enumType := operand.Type;
             if ((object)enumType == null)
             {
                 return;
@@ -562,7 +562,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return;
             }
 
-            var nullableEnum = Compilation.GetOrCreateNullableType(enumType);
+            nullableEnum := Compilation.GetOrCreateNullableType(enumType);
 
             switch (kind)
             {
@@ -581,7 +581,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         {
             Debug.Assert(operand != null);
 
-            var pointerType = operand.Type as PointerTypeSymbol;
+            pointerType := operand.Type as PointerTypeSymbol;
             if ((object)pointerType == null)
             {
                 return null;
@@ -664,7 +664,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return false;
             }
 
-            var operators = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+            operators := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
             bool hadApplicableCandidates = false;
 
             NamedTypeSymbol current = declaringTypeOrTypeParameter as NamedTypeSymbol;
@@ -707,8 +707,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (!interfaces.IsDefaultOrEmpty)
                 {
-                    var shadowedInterfaces = PooledHashSet<NamedTypeSymbol>.GetInstance();
-                    var resultsFromInterface = ArrayBuilder<UnaryOperatorAnalysisResult>.GetInstance();
+                    shadowedInterfaces := PooledHashSet<NamedTypeSymbol>.GetInstance();
+                    resultsFromInterface := ArrayBuilder<UnaryOperatorAnalysisResult>.GetInstance();
                     results.Clear();
 
                     foreach (NamedTypeSymbol @interface in interfaces)
@@ -778,7 +778,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (name2Opt is not null)
             {
-                var operators2 = ArrayBuilder<UnaryOperatorSignature>.GetInstance();
+                operators2 := ArrayBuilder<UnaryOperatorSignature>.GetInstance();
 
                 // Add regular operators as well.
                 GetDeclaredUserDefinedUnaryOperators(constrainedToTypeOpt, type, kind, name2Opt, operators2);
@@ -808,7 +808,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static void GetDeclaredUserDefinedUnaryOperators(TypeSymbol? constrainedToTypeOpt, NamedTypeSymbol type, UnaryOperatorKind kind, string name, ArrayBuilder<UnaryOperatorSignature> operators)
         {
-            var typeOperators = ArrayBuilder<MethodSymbol>.GetInstance();
+            typeOperators := ArrayBuilder<MethodSymbol>.GetInstance();
             type.AddOperators(name, typeOperators);
             GetDeclaredUserDefinedUnaryOperators(constrainedToTypeOpt, typeOperators, kind, name, operators);
             typeOperators.Free();

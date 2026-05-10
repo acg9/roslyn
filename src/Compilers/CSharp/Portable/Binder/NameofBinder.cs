@@ -78,7 +78,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 if (foundParameter)
                 {
-                    var tmp = LookupResult.GetInstance();
+                    tmp := LookupResult.GetInstance();
                     _withTypeParametersBinder.LookupSymbolsInSingleBinder(tmp, name, arity, basesBeingResolved, options, originalBinder, diagnose, ref useSiteInfo);
                     result.MergeEqual(tmp);
                     tmp.Free();

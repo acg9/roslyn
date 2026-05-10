@@ -105,7 +105,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var extent = this.Extent;
+                extent := this.Extent;
                 if (extent.Kind == NamespaceKind.Module)
                 {
                     return extent.Module;
@@ -228,7 +228,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var types = this.GetTypeMembers(TypeSymbol.ImplicitTypeName);
+                types := this.GetTypeMembers(TypeSymbol.ImplicitTypeName);
                 if (types.Length == 0)
                 {
                     return null;
@@ -296,8 +296,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return this.GetNestedNamespace(((SimpleNameSyntax)name).Identifier.ValueText);
 
                 case SyntaxKind.QualifiedName:
-                    var qn = (QualifiedNameSyntax)name;
-                    var leftNs = this.GetNestedNamespace(qn.Left);
+                    qn := (QualifiedNameSyntax)name;
+                    leftNs := this.GetNestedNamespace(qn.Left);
                     if ((object)leftNs != null)
                     {
                         return leftNs.GetNestedNamespace(qn.Right);
@@ -318,7 +318,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var typesWithExtensionMethods = this._lazyTypesMightContainExtensions;
+                typesWithExtensionMethods := this._lazyTypesMightContainExtensions;
                 if (typesWithExtensionMethods.IsDefault)
                 {
                     this._lazyTypesMightContainExtensions = this.GetTypeMembersUnordered().WhereAsArray(t => t.MightContainExtensions);
@@ -337,7 +337,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         /// <remarks>Does not perform a full viability check</remarks>
         internal virtual void GetAllExtensionMembers(ArrayBuilder<Symbol> members, string? name, string? alternativeName, int arity, LookupOptions options, ConsList<FieldSymbol> fieldsBeingBound)
         {
-            var assembly = this.ContainingAssembly;
+            assembly := this.ContainingAssembly;
 
             // Only MergedNamespaceSymbol should have a null ContainingAssembly
             // and MergedNamespaceSymbol overrides GetAllExtensionMembers.
@@ -348,7 +348,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                 return;
             }
 
-            var typesWithExtensionMethods = this.TypesMightContainExtensions;
+            typesWithExtensionMethods := this.TypesMightContainExtensions;
 
             foreach (var type in typesWithExtensionMethods)
             {

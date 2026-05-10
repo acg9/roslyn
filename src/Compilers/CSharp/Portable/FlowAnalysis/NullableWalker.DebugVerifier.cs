@@ -36,7 +36,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public static void Verify(ImmutableDictionary<BoundExpression, (NullabilityInfo Info, TypeSymbol? Type)> analyzedNullabilityMap, SnapshotManager? snapshotManagerOpt, BoundNode node)
             {
-                var verifier = new DebugVerifier(analyzedNullabilityMap, snapshotManagerOpt);
+                verifier := new DebugVerifier(analyzedNullabilityMap, snapshotManagerOpt);
                 verifier.Visit(node);
                 snapshotManagerOpt?.VerifyUpdatedSymbols();
 
@@ -205,7 +205,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     this.Visit(node.Condition);
                     this.Visit(node.Consequence);
 
-                    var alternative = node.AlternativeOpt;
+                    alternative := node.AlternativeOpt;
                     if (alternative is null)
                     {
                         break;

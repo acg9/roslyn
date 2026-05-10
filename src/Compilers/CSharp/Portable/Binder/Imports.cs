@@ -67,20 +67,20 @@ namespace Microsoft.CodeAnalysis.CSharp
             Debug.Assert(previousSubmissionImports != null);
             Debug.Assert(newSubmission.IsSubmission);
 
-            var expandedAliases = ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
+            expandedAliases := ImmutableDictionary<string, AliasAndUsingDirective>.Empty;
             if (!previousSubmissionImports.UsingAliases.IsEmpty)
             {
-                var expandedAliasesBuilder = ImmutableDictionary.CreateBuilder<string, AliasAndUsingDirective>();
+                expandedAliasesBuilder := ImmutableDictionary.CreateBuilder<string, AliasAndUsingDirective>();
                 foreach (var pair in previousSubmissionImports.UsingAliases)
                 {
-                    var name = pair.Key;
-                    var directive = pair.Value;
+                    name := pair.Key;
+                    directive := pair.Value;
                     expandedAliasesBuilder.Add(name, new AliasAndUsingDirective(directive.Alias.ToNewSubmission(newSubmission), directive.UsingDirective));
                 }
                 expandedAliases = expandedAliasesBuilder.ToImmutable();
             }
 
-            var expandedUsings = ExpandPreviousSubmissionImports(previousSubmissionImports.Usings, newSubmission);
+            expandedUsings := ExpandPreviousSubmissionImports(previousSubmissionImports.Usings, newSubmission);
 
             return Imports.Create(
                 expandedAliases,
@@ -94,19 +94,19 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (!previousSubmissionUsings.IsEmpty)
             {
-                var expandedUsingsBuilder = ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance(previousSubmissionUsings.Length);
-                var expandedGlobalNamespace = newSubmission.GlobalNamespace;
+                expandedUsingsBuilder := ArrayBuilder<NamespaceOrTypeAndUsingDirective>.GetInstance(previousSubmissionUsings.Length);
+                expandedGlobalNamespace := newSubmission.GlobalNamespace;
 
                 foreach (var previousUsing in previousSubmissionUsings)
                 {
-                    var previousTarget = previousUsing.NamespaceOrType;
+                    previousTarget := previousUsing.NamespaceOrType;
                     if (previousTarget.IsType)
                     {
                         expandedUsingsBuilder.Add(previousUsing);
                     }
                     else
                     {
-                        var expandedNamespace = ExpandPreviousSubmissionNamespace((NamespaceSymbol)previousTarget, expandedGlobalNamespace);
+                        expandedNamespace := ExpandPreviousSubmissionNamespace((NamespaceSymbol)previousTarget, expandedGlobalNamespace);
                         expandedUsingsBuilder.Add(new NamespaceOrTypeAndUsingDirective(expandedNamespace, previousUsing.UsingDirective, dependencies: default));
                     }
                 }
@@ -125,15 +125,15 @@ namespace Microsoft.CodeAnalysis.CSharp
             // Hard assert: we depend on this.
             Debug.Assert(expandedGlobalNamespace.IsGlobalNamespace, "Global namespace required");
 
-            var nameParts = ArrayBuilder<string>.GetInstance();
-            var curr = originalNamespace;
+            nameParts := ArrayBuilder<string>.GetInstance();
+            curr := originalNamespace;
             while (!curr.IsGlobalNamespace)
             {
                 nameParts.Add(curr.Name);
                 curr = curr.ContainingNamespace;
             }
 
-            var expandedNamespace = expandedGlobalNamespace;
+            expandedNamespace := expandedGlobalNamespace;
             for (int i = nameParts.Count - 1; i >= 0; i--)
             {
                 // Note, the name may have become ambiguous (e.g. if a type with the same name
@@ -182,9 +182,9 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return this;
             }
 
-            var usingAliases = this.UsingAliases.SetItems(otherImports.UsingAliases); // NB: SetItems, rather than AddRange
-            var usings = this.Usings.AddRange(otherImports.Usings).Distinct(UsingTargetComparer.Instance);
-            var externAliases = ConcatExternAliases(this.ExternAliases, otherImports.ExternAliases);
+            usingAliases := this.UsingAliases.SetItems(otherImports.UsingAliases); // NB: SetItems, rather than AddRange
+            usings := this.Usings.AddRange(otherImports.Usings).Distinct(UsingTargetComparer.Instance);
+            externAliases := ConcatExternAliases(this.ExternAliases, otherImports.ExternAliases);
 
             return Imports.Create(usingAliases, usings, externAliases);
         }
@@ -201,7 +201,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return externs1;
             }
 
-            var replacedExternAliases = PooledHashSet<string>.GetInstance();
+            replacedExternAliases := PooledHashSet<string>.GetInstance();
             replacedExternAliases.AddAll(externs2.Select(e => e.Alias.Name));
             return externs1.WhereAsArray((e, replacedExternAliases) => !replacedExternAliases.Contains(e.Alias.Name), replacedExternAliases).AddRange(externs2);
         }

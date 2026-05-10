@@ -79,7 +79,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 #if DEBUG
         public string Dump()
         {
-            var sb = new System.Text.StringBuilder();
+            sb := new System.Text.StringBuilder();
             sb.AppendLine("User defined conversion analysis results:");
             sb.AppendFormat("Summary: {0}\n", Kind);
             for (int i = 0; i < Results.Length; ++i)

@@ -24,12 +24,12 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
             return node;
         }
 
-        var variablesToHoist = IteratorAndAsyncCaptureWalker.Analyze(compilationState.Compilation, method, node, isRuntimeAsync: true, diagnostics.DiagnosticBag);
-        var hoistedLocals = ArrayBuilder<LocalSymbol>.GetInstance();
-        var factory = new SyntheticBoundNodeFactory(method, node.Syntax, compilationState, diagnostics);
-        var rewriter = new RuntimeAsyncRewriter(factory, variablesToHoist, hoistedLocals);
-        var thisStore = hoistThisIfNeeded(rewriter);
-        var result = (BoundStatement)rewriter.Visit(node);
+        variablesToHoist := IteratorAndAsyncCaptureWalker.Analyze(compilationState.Compilation, method, node, isRuntimeAsync: true, diagnostics.DiagnosticBag);
+        hoistedLocals := ArrayBuilder<LocalSymbol>.GetInstance();
+        factory := new SyntheticBoundNodeFactory(method, node.Syntax, compilationState, diagnostics);
+        rewriter := new RuntimeAsyncRewriter(factory, variablesToHoist, hoistedLocals);
+        thisStore := hoistThisIfNeeded(rewriter);
+        result := (BoundStatement)rewriter.Visit(node);
 
         if (thisStore is not null)
         {
@@ -52,7 +52,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
         static BoundAssignmentOperator? hoistThisIfNeeded(RuntimeAsyncRewriter rewriter)
         {
             Debug.Assert(rewriter._factory.CurrentFunction is not null);
-            var thisParameter = rewriter._factory.CurrentFunction.ThisParameter;
+            thisParameter := rewriter._factory.CurrentFunction.ThisParameter;
             if (thisParameter is { Type.IsValueType: true, RefKind: not RefKind.None })
             {
                 // This is a struct or a type parameter. We need to replace it with a hoisted local to preserve behavior from
@@ -60,7 +60,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
                 // We do this regardless of whether `this` is captured to a ref local, because any usage of `ldarg.0` in these
                 // scenarios is illegal after the first await. We could be more precise and only do this if `this` is actually
                 // used after the first await, but at the moment we don't feel that is worth the complexity.
-                var hoistedThis = rewriter._factory.StoreToTemp(rewriter._factory.This(), out BoundAssignmentOperator store, kind: SynthesizedLocalKind.AwaitByRefSpill);
+                hoistedThis := rewriter._factory.StoreToTemp(rewriter._factory.This(), out BoundAssignmentOperator store, kind: SynthesizedLocalKind.AwaitByRefSpill);
                 rewriter._hoistedLocals.Add(hoistedThis.LocalSymbol);
                 rewriter._proxies.Add(thisParameter, new CapturedToExpressionSymbolReplacement<ParameterSymbol>(hoistedThis, hoistedSymbols: [], isReusable: true));
                 return store;
@@ -91,9 +91,9 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
     public override BoundNode? Visit(BoundNode? node)
     {
         if (node == null) return node;
-        var oldSyntax = _factory.Syntax;
+        oldSyntax := _factory.Syntax;
         _factory.Syntax = node.Syntax;
-        var result = base.Visit(node);
+        result := base.Visit(node);
         _factory.Syntax = oldSyntax;
         return result;
     }
@@ -101,16 +101,16 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
     [return: NotNullIfNotNull(nameof(node))]
     public BoundExpression? VisitExpression(BoundExpression? node)
     {
-        var result = Visit(node);
+        result := Visit(node);
         return (BoundExpression?)result;
     }
 
     public override BoundNode? VisitAwaitExpression(BoundAwaitExpression node)
     {
-        var nodeType = node.Expression.Type;
+        nodeType := node.Expression.Type;
         Debug.Assert(nodeType is not null);
 
-        var awaitableInfo = node.AwaitableInfo;
+        awaitableInfo := node.AwaitableInfo;
 
         if (awaitableInfo.IsDynamic)
         {
@@ -123,10 +123,10 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
             return node.WithHasErrors();
         }
 
-        var runtimeAsyncAwaitCall = awaitableInfo.RuntimeAsyncAwaitCall;
+        runtimeAsyncAwaitCall := awaitableInfo.RuntimeAsyncAwaitCall;
         Debug.Assert(runtimeAsyncAwaitCall is not null);
         Debug.Assert(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder is not null);
-        var runtimeAsyncAwaitMethod = runtimeAsyncAwaitCall.Method;
+        runtimeAsyncAwaitMethod := runtimeAsyncAwaitCall.Method;
         Debug.Assert(runtimeAsyncAwaitMethod is not null);
         Debug.Assert(ReferenceEquals(
             runtimeAsyncAwaitMethod.ContainingType.OriginalDefinition,
@@ -137,9 +137,9 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
         {
             // This is the direct await case, with no need for the full pattern.
             // System.Runtime.CompilerServices.RuntimeHelpers.Await(awaitedExpression)
-            var expr = VisitExpression(node.Expression);
+            expr := VisitExpression(node.Expression);
             _placeholderMap.Add(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder, expr);
-            var call = Visit(awaitableInfo.RuntimeAsyncAwaitCall);
+            call := Visit(awaitableInfo.RuntimeAsyncAwaitCall);
             _placeholderMap.Remove(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder);
             return call;
         }
@@ -158,17 +158,17 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
         //    UnsafeAwaitAwaiter(_tmp) OR AwaitAwaiter(_tmp);
         // _tmp.GetResult()
 
-        var expr = VisitExpression(node.Expression);
+        expr := VisitExpression(node.Expression);
 
-        var awaitableInfo = node.AwaitableInfo;
-        var awaitablePlaceholder = awaitableInfo.AwaitableInstancePlaceholder;
+        awaitableInfo := node.AwaitableInfo;
+        awaitablePlaceholder := awaitableInfo.AwaitableInstancePlaceholder;
         if (awaitablePlaceholder is not null)
         {
             _placeholderMap.Add(awaitablePlaceholder, expr);
         }
 
         // expr.GetAwaiter()
-        var getAwaiter = VisitExpression(awaitableInfo.GetAwaiter);
+        getAwaiter := VisitExpression(awaitableInfo.GetAwaiter);
         Debug.Assert(getAwaiter is not null);
 
         if (awaitablePlaceholder is not null)
@@ -177,19 +177,19 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
         }
 
         // var _tmp = expr.GetAwaiter();
-        var tmp = _factory.StoreToTemp(getAwaiter, out BoundAssignmentOperator store, kind: SynthesizedLocalKind.Awaiter);
+        tmp := _factory.StoreToTemp(getAwaiter, out BoundAssignmentOperator store, kind: SynthesizedLocalKind.Awaiter);
 
         // _tmp.IsCompleted
         Debug.Assert(awaitableInfo.IsCompleted is not null);
-        var isCompletedMethod = awaitableInfo.IsCompleted.GetMethod;
+        isCompletedMethod := awaitableInfo.IsCompleted.GetMethod;
         Debug.Assert(isCompletedMethod is not null);
-        var isCompletedCall = _factory.Call(tmp, isCompletedMethod);
+        isCompletedCall := _factory.Call(tmp, isCompletedMethod);
 
         // UnsafeAwaitAwaiter(_tmp) OR AwaitAwaiter(_tmp)
         Debug.Assert(awaitableInfo.RuntimeAsyncAwaitCall is not null);
         Debug.Assert(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder is not null);
         _placeholderMap.Add(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder, tmp);
-        var awaitCall = (BoundCall)Visit(awaitableInfo.RuntimeAsyncAwaitCall);
+        awaitCall := (BoundCall)Visit(awaitableInfo.RuntimeAsyncAwaitCall);
         _placeholderMap.Remove(awaitableInfo.RuntimeAsyncAwaitCallPlaceholder);
 
         // if (!_tmp.IsCompleted) awaitCall
@@ -197,9 +197,9 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
             _factory.If(_factory.Not(isCompletedCall), _factory.ExpressionStatement(awaitCall)));
 
         // _tmp.GetResult()
-        var getResultMethod = awaitableInfo.GetResult;
+        getResultMethod := awaitableInfo.GetResult;
         Debug.Assert(getResultMethod is not null);
-        var getResultCall = _factory.Call(tmp, getResultMethod);
+        getResultCall := _factory.Call(tmp, getResultMethod);
 
         // final sequence
         return _factory.SpillSequence(
@@ -238,7 +238,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
                 isRuntimeAsync: true);
         }
 
-        var visitedLeftOrProxy = VisitExpression(leftLocal);
+        visitedLeftOrProxy := VisitExpression(leftLocal);
         visitedRight = VisitExpression(node.Right);
 
         if (visitedLeftOrProxy is not BoundLocal visitLeftLocal)
@@ -246,7 +246,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
             // Proxy replacement occurred. We need to reassign the proxy into our local as a sequence.
             // ref leftLocal = ref proxy;
             // leftLocal = visitedRight;
-            var assignment = _factory.AssignmentExpression(leftLocal, visitedLeftOrProxy, isRef: true);
+            assignment := _factory.AssignmentExpression(leftLocal, visitedLeftOrProxy, isRef: true);
             return _factory.Sequence([assignment], node.Update(leftLocal, visitedRight, node.IsRef, node.Type));
         }
 
@@ -254,7 +254,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
 
         static LocalSymbol createHoistedLocal(TypeSymbol type, RuntimeAsyncRewriter @this, LocalSymbol local)
         {
-            var hoistedLocal = @this._factory.SynthesizedLocal(type, syntax: local.GetDeclaratorSyntax(), kind: SynthesizedLocalKind.AwaitByRefSpill);
+            hoistedLocal := @this._factory.SynthesizedLocal(type, syntax: local.GetDeclaratorSyntax(), kind: SynthesizedLocalKind.AwaitByRefSpill);
             @this._hoistedLocals.Add(hoistedLocal);
             return hoistedLocal;
         }
@@ -303,7 +303,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
     public override BoundNode? VisitThisReference(BoundThisReference node)
     {
         Debug.Assert(_factory.CurrentFunction is not null);
-        var thisParameter = this._factory.CurrentFunction.ThisParameter;
+        thisParameter := this._factory.CurrentFunction.ThisParameter;
         Debug.Assert(thisParameter is not null);
         if (TryReplaceWithProxy(thisParameter, node.Syntax, out BoundNode? replacement))
         {
@@ -316,7 +316,7 @@ internal sealed class RuntimeAsyncRewriter : BoundTreeRewriterWithStackGuard
 
     public override BoundNode? VisitExpressionStatement(BoundExpressionStatement node)
     {
-        var expr = VisitExpression(node.Expression);
+        expr := VisitExpression(node.Expression);
         if (expr is null)
         {
             // Happens when the node is a hoisted expression that has no side effects.

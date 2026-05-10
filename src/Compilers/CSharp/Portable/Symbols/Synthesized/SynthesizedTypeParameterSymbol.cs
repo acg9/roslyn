@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (ContainingSymbol.Kind == SymbolKind.NamedType && !PropagateAttributes)
             {
-                var definition = _underlyingTypeParameter.OriginalDefinition;
+                definition := _underlyingTypeParameter.OriginalDefinition;
                 if (ContainingSymbol.ContainingModule == definition.ContainingModule)
                 {
                     foreach (CSharpAttributeData attr in definition.GetAttributes())

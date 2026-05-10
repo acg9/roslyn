@@ -22,7 +22,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
                             512,
                             (key) =>
                             {
-                                var kind = SyntaxFacts.GetKeywordKind(key);
+                                kind := SyntaxFacts.GetKeywordKind(key);
                                 if (kind == SyntaxKind.None)
                                 {
                                     kind = SyntaxFacts.GetContextualKeywordKind(key);
@@ -188,12 +188,12 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             int lexemeStartPosition,
             int hashCode)
         {
-            var span = TextSpan.FromBounds(lexemeStartPosition, textWindow.Position);
+            span := TextSpan.FromBounds(lexemeStartPosition, textWindow.Position);
             Debug.Assert(span.Length > 0);
 
             if (textWindow.TryGetTextIfWithinWindow(span, out var lexemeTextSpan))
             {
-                var value = TriviaMap.FindItem(lexemeTextSpan, hashCode);
+                value := TriviaMap.FindItem(lexemeTextSpan, hashCode);
                 if (value == null)
                 {
                     value = SyntaxFactory.Whitespace(textWindow.GetText(lexemeStartPosition, intern: true));
@@ -214,7 +214,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
 
         private static void Hit()
         {
-            var h = System.Threading.Interlocked.Increment(ref hits);
+            h := System.Threading.Interlocked.Increment(ref hits);
 
             if (h % 10000 == 0)
             {
@@ -234,7 +234,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Syntax.InternalSyntax
             Func<TArg, SyntaxToken> createTokenFunction,
             TArg data)
         {
-            var value = TokenMap.FindItem(textBuffer, hashCode);
+            value := TokenMap.FindItem(textBuffer, hashCode);
 
             if (value == null)
             {

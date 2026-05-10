@@ -48,7 +48,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 // Optimization:
                 // Binary operator lowering combines the binary operator with IsTrue/IsFalse more efficiently than we can do here.
 
-                var binaryOperator = (BoundBinaryOperator)node.Operand;
+                binaryOperator := (BoundBinaryOperator)node.Operand;
                 if (node.OperatorKind == UnaryOperatorKind.DynamicTrue && binaryOperator.OperatorKind == BinaryOperatorKind.DynamicLogicalOr ||
                     node.OperatorKind == UnaryOperatorKind.DynamicFalse && binaryOperator.OperatorKind == BinaryOperatorKind.DynamicLogicalAnd)
                 {
@@ -87,7 +87,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 Debug.Assert(method is null);
 
                 // Logical operators on boxed Boolean constants:
-                var constant = UnboxConstant(loweredOperand);
+                constant := UnboxConstant(loweredOperand);
                 if (constant == ConstantValue.True || constant == ConstantValue.False)
                 {
                     switch (kind)
@@ -130,14 +130,14 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (kind == UnaryOperatorKind.EnumBitwiseComplement)
             {
-                var underlyingType = loweredOperand.Type.GetEnumUnderlyingType();
+                underlyingType := loweredOperand.Type.GetEnumUnderlyingType();
                 Debug.Assert(underlyingType is { });
-                var upconvertSpecialType = Binder.GetEnumPromotedType(underlyingType.SpecialType);
+                upconvertSpecialType := Binder.GetEnumPromotedType(underlyingType.SpecialType);
                 var upconvertType = upconvertSpecialType == underlyingType.SpecialType ?
                     underlyingType :
                     _compilation.GetSpecialType(upconvertSpecialType);
 
-                var newOperand = MakeConversionNode(loweredOperand, upconvertType, false);
+                newOperand := MakeConversionNode(loweredOperand, upconvertType, false);
                 UnaryOperatorKind newKind = kind.Operator().WithType(upconvertSpecialType);
 
                 var newNode = (oldNode != null) ?
@@ -263,7 +263,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 return GetLiftedUnaryOperatorConsequence(operatorKind, syntax, method, constrainedToTypeOpt, type, neverNull);
             }
 
-            var conditionalLeft = loweredOperand as BoundLoweredConditionalAccess;
+            conditionalLeft := loweredOperand as BoundLoweredConditionalAccess;
 
             // NOTE: we could in theory handle side-effecting loweredRight here too
             //       by including it as a part of whenNull, but there is a concern 
@@ -273,7 +273,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             if (optimize)
             {
-                var result = LowerLiftedUnaryOperator(operatorKind, syntax, method, constrainedToTypeOpt, conditionalLeft!.WhenNotNull, type);
+                result := LowerLiftedUnaryOperator(operatorKind, syntax, method, constrainedToTypeOpt, conditionalLeft!.WhenNotNull, type);
                 Debug.Assert(result.Type is { });
 
                 return conditionalLeft.Update(
@@ -375,13 +375,13 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private static bool IsIncrement(BoundIncrementOperator node)
         {
-            var op = node.OperatorKind.Operator();
+            op := node.OperatorKind.Operator();
             return op == UnaryOperatorKind.PostfixIncrement || op == UnaryOperatorKind.PrefixIncrement;
         }
 
         private static bool IsPrefix(BoundIncrementOperator node)
         {
-            var op = node.OperatorKind.Operator();
+            op := node.OperatorKind.Operator();
             return op == UnaryOperatorKind.PrefixIncrement || op == UnaryOperatorKind.PrefixDecrement;
         }
 
@@ -498,7 +498,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 BoundExpression assignBack = makeAssignmentBack(syntax, transformedLHS, boundTemp, isChecked, assignmentKind);
 
                 //  (object)default(T) != null
-                var isNotClass = _factory.IsNotNullReference(_factory.Default(operandType));
+                isNotClass := _factory.IsNotNullReference(_factory.Default(operandType));
                 tempInitializers.Add(
                     _factory.Conditional(
                         isNotClass,
@@ -599,7 +599,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             // prefix:  (X)(T.Increment((T)operand)))
             // postfix: (X)(T.Increment((T)temp)))
-            var newValue = makeBuiltInOrStaticIncrementOperator(node, rewrittenValueToIncrement: (isPrefix ? MakeRValue(transformedLHS) : boundTemp));
+            newValue := makeBuiltInOrStaticIncrementOperator(node, rewrittenValueToIncrement: (isPrefix ? MakeRValue(transformedLHS) : boundTemp));
 
             // there are two strategies for completing the rewrite.
             // The reason is that indirect assignments read the target of the assignment before evaluating 
@@ -698,11 +698,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 Debug.Assert(boundTemp.Type is not null);
 
-                var tempValue = isPrefix ? newValue : MakeRValue(operand);
+                tempValue := isPrefix ? newValue : MakeRValue(operand);
                 Debug.Assert(tempValue.Type is { });
-                var tempAssignment = MakeAssignmentOperator(syntax, boundTemp, tempValue, used: false, isChecked: isChecked, AssignmentKind.SimpleAssignment);
+                tempAssignment := MakeAssignmentOperator(syntax, boundTemp, tempValue, used: false, isChecked: isChecked, AssignmentKind.SimpleAssignment);
 
-                var operandValue = isPrefix ? boundTemp : newValue;
+                operandValue := isPrefix ? boundTemp : newValue;
                 var tempAssignedAndOperandValue = new BoundSequence(
                         syntax,
                         ImmutableArray<LocalSymbol>.Empty,
@@ -974,7 +974,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     throw ExceptionUtilities.UnexpectedValue(oper.Operator());
             }
 
-            var method = (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
+            method := (MethodSymbol)_compilation.Assembly.GetSpecialTypeMember(member);
             Debug.Assert((object)method != null); // Should have been checked during Warnings pass
             return method;
         }
@@ -1021,19 +1021,19 @@ namespace Microsoft.CodeAnalysis.CSharp
             switch (transformedExpression.Kind)
             {
                 case BoundKind.PropertyAccess:
-                    var propertyAccess = (BoundPropertyAccess)transformedExpression;
+                    propertyAccess := (BoundPropertyAccess)transformedExpression;
                     return MakePropertyGetAccess(transformedExpression.Syntax, propertyAccess.ReceiverOpt, propertyAccess.PropertySymbol, propertyAccess);
 
                 case BoundKind.DynamicMemberAccess:
-                    var dynamicMemberAccess = (BoundDynamicMemberAccess)transformedExpression;
+                    dynamicMemberAccess := (BoundDynamicMemberAccess)transformedExpression;
                     return _dynamicFactory.MakeDynamicGetMember(dynamicMemberAccess.Receiver, dynamicMemberAccess.Name, resultIndexed: false).ToExpression();
 
                 case BoundKind.IndexerAccess:
-                    var indexerAccess = (BoundIndexerAccess)transformedExpression;
+                    indexerAccess := (BoundIndexerAccess)transformedExpression;
                     return MakePropertyGetAccess(transformedExpression.Syntax, indexerAccess.ReceiverOpt, indexerAccess.Indexer, indexerAccess.Arguments, indexerAccess.ArgumentRefKindsOpt);
 
                 case BoundKind.DynamicIndexerAccess:
-                    var dynamicIndexerAccess = (BoundDynamicIndexerAccess)transformedExpression;
+                    dynamicIndexerAccess := (BoundDynamicIndexerAccess)transformedExpression;
                     return MakeDynamicGetIndex(
                         dynamicIndexerAccess,
                         dynamicIndexerAccess.Receiver,

@@ -106,17 +106,17 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             TypeWithAnnotations elementTypeWithAnnotations,
             AssemblySymbol declaringAssembly)
         {
-            var constructedInterfaces = ArrayBuilder<NamedTypeSymbol>.GetInstance();
+            constructedInterfaces := ArrayBuilder<NamedTypeSymbol>.GetInstance();
 
             //There are cases where the platform does contain the interfaces.
             //So it is fine not to have them listed under the type
-            var iListOfT = declaringAssembly.GetSpecialType(SpecialType.System_Collections_Generic_IList_T);
+            iListOfT := declaringAssembly.GetSpecialType(SpecialType.System_Collections_Generic_IList_T);
             if (!iListOfT.IsErrorType())
             {
                 constructedInterfaces.Add(new ConstructedNamedTypeSymbol(iListOfT, ImmutableArray.Create(elementTypeWithAnnotations)));
             }
 
-            var iReadOnlyListOfT = declaringAssembly.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyList_T);
+            iReadOnlyListOfT := declaringAssembly.GetSpecialType(SpecialType.System_Collections_Generic_IReadOnlyList_T);
 
             if (!iReadOnlyListOfT.IsErrorType())
             {
@@ -175,14 +175,14 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             if (this.Sizes.SequenceEqual(other.Sizes))
             {
-                var thisLowerBounds = this.LowerBounds;
+                thisLowerBounds := this.LowerBounds;
 
                 if (thisLowerBounds.IsDefault)
                 {
                     return other.LowerBounds.IsDefault;
                 }
 
-                var otherLowerBounds = other.LowerBounds;
+                otherLowerBounds := other.LowerBounds;
 
                 return !otherLowerBounds.IsDefault && thisLowerBounds.SequenceEqual(otherLowerBounds);
             }
@@ -376,7 +376,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
             TypeSymbol current = this;
             while (current.TypeKind == TypeKind.Array)
             {
-                var cur = (ArrayTypeSymbol)current;
+                cur := (ArrayTypeSymbol)current;
                 hash = Hash.Combine(cur.Rank, hash);
                 current = cur.ElementType;
             }
@@ -521,7 +521,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             protected override ArrayTypeSymbol WithElementTypeCore(TypeWithAnnotations newElementType)
             {
-                var newInterfaces = _interfaces.SelectAsArray((i, t) => i.OriginalDefinition.Construct(t), newElementType.Type);
+                newInterfaces := _interfaces.SelectAsArray((i, t) => i.OriginalDefinition.Construct(t), newElementType.Type);
                 return new SZArray(newElementType, BaseTypeNoUseSiteDiagnostics, newInterfaces);
             }
 

@@ -53,7 +53,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             underlyingType.Accept(this.NotFirstVisitor);
 
-            var arrayType = symbol;
+            arrayType := symbol;
             while (arrayType != null && arrayType != underlyingType)
             {
                 if (!this.IsFirstSymbolVisited)
@@ -227,7 +227,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (ITypeSymbolHelpers.IsNullableType(symbol) && !symbol.IsDefinition)
                 {
                     // Can't have a type called "int*?".
-                    var typeArg = symbol.TypeArguments[0];
+                    typeArg := symbol.TypeArguments[0];
                     if (typeArg.TypeKind != TypeKind.Pointer)
                     {
                         typeArg.Accept(this.NotFirstVisitor);
@@ -255,7 +255,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 if (Format.DelegateStyle == SymbolDisplayDelegateStyle.NameAndSignature)
                 {
-                    var invokeMethod = symbol.DelegateInvokeMethod;
+                    invokeMethod := symbol.DelegateInvokeMethod;
                     if (invokeMethod.ReturnsByRef)
                     {
                         AddRefIfNeeded();
@@ -279,11 +279,11 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
 
             //only visit the namespace if the style requires it and there isn't an enclosing type
-            var containingSymbol = symbol.ContainingSymbol;
+            containingSymbol := symbol.ContainingSymbol;
             if (ShouldVisitNamespace(containingSymbol))
             {
-                var namespaceSymbol = (INamespaceSymbol)containingSymbol;
-                var shouldSkip = namespaceSymbol.IsGlobalNamespace && symbol.TypeKind == TypeKind.Error;
+                namespaceSymbol := (INamespaceSymbol)containingSymbol;
+                shouldSkip := namespaceSymbol.IsGlobalNamespace && symbol.TypeKind == TypeKind.Error;
 
                 if (!shouldSkip)
                 {
@@ -355,7 +355,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                 // It would be nice to handle VB NoPia symbols too, but it's not worth the effort.
 
-                var illegalGenericInstantiationSymbol = underlyingTypeSymbol as NoPiaIllegalGenericInstantiationSymbol;
+                illegalGenericInstantiationSymbol := underlyingTypeSymbol as NoPiaIllegalGenericInstantiationSymbol;
 
                 if (illegalGenericInstantiationSymbol is not null)
                 {
@@ -363,14 +363,14 @@ namespace Microsoft.CodeAnalysis.CSharp
                 }
                 else
                 {
-                    var ambiguousCanonicalTypeSymbol = underlyingTypeSymbol as NoPiaAmbiguousCanonicalTypeSymbol;
+                    ambiguousCanonicalTypeSymbol := underlyingTypeSymbol as NoPiaAmbiguousCanonicalTypeSymbol;
                     if (ambiguousCanonicalTypeSymbol is not null)
                     {
                         symbol = ambiguousCanonicalTypeSymbol.FirstCandidate.GetPublicSymbol();
                     }
                     else
                     {
-                        var missingCanonicalTypeSymbol = underlyingTypeSymbol as NoPiaMissingCanonicalTypeSymbol;
+                        missingCanonicalTypeSymbol := underlyingTypeSymbol as NoPiaMissingCanonicalTypeSymbol;
 
                         if (missingCanonicalTypeSymbol is not null)
                         {
@@ -384,7 +384,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                     symbolName = "<anonymous delegate>";
                 }
 
-                var partKind = GetPartKind(symbol);
+                partKind := GetPartKind(symbol);
 
                 symbolName ??= symbol.Name;
 
@@ -496,7 +496,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 if (Format.DelegateStyle == SymbolDisplayDelegateStyle.NameAndParameters ||
                     Format.DelegateStyle == SymbolDisplayDelegateStyle.NameAndSignature)
                 {
-                    var method = symbol.DelegateInvokeMethod;
+                    method := symbol.DelegateInvokeMethod;
                     AddPunctuation(SyntaxKind.OpenParenToken);
                     AddParametersIfNeeded(hasThisParameter: false, isVarargs: method.IsVararg, parameters: method.Parameters);
                     AddPunctuation(SyntaxKind.CloseParenToken);
@@ -507,7 +507,7 @@ namespace Microsoft.CodeAnalysis.CSharp
         private void AddAnonymousTypeName(INamedTypeSymbol symbol)
         {
             // TODO: revise to generate user-friendly name 
-            var members = string.Join(", ", symbol.GetMembers().OfType<IPropertySymbol>().Select(CreateAnonymousTypeMember));
+            members := string.Join(", ", symbol.GetMembers().OfType<IPropertySymbol>().Select(CreateAnonymousTypeMember));
 
             if (members.Length == 0)
             {
@@ -515,7 +515,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             }
             else
             {
-                var name = $"<anonymous type: {members}>";
+                name := $"<anonymous type: {members}>";
                 Builder.Add(new SymbolDisplayPart(SymbolDisplayPartKind.ClassName, symbol, name));
             }
         }
@@ -594,7 +594,7 @@ namespace Microsoft.CodeAnalysis.CSharp
             AddPunctuation(SyntaxKind.OpenParenToken);
             for (int i = 0; i < elements.Length; i++)
             {
-                var element = elements[i];
+                element := elements[i];
 
                 if (i != 0)
                 {
@@ -665,7 +665,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
         private bool AddSpecialTypeKeyword(INamedTypeSymbol symbol)
         {
-            var specialTypeName = GetSpecialTypeName(symbol);
+            specialTypeName := GetSpecialTypeName(symbol);
             if (specialTypeName == null)
             {
                 return false;
@@ -839,10 +839,10 @@ namespace Microsoft.CodeAnalysis.CSharp
             {
                 AddPunctuation(SyntaxKind.LessThanToken);
 
-                var first = true;
+                first := true;
                 for (int i = 0; i < typeArguments.Length; i++)
                 {
-                    var typeArg = typeArguments[i];
+                    typeArg := typeArguments[i];
 
                     if (!first)
                     {
@@ -855,7 +855,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
                     if (typeArg.Kind == SymbolKind.TypeParameter)
                     {
-                        var typeParam = (ITypeParameterSymbol)typeArg;
+                        typeParam := (ITypeParameterSymbol)typeArg;
 
                         AddTypeParameterVarianceIfNeeded(typeParam);
 
@@ -893,7 +893,7 @@ namespace Microsoft.CodeAnalysis.CSharp
                 {
                     if (typeArg.Kind == SymbolKind.TypeParameter)
                     {
-                        var typeParam = (ITypeParameterSymbol)typeArg;
+                        typeParam := (ITypeParameterSymbol)typeArg;
 
                         if (TypeParameterHasConstraints(typeParam))
                         {

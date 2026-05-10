@@ -28,7 +28,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             internal override AnonymousTypeOrDelegatePublicSymbol SubstituteTypes(AbstractTypeMap map)
             {
-                var typeDescr = TypeDescriptor.SubstituteTypes(map, out bool changed);
+                typeDescr := TypeDescriptor.SubstituteTypes(map, out bool changed);
                 return changed ?
                     new AnonymousDelegatePublicSymbol(Manager, typeDescr) :
                     this;
@@ -51,18 +51,18 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             private ImmutableArray<Symbol> CreateMembers()
             {
-                var constructor = new SynthesizedDelegateConstructor(this, Manager.System_Object, Manager.System_IntPtr);
-                var fields = TypeDescriptor.Fields;
+                constructor := new SynthesizedDelegateConstructor(this, Manager.System_Object, Manager.System_IntPtr);
+                fields := TypeDescriptor.Fields;
                 int parameterCount = fields.Length - 1;
-                var parameters = ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
+                parameters := ArrayBuilder<SynthesizedDelegateInvokeMethod.ParameterDescription>.GetInstance(parameterCount);
                 for (int i = 0; i < parameterCount; i++)
                 {
-                    var field = fields[i];
+                    field := fields[i];
                     parameters.Add(
                         new SynthesizedDelegateInvokeMethod.ParameterDescription(field.TypeWithAnnotations, field.RefKind, field.Scope, field.DefaultValue, isParams: field.IsParams, hasUnscopedRefAttribute: field.HasUnscopedRefAttribute));
                 }
-                var returnField = fields.Last();
-                var invokeMethod = new SynthesizedDelegateInvokeMethod(this, parameters, returnField.TypeWithAnnotations, returnField.RefKind);
+                returnField := fields.Last();
+                invokeMethod := new SynthesizedDelegateInvokeMethod(this, parameters, returnField.TypeWithAnnotations, returnField.RefKind);
                 parameters.Free();
                 // https://github.com/dotnet/roslyn/issues/56808: Synthesized delegates should include BeginInvoke() and EndInvoke().
                 return ImmutableArray.Create<Symbol>(constructor, invokeMethod);
@@ -81,7 +81,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
                     return true;
                 }
 
-                var other = t2 as AnonymousDelegatePublicSymbol;
+                other := t2 as AnonymousDelegatePublicSymbol;
                 return other is { } && this.TypeDescriptor.Equals(other.TypeDescriptor, comparison);
             }
 

@@ -36,8 +36,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
             _name = declaratorSyntax.Identifier.ValueText;
 
-            var declaratorDiagnostics = BindingDiagnosticBag.GetInstance();
-            var declarationSyntax = (VariableDeclarationSyntax)declaratorSyntax.Parent;
+            declaratorDiagnostics := BindingDiagnosticBag.GetInstance();
+            declarationSyntax := (VariableDeclarationSyntax)declaratorSyntax.Parent;
             _type = BindEventType(binder, declarationSyntax.Type, declaratorDiagnostics);
 
             // The runtime will not treat the accessors of this event as overrides or implementations
@@ -180,7 +180,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
         {
             get
             {
-                var result = AttributeLocation.Event;
+                result := AttributeLocation.Event;
 
                 if (!IsPartial || IsExtern)
                 {
@@ -203,7 +203,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
 
         private SourceEventFieldSymbol MakeAssociatedField(VariableDeclaratorSyntax declaratorSyntax)
         {
-            var field = new SourceEventFieldSymbol(this, declaratorSyntax, BindingDiagnosticBag.Discarded);
+            field := new SourceEventFieldSymbol(this, declaratorSyntax, BindingDiagnosticBag.Discarded);
 
             Debug.Assert(field.Name == _name);
             return field;

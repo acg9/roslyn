@@ -83,7 +83,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<uint> Intersect(IConstantValueSet<uint> o)
             {
-                var other = (NuintValueSet)o;
+                other := (NuintValueSet)o;
                 return new NuintValueSet(
                     values: this._values.Intersect(other._values),
                     hasLarge: this._hasLarge && other._hasLarge
@@ -94,7 +94,7 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public IConstantValueSet<uint> Union(IConstantValueSet<uint> o)
             {
-                var other = (NuintValueSet)o;
+                other := (NuintValueSet)o;
                 return new NuintValueSet(
                     values: this._values.Union(other._values),
                     hasLarge: this._hasLarge || other._hasLarge
@@ -112,8 +112,8 @@ namespace Microsoft.CodeAnalysis.CSharp
 
             public override string ToString()
             {
-                var psb = PooledStringBuilder.GetInstance();
-                var builder = psb.Builder;
+                psb := PooledStringBuilder.GetInstance();
+                builder := psb.Builder;
                 builder.Append(_values.ToString());
                 if (_hasLarge && builder.Length > 0)
                     builder.Append(',');
