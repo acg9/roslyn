@@ -6049,8 +6049,8 @@ System.Console.WriteLine(true)";
         [Fact]
         public void ColonEquals_BasicParse()
         {
-            var text = "x := 42;";
-            var statement = this.ParseStatement(text);
+            text := "x := 42;";
+            statement := this.ParseStatement(text);
 
             Assert.NotNull(statement);
             Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
@@ -6058,7 +6058,7 @@ System.Console.WriteLine(true)";
             Assert.Equal(text, statement.ToFullString());
             Assert.Equal(0, statement.Errors().Length);
 
-            var ds = (LocalDeclarationStatementSyntax)statement;
+            ds := (LocalDeclarationStatementSyntax)statement;
             Assert.Equal(0, ds.Modifiers.Count);
 
             // Type is recognised as var (implicit).
@@ -6076,14 +6076,14 @@ System.Console.WriteLine(true)";
         [Fact]
         public void ColonEquals_StringInitializer()
         {
-            var text = "y := \"hello\";";
-            var statement = this.ParseStatement(text);
+            text := "y := \"hello\";";
+            statement := this.ParseStatement(text);
 
             Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
             Assert.Equal(text, statement.ToFullString());
             Assert.Equal(0, statement.Errors().Length);
 
-            var ds = (LocalDeclarationStatementSyntax)statement;
+            ds := (LocalDeclarationStatementSyntax)statement;
             Assert.True(ds.Declaration.Type.IsVar);
             Assert.Equal("y", ds.Declaration.Variables[0].Identifier.ToString());
         }
@@ -6092,8 +6092,8 @@ System.Console.WriteLine(true)";
         public void ColonEquals_NotLabel()
         {
             // Ensure `x :=` is not confused with a labeled statement (`x:`).
-            var text = "x := 1;";
-            var statement = this.ParseStatement(text);
+            text := "x := 1;";
+            statement := this.ParseStatement(text);
 
             Assert.Equal(SyntaxKind.LocalDeclarationStatement, statement.Kind());
             Assert.Equal(0, statement.Errors().Length);
@@ -6103,8 +6103,8 @@ System.Console.WriteLine(true)";
         public void ColonEquals_NotExpression()
         {
             // `:=` in expression position should produce parse errors.
-            var text = "var z = (x := 1);";
-            var statement = this.ParseStatement(text);
+            text := "var z = (x := 1);";
+            statement := this.ParseStatement(text);
 
             Assert.True(statement.Errors().Length > 0);
         }
@@ -6113,8 +6113,8 @@ System.Console.WriteLine(true)";
         public void ColonEquals_ExplicitTypeIsError()
         {
             // `int x := 1;` should not parse as a := declaration.
-            var text = "int x := 1;";
-            var statement = this.ParseStatement(text);
+            text := "int x := 1;";
+            statement := this.ParseStatement(text);
 
             Assert.True(statement.Errors().Length > 0);
         }
@@ -6122,14 +6122,14 @@ System.Console.WriteLine(true)";
         [Fact]
         public void ColonEquals_InForInitializer()
         {
-            var text = "for (i := 0; i < 10; i++) { }";
-            var statement = this.ParseStatement(text);
+            text := "for (i := 0; i < 10; i++) { }";
+            statement := this.ParseStatement(text);
 
             Assert.Equal(SyntaxKind.ForStatement, statement.Kind());
             Assert.Equal(text, statement.ToFullString());
             Assert.Equal(0, statement.Errors().Length);
 
-            var fs = (ForStatementSyntax)statement;
+            fs := (ForStatementSyntax)statement;
             Assert.NotNull(fs.Declaration);
             Assert.True(fs.Declaration.Type.IsVar);
             Assert.Equal(1, fs.Declaration.Variables.Count);
