@@ -222,6 +222,11 @@
         <target state="translated">일반 문자열로 변환</target>
         <note />
       </trans-unit>
+      <trans-unit id="Convert_to_short_declaration">
+        <source>Convert to ':=' short declaration</source>
+        <target state="new">Convert to ':=' short declaration</target>
+        <note />
+      </trans-unit>
       <trans-unit id="Convert_to_switch_expression">
         <source>Convert to 'switch' expression</source>
         <target state="translated">'switch' 식으로 변환</target>
